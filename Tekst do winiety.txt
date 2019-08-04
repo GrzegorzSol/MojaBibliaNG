@@ -1,0 +1,7 @@
+﻿Aplikacja Moja Biblia NG jest przeznaczona do analizy, studiowania Pisma Świętego.
+W jej skład wchodzą polskie przekłady biblii, w wersji protestanckiej jak i katolickiej (zawierają apokryfy).
+Aplikacja również posiada dostęp do tekstów oryginalnych, w języku greckim (Nowy Testament, Septuaginta), jak i hebrajskim (Stary Testament).
+
+Aplikacja ma status FreeWare, więc jest całkowicie darmowa, jednak zabronione jest czerpanie jakichkolwiek korzyści z jej dalszego rozpowszechniania.
+
+Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik. Jej rozwój rozpoczął się od 2007 roku. Więcej informacji znajduje się pod adresem „https://www.facebook.com/MojaBiblia/”
