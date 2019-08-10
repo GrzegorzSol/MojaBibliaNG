@@ -5014,7 +5014,7 @@ object InformationsAppWindow: TInformationsAppWindow
     object BevelPartSystemInfo: TBevel
       AlignWithMargins = True
       Left = 13
-      Top = 379
+      Top = 457
       Width = 397
       Height = 3
       Margins.Left = 12
@@ -5050,7 +5050,7 @@ object InformationsAppWindow: TInformationsAppWindow
       Left = 13
       Top = 84
       Width = 397
-      Height = 220
+      Height = 298
       Margins.Left = 12
       Margins.Top = 12
       Margins.Right = 12
@@ -5061,7 +5061,7 @@ object InformationsAppWindow: TInformationsAppWindow
     object STextInfoVersions: TStaticText
       AlignWithMargins = True
       Left = 13
-      Top = 319
+      Top = 397
       Width = 397
       Height = 45
       Margins.Left = 12
@@ -5071,11 +5071,12 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 2
+      ExplicitTop = 319
     end
     object STextInfoSystem: TStaticText
       AlignWithMargins = True
       Left = 13
-      Top = 397
+      Top = 475
       Width = 397
       Height = 49
       Margins.Left = 12
@@ -5085,6 +5086,7 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 3
+      ExplicitTop = 397
     end
   end
   object TimerInfoSystem: TTimer

@@ -45,7 +45,8 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 		"Produkt ten posiada licencje FreeWare, więc jest przeznaczony do darmowego rozpowszechniania, ale bez czerpania jakichkolwiek korzyści finansowych.\n" +
 		"Kod źródłowy projektu jest upubliczniony na stronie: „https://github.com/GrzegorzSol/MojaBibliaNG_Git”, można go dowolnie modyfikować," +
 		"jednak o wszystkich takich zabiegach autor pragnie być poinformowany, razem z przedstawieniem zmodyfikowanego kodu.\n" +
-		"Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik." +
+		"Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik.\n\n" +
+		"Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder 10.3 Version 26.0.33219.4899\n\n" +
 		"Jej rozwój rozpoczął się od 2007 roku (kolejne wersje były przeprojektowywane, zmieniane itd.). Więcej informacji znajduje się pod adresem \"https://www.facebook.com/MojaBiblia/\"";
 
   this->STextInfoSystem->Caption =  Format("Wersja systemu operacyjnego:\n%s", ARRAYOFCONST((TOSVersion::ToString())));
