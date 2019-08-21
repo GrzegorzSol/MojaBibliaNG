@@ -59,6 +59,8 @@ __published:	// IDE-managed Components
 	TAction *Act_OtherInfoTaskbarButton;
 	TAction *Act_OtherInfoApplicTaskBarButton;
 	TSplitView *MBW_SplitViewMain;
+	TAction *Act_FacePage;
+	TAction *Act_Update;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -71,7 +73,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_SelectVersExecute(TObject *Sender);
 	void __fastcall MBW_TrayIconMainBalloonClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
-	void __fastcall MBW_PageControlBibleTextChange(TObject *Sender);
+	void __fastcall MBW_PageControlAllChange(TObject *Sender);
 	void __fastcall MBW_SplitTreeTextCanResize(TObject *Sender, int &NewSize, bool &Accept);
 	void __fastcall Act_CorcordanceDictionaryGrecExecute(TObject *Sender);
 	void __fastcall MBW_PageControlsAllDrawTab(TCustomTabControl *Control, int TabIndex,
@@ -82,6 +84,8 @@ __published:	// IDE-managed Components
 	void __fastcall Act_ResizeWorkExecute(TObject *Sender);
 	void __fastcall Act_OtherInfoTaskbarButtonExecute(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+	void __fastcall Act_FacePageExecute(TObject *Sender);
+	void __fastcall Act_UpdateExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

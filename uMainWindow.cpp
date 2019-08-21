@@ -63,6 +63,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uViewAllResourcesWindow.h"
 #include "uInformationsAppWindow.h"
 #include "uMyBibleNGLibrary.h"
+#include "uReadUpdateWindow.h"
 #include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -85,6 +86,8 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImageSchemeVers,               //7.Projektowanie zależności logicznej między wersetami
 			enImageViewAllResources,         //8.Przegląd wszystkich dostępnych zasobów
 			enImageResizeWork,               //9.Poszerzanie obszaru tekstu
+			enImageFacePage,                 //10.Odnośnik do strony FaceBook
+			enImageUpdate,                   //11.Sprawdzanie aktualizacji i ewentualny aktualizacje
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -112,6 +115,8 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enTagInformations,    //Wyświetlanie informacji
 			enTagViewAllResources,//Przegląd wszystkich dostępnych zasobów
 			enTagResizeWork,      //Poszerzanie obszaru tekstu
+			enTagFacePage,        //Odnośnik do strony facebook
+			enTagUpdate,          //Sprawdzanie aktualizacji i ewentualny aktualizacje
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,            //Zakładka z narzędziami
 			//Numery dla przycisków na taskbarze
@@ -364,6 +369,10 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_ViewAllResources->Hint = Format("Przegląd zasobów|Wyświetlanie okna z lista wszystkich, dostępnych zasobów aplikacji.|%u", ARRAYOFCONST((this->Act_ViewAllResources->ImageIndex)));
 	this->Act_ResizeWork->Tag = enTagResizeWork;
 	this->Act_ResizeWork->Hint = Format("Poszerzenie obszaru tekstu.|Przełącznik powodujący poszerzenie obszaru tekstu biblijnego, przez schowanie zakładek.|%u", ARRAYOFCONST((this->Act_ResizeWork->ImageIndex)));
+	this->Act_FacePage->Tag = enTagFacePage;
+	this->Act_FacePage->Hint = Format("Otwarcie strony na Facebooku.|Otwarcie strony aplikacji na Facebooku, w domyślnej przeglądarce.|%u", ARRAYOFCONST((this->Act_FacePage->ImageIndex)));
+	this->Act_Update->Tag = enTagUpdate;
+	this->Act_Update->Hint = Format("Otwarcie okna sprawdzania i akualizacji.|Otwarcie okna, do sprawdzania wersji na serwerze i ewentualnej aktualizacji.|%u", ARRAYOFCONST((this->Act_Update->ImageIndex)));
 	//---
 	this->MBW_PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->MBW_PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
@@ -687,9 +696,9 @@ void __fastcall TMainBibleWindow::Act_OtherInfoTaskbarButtonExecute(TObject *Sen
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_PageControlBibleTextChange(TObject *Sender)
+void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI): Metoda uaktualnia wskazania objektu, klasy TTaskBar, dla aktualnej zakłdki
+	OPIS METOD(FUNKCJI): Metoda wywoływana podczas zmiany zakłedki, we wszystkich objektach klasy TPageControl
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -698,21 +707,39 @@ void __fastcall TMainBibleWindow::MBW_PageControlBibleTextChange(TObject *Sender
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
 	//---
-	//TTabSheet *pTabSheet = pPageControl->ActivePage;
-	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(pPageControl->ActivePage);
-	if(!pGsTabSheetClass)
-	//Jeśli to nie jest zakładka z wybranym rozdziałem z wybranej ksiegi, to wyzeruje się wskaźnik na taskbarze
-  //i metoda zostanie opuszczona
+	switch(pPageControl->Tag)
 	{
-		this->MBW_TaskbarMain->ProgressValue = 0;
-		return;
+		case enTagPageControlBibleText: //Zakładki z tekstem
+		{
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("Zakładki z tekstem");
+			#endif
+			//TTabSheet *pTabSheet = pPageControl->ActivePage;
+			GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(pPageControl->ActivePage);
+			if(!pGsTabSheetClass)
+			//Jeśli to nie jest zakładka z wybranym rozdziałem z wybranej ksiegi, to wyzeruje się wskaźnik na taskbarze
+			//i metoda zostanie opuszczona
+			{
+				this->MBW_TaskbarMain->ProgressValue = 0;
+				return;
+			}
+			//Wyłuskanie wskaźnika do TProgressBaru, aktualnej zakładki
+			TProgressBar *pProgressBar = GsReadBibleTextData::GetCurrentNamberChaptOnSheet();
+			if(!pProgressBar) return;
+			//---
+			this->MBW_TaskbarMain->ProgressMaxValue = pProgressBar->Max;
+			this->MBW_TaskbarMain->ProgressValue = pProgressBar->Position;
+		}
+		break;
+		//---
+		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
+		{
+      #if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)");
+			#endif
+		}
+    break;
 	}
-	//Wyłuskanie wskaźnika do TProgressBaru, aktualnej zakładki
-	TProgressBar *pProgressBar = GsReadBibleTextData::GetCurrentNamberChaptOnSheet();
-	if(!pProgressBar) return;
-  //---
-	this->MBW_TaskbarMain->ProgressMaxValue = pProgressBar->Max;
-	this->MBW_TaskbarMain->ProgressValue = pProgressBar->Position;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::MBW_SplitTreeTextCanResize(TObject *Sender,
@@ -748,7 +775,7 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 	TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
 	if(!pActSheet) return;
 	//---
-  TRect MyRect(Rect);
+	TRect MyRect(Rect);
 	switch(pPControl->Tag)
 	{
 		case enTagPageControlBibleText: //Zakładki z tekstem
@@ -765,9 +792,9 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 		}
 		break;
     //---
-		case enTagPageControlTools:            //???Zakładka z narzędziami
+		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
 		{
-      if(Active)
+			if(Active)
 			{
 				pPControl->Canvas->Font->Color = clBlack;
 				pPControl->Canvas->Brush->Color = clWebDarkOrange;
@@ -781,6 +808,36 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 		}
 		break;
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_FacePageExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Akcja otwiera w domyślnej przeglądarce stronę facebookową
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	ShellExecute(this->Handle, NULL , TEXT("https://www.facebook.com/MojaBiblia/"), NULL, NULL, SW_SHOWNORMAL);
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Akcja otwiera okno do sprawdzania na serwerze i ewentualną aktualizacje
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	TReadUpdateWindow *pReadUpdateWindow = new TReadUpdateWindow(this);
+	if(!pReadUpdateWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TReadUpdateWindow"));
+	pReadUpdateWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 
