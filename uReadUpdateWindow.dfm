@@ -1,8 +1,9 @@
 object ReadUpdateWindow: TReadUpdateWindow
   Left = 0
   Top = 0
+  ActiveControl = STextInfos
   Caption = 'Sprawdzenie dost'#281'pnej aktualizacji.'
-  ClientHeight = 459
+  ClientHeight = 197
   ClientWidth = 641
   Color = clBtnFace
   DoubleBuffered = True
@@ -16,4 +17,80 @@ object ReadUpdateWindow: TReadUpdateWindow
   OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
+  object LabeledEdCurrentVersion: TLabeledEdit
+    Left = 321
+    Top = 15
+    Width = 257
+    Height = 24
+    BorderStyle = bsNone
+    Ctl3D = False
+    EditLabel.Width = 238
+    EditLabel.Height = 25
+    EditLabel.Caption = 'Aktualna wersja aplikacji:'
+    EditLabel.Font.Charset = DEFAULT_CHARSET
+    EditLabel.Font.Color = clWindowText
+    EditLabel.Font.Height = -21
+    EditLabel.Font.Name = 'Tahoma'
+    EditLabel.Font.Style = []
+    EditLabel.ParentFont = False
+    EditLabel.Layout = tlCenter
+    Font.Charset = EASTEUROPE_CHARSET
+    Font.Color = clMaroon
+    Font.Height = -21
+    Font.Name = 'Arial'
+    Font.Style = []
+    LabelPosition = lpLeft
+    ParentColor = True
+    ParentCtl3D = False
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 0
+  end
+  object LabeledEdDownLoadversion: TLabeledEdit
+    Left = 321
+    Top = 49
+    Width = 257
+    Height = 24
+    BorderStyle = bsNone
+    Ctl3D = False
+    EditLabel.Width = 256
+    EditLabel.Height = 25
+    EditLabel.Caption = 'Najnowsza wersja aplikacji:'
+    EditLabel.Font.Charset = DEFAULT_CHARSET
+    EditLabel.Font.Color = clWindowText
+    EditLabel.Font.Height = -21
+    EditLabel.Font.Name = 'Tahoma'
+    EditLabel.Font.Style = []
+    EditLabel.ParentFont = False
+    EditLabel.Layout = tlCenter
+    Font.Charset = EASTEUROPE_CHARSET
+    Font.Color = clRed
+    Font.Height = -21
+    Font.Name = 'Arial'
+    Font.Style = []
+    LabelPosition = lpLeft
+    ParentColor = True
+    ParentCtl3D = False
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 1
+  end
+  object STextInfos: TStaticText
+    Left = 8
+    Top = 88
+    Width = 625
+    Height = 57
+    Alignment = taCenter
+    AutoSize = False
+    BorderStyle = sbsSunken
+    Color = clSkyBlue
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -21
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 2
+  end
 end

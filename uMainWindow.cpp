@@ -202,11 +202,15 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	GsReadBibleTextData::CreateTreeBooks(this->MBW_TabSheetBooks, this->MBW_PageControlBibleText);
 	//---
 	UnicodeString ustrVersion = Library::GetInfo();
+	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
 		this->Caption = Format("Moja Biblia NG wersja beta CLANG v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
 	#else
 		this->Caption = Format("Moja Biblia NG wersja beta v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
 	#endif
+	//Zapis pliku tekstowego z wersją
+	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);
+	//---
 	this->STextHeaderListCommentVers->Caption = "Lista wersetów do, których istnieją\n komentarze";
 	//--- Tworzenie objektu, klasy listy komentarzy (klasa GsLViewCommentsAllClass) i nagłówka
 	this->pGsLViewCommentsAllClass = new GsLViewCommentsAllClass(this->MBW_TabSheetAllCommentsVers);

@@ -10,6 +10,8 @@
 #pragma package(smart_init)
 
 const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName), //Ścieżka dostępu do katalogu głównego programu;
+										GlobalVar::Global_custrNameIVerFile = "MBibleNG.iver",        //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
+										GlobalVar::Global_custrGetVersionUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 										GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathFileStartDisplay = TPath::Combine(GlobalVar::Global_custrGetDataDir, "startMyBibleNG.bmp"),	//Ściezka dostępu do grafiki wyświetlanej podczas startu aplikacji
@@ -57,10 +59,15 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::GlobalIni_TranslatesSection_Main="TRANSLATES", 				        //Główna sekcja TRANSLATES pliku ini
 												GlobalVar::GlobalIni_ExcludeTranslates="ExcludeTranslates";    //Tłumaczenia nie wyświetlane
 //----- Wersje plików i bibliotek
-UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = ""; //Wersja biblioteki GsReadBibleTextClass
+UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja biblioteki GsReadBibleTextClass
+							GlobalVar::Global_ustrVerAplicMain = ""; //Wersja głównej biblioteki
 //***************************************************************************
 TStringList *GlobalVar::Global_SListPathMultiM=0;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 TMemIniFile *GlobalVar::Global_ConfigFile=0;			 //Globalny wskażnik na plik konfiguracyjny
 TStringDynArray GlobalVar::SDirTranslatesList;     //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
 THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=0; //String lista do wszystkich ulubionych wesrsetów
+int GlobalVar::iReturnUpdate=0; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
+																//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
+																//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
+										 						//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
 

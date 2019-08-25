@@ -15,6 +15,8 @@
 struct GlobalVar
 {
 	const static UnicodeString Global_custrGetExeDir,           //Ścieżka dostępu do katalogu głównego programu;
+                             Global_custrNameIVerFile,        //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
+                             Global_custrGetVersionUpdate,    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 														 Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
 														 Global_custrGetDataDir,          //Ścieżka dostępu do katalogu z danymi aplikacji
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
@@ -64,12 +66,17 @@ struct GlobalVar
 														 GlobalIni_TranslatesSection_Main, 				//Główna sekcja TRANSLATES pliku ini
 																GlobalIni_ExcludeTranslates;    //Tłumaczenia nie wyświetlane
  //----- Wersje plików i bibliotek
- static UnicodeString Global_ustrVerGsReadBibleTextClass; //Wersja biblioteki GsReadBibleTextClass
+ static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
+                      Global_ustrVerAplicMain; 						//Wersja głównej biblioteki
 //***************************************************************************
 	static TStringList *Global_SListPathMultiM;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 	static TMemIniFile *Global_ConfigFile;			 //Globalny wskażnik na plik konfiguracyjny
 	static TStringDynArray SDirTranslatesList;   //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
 	static THashedStringList *Global_HSListAllFavoritiesVers; //String lista do wszystkich ulubionych wesrsetów
+	static int iReturnUpdate; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
+														//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
+														//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
+										 				//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
 };
 //---------------------------------------------------------------------------
 #endif
