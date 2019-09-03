@@ -13,6 +13,8 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TReadUpdateWindow *ReadUpdateWindow;
+
+enum {enTagUp_UpYes=0x1000, enTagUp_UpNo};
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
@@ -21,7 +23,7 @@ TReadUpdateWindow *ReadUpdateWindow;
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected);
-
+bool bIsPushButton=false;
 //---------------------------------------------------------------------------
 __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -32,7 +34,8 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+	this->ButtYes->Tag = enTagUp_UpYes;
+	this->ButtonNo->Tag = enTagUp_UpNo;
 
   this->LabeledEdCurrentVersion->Text = GlobalVar::Global_ustrVerAplicMain;
 	//--- Sprawdzenie po³¹czenia z internetem
@@ -60,7 +63,8 @@ void __fastcall TReadUpdateWindow::FormClose(TObject *Sender, TCloseAction &Acti
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	if(!bIsPushButton) GlobalVar::iReturnUpdate = -1;
+	Action = caFree;
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
@@ -74,11 +78,10 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
   //Uzyskanie œcie¿ki dostepu do katalogu Temp
 	TCHAR pathTemp[MAX_PATH];
 	GetTempPath(MAX_PATH, pathTemp);
-	const UnicodeString ustrDestinyDownloadVersion = pathTemp + GlobalVar::Global_custrNameIVerFile + "_ftp",
-											ustrDestinyDownloadApplication = pathTemp + System::Sysutils::ExtractFileName(Application->ExeName) + "_ftp";
+
 	bool bRetDownload=false;
 
-	bRetDownload = this->_DownLoadFileFTP(ustrDestinyDownloadVersion, "/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver");
+	bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
 	if(!bRetDownload) this->Caption = "B³¹d procesu aktualizacji!";
 
 	TStringBuilder *pStrBuilderDownload = new TStringBuilder();
@@ -86,8 +89,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 
 	__int64 i64DonloadFile=0, i64LocalFile=0;
 
-	pStrBuilderDownload->Append(TFile::ReadAllText(ustrDestinyDownloadVersion, TEncoding::UTF8));
-	TFile::Delete(ustrDestinyDownloadVersion);
+	pStrBuilderDownload->Append(TFile::ReadAllText(GlobalVar::Global_custrLocalVersionFile, TEncoding::UTF8));
 	this->LabeledEdDownLoadversion->Text = pStrBuilderDownload->ToString();
 
 	pStrBuilderDownload->Replace(".", ""); //Usuniêcie kropek
@@ -113,13 +115,12 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	}
 	else if(i64DonloadFile > i64LocalFile)
 	{
-		this->STextInfos->Caption = "Jest dostêpna nowsza wersja na serwerze aktualizacyjnym";
+		this->STextInfos->Caption = "Jest dostêpna nowsza wersja na serwerze aktualizacyjnym, czy zaktualizowaæ aplikacjê?";
 		GlobalVar::iReturnUpdate = 1;
+		this->PanelButtons->Visible = true;
     //Pobranie nowszej wersji
-		bRetDownload = this->_DownLoadFileFTP(ustrDestinyDownloadApplication, "/public_html/wp-content/uploads/MojaBibliaNG/Moja Biblia NG.zip");
+		bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalApplicFile, GlobalVar::Global_custrFTPSourceApplicFile);
 		if(!bRetDownload) this->Caption = "B³¹d procesu aktualizacji!";
-
-		TFile::Delete(ustrDestinyDownloadApplication);
 	}
 	if(i64DonloadFile < i64LocalFile)
 	{
@@ -140,9 +141,6 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTP(const UnicodeString _destPat
 {
   HINTERNET hInternetConnectHandle=NULL; 	//Wynik funkcji InternetConnect()
 	HINTERNET hInternetOpenHandle=NULL;	//Wynik funkcji InternetOpen()
-	const UnicodeString ustrHostName = "ftp.nasz-salem.pl",
-											ustrMyUser = "naszsalem",
-											ustrMyPassword = "JdgoG3OEc3v3";
 
 	bool bRet=true;
   const unsigned int uiBufferSize = 4096;
@@ -154,8 +152,8 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTP(const UnicodeString _destPat
 	{
 		try
 		{
-			hInternetConnectHandle = InternetConnect(hInternetOpenHandle, ustrHostName.c_str(), INTERNET_DEFAULT_FTP_PORT,
-																							 ustrMyUser.c_str(), ustrMyPassword.c_str(), INTERNET_SERVICE_FTP, INTERNET_FLAG_PASSIVE, 0);
+			hInternetConnectHandle = InternetConnect(hInternetOpenHandle, GlobalVar::Global_custrHostName.c_str(), INTERNET_DEFAULT_FTP_PORT,
+																							 GlobalVar::Global_custrUserHost.c_str(), GlobalVar::Global_custrPassword.c_str(), INTERNET_SERVICE_FTP, INTERNET_FLAG_PASSIVE, 0);
 			if(!hInternetConnectHandle) throw(Exception("B³¹d funkcji hInternetConnectHandle()"));
 
       HINTERNET hFileTransfer = NULL;
@@ -264,3 +262,33 @@ bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 	}
 	return bInternetConnect;
 }
+//---------------------------------------------------------------------------
+void __fastcall TReadUpdateWindow::ButtAllClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButton *pButt = dynamic_cast<TButton *>(Sender);
+	if(!pButt) return;
+	//---
+	bIsPushButton = true;
+	switch(pButt->Tag)
+	{
+		case enTagUp_UpYes:
+			GlobalVar::iReturnUpdate = 1;
+		break;
+		//---
+		case enTagUp_UpNo:
+			GlobalVar::iReturnUpdate = -1;
+			TFile::Delete(GlobalVar::Global_custrLocalVersionFile);
+			TFile::Delete(GlobalVar::Global_custrLocalApplicFile);
+		break;
+    //---
+  }
+	this->Close();
+}
+//---------------------------------------------------------------------------
+

@@ -15,7 +15,11 @@ __published:	// IDE-managed Components
 	TLabeledEdit *LabeledEdCurrentVersion;
 	TLabeledEdit *LabeledEdDownLoadversion;
 	TStaticText *STextInfos;
+	TPanel *PanelButtons;
+	TButton *ButtYes;
+	TButton *ButtonNo;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+	void __fastcall ButtAllClick(TObject *Sender);
 private:	// User declarations
 	void __fastcall _GetIsUpdateVerify();
   bool __fastcall _DownLoadFileFTP(const UnicodeString _destPathDownload, const UnicodeString _ustrPathFTPFile);

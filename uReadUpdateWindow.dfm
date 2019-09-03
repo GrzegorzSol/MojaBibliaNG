@@ -93,4 +93,35 @@ object ReadUpdateWindow: TReadUpdateWindow
     ParentFont = False
     TabOrder = 2
   end
+  object PanelButtons: TPanel
+    Left = 0
+    Top = 156
+    Width = 641
+    Height = 41
+    Align = alBottom
+    ShowCaption = False
+    TabOrder = 3
+    Visible = False
+    ExplicitLeft = 128
+    ExplicitTop = 176
+    ExplicitWidth = 185
+    object ButtYes: TButton
+      Left = 8
+      Top = 8
+      Width = 97
+      Height = 25
+      Caption = 'Aktualizacja...'
+      TabOrder = 0
+      OnClick = ButtAllClick
+    end
+    object ButtonNo: TButton
+      Left = 544
+      Top = 8
+      Width = 89
+      Height = 25
+      Caption = 'Nie aktualizuj'
+      TabOrder = 1
+      OnClick = ButtAllClick
+    end
+  end
 end

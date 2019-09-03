@@ -65,6 +65,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uMyBibleNGLibrary.h"
 #include "uReadUpdateWindow.h"
 #include <System.IOUtils.hpp>
+#include <System.Zip.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -88,6 +89,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImageResizeWork,               //9.Poszerzanie obszaru tekstu
 			enImageFacePage,                 //10.Odnośnik do strony FaceBook
 			enImageUpdate,                   //11.Sprawdzanie aktualizacji i ewentualny aktualizacje
+			enImageLogoApplication,          //12.Ikona z główną grafiką aplikacji
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -181,7 +183,7 @@ __fastcall TMainBibleWindow::~TMainBibleWindow()
 {
 	if(GlobalVar::Global_SListPathMultiM) {delete GlobalVar::Global_SListPathMultiM; GlobalVar::Global_SListPathMultiM = 0;}
 	#if defined(_DEBUGINFO_) //Konsola debuggera
-		MessageBox(NULL, TEXT("Wstrzymanie zamykania aplikacji, w celu przeglądu komunikatów konsoli!"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+		//MessageBox(NULL, TEXT("Wstrzymanie zamykania aplikacji, w celu przeglądu komunikatów konsoli!"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 		GsDebugClass::CloseDebug();
 	#endif
 }
@@ -279,11 +281,30 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true))
+  if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true) &&
+		 GlobalVar::iReturnUpdate != 1)
 	{
-		int iResult;
-		iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz opuścić apilkacje?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
-		if(iResult == IDYES) CanClose = true; else CanClose = false;
+		TTaskDialog *pTaskDialog = new TTaskDialog(this);
+		if(!pTaskDialog) throw(Exception("Błąd inicjalizacji objektu TTaskDialog"));
+
+		pTaskDialog->Caption = "Pytanie aplikacji";
+		pTaskDialog->Title = "Czy rzeczywiście chcesz opuścić apilkacje?";
+
+		pTaskDialog->ExpandedText = "Naciśnięcie przycisku OK, spowoduje opuszczenie aplikacji. To pytania można wyłączyć w jej ustawieniach, wtedy aplikacja zostanie zaknięta bez pytania!";
+		pTaskDialog->MainIcon = tdiWarning;
+		pTaskDialog->DefaultButton = tcbNo;
+    pTaskDialog->CommonButtons = TTaskDialogCommonButtons() << tcbYes << tcbNo;
+		pTaskDialog->ModalResult = mrNo;
+		pTaskDialog->Flags = TTaskDialogFlags() << tfUseHiconMain << tfExpandedByDefault;
+		this->MBW_ImageListMainActive->GetIcon(enImageLogoApplication, pTaskDialog->CustomMainIcon);
+		//TTaskDialogBaseButtonItem *pTaskDialogBaseButtonItem = pTaskDialog->Buttons->Add();
+		//pTaskDialogBaseButtonItem->Caption = "Dodany";
+
+		if(pTaskDialog->Execute())
+		{
+			if(pTaskDialog->ModalResult == mrYes) CanClose = true; else CanClose = false;
+		}
+		delete pTaskDialog;
 	}
   else CanClose = true;
 }
@@ -296,7 +317,10 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppWidth, this->Width);
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("TMainBibleWindow::FormClose()");
+	#endif
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppWidth, this->Width);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppHeight, this->Height);
 	//--- Zamknięcie klasy głównej do analizy Pisma
 	GsReadBibleTextData::CloseMyBible();
@@ -836,12 +860,46 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
+	//---
+  //Uzyskanie ścieżki dostepu do katalogu Temp
+	TCHAR pathTemp[MAX_PATH];
+	GetTempPath(MAX_PATH, pathTemp);
+	GlobalVar::Global_custrLocalVersionFile = pathTemp + GlobalVar::Global_custrNameIVerFile + "_ftp",
+  //...Temp\Nazwa_aplikacji.exe_ftp
+	GlobalVar::Global_custrLocalApplicFile = pathTemp + TPath::GetFileNameWithoutExtension(Application->ExeName) + ".zip_ftp";
 	//---
 	TReadUpdateWindow *pReadUpdateWindow = new TReadUpdateWindow(this);
 	if(!pReadUpdateWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TReadUpdateWindow"));
 	pReadUpdateWindow->ShowModal();
+	if(GlobalVar::iReturnUpdate != 1) return;
+
+	UnicodeString ustrPathNewApplic = TPath::ChangeExtension(GlobalVar::Global_custrLocalApplicFile, "zip"),
+								ustrPathDirExtract;
+  //Zmiana nazwy na plik z archiwum. Usunięcie części _ftp z nazwy
+	System::Sysutils::RenameFile(GlobalVar::Global_custrLocalApplicFile, ustrPathNewApplic);
+
+	//Rozpakowanie archiwum aktualizacyjnego
+	if(TFile::Exists(ustrPathNewApplic))
+	//Jeśli istnieje pobrane archiwum
+	{
+		ustrPathDirExtract = TPath::GetDirectoryName(ustrPathNewApplic); //Katalog na pliki rozpakowane z archiwum
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("ustrPathNewApplic: %s, ustrPathDirExtract: %s", ARRAYOFCONST((ustrPathNewApplic, ustrPathDirExtract))));
+		#endif
+
+		TZipFile *pZipFile = new TZipFile();
+		pZipFile->ExtractZipFile(ustrPathNewApplic, ustrPathDirExtract);
+		delete pZipFile;
+		if(TFile::Exists(GlobalVar::Global_ustrPathApplicUpdate))
+		//Jesli istnieje aplikacja do kopiowania nowej wersji na starą
+		{
+			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
+			this->Close();
+		}
+	}
 }
 //---------------------------------------------------------------------------
 

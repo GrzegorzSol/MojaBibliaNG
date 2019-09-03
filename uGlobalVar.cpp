@@ -22,6 +22,13 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrPathMultimediaFilesData = TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
 										GlobalVar::Global_custrPathFileFavoriteVers = TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),    //Ścieżka dostępu do pliku z listą ulubionych wersetów
 										GlobalVar::Global_custrPathdirComments = TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
+                    //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+										GlobalVar::Global_custrFTPSourceVersionFile = "/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver", //Ścieżka sieciowa do pliku wersji
+										GlobalVar::Global_custrFTPSourceApplicFile = "/public_html/wp-content/uploads/MojaBibliaNG/Moja Biblia NG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
+										GlobalVar::Global_custrHostName = "ftp.nasz-salem.pl", //Adres hosta
+										GlobalVar::Global_custrUserHost = "naszsalem", //Nazwa użytkownika
+										GlobalVar::Global_custrPassword = "JdgoG3OEc3v3", //Hasło do hosta
+                    GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, "winmbupd.exe"),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -60,7 +67,10 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_ExcludeTranslates="ExcludeTranslates";    //Tłumaczenia nie wyświetlane
 //----- Wersje plików i bibliotek
 UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja biblioteki GsReadBibleTextClass
-							GlobalVar::Global_ustrVerAplicMain = ""; //Wersja głównej biblioteki
+							GlobalVar::Global_ustrVerAplicMain = "", //Wersja głównej biblioteki
+							//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+							GlobalVar::Global_custrLocalVersionFile = "", //Ścieżka dostępu lokalna, do pobranego pliku wersji
+							GlobalVar::Global_custrLocalApplicFile = ""; //Ścieżka dostępu lokalna, do pobranej aplikacji
 //***************************************************************************
 TStringList *GlobalVar::Global_SListPathMultiM=0;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 TMemIniFile *GlobalVar::Global_ConfigFile=0;			 //Globalny wskażnik na plik konfiguracyjny

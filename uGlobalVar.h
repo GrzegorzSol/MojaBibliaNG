@@ -28,6 +28,13 @@ struct GlobalVar
 														 Global_custrPathMultimediaFilesData,//Ścieżka dostępu do danych multimedialnych
 														 Global_custrPathFileFavoriteVers,    //Ścieżka dostępu do pliku z listą ulubionych wersetów
 														 Global_custrPathdirComments,      //Katalog do pojedyńczych plików z komentarzami do wersetów
+														 //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+														 Global_custrFTPSourceVersionFile, //Ścieżka sieciowa do pliku wersji
+														 Global_custrFTPSourceApplicFile, //Ścieżka sieciowa do głównego pliku aplikacji
+														 Global_custrHostName, //Adres hosta
+														 Global_custrUserHost, //Nazwa użytkownika
+														 Global_custrPassword, //Hasło do hosta
+                             Global_ustrPathApplicUpdate,   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -67,7 +74,10 @@ struct GlobalVar
 																GlobalIni_ExcludeTranslates;    //Tłumaczenia nie wyświetlane
  //----- Wersje plików i bibliotek
  static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
-                      Global_ustrVerAplicMain; 						//Wersja głównej biblioteki
+											Global_ustrVerAplicMain, 						//Wersja głównej biblioteki
+											//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+											Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
+											Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
 //***************************************************************************
 	static TStringList *Global_SListPathMultiM;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 	static TMemIniFile *Global_ConfigFile;			 //Globalny wskażnik na plik konfiguracyjny
