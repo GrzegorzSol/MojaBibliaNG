@@ -28,7 +28,8 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrHostName = "ftp.nasz-salem.pl", //Adres hosta
 										GlobalVar::Global_custrUserHost = "naszsalem", //Nazwa użytkownika
 										GlobalVar::Global_custrPassword = "JdgoG3OEc3v3", //Hasło do hosta
-                    GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, "winmbupd.exe"),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+										GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, "winmbupd.exe"),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+                    GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/

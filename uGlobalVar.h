@@ -34,7 +34,8 @@ struct GlobalVar
 														 Global_custrHostName, //Adres hosta
 														 Global_custrUserHost, //Nazwa użytkownika
 														 Global_custrPassword, //Hasło do hosta
-                             Global_ustrPathApplicUpdate,   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+														 Global_ustrPathApplicUpdate,   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+														 Global_ustrMutexName,  //Mutekst główny aplikacji
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -88,5 +89,4 @@ struct GlobalVar
 														//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
 										 				//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
 };
-//---------------------------------------------------------------------------
 #endif

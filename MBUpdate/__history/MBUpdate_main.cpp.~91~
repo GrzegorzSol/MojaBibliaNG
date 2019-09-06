@@ -1,0 +1,46 @@
+#pragma hdrstop
+#pragma argsused
+
+#ifdef _WIN32
+#include <tchar.h>
+#else
+	typedef char _TCHAR;
+	#define _tmain main
+#endif
+
+#include <stdio.h>
+#include <windows.h>
+//#include <tlhelp32.h>
+#include <Strsafe.h>
+//#include <string.h>
+
+TCHAR pszSourceFile[MAX_PATH], pszDestinyFile[MAX_PATH], pszCurrentDir[MAX_PATH], pszPathTemp[MAX_PATH];
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	const int ciMaxChar = 512;
+	TCHAR tInfo[ciMaxChar];
+
+	StringCchCopy(tInfo, ciMaxChar, TEXT("W celu dokoñczenia aktualizacji, g³ówna aplikacja musi zostaæ zamkniêta. "));
+	StringCchCat(tInfo, ciMaxChar, TEXT("Czy mam zamkn¹æ aplikacjê? Po zaktualizowaniu, aplikacja zostanie uruchomiona w wersji zaktualizowanej. "));
+	StringCchCat(tInfo, ciMaxChar, TEXT("jeœli siê nie zgodzisz, to aktaulizacja nie zostanie przeprowadzona automatycznie"));
+	StringCchCat(tInfo, ciMaxChar, TEXT("i bedziesz musia³ samodzielnie przekopiowaæ plik z aktualizacj¹ \"Moja Biblia NG.exe\", które znajduje siê w katalogu Temp."));
+	StringCchCat(tInfo, ciMaxChar, TEXT("Aby to przeprowadziæ samodzielnie, skopiuj plik do katalogu z aplikacj¹."));
+
+	GetModuleFileName(NULL, pszSourceFile, MAX_PATH);
+	wprintf(TEXT("GetModuleFileName: %s\n"), pszSourceFile);
+	GetCurrentDirectory(MAX_PATH, pszCurrentDir);
+	wprintf(TEXT("GetCurrentDirectory: %s\n"), pszCurrentDir);
+	GetTempPath(MAX_PATH, pszPathTemp);
+	StringCchCat(pszPathTemp, MAX_PATH, TEXT("\\"));
+	wprintf(TEXT("pszPathTemp: %s\n"), pszPathTemp);
+
+	int iResult = MessageBox(NULL, tInfo, TEXT("Aktualizacja aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
+	if(iResult == IDYES)
+	{
+
+		//BOOL CopyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, false);
+		//ShellExecute(NULL, NULL , TEXT("Moja Biblia NG Testing.exe"), NULL, NULL, SW_SHOWNORMAL);
+    //Skasowanie pobranych aktualizacji
+  }
+}

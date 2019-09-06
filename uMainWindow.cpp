@@ -331,7 +331,7 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 		delete GlobalVar::Global_ConfigFile;
 		GlobalVar::Global_ConfigFile = 0;
 	}
-	Action = caFree;
+	//Action = caFree; //?
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)
@@ -896,8 +896,8 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 		if(TFile::Exists(GlobalVar::Global_ustrPathApplicUpdate))
 		//Jesli istnieje aplikacja do kopiowania nowej wersji na starą
 		{
-			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
 			this->Close();
+			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
 		}
 	}
 }

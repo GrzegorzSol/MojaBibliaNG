@@ -1,0 +1,5 @@
+﻿#define DIALOG_UPDATE 201
+#define IDC_BUTTONOK 202
+#define IDC_LISTBOX 203
+
+#define ICON_UPDATE 301
