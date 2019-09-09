@@ -139,6 +139,9 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
   #if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
 	#endif
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("Mutex name: \"%s\"", ARRAYOFCONST((GlobalVar::Global_ustrMutexName))));
+	#endif
 	//----- Sprawdzanie istnienia odpowiednich katalogów
   if(!TDirectory::Exists(GlobalVar::Global_custrPathMultimediaFilesData)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathMultimediaFilesData);
 	//----- Tworzenie globalnego wskaźnika, do pliku konfiguracyjnego
@@ -331,7 +334,6 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 		delete GlobalVar::Global_ConfigFile;
 		GlobalVar::Global_ConfigFile = 0;
 	}
-	//Action = caFree; //?
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)
@@ -896,8 +898,8 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 		if(TFile::Exists(GlobalVar::Global_ustrPathApplicUpdate))
 		//Jesli istnieje aplikacja do kopiowania nowej wersji na starą
 		{
-			this->Close();
 			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
+			this->Close();
 		}
 	}
 }
