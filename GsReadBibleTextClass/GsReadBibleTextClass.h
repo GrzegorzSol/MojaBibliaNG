@@ -414,7 +414,7 @@ class GsTabSheetClass : public TTabSheet //Klasa całkowicie PRYWATNA!
 	void __fastcall _OnClickButton(System::TObject* Sender);
 	void __fastcall _OnSelectBoxChapter(System::TObject* Sender);
 	void __fastcall _OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
-	/**/void __fastcall _OnSaveComments(System::TObject* Sender);
+	void __fastcall _OnSaveComments(System::TObject* Sender);
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń

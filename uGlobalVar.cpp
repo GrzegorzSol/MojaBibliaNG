@@ -24,11 +24,12 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrPathdirComments = TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
                     //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
 										GlobalVar::Global_custrFTPSourceVersionFile = "/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver", //Ścieżka sieciowa do pliku wersji
-										GlobalVar::Global_custrFTPSourceApplicFile = "/public_html/wp-content/uploads/MojaBibliaNG/Moja Biblia NG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
+										GlobalVar::Global_custrFTPSourceApplicFile = "/public_html/wp-content/uploads/MojaBibliaNG/MojaBibliaNG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
 										GlobalVar::Global_custrHostName = "ftp.nasz-salem.pl", //Adres hosta
 										GlobalVar::Global_custrUserHost = "naszsalem", //Nazwa użytkownika
 										GlobalVar::Global_custrPassword = "JdgoG3OEc3v3", //Hasło do hosta
-										GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, "winmbupd.exe"),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+										GlobalVar::Global_custrNameUpd = "winmbupd.exe",  //nazwa aplikacji zewnętrznej do aktualizacji
+										GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameUpd),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
                     GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
@@ -42,6 +43,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_IsDisplaySplashStart="IsDisplaySplashStart", //Czy wyświetlać winiete startową podczas startu aplikacji
 												GlobalVar::GlobalIni_IsRequestEnd="IsRequestEndApplication",      //czy pytać o zamknięcie aplikacji
 												GlobalVar::GlobalIni_IsOnlyOne="IsOnlyOne",            //Dozwolona tylko jedna kopia aplikacji
+												GlobalVar::GlobalIni_IsAutoFindUpdate="IsAutoFindUpdate",       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
 										//----- Sekcje Colors pliku ini
 										GlobalVar::GlobalIni_ColorsSection_Main="COLORS",       //Główna sekcja COLORS pliku ini
 												GlobalVar::GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",       //Kolor zaznaczenie ulubionych wersetów

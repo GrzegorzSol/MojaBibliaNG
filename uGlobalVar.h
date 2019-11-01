@@ -1,6 +1,4 @@
-﻿//---------------------------------------------------------------------------
-
-#ifndef uGlobalVarH
+﻿#ifndef uGlobalVarH
 #define uGlobalVarH
 //---------------------------------------------------------------------------
 #include <Forms.hpp>
@@ -34,6 +32,7 @@ struct GlobalVar
 														 Global_custrHostName, //Adres hosta
 														 Global_custrUserHost, //Nazwa użytkownika
 														 Global_custrPassword, //Hasło do hosta
+                             Global_custrNameUpd,  //nazwa aplikacji zewnętrznej do aktualizacji
 														 Global_ustrPathApplicUpdate,   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
 														 Global_ustrMutexName,  //Mutekst główny aplikacji
 /*****************************************************************************
@@ -48,6 +47,7 @@ struct GlobalVar
 																GlobalIni_IsDisplaySplashStart, //Czy wyświetlać winiete startową podczas startu aplikacji
 																GlobalIni_IsRequestEnd,         //czy pytać o zamknięcie aplikacji
 																GlobalIni_IsOnlyOne,            //Dozwolona tylko jedna kopia aplikacji
+																GlobalIni_IsAutoFindUpdate,       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
 																//GlobalIni_IsStartInfo,          //Podczas startu aplikacji czy jest wyświetlane powitanie
 														 //----- Sekcje Colors pliku ini
 														 GlobalIni_ColorsSection_Main,         //Główna sekcja COLORS pliku ini

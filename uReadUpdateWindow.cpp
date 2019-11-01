@@ -1,4 +1,4 @@
-#include <vcl.h>
+ï»¿#include <vcl.h>
 #pragma hdrstop
 
 #include "uReadUpdateWindow.h"
@@ -29,7 +29,7 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 	: TForm(Owner)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -38,18 +38,18 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 	this->ButtonNo->Tag = enTagUp_UpNo;
 
   this->LabeledEdCurrentVersion->Text = GlobalVar::Global_ustrVerAplicMain;
-	//--- Sprawdzenie po³¹czenia z internetem
+	//--- Sprawdzenie poÅ‚Ä…czenia z internetem
 	UnicodeString ustrReturnConect;
 	bool bRet = GsTypeConnected(ustrReturnConect);
 
 	if(bRet)
-	//Jeœli pol¹czenei powiod³o siê
+	//JeÅ›li polÄ…czenei powiodÅ‚o siÄ™
 	{
 		this->Caption = Format("%s - %s", ARRAYOFCONST((this->Caption, ustrReturnConect)));
 	}
 	else
 	{
-	 throw(Exception("Brak dostêpu do sieci"));
+	 throw(Exception("Brak dostÄ™pu do sieci"));
 	}
 
 	this->_GetIsUpdateVerify();
@@ -58,7 +58,7 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 void __fastcall TReadUpdateWindow::FormClose(TObject *Sender, TCloseAction &Action)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -70,40 +70,41 @@ void __fastcall TReadUpdateWindow::FormClose(TObject *Sender, TCloseAction &Acti
 void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Uzyskanie œcie¿ki dostepu do katalogu Temp
+  //Uzyskanie Å›cieÅ¼ki dostepu do katalogu Temp
 	TCHAR pathTemp[MAX_PATH];
 	GetTempPath(MAX_PATH, pathTemp);
 
 	bool bRetDownload=false;
 
-	bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
-	if(!bRetDownload) this->Caption = "B³¹d procesu aktualizacji!";
+	//bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
+	bRetDownload = this->_DownLoadFileFTPGet(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
+	if(!bRetDownload) this->Caption = "BÅ‚Ä…d procesu aktualizacji!";
 
 	TStringBuilder *pStrBuilderDownload = new TStringBuilder();
-	if(!pStrBuilderDownload) throw(Exception("B³¹d inicjalizacji objektu TStringBuilder"));
+	if(!pStrBuilderDownload) throw(Exception("BÅ‚Ä…d inicjalizacji objektu TStringBuilder"));
 
 	__int64 i64DonloadFile=0, i64LocalFile=0;
 
 	pStrBuilderDownload->Append(TFile::ReadAllText(GlobalVar::Global_custrLocalVersionFile, TEncoding::UTF8));
 	this->LabeledEdDownLoadversion->Text = pStrBuilderDownload->ToString();
 
-	pStrBuilderDownload->Replace(".", ""); //Usuniêcie kropek
+	pStrBuilderDownload->Replace(".", ""); //UsuniÄ™cie kropek
 
 	if(!TryStrToInt64(pStrBuilderDownload->ToString(), i64DonloadFile))
-	//jeœli nie uda³o siê skonwertowaæ na __int64, to musia³ nast¹piæ b³¹d
+	//jeÅ›li nie udaÅ‚o siÄ™ skonwertowaÄ‡ na __int64, to musiaÅ‚ nastÄ…piÄ‡ bÅ‚Ä…d
 	{
 		delete pStrBuilderDownload; return;
 	}
-	pStrBuilderDownload->Clear(); //Wyczyszczenie zawartoœci
+	pStrBuilderDownload->Clear(); //Wyczyszczenie zawartoÅ›ci
 	pStrBuilderDownload->Append(GlobalVar::Global_ustrVerAplicMain);
-	pStrBuilderDownload->Replace(".", ""); //Usuniêcie kropek
+	pStrBuilderDownload->Replace(".", ""); //UsuniÄ™cie kropek
 	if(!TryStrToInt64(pStrBuilderDownload->ToString(), i64LocalFile))
-	//jeœli nie uda³o siê skonwertowaæ na __int64, to musia³ nast¹piæ b³¹d
+	//jeÅ›li nie udaÅ‚o siÄ™ skonwertowaÄ‡ na __int64, to musiaÅ‚ nastÄ…piÄ‡ bÅ‚Ä…d
 	{
 		delete pStrBuilderDownload; return;
 	}
@@ -115,26 +116,27 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	}
 	else if(i64DonloadFile > i64LocalFile)
 	{
-		this->STextInfos->Caption = "Jest dostêpna nowsza wersja na serwerze aktualizacyjnym, czy zaktualizowaæ aplikacjê?";
+		this->STextInfos->Caption = "Jest dostÄ™pna nowsza wersja na serwerze aktualizacyjnym, czy zaktualizowaÄ‡ aplikacjÄ™? Spowoduje to zakniÄ™cie aplikacji, by pobraÄ‡ i zainstalowaÄ‡ poprawkÄ™";
 		GlobalVar::iReturnUpdate = 1;
 		this->PanelButtons->Visible = true;
     //Pobranie nowszej wersji
-		bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalApplicFile, GlobalVar::Global_custrFTPSourceApplicFile);
-		if(!bRetDownload) this->Caption = "B³¹d procesu aktualizacji!";
+		//bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalApplicFile, GlobalVar::Global_custrFTPSourceApplicFile);
+		bRetDownload = this->_DownLoadFileFTPGet(GlobalVar::Global_custrLocalApplicFile, GlobalVar::Global_custrFTPSourceApplicFile);
+		if(!bRetDownload) this->Caption = "BÅ‚Ä…d procesu aktualizacji!";
 	}
 	if(i64DonloadFile < i64LocalFile)
 	{
-		this->STextInfos->Caption = "Wersja lokalna jest nowsza ni¿ na serwerze aktualizacyjnym";
+		this->STextInfos->Caption = "Wersja lokalna jest nowsza niÅ¼ na serwerze aktualizacyjnym";
 		GlobalVar::iReturnUpdate = -1;
 	}
 
 	delete pStrBuilderDownload;
 }
 //---------------------------------------------------------------------------
-bool __fastcall TReadUpdateWindow::_DownLoadFileFTP(const UnicodeString _destPathDownload, const UnicodeString _ustrPathFTPFile)
+bool __fastcall TReadUpdateWindow::_DownLoadFileFTPGet(const UnicodeString _destPathDownload, const UnicodeString _ustrPathFTPFile)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -143,7 +145,6 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTP(const UnicodeString _destPat
 	HINTERNET hInternetOpenHandle=NULL;	//Wynik funkcji InternetOpen()
 
 	bool bRet=true;
-  const unsigned int uiBufferSize = 4096;
 
   hInternetOpenHandle = InternetOpen(0, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_PASSIVE);
 	if(!hInternetOpenHandle) return false;
@@ -154,90 +155,25 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTP(const UnicodeString _destPat
 		{
 			hInternetConnectHandle = InternetConnect(hInternetOpenHandle, GlobalVar::Global_custrHostName.c_str(), INTERNET_DEFAULT_FTP_PORT,
 																							 GlobalVar::Global_custrUserHost.c_str(), GlobalVar::Global_custrPassword.c_str(), INTERNET_SERVICE_FTP, INTERNET_FLAG_PASSIVE, 0);
-			if(!hInternetConnectHandle) throw(Exception("B³¹d funkcji hInternetConnectHandle()"));
-
-      HINTERNET hFileTransfer = NULL;
-			HANDLE hFileDownload = NULL;
-
-			hFileTransfer = FtpOpenFile(hInternetConnectHandle, _ustrPathFTPFile.c_str(), GENERIC_READ, FTP_TRANSFER_TYPE_BINARY, 0);
-			if(!hFileTransfer) throw(Exception("B³¹d funkcji FtpOpenFile()"));
-			//--- Wielkoœæ pliku na serwerze
-			DWORD filesized = 0; //D³ugoœæ pliku na serwerze
-			filesized =  FtpGetFileSize(hFileTransfer, NULL);
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("filesized: %u", ARRAYOFCONST((filesized))));
-			#endif
-
-			hFileDownload = CreateFile(_destPathDownload.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-      if(hFileDownload == INVALID_HANDLE_VALUE)
+			if(hInternetConnectHandle)
 			{
-				//Plik na serwerze musimy zamkn¹æ, na dysku nie gdy¿ nie zosta³ otwarty z powodu b³êdu.
-				InternetCloseHandle(hFileTransfer); hFileTransfer = 0;
-				throw(Exception("B³¹d funkcji CreateFile()"));
+				bRet = FtpGetFile(hInternetConnectHandle, _ustrPathFTPFile.c_str(), _destPathDownload.c_str(), FALSE, FILE_ATTRIBUTE_NORMAL, FTP_TRANSFER_TYPE_BINARY, 0 );
 			}
-
-      bool bActive = true, //Test czy koniec zciaganego pliku z serwera ju¿ nast¹pi³
-					 bSuccess = false, //Odczyt kolejnej porcji pliku z serwera powiód³ siê
-					 bSuccesWrite = false; //Zapis pobranego pliku do lokalnego katalogu
-			char Buffer[uiBufferSize]; //Bufor na porcje, odczytywanego pliku z serwera
-			DWORD dwBytesAvailable = 0,
-						dwRead = 0,	//Iloœæ odczytanych bajtów z pliku, na serwerze
-						dwWritten = 0;	//Iloœæ zapisanych danych na dysku lokalnym
-			int progress=0; //Wska¿nik na pozycje w czytanym pliku z serwera
-
-			//---G³ówna pêtla pobierania pliku z serwera i zapisu go na lokalny dysk twardy.
-      do
-			{
-				Application->ProcessMessages();
-				bSuccess = InternetReadFile(hFileTransfer, Buffer, uiBufferSize, &dwRead);
-				if(!bSuccess || dwRead == 0)
-				{
-					bActive = false;
-					if(!bSuccess)
-					{
-					}
-					break;	//Wyskoczenie z pêtli w przypadku b³êdu(bSucces==false), lub napotkania koñca pliku,
-									//pobieranego z serwera(bActive==false)
-				}
-        //Zapisujemy pobran¹ porcjê danych z pliku na serwerze
-				dwWritten = 0;	//Zerowanie iloœci zapisanej na lokalny dysk
-				bSuccesWrite = WriteFile(hFileDownload, Buffer, dwRead, &dwWritten, NULL);
-
-				if(!bSuccesWrite)
-				{
-          CloseHandle(hFileDownload); hFileDownload = 0;
-					InternetCloseHandle(hFileTransfer);
-					throw(Exception("B³¹d funkcji WriteFile()"));
-        }
-				progress += dwRead; //Przesuwanie wskaŸnika odczytu pliku pobieranego z serwera
-				ZeroMemory(Buffer, uiBufferSize);
-				dwRead = 0; //Zerowanie licznika odczytanych bajtów z pliku pobieranego z serwera
-
-			} while(bActive);
-
-      //---Zamykanie uchwytu na otwarty plik na serwerze i na dysku
-			CloseHandle(hFileDownload); hFileDownload = 0;
-			InternetCloseHandle(hFileTransfer);
-
 		}
 		catch(...) {bRet = false;}
 	}
 	__finally
 	{
-		if(hInternetConnectHandle) InternetCloseHandle(hInternetConnectHandle);
+    if(hInternetConnectHandle) InternetCloseHandle(hInternetConnectHandle);
 		if(hInternetOpenHandle) InternetCloseHandle(hInternetOpenHandle);
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("__finally");
-		#endif
 	}
 	return bRet;
-
 }
-//=====================FUNKCJE NIE BÊD¥CE METODAMI KLASY=====================
+//=====================FUNKCJE NIE BÄ˜DÄ„CE METODAMI KLASY=====================
 bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 /**
-	OPIS METOD(FUNKCJI): Sprawdzanie czy komputer jest pod³¹czony do internetu
-	OPIS ARGUMENTÓW:
+	OPIS METOD(FUNKCJI): Sprawdzanie czy komputer jest podÅ‚Ä…czony do internetu
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -247,18 +183,18 @@ bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 	if(InternetGetConnectedState(&State, 0))
 	{
 		UnicodeString ustrTypeConect;
-		if(State & INTERNET_CONNECTION_MODEM)      ustrTypeConect = "Po³¹czenie prze modem";
-		if(State & INTERNET_CONNECTION_LAN)        ustrTypeConect = "Po³¹czenie przez LAN";
-		if(State & INTERNET_CONNECTION_PROXY)      ustrTypeConect = "Po³¹czenie przez PROXY";
-		if(State & INTERNET_CONNECTION_MODEM_BUSY) ustrTypeConect = "Modem zajêty";
+		if(State & INTERNET_CONNECTION_MODEM)      ustrTypeConect = "PoÅ‚Ä…czenie prze modem";
+		if(State & INTERNET_CONNECTION_LAN)        ustrTypeConect = "PoÅ‚Ä…czenie przez LAN";
+		if(State & INTERNET_CONNECTION_PROXY)      ustrTypeConect = "PoÅ‚Ä…czenie przez PROXY";
+		if(State & INTERNET_CONNECTION_MODEM_BUSY) ustrTypeConect = "Modem zajÄ™ty";
 
-		_ustrInfoTypeConnected = "Typ po³¹czenia: " + ustrTypeConect;
+		_ustrInfoTypeConnected = "Typ poÅ‚Ä…czenia: " + ustrTypeConect;
 		bInternetConnect = true;
 	}
 	else
 	{
 		//bInternetConnect = false;
-		_ustrInfoTypeConnected = "Brak po³¹czenie z Internetem!!!";
+		_ustrInfoTypeConnected = "Brak poÅ‚Ä…czenie z Internetem!!!";
 	}
 	return bInternetConnect;
 }
@@ -266,7 +202,7 @@ bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 void __fastcall TReadUpdateWindow::ButtAllClick(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -283,11 +219,11 @@ void __fastcall TReadUpdateWindow::ButtAllClick(TObject *Sender)
 		//---
 		case enTagUp_UpNo:
 			GlobalVar::iReturnUpdate = -1;
-			TFile::Delete(GlobalVar::Global_custrLocalVersionFile);
-			TFile::Delete(GlobalVar::Global_custrLocalApplicFile);
+
 		break;
     //---
-  }
+	}
+
 	this->Close();
 }
 //---------------------------------------------------------------------------

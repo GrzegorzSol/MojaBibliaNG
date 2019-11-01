@@ -80,6 +80,7 @@ __published:	// IDE-managed Components
 	TButton *ButtFontNameAdress;
 	TButton *ButtFontNameTranslates;
 	TCheckBox *SW_CBoxOnlyOne;
+	TCheckBox *SW_CBoxAutoFindUpdate;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

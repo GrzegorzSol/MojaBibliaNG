@@ -75,10 +75,6 @@ object SetupsWindow: TSetupsWindow
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GrBoxSetColors: TGroupBox
         Left = 0
         Top = 0
@@ -312,10 +308,6 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Flagi i prze'#322#261'czniki aplikacji'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_CBoxIsDisplaySplashScreen: TCheckBox
         AlignWithMargins = True
         Left = 3
@@ -357,15 +349,24 @@ object SetupsWindow: TSetupsWindow
         Caption = 'Dozwolona tylko jedna kopia aplikacji'
         TabOrder = 2
       end
+      object SW_CBoxAutoFindUpdate: TCheckBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 72
+        Width = 683
+        Height = 17
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        Caption = 'Czy sprawdza'#263' aktualizacje podczas uruchamiania aplikacji ?'
+        TabOrder = 3
+        ExplicitTop = 71
+        ExplicitWidth = 574
+      end
     end
     object SW_SheetPaths: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Scie'#380'ki dost'#281'pu'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_GrBoxSelectPathDirMulti: TGroupBox
         Left = 0
         Top = 0
@@ -477,10 +478,6 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Inne ustawienia'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object LabelSizeMainFont: TLabel
         Left = 19
         Top = 16
@@ -636,10 +633,6 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Wyb'#243'r t'#322'umacze'#324
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_ListViewAllTranslates: TListView
         AlignWithMargins = True
         Left = 12

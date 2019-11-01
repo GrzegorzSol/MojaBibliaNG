@@ -3,7 +3,7 @@ object ReadUpdateWindow: TReadUpdateWindow
   Top = 0
   ActiveControl = STextInfos
   Caption = 'Sprawdzenie dost'#281'pnej aktualizacji.'
-  ClientHeight = 197
+  ClientHeight = 229
   ClientWidth = 641
   Color = clBtnFace
   DoubleBuffered = True
@@ -79,7 +79,7 @@ object ReadUpdateWindow: TReadUpdateWindow
     Left = 8
     Top = 88
     Width = 625
-    Height = 57
+    Height = 89
     Alignment = taCenter
     AutoSize = False
     BorderStyle = sbsSunken
@@ -95,16 +95,13 @@ object ReadUpdateWindow: TReadUpdateWindow
   end
   object PanelButtons: TPanel
     Left = 0
-    Top = 156
+    Top = 188
     Width = 641
     Height = 41
     Align = alBottom
     ShowCaption = False
     TabOrder = 3
     Visible = False
-    ExplicitLeft = 128
-    ExplicitTop = 176
-    ExplicitWidth = 185
     object ButtYes: TButton
       Left = 8
       Top = 8

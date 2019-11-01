@@ -22,7 +22,7 @@ __published:	// IDE-managed Components
 	void __fastcall ButtAllClick(TObject *Sender);
 private:	// User declarations
 	void __fastcall _GetIsUpdateVerify();
-  bool __fastcall _DownLoadFileFTP(const UnicodeString _destPathDownload, const UnicodeString _ustrPathFTPFile);
+	bool __fastcall _DownLoadFileFTPGet(const UnicodeString _destPathDownload, const UnicodeString _ustrPathFTPFile);
 public:		// User declarations
 	__fastcall TReadUpdateWindow(TComponent* Owner);
 };

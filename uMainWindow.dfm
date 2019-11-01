@@ -12,6 +12,7 @@ object MainBibleWindow: TMainBibleWindow
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -35,6 +36,7 @@ object MainBibleWindow: TMainBibleWindow
     StyleElements = []
     OnChange = MBW_PageControlAllChange
     OnDrawTab = MBW_PageControlsAllDrawTab
+    OnEnter = MBW_PageControlBibleTextEnter
   end
   object MBW_StatusBarMain: TStatusBar
     Left = 0
@@ -64,14 +66,14 @@ object MainBibleWindow: TMainBibleWindow
         Control = MBW_ActionToolBarMain
         ImageIndex = -1
         MinHeight = 42
-        Width = 937
+        Width = 1028
       end
       item
         Break = False
         Control = MBW_ActionToolBarTools
         ImageIndex = -1
         MinHeight = 42
-        Width = 241
+        Width = 150
       end>
     ParentShowHint = False
     ShowHint = True
@@ -79,7 +81,7 @@ object MainBibleWindow: TMainBibleWindow
     object MBW_ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
-      Width = 924
+      Width = 1015
       Height = 42
       CustomHint = XMBW_BalloonHintMain
       ActionManager = XMBW_ActionManagerMain
@@ -97,9 +99,9 @@ object MainBibleWindow: TMainBibleWindow
       Spacing = 0
     end
     object MBW_ActionToolBarTools: TActionToolBar
-      Left = 952
+      Left = 1043
       Top = 0
-      Width = 232
+      Width = 141
       Height = 42
       CustomHint = XMBW_BalloonHintMain
       ActionManager = XMBW_ActionManagerMain
@@ -122,17 +124,19 @@ object MainBibleWindow: TMainBibleWindow
     Height = 820
     AnimationDelay = 5
     AnimationStep = 10
-    CompactWidth = 30
+    CloseStyle = svcCompact
+    CompactWidth = 0
     DisplayMode = svmOverlay
     OpenedWidth = 300
     Placement = svpLeft
     TabOrder = 3
+    OnOpened = MBW_SplitViewMainOpened
     object MBW_PageControlTools: TPageControl
       Left = 0
       Top = 0
       Width = 300
       Height = 820
-      ActivePage = MBW_TabSheetAllCommentsVers
+      ActivePage = MBW_TabSheetBooks
       Align = alClient
       Images = MBW_ImageListSmall
       MultiLine = True
@@ -142,14 +146,11 @@ object MainBibleWindow: TMainBibleWindow
       TabOrder = 0
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
+      OnChanging = MBW_PageControlToolsChanging
       OnDrawTab = MBW_PageControlsAllDrawTab
       object MBW_TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
       object MBW_TabSheetMultimedials: TTabSheet
         Caption = 'Grafika i Multimedia'
@@ -292,12 +293,14 @@ object MainBibleWindow: TMainBibleWindow
           end>
         ActionBar = MBW_ActionToolBarTools
       end>
+    DisabledImages = MBW_ImageListMainInactive
     Images = MBW_ImageListMainActive
     Left = 138
     Top = 507
     StyleName = 'Platform Default'
     object Act_CloseSheetActive: TAction
       Caption = 'Zamkni'#281'cie aktywnej zak'#322'adki'
+      Enabled = False
       ImageIndex = 0
       OnExecute = Act_CloseSheetActiveExecute
     end

@@ -86,6 +86,12 @@ __published:	// IDE-managed Components
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall Act_FacePageExecute(TObject *Sender);
 	void __fastcall Act_UpdateExecute(TObject *Sender);
+	void __fastcall FormActivate(TObject *Sender);
+	void __fastcall MBW_SplitViewMainOpened(TObject *Sender);
+	void __fastcall MBW_PageControlToolsChanging(TObject *Sender, bool &AllowChange);
+	void __fastcall MBW_PageControlBibleTextEnter(TObject *Sender);
+
+
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

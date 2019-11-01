@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899-12-30 00:00:00.000.469,G:\rodzina\Programowanie\BuilderCPP\Project1PCH1.h=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\Headers.h</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.469,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\Headers.h=G:\rodzina\Programowanie\BuilderCPP\Project1PCH1.h</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.337,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBUpdate.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBuuuu.cbproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.820,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdate.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdates.cbproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.426,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBUpdate.cbproj=G:\rodzina\Programowanie\BuilderCPP\Project1.cbproj</Transaction>
     <Transaction>1899-12-30 00:00:00.000.178,=G:\rodzina\Programowanie\BuilderCPP\Project1PCH1.h</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.776,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupd.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdates.cbproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.357,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdate.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBuuuu.cbproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.337,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBuuuu.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBUpdate.cbproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.820,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdates.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdate.cbproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.938,G:\rodzina\Programowanie\BuilderCPP\File1.cpp=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBUpdate_main.cpp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.938,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBUpdate_main.cpp=G:\rodzina\Programowanie\BuilderCPP\File1.cpp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.776,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdates.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupd.cbproj</Transaction>
     <Transaction>1899-12-30 00:00:00.000.365,=G:\rodzina\Programowanie\BuilderCPP\File1.cpp</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.426,G:\rodzina\Programowanie\BuilderCPP\Project1.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBUpdate.cbproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.357,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\MBuuuu.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\mbupdate.cbproj</Transaction>
   </Transactions>
 </BorlandProject>

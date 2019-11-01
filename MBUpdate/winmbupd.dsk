@@ -1,13 +1,12 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'e:\develop\embarcadero\studio\20.0\include\windows\crtl\_stddef.h',0,1,47,1,70,0,0,,
-File_1=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\TestRepo\uMain.cpp',0,1,4,3,35,0,0,{{38,39}
+File_0=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.h',0,1,1,18,5,0,0,,
+File_1=TSourceModule,'e:\develop\embarcadero\studio\20.0\include\windows\crtl\_stddef.h',0,1,47,1,70,0,0,,
 
 [Modules]
 Module0=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp
 Module1=default.htm
 Module2=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.rc
-Module3=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.h
-Count=4
+Count=3
 EditWindowCount=1
 
 [G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp]
@@ -19,16 +18,12 @@ ModuleType=TURLModule
 [G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.rc]
 ModuleType=TSourceModule
 
-[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.h]
-ModuleType=TSourceModule
-
 [EditWindow0]
-ViewCount=4
+ViewCount=3
 CurrentEditView=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp
 View0=0
 View1=1
 View2=2
-View3=3
 PercentageSizes=1
 Create=1
 Visible=1
@@ -63,35 +58,24 @@ WelcomePageURL=bds:/default.htm
 [View1]
 CustomEditViewType=TEditView
 Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp
-CursorX=78
-CursorY=90
-TopLine=63
+CursorX=170
+CursorY=93
+TopLine=74
 LeftCol=1
-Elisions={{29,275},{31,74},{'...'}}
+Elisions=
 Bookmarks=
 EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp
 
 [View2]
 CustomEditViewType=TEditView
 Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.rc
-CursorX=21
-CursorY=18
+CursorX=54
+CursorY=15
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.rc
-
-[View3]
-CustomEditViewType=TEditView
-Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.h
-CursorX=24
-CursorY=4
-TopLine=1
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.h
 
 [UndockedDesigner]
 Count=0
@@ -156,11 +140,11 @@ State=0
 Left=0
 Top=0
 Width=1599
-Height=8444
+Height=3380
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1599
-ClientHeight=8444
+ClientHeight=3380
 TBDockHeight=5898
 LRDockWidth=2349
 Dockable=1
@@ -178,8 +162,8 @@ Width=5172
 Height=1417
 MaxLeft=-5
 MaxTop=-9
-ClientWidth=5109
-ClientHeight=1065
+ClientWidth=5120
+ClientHeight=1148
 TBDockHeight=1417
 LRDockWidth=2771
 Dockable=1
@@ -194,11 +178,11 @@ State=0
 Left=0
 Top=0
 Width=1599
-Height=4037
+Height=4111
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1599
-ClientHeight=4037
+ClientHeight=4111
 TBDockHeight=7157
 LRDockWidth=2000
 Dockable=1
@@ -287,8 +271,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-9
-Top=-151
+Left=-15
+Top=-299
 Width=276
 Height=361
 MaxLeft=-1
@@ -511,8 +495,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=-24
+Left=18
+Top=192
 Width=1849
 Height=3139
 MaxLeft=-1
@@ -692,11 +676,11 @@ State=0
 Left=0
 Top=0
 Width=1599
-Height=3380
+Height=8444
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1599
-ClientHeight=3380
+ClientHeight=8444
 TBDockHeight=3676
 LRDockWidth=1896
 Dockable=1
@@ -793,7 +777,7 @@ LRDockWidth=1745
 Dockable=1
 StayOnTop=0
 TabPosition=2
-ActiveTabID=StructureView
+ActiveTabID=ProjectManager
 TabDockClients=StructureView,ProjectManager,ClassBrowserTool,frmDesignPreview,DataExplorerContainer
 
 [DockSite3]

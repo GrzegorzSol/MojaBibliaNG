@@ -45,11 +45,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
     //Your code.
 	#endif
 */
-/*************************************************************************************************************************************************
- *  03.07.2019 TYMCZASOWE ZANIECHANIE DODAWANIA NOWYCH ELEMENTÓW DO KODU. ROZPOCZĘTO GRUNTOWNE SPRAWDZANIE, ORAZ OPTYMALIZACJĘ KODU ŹRÓDŁOWEGO.  *
- *  PODMIENIANIE PRZESTARZAŁYCH, LUB STARYCH FUNKCJI, METOD, NOWYMI BARDZIEJ ZOPTYMALIZOWANYMI I ZAAWANSOWANYMI.                                 *
- *  SPRAWDZANIE MOŻLIWOSCI PODMIANY FUNKCJI ZAPISU I ODCZYTU PLIKÓW, PRZEZ METODY Z KLASY TFILE.                                                 *
- *************************************************************************************************************************************************/
 #include <vcl.h>
 #pragma hdrstop
 
@@ -162,20 +157,6 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	this->_InitAllTagAndHint();
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_TrayIconMainBalloonClick(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Kliknięto na objekt, klassy BallonHint, objektu klasy TTrayIcon
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TTrayIcon *pTrayIcon = dynamic_cast<TTrayIcon *>(Sender);
-	if(!pTrayIcon) return;
-	//---
-	//MessageBox(NULL, L"TMainBibleWindow::MBW_TrayIconMainBalloonClick", TEXT("Informacja aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-}
-//---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::~TMainBibleWindow()
 /**
 	OPIS METOD(FUNKCJI): Destruktor klasy TMainBibliaWindow
@@ -273,7 +254,25 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 		#endif
 	}
 
-  this->MBW_TaskbarMain->ApplyChanges();
+	this->MBW_TaskbarMain->ApplyChanges();
+	//ustawienie wartości domyślnej dla szerokości, do której zostanie zwinięty objekt, klasy TSplitView.
+	//Dokładna szerokość określana jest w metodzie TMainBibleWindow::MBW_PageControlsAllDrawTab() tylko jednokrotnie!
+	this->MBW_SplitViewMain->CompactWidth = 0;
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Okno staje się aktywnym
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //Sprawdzanie aktualizacji podczas startu aplikacji
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true))
+	{
+		this->Act_UpdateExecute(this->Act_Update);
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose)
@@ -410,6 +409,20 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	//this->MBW_HdrControlBooks->Hint = "Nagłówek drzewa ksiąg biblijnych|Nagłówek drzewa ksiąg biblijnych, pokazujący nazwy poszczególnych informacji o księgach biblijnych";
 }
 //---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::MBW_TrayIconMainBalloonClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Kliknięto na objekt, klassy BallonHint, objektu klasy TTrayIcon
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTrayIcon *pTrayIcon = dynamic_cast<TTrayIcon *>(Sender);
+	if(!pTrayIcon) return;
+	//---
+	//MessageBox(NULL, L"TMainBibleWindow::MBW_TrayIconMainBalloonClick", TEXT("Informacja aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+}
+//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_AppOnHint(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
@@ -519,8 +532,16 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 	if(pActiveSheet)
 	{
 		if(pActiveSheet->ClassNameIs("GsTabSheetSelectVersClass")) GsReadBibleTextData::GsSheetListVers = 0; //Jeśli to zakładka z listą wybranych wersetów,
-                                                                                      //globalny wskaźnik na zakładkę zostanie wyzerowany
-		delete pActiveSheet; //pActiveSheet = 0;
+																																																				 //globalny wskaźnik na zakładkę zostanie wyzerowany
+		delete pActiveSheet;
+		//---
+		if(this->MBW_PageControlBibleText->PageCount == 0)
+		//Otwieranie zakładki z wyborem ksiąg, w wypadku, gdy żadna księga nie jest wczytana
+		{
+			this->Act_ResizeWork->Checked = false;
+			this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+      pAction->Enabled = false;
+    }
 	}
 }
 //---------------------------------------------------------------------------
@@ -828,6 +849,9 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 			{
 				pPControl->Canvas->Font->Color = clBlack;
 				pPControl->Canvas->Brush->Color = clWebDarkOrange;
+				//Ustwienie szerokosci "ucha" aktywnej zakładki, do jakiej bedzie się zwijać objekt, klasy TSplitView. Szerokość ustawia się tylko raz, gdy jest ustawiona na
+        //domyślną wartość równą zero, później już nie jest modyfikowana - 06-10-2019
+				if(this->MBW_SplitViewMain->CompactWidth == 0) this->MBW_SplitViewMain->CompactWidth = Rect.GetWidth();
 			}
 			pPControl->Canvas->FillRect(Rect);
 			pPControl->Canvas->Font->Orientation = 900;
@@ -862,45 +886,102 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
   //Uzyskanie ścieżki dostepu do katalogu Temp
 	TCHAR pathTemp[MAX_PATH];
 	GetTempPath(MAX_PATH, pathTemp);
-	GlobalVar::Global_custrLocalVersionFile = pathTemp + GlobalVar::Global_custrNameIVerFile + "_ftp",
-  //...Temp\Nazwa_aplikacji.exe_ftp
-	GlobalVar::Global_custrLocalApplicFile = pathTemp + TPath::GetFileNameWithoutExtension(Application->ExeName) + ".zip_ftp";
+
+	GlobalVar::Global_custrLocalVersionFile = TPath::Combine(pathTemp, GlobalVar::Global_custrNameIVerFile); //Pobrany plik wersjji - pathTemp + GlobalVar::Global_custrNameIVerFile,
+	GlobalVar::Global_custrLocalApplicFile = TPath::Combine(pathTemp, TPath::GetFileNameWithoutExtension(Application->ExeName)) + ".zip"; //Pobrane archiwum poprawki - ...Temp\Nazwa_aplikacji.exe - Plik
 	//---
 	TReadUpdateWindow *pReadUpdateWindow = new TReadUpdateWindow(this);
 	if(!pReadUpdateWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TReadUpdateWindow"));
 	pReadUpdateWindow->ShowModal();
 	if(GlobalVar::iReturnUpdate != 1) return;
 
-	UnicodeString ustrPathNewApplic = TPath::ChangeExtension(GlobalVar::Global_custrLocalApplicFile, "zip"),
-								ustrPathDirExtract;
-  //Zmiana nazwy na plik z archiwum. Usunięcie części _ftp z nazwy
-	System::Sysutils::RenameFile(GlobalVar::Global_custrLocalApplicFile, ustrPathNewApplic);
-
+	UnicodeString ustrPathDirExtract;
 	//Rozpakowanie archiwum aktualizacyjnego
-	if(TFile::Exists(ustrPathNewApplic))
+	if(TFile::Exists(GlobalVar::Global_custrLocalApplicFile))
 	//Jeśli istnieje pobrane archiwum
 	{
-		ustrPathDirExtract = TPath::GetDirectoryName(ustrPathNewApplic); //Katalog na pliki rozpakowane z archiwum
+		ustrPathDirExtract = TPath::GetDirectoryName(GlobalVar::Global_custrLocalApplicFile); //Katalog na pliki rozpakowane z archiwum
 		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("ustrPathNewApplic: %s, ustrPathDirExtract: %s", ARRAYOFCONST((ustrPathNewApplic, ustrPathDirExtract))));
+			GsDebugClass::WriteDebug(Format("GlobalVar::Global_custrLocalApplicFile: %s, ustrPathDirExtract: %s", ARRAYOFCONST((GlobalVar::Global_custrLocalApplicFile, ustrPathDirExtract))));
 		#endif
 
 		TZipFile *pZipFile = new TZipFile();
-		pZipFile->ExtractZipFile(ustrPathNewApplic, ustrPathDirExtract);
+		pZipFile->ExtractZipFile(GlobalVar::Global_custrLocalApplicFile, ustrPathDirExtract);
+		UnicodeString ustrPathWinMBUpdate = TPath::Combine(pathTemp, GlobalVar::Global_custrNameUpd);
+    #if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("ustrPathWinMBUpdate: %s", ARRAYOFCONST((ustrPathWinMBUpdate))));
+		#endif
+
+		TFile::Copy(ustrPathWinMBUpdate, GlobalVar::Global_ustrPathApplicUpdate, true); //Kopiowanie aplikacji aktualizacyjnej do katalogu z główną aplikacją
+
+		//TFile::Delete(ustrPathWinMBUpdate); //Kasowanie programy aktualizacyjnego z katalogu temp
+		//TFile::Delete(GlobalVar::Global_custrLocalVersionFile); //Kasowanie pliku wersji
+		//TFile::Delete(GlobalVar::Global_custrLocalApplicFile);  //Kasowanie archiwum z łatkami z katalogu temp
+
+		//Kasowanie niepotrzebnych plików
 		delete pZipFile;
 		if(TFile::Exists(GlobalVar::Global_ustrPathApplicUpdate))
 		//Jesli istnieje aplikacja do kopiowania nowej wersji na starą
 		{
-			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
 			this->Close();
+			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
 		}
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::MBW_SplitViewMainOpened(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Objekt, klasy TSplitView został otwarty
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TSplitView *pSplitView = dynamic_cast<TSplitView *>(Sender);
+	if(!pSplitView) return;
+	//---
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::MBW_PageControlToolsChanging(TObject *Sender,
+					bool &AllowChange)
+/**
+	OPIS METOD(FUNKCJI): Zezwolenie na zmianę zakładki w zakładkach z narzędziami
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
+	if(!pPageControl) return;
+	//---
+	if(!this->MBW_SplitViewMain->Opened) AllowChange = false;
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::MBW_PageControlBibleTextEnter(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Zamknięcie objektu klasy, TSplitView, po wybraniu księgi, lub rozdziału
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
+	if(!pPageControl) return;
+	//---
+	if(pPageControl->PageCount > 0)
+	{
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("TMainBibleWindow::MBW_PageControlBibleTextEnter()");
+		#endif
+		this->Act_ResizeWork->Checked = true;
+		this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+    this->Act_CloseSheetActive->Enabled = true;
 	}
 }
 //---------------------------------------------------------------------------

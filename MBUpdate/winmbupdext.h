@@ -1,5 +1,7 @@
 ﻿#define DIALOG_UPDATE 201
-#define IDC_BUTTONOK 202
-#define IDC_LISTBOX 203
+#define IDC_LISTBOX 202
+#define IDC_PROGRESSBAR 203
 
-#define ICON_UPDATE 301
+#define IDT_TIMER 300
+
+#define ICON_UPDATE 40

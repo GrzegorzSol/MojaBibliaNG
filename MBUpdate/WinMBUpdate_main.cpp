@@ -18,20 +18,17 @@ const size_t Global_cuMaxLenName=68,
 const int Global_ciMaxSizeMutexName = 128;
 
 HINSTANCE Global_hThisInstance;
-HWND Global_ButtonImage, Global_ButtonOK, Global_ListBoxHnd, Global_ProgressHnd;
+HWND Global_ListBox, Global_ProgressBar, Global_Timer;
 HANDLE Global_hSemaphore;
 
 TCHAR Global_lpszPathExistsOldApplic[MAX_PATH],  //Ścieżka dostępu do katalogu lokalnej, istniejącej aplikacji
-			Global_lpszInfo[Global_cuiMaxlenInfo], 		 //Informacje
 			Global_lpszDownloadedNewApplic[MAX_PATH],  //Ścieżka dostępu do pliku pobranego, aplikacji
 			Global_lpszMutexName[Global_ciMaxSizeMutexName];//Pełna nazwa mutexa
-			//Global_lpszFilenameExe[_MAX_PATH];
+
 #if defined(_MBTESTING_)
-	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG Testing.exe"),          //Nazwa lokalna aplikacji
-				Global_lpcszParentExeFile[MAX_PATH] = TEXT("Moja Biblia NG Testing.exe");
+	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG Testing.exe");          //Nazwa lokalna aplikacji
 #else
-	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG.exe"),          //Nazwa lokalna aplikacji
-				Global_lpcszParentExeFile[MAX_PATH] = TEXT("Moja Biblia NG.exe");
+	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG.exe");          //Nazwa lokalna aplikacji
 #endif
 //--- Inne zmienne
 HBRUSH Global_hLBoxBrush; //Pędzel dla podkładu pod kontrolkę LISTBOX
@@ -49,8 +46,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
   int iRet=0;
 	Global_hThisInstance = hInstance;
 
-	//TCHAR lpszFilenameExe[_MAX_PATH];
-	//GetModuleFileName(NULL, Global_lpszFilenameExe, MAX_PATH);
 	//Tworzenie pełnej nazwy mutexa
 	StringCchPrintf(Global_lpszMutexName, Global_ciMaxSizeMutexName, TEXT("MutexName_%s"), Global_lpcszNameApplic);
 	//Ścieżka dostępu do katalogu aplikacji
@@ -75,84 +70,93 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  switch(uMsg)
+	const int cITimerTime = 2400;
+	switch(uMsg)
 	{
     case WM_INITDIALOG:
 		{
-			Global_ListBoxHnd = GetDlgItem(hDlg, IDC_LISTBOX);
+			Global_ListBox = GetDlgItem(hDlg, IDC_LISTBOX);
+			Global_ProgressBar = GetDlgItem(hDlg, IDC_PROGRESSBAR);	
+
+			long style = GetWindowLong(Global_ProgressBar, GWL_STYLE);
+			style |= PBS_MARQUEE;
+			SetWindowLong(Global_ProgressBar, GWL_STYLE, style);
+
+			SendMessage(Global_ProgressBar, (UINT)PBM_SETMARQUEE, (WPARAM)true, (LPARAM)0);
+
 			//Ustawienie ikonki, na pasku okna dialogu
 			SetClassLongPtr(hDlg, GCLP_HICON, (LONG_PTR)LoadIcon(Global_hThisInstance, MAKEINTRESOURCE(ICON_UPDATE))); //Ikonka aplikacji
-			HICON hIconButton = LoadIcon(Global_hThisInstance, MAKEINTRESOURCE(ICON_UPDATE));	//Pzyskanie ikony z zasobów
-			SendMessage(Global_ButtonImage , BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)hIconButton);
-			//Tworzenie pełnej nazwy mutexa
-			SendMessage(Global_ListBoxHnd, LB_ADDSTRING, 0, (LPARAM)Global_lpszMutexName);
+			//Właściwe działanie
+      Global_hSemaphore = CreateSemaphore(NULL, 0, 1, Global_lpszMutexName);
+			if((Global_hSemaphore != 0) && (GetLastError() == ERROR_ALREADY_EXISTS))
+			{
+				CloseHandle(Global_hSemaphore);
+				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Aplikacja nie została zamknięta, więc nie mogę przeprowadzić aktualizacji. Zamknij aplikacje i spróbuj ponownie."));
+				return true;
+			}
+      CloseHandle(Global_hSemaphore);
 
-			StringCchPrintf(Global_lpszInfo, Global_cuiMaxlenInfo, TEXT(" %s"), Global_lpszPathExistsOldApplic);
-			SendMessage(Global_ListBoxHnd, LB_ADDSTRING, 0, (LPARAM)Global_lpszInfo);
-			StringCchPrintf(Global_lpszInfo, Global_cuiMaxlenInfo, TEXT(" %s"), Global_lpszDownloadedNewApplic);
-			SendMessage(Global_ListBoxHnd, LB_ADDSTRING, 0, (LPARAM)Global_lpszInfo);
+			BOOL b=FALSE;
 
-			//SendMessage(Global_ProgressHnd, PBM_SETRANGE, 0, (LPARAM)MAKELONG(0, 100));
+			bool result = CopyFileEx(Global_lpszDownloadedNewApplic, Global_lpszPathExistsOldApplic, NULL , NULL, &b, NULL);
+
+			if(!result)
+			{
+				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Kopiowanie nie powiodło się!!! Zamknij okienko aktualizacji"));
+				//ShellExecute(NULL, NULL , Global_lpcszNameApplic, NULL, NULL, SW_SHOWNORMAL);
+				//SendMessage(hDlg, WM_CLOSE, 0, 0);
+			}
+			else
+			{
+				//DeleteFile(Global_lpszDownloadedNewApplic);
+				SetTimer(hDlg, IDT_TIMER, cITimerTime, (TIMERPROC) NULL);
+				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Aktualizacja zakończyła się pełnym sukcesem, teraz zostanie uruchomiona zaktualizowana aplikacja \"Moja Biblia NG\""));
+				ShellExecute(NULL, NULL , Global_lpcszNameApplic, NULL, NULL, SW_SHOWNORMAL);
+				//SendMessage(hDlg, WM_CLOSE, 0, 0);
+			}
 		}
-		return true;
-		//---
+		break;
+		//----------------------------------------------------------------------------------
     case WM_CLOSE:
-    {
+		{
+				KillTimer(hDlg, IDT_TIMER);
 				EndDialog(hDlg, 0);
     }
-		return true;
-		//---
-    case WM_CTLCOLORLISTBOX:
+		break;
+		//----------------------------------------------------------------------------------
+		case WM_CTLCOLORLISTBOX:
 		{
 			HWND hCtl = (HWND)lParam;	//Uchwyt kontrolki, która wysłała komunikat
 			HDC hDC = (HDC)wParam;   //Uchwyt kontekstu urządzenia
 			//---
-			if(hCtl == Global_ListBoxHnd) 	//Jeśli komunikat pochodzi od statycznej kontrolki informacyjnej
+			if(hCtl == Global_ListBox) 	//Jeśli komunikat pochodzi od statycznej kontrolki informacyjnej
 			{
 				SetBkMode(hDC, TRANSPARENT );					//Tekst bedzie miał przezroczyste tło
         SetTextColor( hDC, RGB(55, 55, 55));	//Kolor tekstu
         return(LRESULT)Global_hLBoxBrush;
 			}
 		}
-		return true;
-		//---
+		break;
+		//----------------------------------------------------------------------------------
 		case WM_COMMAND:
 		{
-      switch(LOWORD(wParam))
+		}
+		break;
+		//----------------------------------------------------------------------------------
+		case WM_TIMER:
+		{
+      switch (wParam)
 			{
-				case IDC_BUTTONOK:
-					Global_hSemaphore = CreateSemaphore(NULL, 0, 1, Global_lpszMutexName);
-					if((Global_hSemaphore != 0) && (GetLastError() == ERROR_ALREADY_EXISTS))
-					{
-						CloseHandle(Global_hSemaphore);
-						SendMessage(Global_ListBoxHnd, LB_ADDSTRING, 0, (LPARAM)TEXT("Aplikacja nie została zamknieta, więc nie mogę przeprowadzić aktualizacji. Zamknij aplikacje i spróbuj ponownie."));
-            return true;
-          }
-
-					BOOL b=FALSE;
-
-					//bool result = CopyFileEx(Global_lpszDownloadedNewApplic, Global_lpszPathExistsOldApplic, NULL , NULL, &b, NULL);//COPY_FILE_FAIL_IF_EXISTS);
-          bool result=true;
-					if(!result)
-					{
-						SendMessage(Global_ListBoxHnd, LB_ADDSTRING, 0, (LPARAM)TEXT("Kopiowanie nie powiodło się!!! Zamknij okienko aktualizacji"));
-            //ShellExecute(NULL, NULL , Global_lpcszParentExeFile, NULL, NULL, SW_SHOWNORMAL);
-					}
-					else
-					{
-						ShellExecute(NULL, NULL , Global_lpcszParentExeFile, NULL, NULL, SW_SHOWNORMAL);
-						SendMessage(hDlg, WM_CLOSE, 0, 0);
-					}
-					break;
+				case IDT_TIMER:
+        	SendMessage(hDlg, WM_CLOSE, 0, 0);
+					return true;
 			}
 		}
-		//---
-    case WM_DESTROY:
-		{
-			//DestroyWindow(hDlg);
-		}
+		break;
+		//----------------------------------------------------------------------------------
+    default: return false;
 	}
-	return false;
+	return true;
 }
 //---------------------------------------------------------------------------
 
