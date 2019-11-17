@@ -615,7 +615,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_GsChildBibleSchemeList->Count==0) return;
+ 	if(this->_GsChildBibleSchemeList->Count==0) return;
 	//---
 	TStringStream *pStringStream = new TStringStream("", TEncoding::ANSI, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));

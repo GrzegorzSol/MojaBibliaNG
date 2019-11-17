@@ -1,22 +1,21 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMyBibleNGLibrary.cpp',0,1,1,1,1,0,0,,
-File_1=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uInformationsAppWindow.cpp',0,1,1,69,64,0,0,{{16,77}
+File_0=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.cpp',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.cpp
+Module0=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
 Module1=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp
-Module2=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
+Module2=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp
 Module3=default.htm
 Count=4
 EditWindowCount=1
 
-[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.cpp]
+[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp]
 ModuleType=TSourceModule
 
 [G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp]
 ModuleType=TSourceModule
 
-[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp]
+[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp]
 ModuleType=TSourceModule
 
 [default.htm]
@@ -24,7 +23,7 @@ ModuleType=TURLModule
 
 [EditWindow0]
 ViewCount=4
-CurrentEditView=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.cpp
+CurrentEditView=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
 View0=0
 View1=1
 View2=2
@@ -63,35 +62,35 @@ WelcomePageURL=bds:/default.htm
 [View1]
 CustomEditViewType=TEditView
 Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
-CursorX=102
-CursorY=45
-TopLine=34
+CursorX=168
+CursorY=973
+TopLine=967
 LeftCol=1
-Elisions={{123,65},{153,0},{'...'}}{{155,80},{167,0},{'...'}}{{169,49},{182,0},{'...'}}{{184,62},{263,0},{'...'}}{{265,82},{280,0},{'...'}}{{282,83},{302,0},{'...'}}{{304,63},{313,0},{'...'}}{{315,62},{325,0},{'...'}}{{327,88},{337,0},{'...'}}{{339,55},{372,0},{'...'}}{{374,62},{386,0},{'...'}}{{388,57},{410,0},{'...'}}{{412,78},{424,0},{'...'}}{{426,83},{444,0},{'...'}}{{446,86},{466,0},{'...'}}{{468,79},{486,0},{'...'}}{{488,78},{500,0},{'...'}}{{502,78},{516,0},{'...'}}{{518,124},{539,0},{'...'}}{{541,75},{555,0},{'...'}}{{557,73},{579,0},{'...'}}{{581,88},{595,0},{'...'}}{{597,80},{611,0},{'...'}}{{613,74},{632,0},{'...'}}{{634,79},{648,0},{'...'}}{{650,73},{663,0},{'...'}}{{665,85},{688,0},{'...'}}{{690,82},{716,0},{'...'}}{{718,106},{734,0},{'...'}}{{736,135},{784,0},{'...'}}
+Elisions={{120,65},{154,0},{'...'}}{{156,49},{174,0},{'...'}}{{176,62},{269,0},{'...'}}{{271,64},{287,0},{'...'}}{{289,82},{343,0},{'...'}}{{345,83},{367,0},{'...'}}{{369,63},{381,0},{'...'}}{{383,62},{397,0},{'...'}}{{399,88},{409,0},{'...'}}{{411,55},{450,0},{'...'}}{{452,76},{464,0},{'...'}}{{466,62},{478,0},{'...'}}{{480,57},{502,0},{'...'}}{{504,78},{516,0},{'...'}}{{518,83},{536,0},{'...'}}{{538,86},{558,0},{'...'}}{{560,79},{613,0},{'...'}}{{615,78},{627,0},{'...'}}{{629,78},{643,0},{'...'}}{{645,120},{666,0},{'...'}}{{668,75},{682,0},{'...'}}{{684,73},{706,0},{'...'}}{{708,88},{722,0},{'...'}}{{724,80},{738,0},{'...'}}{{740,74},{759,0},{'...'}}{{761,79},{775,0},{'...'}}{{777,73},{790,0},{'...'}}{{792,85},{815,0},{'...'}}{{817,76},{861,0},{'...'}}{{863,106},{879,0},{'...'}}{{881,135},{932,0},{'...'}}{{934,71},{946,0},{'...'}}
 Bookmarks=
 EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
 
 [View2]
 CustomEditViewType=TEditView
 Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp
-CursorX=56
-CursorY=12
-TopLine=1
+CursorX=173
+CursorY=14
+TopLine=7
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.h
+EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp
 
 [View3]
 CustomEditViewType=TEditView
-Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.cpp
-CursorX=1
-CursorY=1
-TopLine=1
+Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp
+CursorX=57
+CursorY=74
+TopLine=15
 LeftCol=1
-Elisions=
+Elisions={{32,67},{60,0},{'...'}}{{62,84},{72,0},{'...'}}{{74,56},{138,0},{'...'}}{{140,132},{175,0},{'...'}}{{177,60},{204,0},{'...'}}{{206,65},{232,0},{'...'}}
 Bookmarks=
-EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.h
+EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp
 
 [UndockedDesigner]
 Count=0
@@ -156,11 +155,11 @@ State=0
 Left=0
 Top=0
 Width=1599
-Height=8444
+Height=3380
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1599
-ClientHeight=8444
+ClientHeight=3380
 TBDockHeight=5898
 LRDockWidth=2349
 Dockable=1
@@ -178,8 +177,8 @@ Width=5172
 Height=1417
 MaxLeft=-5
 MaxTop=-9
-ClientWidth=5120
-ClientHeight=1148
+ClientWidth=5109
+ClientHeight=1065
 TBDockHeight=1417
 LRDockWidth=2771
 Dockable=1
@@ -287,8 +286,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-15
-Top=-299
+Left=-24
+Top=-521
 Width=276
 Height=361
 MaxLeft=-1
@@ -511,8 +510,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=18
-Top=192
+Left=45
+Top=516
 Width=1849
 Height=3139
 MaxLeft=-1
@@ -692,11 +691,11 @@ State=0
 Left=0
 Top=0
 Width=1599
-Height=3380
+Height=8444
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1599
-ClientHeight=3380
+ClientHeight=8444
 TBDockHeight=3676
 LRDockWidth=1896
 Dockable=1
@@ -793,7 +792,7 @@ LRDockWidth=1745
 Dockable=1
 StayOnTop=0
 TabPosition=2
-ActiveTabID=StructureView
+ActiveTabID=ProjectManager
 TabDockClients=StructureView,ProjectManager,ClassBrowserTool,DataExplorerContainer,frmDesignPreview
 
 [DockSite3]

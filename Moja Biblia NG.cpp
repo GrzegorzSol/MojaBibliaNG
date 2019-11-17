@@ -1,21 +1,20 @@
-﻿//---------------------------------------------------------------------------
-
-#include <vcl.h>
+﻿#include <vcl.h>
 #pragma hdrstop
 #include <tchar.h>
 #include "uGlobalVar.h"
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
+USEFORM("uReadUpdateWindow.cpp", ReadUpdateWindow);
 USEFORM("uMainWindow.cpp", MainBibleWindow);
-USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
+USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
+USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
-USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
+USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 //---------------------------------------------------------------------------
-const UnicodeString ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName);	//Nazwa mutexa, do sprawdzenie
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
@@ -44,12 +43,17 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		//---
 		if(bOnlyOne) //Jeśli jest dopuszczalna tylko jedna kopia aplikacji, to sprawdzam czy nie uruchomiono drugiej.
 		{
-			hSemaphore = CreateSemaphore(NULL, 0, 1, ustrMutexName.c_str());
+			hSemaphore = CreateSemaphore(NULL, 0, 1,  GlobalVar::Global_ustrMutexName.c_str());
 			if((hSemaphore != 0) && (GetLastError() == ERROR_ALREADY_EXISTS))
 			{
-				CloseHandle(hSemaphore);
+				if(hSemaphore) {CloseHandle(hSemaphore); hSemaphore = 0;}
 				MessageBox(NULL, TEXT("Została uruchomiona druga kopia aplikcji \"Moja Biblia NG\", więc zostanie ona natychmiast zamknięta!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
         return 1;
+			}
+      else if(!hSemaphore)
+			{
+				MessageBox(NULL, TEXT("Nie mogę utworzyć semafora systemowego, więc zostanie ona natychmiast zamknięta!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+				return 1;
 			}
 		}
     //----- Sprawdzenie wersji Internet Explorera
@@ -69,7 +73,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			pTInformationsAppWindow->Show();
 			Application->ProcessMessages();
 		}
-    delete pTempMemIni;
+		if(pTempMemIni) {delete pTempMemIni;}
 		//--- Klasyczny kod rozruchowy aplikacji
 		Application->Initialize();
 		Application->MainFormOnTaskBar = true;
@@ -91,7 +95,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			Application->ShowException(&exception);
 		}
 	}
-  CloseHandle(hSemaphore);
+	if(hSemaphore) {CloseHandle(hSemaphore); hSemaphore = 0;}
 	return 0;
 }
 //---------------------------------------------------------------------------

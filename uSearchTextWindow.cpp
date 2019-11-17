@@ -472,19 +472,19 @@ void __fastcall TSearchTextWindow::STW_CBoxSearchDrawItem(TWinControl *Control,
 	switch(pCBox->Tag)
 	{
 		case enIdent_CBoxSelectRangeSearch:
-			this->STW_ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->STW_ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_SelectRange);
+			this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_SelectRange);
 		break;
 		//---
 		case enIdent_CBoxStartSelectRange:
-			this->STW_ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->STW_ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_StartSelect);
+			this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_StartSelect);
 		break;
 		//---
 		case enIdent_CBoxStopSelectRange:
-			this->STW_ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->STW_ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_StopSelect);
+			this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_StopSelect);
 		break;
 		//---
 		case enIdent_CBoxSelectTranslate:
-      this->STW_ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->STW_ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_Translates);
+      this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_Translates);
     break;
   }
 	Rect.Left += 18;

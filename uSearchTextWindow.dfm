@@ -34,16 +34,12 @@ object SearchTextWindow: TSearchTextWindow
     OnChanging = STW_PControlChanging
     object STW_TabSheetInputText: TTabSheet
       Caption = 'Wprowadzanie szukanego tekstu'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object STW_LEditSearchText: TLabeledEdit
         Left = 3
         Top = 77
         Width = 930
         Height = 19
-        CustomHint = XMBW_BalloonHintSearch
+        CustomHint = BalloonHintSearch
         AutoSize = False
         Ctl3D = False
         EditLabel.Width = 455
@@ -64,7 +60,7 @@ object SearchTextWindow: TSearchTextWindow
         Top = 102
         Width = 414
         Height = 17
-        CustomHint = XMBW_BalloonHintSearch
+        CustomHint = BalloonHintSearch
         Caption = 
           'Zastosuj wyszukiwanie za pomoc'#261' wyra'#380'e'#324' regularnych (dla zaawans' +
           'owanych)'
@@ -80,11 +76,11 @@ object SearchTextWindow: TSearchTextWindow
         Top = 102
         Width = 177
         Height = 38
-        CustomHint = XMBW_BalloonHintSearch
+        CustomHint = BalloonHintSearch
         Caption = 'Pomoc w wyszukiwaniu za pomoc'#261' wyra'#380'e'#324' regularnych.'
         Enabled = False
         ImageIndex = 2
-        Images = STW_ImgListSmallSearch
+        Images = ImgListSmallSearch
         ParentShowHint = False
         ShowHint = True
         TabOrder = 2
@@ -95,16 +91,12 @@ object SearchTextWindow: TSearchTextWindow
     object STW_TabSheetStatistick: TTabSheet
       Caption = 'Statystyka wyszukiwania'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object STW_LViewStatistic: TListView
         Left = 0
         Top = 0
         Width = 936
         Height = 192
-        CustomHint = XMBW_BalloonHintSearch
+        CustomHint = BalloonHintSearch
         Align = alClient
         Columns = <>
         Ctl3D = False
@@ -155,12 +147,12 @@ object SearchTextWindow: TSearchTextWindow
       Top = 3
       Width = 87
       Height = 24
-      CustomHint = XMBW_BalloonHintSearch
+      CustomHint = BalloonHintSearch
       Anchors = []
       Caption = 'Szukaj...'
       Enabled = False
       ImageIndex = 0
-      Images = STW_ImgListSmallSearch
+      Images = ImgListSmallSearch
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
@@ -207,7 +199,7 @@ object SearchTextWindow: TSearchTextWindow
       Top = 18
       Width = 201
       Height = 22
-      CustomHint = XMBW_BalloonHintSearch
+      CustomHint = BalloonHintSearch
       Style = csOwnerDrawFixed
       Ctl3D = True
       ParentCtl3D = False
@@ -223,7 +215,7 @@ object SearchTextWindow: TSearchTextWindow
       Width = 232
       Height = 22
       Hint = 'Pocz'#261'tkowa ksi'#281'ga w wyszukiwaniu u'#380'ytkownika'
-      CustomHint = XMBW_BalloonHintSearch
+      CustomHint = BalloonHintSearch
       Style = csOwnerDrawFixed
       Ctl3D = True
       Enabled = False
@@ -239,7 +231,7 @@ object SearchTextWindow: TSearchTextWindow
       Top = 47
       Width = 219
       Height = 22
-      CustomHint = XMBW_BalloonHintSearch
+      CustomHint = BalloonHintSearch
       Style = csOwnerDrawFixed
       Ctl3D = True
       Enabled = False
@@ -255,7 +247,7 @@ object SearchTextWindow: TSearchTextWindow
       Top = 18
       Width = 241
       Height = 22
-      CustomHint = XMBW_BalloonHintSearch
+      CustomHint = BalloonHintSearch
       Style = csOwnerDrawFixed
       Ctl3D = False
       ParentCtl3D = False
@@ -285,10 +277,6 @@ object SearchTextWindow: TSearchTextWindow
       OnChanging = STW_PControlChanging
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object STW_WBrowserResultSearch: TWebBrowser
           Left = 0
           Top = 0
@@ -313,10 +301,6 @@ object SearchTextWindow: TSearchTextWindow
           'Lista wszystkich wynik'#243'w wyszukiwania, w formie wybieralnej list' +
           'y'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object STW_LViewResultSearch: TListView
           Left = 0
           Top = 0
@@ -327,7 +311,7 @@ object SearchTextWindow: TSearchTextWindow
           HotTrack = True
           OwnerData = True
           ReadOnly = True
-          SmallImages = STW_ImgListSmallSearch
+          SmallImages = ImgListSmallSearch
           TabOrder = 0
           ViewStyle = vsList
           OnData = STW_LViewResultSearchData
@@ -366,13 +350,13 @@ object SearchTextWindow: TSearchTextWindow
     SimplePanel = True
     SizeGrip = False
   end
-  object STW_ImgListSmallSearch: TImageList
+  object ImgListSmallSearch: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Left = 848
     Top = 321
     Bitmap = {
-      494C010107009801080110001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010107009801040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000000000000E0E0F0F675E6C6C876F
       98C4866E99C5866E99C5866E99C58E739DB26D6374785F5D6771595B616F595B
@@ -643,8 +627,9 @@ object SearchTextWindow: TSearchTextWindow
       E007FF03E0078001FC07FFFFF81F800100000000000000000000000000000000
       000000000000}
   end
-  object XMBW_BalloonHintSearch: TBalloonHint
-    Images = STW_ImgListSmallSearch
+  object BalloonHintSearch: TBalloonHint
+    Images = ImgListSmallSearch
+    HideAfter = 750
     Left = 851
     Top = 381
   end

@@ -4,6 +4,7 @@
 #include <Forms.hpp>
 #include <System.IniFiles.hpp>
 //#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
+//#define _FULL_DEBUG_ //Używane do pełnej kontroli wersji release
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif
@@ -35,6 +36,7 @@ struct GlobalVar
                              Global_custrNameUpd,  //nazwa aplikacji zewnętrznej do aktualizacji
 														 Global_ustrPathApplicUpdate,   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
 														 Global_ustrMutexName,  //Mutekst główny aplikacji
+                             Global_ustrNameDirUpdate,//nazwa katalogu z poprawkami
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/

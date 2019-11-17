@@ -6,9 +6,13 @@
 #include <System.IOUtils.hpp>
 #include <wininet.h>
 #include <urlmon.h>
-
-#pragma link "urlmon.lib"
-#pragma link "wininet.lib"
+#if defined(_WIN64)
+	#pragma link "urlmon.a"
+	#pragma link "wininet.a"
+#else
+	#pragma link "urlmon.lib"
+	#pragma link "wininet.lib"
+#endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -79,7 +83,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	TCHAR pathTemp[MAX_PATH];
 	GetTempPath(MAX_PATH, pathTemp);
 
-	bool bRetDownload=false;
+	bool bRetDownload;//=false;
 
 	//bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
 	bRetDownload = this->_DownLoadFileFTPGet(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);

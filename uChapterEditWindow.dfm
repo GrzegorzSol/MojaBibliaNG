@@ -1,9 +1,9 @@
-object WindowMainTest: TWindowMainTest
+object ChapterEditWindow: TChapterEditWindow
   Left = 0
   Top = 0
-  Caption = 'WindowMainTest'
-  ClientHeight = 309
-  ClientWidth = 641
+  Caption = 'ChapterEditWindow'
+  ClientHeight = 671
+  ClientWidth = 1010
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -13,17 +13,10 @@ object WindowMainTest: TWindowMainTest
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object ButtUpd: TButton
-    Left = 112
-    Top = 240
-    Width = 75
-    Height = 25
-    Caption = 'Update...'
-    TabOrder = 0
-    OnClick = ButtUpdClick
-  end
 end

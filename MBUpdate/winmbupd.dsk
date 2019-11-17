@@ -58,9 +58,9 @@ WelcomePageURL=bds:/default.htm
 [View1]
 CustomEditViewType=TEditView
 Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp
-CursorX=170
-CursorY=93
-TopLine=74
+CursorX=177
+CursorY=77
+TopLine=47
 LeftCol=1
 Elisions=
 Bookmarks=

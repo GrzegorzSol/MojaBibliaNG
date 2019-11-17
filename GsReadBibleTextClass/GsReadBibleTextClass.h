@@ -36,6 +36,7 @@ static UnicodeString sustrVersionGsReadBibleTextClass = "0.9.8990.9682";
 enum enReturnError {enR_NoError,           //Brak błędu
 										enR_GSelectBoook=1000  //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
+const unsigned char cucMaxCountTranslates=12; //Maksymalna ilość tłumaczeń
 //Numery ikon dla lsisty typu TImageList GsReadBibleTextData::GsImgListData
 enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_Root,            //0.Główny korzeń drzew
@@ -223,6 +224,8 @@ class GsReadBibleTextData
 		static void __fastcall LoadFirstChapt(const unsigned char cucBook); //Otwiera pierwszy rozdział wybranej księgi
 		static unsigned char __fastcall GetConvertIdToTreeView(const unsigned char cucID); //Tłumaczenie "płaskich" identyfikatorów, na pozycje w objekcie, klasy GsTreeBibleClass
 		static TProgressBar *__fastcall GetCurrentNamberChaptOnSheet();	//Metoda zwraca wskaźnik na progresbar miejsca aktualnego rozdziału, w odniesieniu do aktualnej księgi
+		//Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
+		static TList *__fastcall GetListAllTrChap();
 };
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
@@ -343,6 +346,7 @@ class GsTreeNodeClass : public TTreeNode //Klasa całkowicie PRYWATNA!
 };
 /****************************************************************************
  *                        Klasalasa GsTreeBibleClass                        *
+ * 							Drzewo wszystkich, dostępnych ksąg biblijnych               *
  ****************************************************************************/
  //Stałe kolejnych sekcji w objekcie this->_pHeaderControl
 enum {enHeaderSection_FullName,/* enHeaderSection_ShortName, enHeaderSection_CountChapt,*/ enHeaderSection_Count};
@@ -376,6 +380,8 @@ class GsTreeBibleClass : public TCustomTreeView //Klasa cała jest prywatna
 		virtual bool __fastcall CustomDraw(const System::Types::TRect &ARect, TCustomDrawStage Stage);
 		virtual bool __fastcall IsCustomDrawn(TCustomDrawTarget Target, TCustomDrawStage Stage);	//Bez tej metody własnwe rysowanie objektu jest niemożliwe
 		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczarólnym gałęziom
+		//---
+		void __fastcall _OnMouseLeave(TObject *Sender);
 };
 /****************************************************************************
 *                     Klasa GsListBoxSelectedVersClass                      *
@@ -398,7 +404,7 @@ class GsListBoxSelectedVersClass : public TCustomListBox
 /****************************************************************************
  *                          KLASA GsTabSheetClass                           *
  ****************************************************************************/
-class GsTabSheetClass : public TTabSheet //Klasa całkowicie PRYWATNA!
+class GsTabSheetClass : public TTabSheet
 {
 	friend class GsTreeBibleClass;
 	friend class GsTabSetClass;

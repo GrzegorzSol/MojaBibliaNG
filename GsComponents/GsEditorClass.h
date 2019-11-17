@@ -23,6 +23,7 @@ class GsEditorClass : public TCustomPanel
 		inline void __fastcall ClearEditor() {this->pTRichEdit->Clear();};
 		bool inline __fastcall IsModified() {return this->pTRichEdit->Modified;}
 		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsEditorClass\" v%s", ARRAYOFCONST((sustrVersionGsEditorClass)));};	//Metoda inline zwracająca wersje klasy
+		inline TRichEdit *__fastcall GetRichEditObject() {return this->pTRichEdit;};
 		//---
 		__property UnicodeString EditorFileName = {read=FEditorFileName};
 		__property bool IsVisibleAllIOButton = {read=FIsVisibleAllIOButtons, write=FSetupVisibleAllIOButtons, default=true};

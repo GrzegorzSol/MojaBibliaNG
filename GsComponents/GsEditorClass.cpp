@@ -12,6 +12,10 @@
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 #endif
+
+#if defined(_WIN64)
+#else
+#endif
 */
 enum {
 				EnImage_Save,     //0-0.Zapis pod tą samą nazwą
@@ -625,7 +629,11 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		//---
 		case EnImage_Redo:     //Wróć
 		{
-			this->pTRichEdit->Perform(EM_REDO, 0, 0);
+			#if defined(__clang__)
+				this->pTRichEdit->Perform(EM_REDO, 0, (LPARAM)0);
+			#else
+				this->pTRichEdit->Perform(EM_REDO, 0, 0);
+			#endif
 			this->pTRichEdit->Modified = true;
 			if(this->pTRichEdit->CanUndo) this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik zmodyfikowany";
 			//this->pTButtSave->Enabled = true;
