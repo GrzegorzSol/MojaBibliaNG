@@ -138,6 +138,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		GsBarSelectVers *_pGsBarSelectVers;
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme;
 		GsEditorClass *pGsEditorClass;
+    TSplitter *pSplitter;
 		TLabel *_pVersDisplayText; //Wyświetlenie wybranego wersetu
 };
 

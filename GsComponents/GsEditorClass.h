@@ -23,6 +23,7 @@ class GsEditorClass : public TCustomPanel
 		inline void __fastcall ClearEditor() {this->pTRichEdit->Clear();};
 		bool inline __fastcall IsModified() {return this->pTRichEdit->Modified;}
 		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsEditorClass\" v%s", ARRAYOFCONST((sustrVersionGsEditorClass)));};	//Metoda inline zwracająca wersje klasy
+		inline TRichEdit *__fastcall GetRichEditObject() {return this->pTRichEdit;};
 		//---
 		__property UnicodeString EditorFileName = {read=FEditorFileName};
 		__property bool IsVisibleAllIOButton = {read=FIsVisibleAllIOButtons, write=FSetupVisibleAllIOButtons, default=true};
@@ -37,7 +38,7 @@ class GsEditorClass : public TCustomPanel
 							 *pTImageListInActive;
 		TToolBar *pToolBar;
 		TToolButton *pTButtBold, *pTButtItalic, *pTButtUnderline, *pTButtStrikeOut,
-								*pTButtLeft, *pTButtCenter, *pTButtRight, *pTButtSave, *pTButtSaveAs, *pTButtLoad,
+								*pTButtLeft, *pTButtCenter, *pTButtRight, *pTButtSave, *pTButtSaveAs, *pTButtLoad, *pTButtPrint,
 								*pTButtInsert, *pTButtUndo, *pTButtRedo, *pTButtParagraf;
 		TComboBox *pCBoxSelectFontName,
 							*pCBoxSelectFontSize;
@@ -52,6 +53,7 @@ class GsEditorClass : public TCustomPanel
 		void __fastcall _OnChangeEdit(System::TObject *Sender);
 		//---
 		void __fastcall _InitImageList();
+    void __fastcall _PrintEditor(); //Drukowanie zawartości edytora
 		//---
 		UnicodeString FEditorFileName;
 		bool FIsVisibleAllIOButtons; //Prywatny wskażnik modyfikacji

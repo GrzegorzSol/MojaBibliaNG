@@ -37,7 +37,9 @@ __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
 	this->pGsMasterBibleScheme->Parent = this;
 	this->pGsMasterBibleScheme->Align = alClient;
   //---
-  this->Caption = ustrCaptionWindow;
+	this->Caption = ustrCaptionWindow;
+	this->ActOpenProject->Tag = enTagScheme_Open;
+	this->ActOpenProject->Hint = Format("%s|Otwiera istniejący, zapisany projekt na dysku.|%u", ARRAYOFCONST((this->ActOpenProject->Caption, this->ActOpenProject->ImageIndex)));
 	this->ActNewLink->Tag = enTagScheme_AddLink;
 	this->ActNewLink->Hint = Format("%s|Dodaje nowe dowiązanie do aktualnego elementu|%u", ARRAYOFCONST((this->ActNewLink->Caption, this->ActNewLink->ImageIndex)));
 	this->ActDeleteLink->Tag = enTagScheme_DeleteLink;

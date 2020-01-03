@@ -36,6 +36,8 @@ class GsListViewMultiMClass : public TCustomListView
 		DYNAMIC void __fastcall ColClick(TListColumn* Column);
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
+		//---
+    void __fastcall _OnMouseLeave(TObject *Sender);
 	private:
 	#if defined(_TWICIMAGE_) //Czy ma być używane obsługa jpg przez moduł buildera,
 													 //czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)

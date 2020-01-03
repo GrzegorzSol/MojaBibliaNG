@@ -35,7 +35,7 @@ __published:	// IDE-managed Components
 	TGroupBox *STW_GroBoxViewSearchText;
 	TPageControl *STW_PControlViewsText;
 	TTabSheet *STW_TabSheetViewListSearch;
-	TImageList *STW_ImgListSmallSearch;
+	TImageList *ImgListSmallSearch;
 	TWebBrowser *STW_WBrowserResultSearch;
 	TTabSheet *STW_TabSheetViewListView;
 	TComboBox *STW_CBoxSelectRangeSearch;
@@ -49,7 +49,7 @@ __published:	// IDE-managed Components
 	TListView *STW_LViewResultSearch;
 	TWebBrowser *STW_WBrowserSelectItemResult;
 	TButton *STW_ButtonHelpRegExp;
-	TBalloonHint *XMBW_BalloonHintSearch;
+	TBalloonHint *BalloonHintSearch;
 	TListView *STW_LViewStatistic;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);

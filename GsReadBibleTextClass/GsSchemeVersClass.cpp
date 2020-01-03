@@ -615,7 +615,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_GsChildBibleSchemeList->Count==0) return;
+ 	if(this->_GsChildBibleSchemeList->Count==0) return;
 	//---
 	TStringStream *pStringStream = new TStringStream("", TEncoding::ANSI, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
@@ -722,26 +722,6 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
   Randomize();  //Uruchomienie generatora liczb losowych.
 	//---
 	this->DoubleBuffered = true;
-	this->_pGsBarSelectVers = new GsBarSelectVers(this);
-	if(!this->_pGsBarSelectVers) throw(Exception("Błąd inicjalizacji objektu GsBarSelectVers"));
-  this->_pGsBarSelectVers->Parent = this;
-	this->_pGsBarSelectVers->Align = alTop;
-	//Utworzenie objektu, klasy do scrollowania
-	this->_pGsScrollBibleScheme = new GsScrollBibleScheme(this);
-	if(!this->_pGsScrollBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsScrollBibleScheme"));
-	//Stworzenie panelu do rysowania połączeń i objektów
-	this->_pGsScrollBibleScheme->Parent = this;
-	this->_pGsScrollBibleScheme->Align = alClient;
-	//---
-	this->_pGsDrawPanelBibleScheme = this->_pGsScrollBibleScheme->_pGsDrawPanelBibleScheme;
-	//---
-	this->_pVersDisplayText = new TLabel(this); //Wyświetlenie wybranego wersetu
-	if(!this->_pVersDisplayText) throw(Exception("Błąd inicjalizacji objektu TLabel"));
-	this->_pVersDisplayText->Parent = this;
-	this->_pVersDisplayText->Align = alBottom;
-	this->_pVersDisplayText->AutoSize = true;
-	this->_pVersDisplayText->WordWrap = true;
-	this->_pVersDisplayText->Font->Color = clRed;
 }
 //---------------------------------------------------------------------------
 __fastcall GsMasterBibleScheme::~GsMasterBibleScheme()
@@ -765,7 +745,40 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
-  this->pGsEditorClass = new GsEditorClass(this);
+  this->_pGsBarSelectVers = new GsBarSelectVers(this);
+	if(!this->_pGsBarSelectVers) throw(Exception("Błąd inicjalizacji objektu GsBarSelectVers"));
+	this->_pGsBarSelectVers->Parent = this;
+	this->_pGsBarSelectVers->Align = alTop;
+  //Utworzenie objektu, klasy do scrollowania
+	this->_pGsScrollBibleScheme = new GsScrollBibleScheme(this);
+	if(!this->_pGsScrollBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsScrollBibleScheme"));
+	//Stworzenie panelu do rysowania połączeń i objektów
+	this->_pGsScrollBibleScheme->Parent = this;
+	this->_pGsScrollBibleScheme->Align = alClient;
+	//---
+	this->_pGsDrawPanelBibleScheme = this->_pGsScrollBibleScheme->_pGsDrawPanelBibleScheme;
+	//---
+	this->pSplitter = new TSplitter(this);
+	if(!this->pSplitter) throw(Exception("Błąd inicjalizacji objektu TSplitter"));
+	this->pSplitter->Parent = this;
+	this->pSplitter->Align = alBottom;
+	this->pSplitter->Color = clCream;
+	this->pSplitter->Height = 6;
+	this->pSplitter->Beveled = true;
+	//---
+  this->_pVersDisplayText = new TLabel(this); //Wyświetlenie wybranego wersetu
+	if(!this->_pVersDisplayText) throw(Exception("Błąd inicjalizacji objektu TLabel"));
+	this->_pVersDisplayText->Parent = this;
+	this->_pVersDisplayText->Align = alBottom;
+  this->_pVersDisplayText->Color = clCream;
+	this->_pVersDisplayText->AutoSize = true;
+	this->_pVersDisplayText->WordWrap = true;
+	this->_pVersDisplayText->Font->Color = clGreen;
+	this->_pVersDisplayText->Font->Style = TFontStyles() << fsBold;
+  this->_pVersDisplayText->Font->Size = 11;
+	this->_pVersDisplayText->Caption = "Tu bedzie sie pojawiał tekst objektu z wersetem biblijnym";
+	//---
+	this->pGsEditorClass = new GsEditorClass(this);
 	if(!this->pGsEditorClass) throw(Exception("Błąd inicjalizacji objektu GsEditorClass"));
 	this->pGsEditorClass->Parent = this;
 	this->pGsEditorClass->Align = alBottom;

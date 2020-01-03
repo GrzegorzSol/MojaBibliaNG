@@ -23,13 +23,17 @@ HANDLE Global_hSemaphore;
 
 TCHAR Global_lpszPathExistsOldApplic[MAX_PATH],  //Ścieżka dostępu do katalogu lokalnej, istniejącej aplikacji
 			Global_lpszDownloadedNewApplic[MAX_PATH],  //Ścieżka dostępu do pliku pobranego, aplikacji
-			Global_lpszMutexName[Global_ciMaxSizeMutexName];//Pełna nazwa mutexa
+			Global_lpszMutexName[Global_ciMaxSizeMutexName],//Pełna nazwa mutexa
+			Global_lpszDirNameUpd[MAX_PATH] = TEXT("MojaBibliaNG");
 
 #if defined(_MBTESTING_)
 	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG Testing.exe");          //Nazwa lokalna aplikacji
 #else
 	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG.exe");          //Nazwa lokalna aplikacji
 #endif
+/*
+MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+*/
 //--- Inne zmienne
 HBRUSH Global_hLBoxBrush; //Pędzel dla podkładu pod kontrolkę LISTBOX
 
@@ -53,9 +57,16 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 	PathAppend(Global_lpszPathExistsOldApplic, Global_lpcszNameApplic);
 
 	GetTempPath(MAX_PATH, Global_lpszDownloadedNewApplic); //Pobranie ściezki dostępu do katalogu tymczsowego
-	PathAppend(Global_lpszDownloadedNewApplic, Global_lpcszNameApplic); //Ściezka dostępu do pobranej aplikacji
 
+	PathAppend(Global_lpszDownloadedNewApplic, Global_lpszDirNameUpd); //Ściezka dostępu do pobranej aplikacji
+	PathAppend(Global_lpszDownloadedNewApplic, Global_lpcszNameApplic); //Ściezka dostępu do pobranej aplikacji
+	/*
+	MessageBox(NULL, Global_lpszPathExistsOldApplic, TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+	MessageBox(NULL, Global_lpszDownloadedNewApplic, TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+	return 0;
+  */
 	Global_hLBoxBrush = CreateSolidBrush(RGB(160, 160, 220));			//Pędzel dla podkładu pod kontrolkę LISTBOX
+  Sleep(1000);
 	iRet = DialogBox(Global_hThisInstance, MAKEINTRESOURCE(DIALOG_UPDATE), NULL, DialogProc);
 
 	DeleteObject(Global_hLBoxBrush);
@@ -73,7 +84,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	const int cITimerTime = 2400;
 	switch(uMsg)
 	{
-    case WM_INITDIALOG:
+		case WM_INITDIALOG:
 		{
 			Global_ListBox = GetDlgItem(hDlg, IDC_LISTBOX);
 			Global_ProgressBar = GetDlgItem(hDlg, IDC_PROGRESSBAR);	
@@ -87,14 +98,15 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			//Ustawienie ikonki, na pasku okna dialogu
 			SetClassLongPtr(hDlg, GCLP_HICON, (LONG_PTR)LoadIcon(Global_hThisInstance, MAKEINTRESOURCE(ICON_UPDATE))); //Ikonka aplikacji
 			//Właściwe działanie
-      Global_hSemaphore = CreateSemaphore(NULL, 0, 1, Global_lpszMutexName);
+			Global_hSemaphore = CreateSemaphore(NULL, 0, 1, Global_lpszMutexName);
 			if((Global_hSemaphore != 0) && (GetLastError() == ERROR_ALREADY_EXISTS))
 			{
 				CloseHandle(Global_hSemaphore);
 				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Aplikacja nie została zamknięta, więc nie mogę przeprowadzić aktualizacji. Zamknij aplikacje i spróbuj ponownie."));
 				return true;
 			}
-      CloseHandle(Global_hSemaphore);
+			CloseHandle(Global_hSemaphore);
+      SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Przeprowadzam aktualizacje..."));
 
 			BOOL b=FALSE;
 
@@ -117,11 +129,11 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		//----------------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
 				KillTimer(hDlg, IDT_TIMER);
 				EndDialog(hDlg, 0);
-    }
+		}
 		break;
 		//----------------------------------------------------------------------------------
 		case WM_CTLCOLORLISTBOX:
@@ -154,7 +166,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		//----------------------------------------------------------------------------------
-    default: return false;
+		default: return false;
 	}
 	return true;
 }

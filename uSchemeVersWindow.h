@@ -17,6 +17,7 @@
 #include <Vcl.PlatformDefaultStyleActnCtrls.hpp>
 #include <System.ImageList.hpp>
 #include <Vcl.ImgList.hpp>
+#include <Vcl.ExtCtrls.hpp>
 //---------------------------------------------------------------------------
 class TSchemeVersWindow : public TForm
 {

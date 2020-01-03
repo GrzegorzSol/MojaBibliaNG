@@ -9,6 +9,15 @@
 #endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
+/*
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
+#endif
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug("");
+#endif
+#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
+*/
 /****************************************************************************
 *                        Klasa GsListBoxMultiMClass                         *
 *****************************************************************************/
@@ -59,6 +68,7 @@ __fastcall GsListViewMultiMClass::GsListViewMultiMClass(TComponent* Owner) : TCu
   this->SmallImages = this->_pImageList;
 
 	this->_CreateColumns();
+  this->OnMouseLeave = this->_OnMouseLeave;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListViewMultiMClass::~GsListViewMultiMClass()
@@ -363,6 +373,27 @@ void __fastcall GsListViewMultiMClass::ColClick(TListColumn* Column)
 	this->Refresh();
 }
 //---------------------------------------------------------------------------
+void __fastcall GsListViewMultiMClass::_OnMouseLeave(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Metoda wywoływana podczas wyjścia wskaźnika myszy poza objekt //[03-11-2019]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(this->Parent->Parent); //1.Parent - TPanel
+                                                                          //2.Parent - TTabSheet
+	if(!pTabSheet) return;
+	//---
+  if(pTabSheet->OnMouseLeave)
+	{
+		pTabSheet->OnMouseLeave(pTabSheet);
+	}
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("GsListViewMultiMClass::_OnMouseLeave, parent: %s", ARRAYOFCONST((this->Parent->Parent->ClassName()))));
+	#endif
+}
+//---------------------------------------------------------------------------
 #if defined(_TWICIMAGE_) //Czy ma być używane obsługa jpg przez moduł buildera,
 												 //czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)
 /*
@@ -380,7 +411,7 @@ void __fastcall GsListViewMultiMClass::_OnProgress(System::TObject* Sender, TPro
 __fastcall GsPanelMultiM::GsPanelMultiM(TComponent* Owner, TPageControl *_pPControl) : TCustomPanel(Owner)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÓW: TPageControl *_pPControl - zakładka w głównym oknie.
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */

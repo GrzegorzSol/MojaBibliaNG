@@ -30,7 +30,8 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrPassword = "JdgoG3OEc3v3", //Hasło do hosta
 										GlobalVar::Global_custrNameUpd = "winmbupd.exe",  //nazwa aplikacji zewnętrznej do aktualizacji
 										GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameUpd),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
-                    GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
+										GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
+										GlobalVar::Global_ustrNameDirUpdate = "MojaBibliaNG",//nazwa katalogu z poprawkami
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -79,7 +80,7 @@ TStringList *GlobalVar::Global_SListPathMultiM=0;  //Ścieżki dostępu do wybra
 TMemIniFile *GlobalVar::Global_ConfigFile=0;			 //Globalny wskażnik na plik konfiguracyjny
 TStringDynArray GlobalVar::SDirTranslatesList;     //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
 THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=0; //String lista do wszystkich ulubionych wesrsetów
-int GlobalVar::iReturnUpdate=0; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
+int GlobalVar::iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
 																//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 																//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
 										 						//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować

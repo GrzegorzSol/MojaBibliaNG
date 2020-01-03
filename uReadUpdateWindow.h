@@ -23,6 +23,8 @@ __published:	// IDE-managed Components
 private:	// User declarations
 	void __fastcall _GetIsUpdateVerify();
 	bool __fastcall _DownLoadFileFTPGet(const UnicodeString _destPathDownload, const UnicodeString _ustrPathFTPFile);
+  void __fastcall GsTypeConnected(UnicodeString &_ustrInfoTypeConnected);
+  bool bIsConnected; //Czy zdo³ano po³¹czyæ siê z sieci¹
 public:		// User declarations
 	__fastcall TReadUpdateWindow(TComponent* Owner);
 };

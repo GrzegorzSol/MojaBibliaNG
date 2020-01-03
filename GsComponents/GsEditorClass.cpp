@@ -6,51 +6,57 @@
 #include <Vcl.Dialogs.hpp>
 #include <System.IOUtils.hpp>
 #include "GsEditorDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
+#include <Vcl.Printers.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 #endif
+
+#if defined(_WIN64)
+#else
+#endif
 */
 enum {
 				EnImage_Save,     //0-0.Zapis pod tą samą nazwą
 				EnImage_SaveAs,   //1-1.Zapis pod zmienioną nazwą
 				EnImage_Open,     //2-2.Otwórz
-				EnImage_Clear,    //3-3.Wyczyść
-				EnImage_Sep,      //4.Separator
-				EnImage_Copy,     //5-4.Kopiuj
-				EnImage_Cut,      //6-5.Wytnij
-				EnImage_Insert,   //7-6.Wstaw
-				EnImage_Sep1,     //8.Separator
-				EnImage_Find,     //9-7.Szukaj
-				EnImage_FindReplace,//10-8.Szukaj i podmień
-				EnImage_Sep2,     //11
-				EnImage_Undo,     //12-9.Cofnij
-				EnImage_Redo,     //13-10.Wróć
-				EnImage_Sep3,     //14
-				EnTag_FontName,   //15.Nazwa czcionki
-				EnTag_FontSize,   //16.Wielkość czcionki
-				EnImage_Bold,     //17-11.Pogrubienie
-				EnImage_Italic,   //18-12.Pochylona
-				EnImage_Underline,//19-13.Podkreślona
-				EnImage_StrikeOut,//20-14
-				EnImage_Sep4,     //21
-				EnImage_FontColour,//22
-				EnImage_FontBackgroundColour,//23
-				EnImage_Sep5,     //24
-				EnImage_LeftAl,   //25-15.Dosunięcie tekstu do lewego marginesu
-				EnImage_CentreAl, //26-16.Dosunięcie tekstu d centrum
-				EnImage_RightAl,  //27-17.Dosunięcie tekstu do prawego marginesu
-				EnImage_Sep6,     //28.
-				EnImage_Paragraph,//29-18.Punktowanie
+				EnImage_Print,    //3-3.Drukuj
+				EnImage_Clear,    //4-4.Wyczyść
+				EnImage_Sep,      //5.Separator
+				EnImage_Copy,     //6-5.Kopiuj
+				EnImage_Cut,      //7-6.Wytnij
+				EnImage_Insert,   //8-7.Wstaw
+				EnImage_Sep1,     //9.Separator
+				EnImage_Find,     //10-8.Szukaj
+				EnImage_FindReplace,//11-9.Szukaj i podmień
+				EnImage_Sep2,     //12.Separator
+				EnImage_Undo,     //13-10.Cofnij
+				EnImage_Redo,     //14-11.Wróć
+				EnImage_Sep3,     //15.Separator
+				EnTag_FontName,   //16.Nazwa czcionki
+				EnTag_FontSize,   //17.Wielkość czcionki
+				EnImage_Bold,     //18-12.Pogrubienie
+				EnImage_Italic,   //19-13.Pochylona
+				EnImage_Underline,//20-14.Podkreślona
+				EnImage_StrikeOut,//21-15
+				EnImage_Sep4,     //22.Separator
+				EnImage_FontColour,//23
+				EnImage_FontBackgroundColour,//24
+				EnImage_Sep5,     //25.Separator
+				EnImage_LeftAl,   //26-16.Dosunięcie tekstu do lewego marginesu
+				EnImage_CentreAl, //27-17.Dosunięcie tekstu d centrum
+				EnImage_RightAl,  //28-18.Dosunięcie tekstu do prawego marginesu
+				EnImage_Sep6,     //29.Separator
+				EnImage_Paragraph,//30-19.Punktowanie
 				//---
 				EnImage_Count
 		 };
 enum {EnPanel_FileInfo, EnPanel_Info, EnPanel_Count};
 const UnicodeString custrSep = "SEP", //Nazwa domyślna separatora
 										//Nazwy przycislów
-										ustrHintButtons[] = {"Zapisz", "Zapisz jako...", "Otwórz...",  "Wyczyść", custrSep, "Kopiuj", "Wytnij", "Wstaw",
+										ustrHintButtons[] = {"Zapisz", "Zapisz jako...", "Otwórz...", "Drukuj zawartość...", "Wyczyść", custrSep, "Kopiuj", "Wytnij", "Wstaw",
 																				 custrSep, "Szukaj...", "Szukaj i podmień...", custrSep, "Cofnij", "Powróć", custrSep,
 																				 "Nazwa czcionki", "Wielkość czcionki", "Pogrubiona", "Pochylona", "Podkreślona", "Przekreślona",
 																				 custrSep, "Kolor czcionki", "Kolor podkładu czcionki", custrSep, "Dosunięcie do lewej",
@@ -558,6 +564,12 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		}
 		break;
 		//---
+		case EnImage_Print:
+		{
+			this->_PrintEditor();
+		}
+		break;
+		//---
 		case EnImage_Clear:    //Wyczyść
 		{
 			this->pTRichEdit->Clear();
@@ -625,7 +637,11 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		//---
 		case EnImage_Redo:     //Wróć
 		{
-			this->pTRichEdit->Perform(EM_REDO, 0, 0);
+			#if defined(__clang__)
+				this->pTRichEdit->Perform(EM_REDO, 0, (LPARAM)0);
+			#else
+				this->pTRichEdit->Perform(EM_REDO, 0, 0);
+			#endif
 			this->pTRichEdit->Modified = true;
 			if(this->pTRichEdit->CanUndo) this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik zmodyfikowany";
 			//this->pTButtSave->Enabled = true;
@@ -870,97 +886,103 @@ void __fastcall GsEditorClass::_InitImageList()
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 3.Ikona - wyczyść
+		//--- 3.Ikona - drukuj
+		pMemoryStr->WriteBuffer(ID_PRINT, ARRAYSIZE(ID_PRINT)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 4.Ikona - wyczyść
 		pMemoryStr->WriteBuffer(ID_CLEAR, ARRAYSIZE(ID_CLEAR)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 4.Ikona - kopiuj
+		//--- 5.Ikona - kopiuj
 		pMemoryStr->WriteBuffer(ID_COPY, ARRAYSIZE(ID_COPY)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 5.Ikona - wytnij
+		//--- 6.Ikona - wytnij
 		pMemoryStr->WriteBuffer(ID_CUT, ARRAYSIZE(ID_CUT)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 6.Ikona - wstaw
+		//--- 7.Ikona - wstaw
 		pMemoryStr->WriteBuffer(ID_INSERT, ARRAYSIZE(ID_INSERT)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 7.Ikona - szukaj
+		//--- 8.Ikona - szukaj
 		pMemoryStr->WriteBuffer(ID_FIND, ARRAYSIZE(ID_FIND)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 8.Ikona - szukaj i podmień
+		//--- 9.Ikona - szukaj i podmień
 		pMemoryStr->WriteBuffer(ID_FINDREPLACE, ARRAYSIZE(ID_FINDREPLACE)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 9.Ikona - cofnij
+		//--- 10.Ikona - cofnij
 		pMemoryStr->WriteBuffer(ID_UNDO, ARRAYSIZE(ID_UNDO)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 10.Ikona - wróć
+		//--- 11.Ikona - wróć
 		pMemoryStr->WriteBuffer(ID_REDO, ARRAYSIZE(ID_REDO)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 11.Ikona - pogrubiona
+		//--- 12.Ikona - pogrubiona
 		pMemoryStr->WriteBuffer(ID_BOLD, ARRAYSIZE(ID_BOLD)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 12.Ikona - pochylona
+		//--- 13.Ikona - pochylona
 		pMemoryStr->WriteBuffer(ID_ITALIC, ARRAYSIZE(ID_ITALIC)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 13.Ikona - podkreślona
+		//--- 14.Ikona - podkreślona
 		pMemoryStr->WriteBuffer(ID_UNDERLINE, ARRAYSIZE(ID_UNDERLINE)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 14.Ikona - przekreślona
+		//--- 15.Ikona - przekreślona
 		pMemoryStr->WriteBuffer(ID_STRIKEOUT, ARRAYSIZE(ID_STRIKEOUT)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 15.Ikona - do lewej
+		//--- 16.Ikona - do lewej
 		pMemoryStr->WriteBuffer(ID_LEFTAL, ARRAYSIZE(ID_LEFTAL)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 16.Ikona - centrum
+		//--- 17.Ikona - centrum
 		pMemoryStr->WriteBuffer(ID_CENTER, ARRAYSIZE(ID_CENTER)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 17.Ikona - do prawej
+		//--- 18.Ikona - do prawej
 		pMemoryStr->WriteBuffer(ID_RIGHTAL, ARRAYSIZE(ID_RIGHTAL)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 18.Ikona - paragraf
+		//--- 19.Ikona - paragraf
 		pMemoryStr->WriteBuffer(ID_PARAGRAPH, ARRAYSIZE(ID_PARAGRAPH)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
@@ -985,97 +1007,103 @@ void __fastcall GsEditorClass::_InitImageList()
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 3.Ikona - wyczyść
+		//--- 3.Ikona - drukuj
+		pMemoryStr->WriteBuffer(ID_PRINT_DIS, ARRAYSIZE(ID_PRINT_DIS)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 4.Ikona - wyczyść
 		pMemoryStr->WriteBuffer(ID_CLEAR_DIS, ARRAYSIZE(ID_CLEAR_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 4.Ikona - kopiuj
+		//--- 5.Ikona - kopiuj
 		pMemoryStr->WriteBuffer(ID_COPY_DIS, ARRAYSIZE(ID_COPY_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 5.Ikona - wytnij
+		//--- 6.Ikona - wytnij
 		pMemoryStr->WriteBuffer(ID_CUT_DIS, ARRAYSIZE(ID_CUT_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 6.Ikona - wstaw
+		//--- 7.Ikona - wstaw
 		pMemoryStr->WriteBuffer(ID_INSERT_DIS, ARRAYSIZE(ID_INSERT_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 7.Ikona - szukaj
+		//--- 8.Ikona - szukaj
 		pMemoryStr->WriteBuffer(ID_FIND_DIS, ARRAYSIZE(ID_FIND_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 8.Ikona - szukaj i podmień
+		//--- 9.Ikona - szukaj i podmień
 		pMemoryStr->WriteBuffer(ID_FINDREPLACE_DIS, ARRAYSIZE(ID_FINDREPLACE_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 9.Ikona - cofnij
+		//--- 10.Ikona - cofnij
 		pMemoryStr->WriteBuffer(ID_UNDO_DIS, ARRAYSIZE(ID_UNDO_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 10.Ikona - wróć
+		//--- 11.Ikona - wróć
 		pMemoryStr->WriteBuffer(ID_REDO_DIS, ARRAYSIZE(ID_REDO_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 11.Ikona - pogrubiona
+		//--- 12.Ikona - pogrubiona
 		pMemoryStr->WriteBuffer(ID_BOLD_DIS, ARRAYSIZE(ID_BOLD_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 12.Ikona - pochylona
+		//--- 13.Ikona - pochylona
 		pMemoryStr->WriteBuffer(ID_ITALIC_DIS, ARRAYSIZE(ID_ITALIC_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 13.Ikona - podkreślona
+		//--- 14.Ikona - podkreślona
 		pMemoryStr->WriteBuffer(ID_UNDERLINE_DIS, ARRAYSIZE(ID_UNDERLINE_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 14.Ikona - przekreślona
+		//--- 15.Ikona - przekreślona
 		pMemoryStr->WriteBuffer(ID_STRIKEOUT_DIS, ARRAYSIZE(ID_STRIKEOUT_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 15.Ikona - do lewej
+		//--- 16.Ikona - do lewej
 		pMemoryStr->WriteBuffer(ID_LEFTAL_DIS, ARRAYSIZE(ID_LEFTAL_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 16.Ikona - centrum
+		//--- 17.Ikona - centrum
 		pMemoryStr->WriteBuffer(ID_CENTER_DIS, ARRAYSIZE(ID_CENTER_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 17.Ikona - do prawej
+		//--- 18.Ikona - do prawej
 		pMemoryStr->WriteBuffer(ID_RIGHTAL_DIS, ARRAYSIZE(ID_RIGHTAL_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 18.Ikona - paragraf
+		//--- 19.Ikona - paragraf
 		pMemoryStr->WriteBuffer(ID_PARAGRAPH_DIS, ARRAYSIZE(ID_PARAGRAPH_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
@@ -1089,3 +1117,21 @@ void __fastcall GsEditorClass::_InitImageList()
 		if(pMemoryStr) {delete pMemoryStr; /*pMemoryStr = 0;*/}
 	}
 }
+//---------------------------------------------------------------------------
+void __fastcall GsEditorClass::_PrintEditor()
+/**
+	OPIS METOD(FUNKCJI): Drukowanie zawartości edytora
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPrintDialog *PrintDialogMainMan = new TPrintDialog(this);
+	if(!PrintDialogMainMan) throw(Exception("Nie dokonano inicjalizacji objektu TPrintDialog"));
+	//---
+  if(PrintDialogMainMan->Execute())
+	{
+    this->pTRichEdit->Print("");
+  }
+}
+//---------------------------------------------------------------------------

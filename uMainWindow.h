@@ -1,7 +1,7 @@
 ﻿#ifndef uMainWindowH
 #define uMainWindowH
 //---------------------------------------------------------------------------
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "GsReadBibleTextClass\GsReadBibleTextClass.h" //Główna klasa do pracy z tekstem biblijnym
 #include <System.Actions.hpp>
 #include <System.Classes.hpp>
 #include <System.ImageList.hpp>
@@ -19,59 +19,61 @@
 #include <Vcl.ToolWin.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ActnColorMaps.hpp>
-#include <Vcl.WinXCtrls.hpp> //Główna klasa do pracy z tekstem biblijnym
+#include <Vcl.WinXCtrls.hpp>
+//#include <Vcl.AppEvnts.hpp>
 //---------------------------------------------------------------------------
 class TMainBibleWindow : public TForm
 {
 __published:	// IDE-managed Components
-	TActionToolBar *MBW_ActionToolBarMain;
-	TActionManager *XMBW_ActionManagerMain;
-	TPageControl *MBW_PageControlBibleText;
+	TActionToolBar *ActionToolBarMain;
+	TActionManager *ActionManagerMain;
+	TPageControl *PageControlBibleText;
 	TAction *Act_CloseSheetActive;
-	TImageList *MBW_ImageListMainActive;
-	TImageList *MBW_ImageListMainInactive;
+	TImageList *ImageListMainActive;
+	TImageList *ImageListMainInactive;
 	TAction *Act_SaveChaptToHTML;
 	TAction *Act_SearchBibleText;
-	TStatusBar *MBW_StatusBarMain;
+	TStatusBar *StatusBarMain;
 	TAction *Act_SetupsApplic;
 	TAction *Act_SelectVers;
-	TBalloonHint *XMBW_BalloonHintMain;
-	TTrayIcon *MBW_TrayIconMain;
-	TPopupMenu *MBW_PMenuTray;
-	TTaskbar *MBW_TaskbarMain;
-	TPageControl *MBW_PageControlTools;
-	TTabSheet *MBW_TabSheetBooks;
-	TTabSheet *MBW_TabSheetMultimedials;
-	TCoolBar *MBW_CoolBarMain;
-	TActionToolBar *MBW_ActionToolBarTools;
+	TBalloonHint *BalloonHintMain;
+	TTrayIcon *TrayIconMain;
+	TPopupMenu *PMenuTray;
+	TTaskbar *TaskbarMain;
+	TPageControl *PageControlTools;
+	TTabSheet *TabSheetBooks;
+	TTabSheet *TabSheetMultimedials;
+	TCoolBar *CoolBarMain;
+	TActionToolBar *ActionToolBarTools;
 	TAction *Act_CorcordanceDictionaryGrec;
-	TTabSheet *MBW_TabSheetAllCommentsVers;
-	TImageList *MBW_ImageListSmall;
+	TTabSheet *TabSheetAllCommentsVers;
+	TImageList *ImageListSmall;
 	TAction *Act_ProjectSchemeVers;
 	TStaticText *STextHeaderListCommentVers;
 	TStaticText *STextHeaderFavorteListVers;
 	TAction *Act_Infomations;
-	TStandardColorMap *XMBW_StandardColorMapMain;
+	TStandardColorMap *StandardColorMapMain;
 	TAction *Act_ViewAllResources;
-	TStandardColorMap *XMBW_StandardColorMapTools;
+	TStandardColorMap *StandardColorMapTools;
 	TAction *Act_ResizeWork;
-	TActionManager *XMBW_ActionManagerOther;
+	TActionManager *ActionManagerOther;
 	TAction *Act_OtherInfoTaskbarButton;
 	TAction *Act_OtherInfoApplicTaskBarButton;
-	TSplitView *MBW_SplitViewMain;
+	TSplitView *SplitViewMain;
 	TAction *Act_FacePage;
 	TAction *Act_Update;
+	TAction *Act_EditChapter;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
 	void __fastcall Act_SaveChaptToHTMLExecute(TObject *Sender);
 	void __fastcall Act_SearchBibleTextExecute(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
-	void __fastcall MBW_StatusBarMainDrawPanel(TStatusBar *StatusBar, TStatusPanel *Panel,
+	void __fastcall StatusBarMainDrawPanel(TStatusBar *StatusBar, TStatusPanel *Panel,
           const TRect &Rect);
 	void __fastcall Act_SetupsApplicExecute(TObject *Sender);
 	void __fastcall Act_SelectVersExecute(TObject *Sender);
-	void __fastcall MBW_TrayIconMainBalloonClick(TObject *Sender);
+	void __fastcall TrayIconMainBalloonClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 	void __fastcall MBW_PageControlAllChange(TObject *Sender);
 	void __fastcall MBW_SplitTreeTextCanResize(TObject *Sender, int &NewSize, bool &Accept);
@@ -87,16 +89,18 @@ __published:	// IDE-managed Components
 	void __fastcall Act_FacePageExecute(TObject *Sender);
 	void __fastcall Act_UpdateExecute(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
-	void __fastcall MBW_SplitViewMainOpened(TObject *Sender);
-	void __fastcall MBW_PageControlToolsChanging(TObject *Sender, bool &AllowChange);
-	void __fastcall MBW_PageControlBibleTextEnter(TObject *Sender);
-
-
+	void __fastcall SplitViewMainOpened(TObject *Sender);
+	void __fastcall PageControlToolsChanging(TObject *Sender, bool &AllowChange);
+	void __fastcall PageControlBibleTextEnter(TObject *Sender);
+	void __fastcall PageControlToolsMouseEnter(TObject *Sender);
+	void __fastcall TabSheetAllToolsMouseLeave(TObject *Sender);
+	void __fastcall Act_EditChapterExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;
 	void __fastcall _AppException(TObject *Sender, Exception *pException);	//Obsługa błędów całej aplikacji
 	void __fastcall _AppOnHint(TObject *Sender);
+	void __fastcall _AppMessage(tagMSG &Msg, bool &Handled);
 	void __fastcall _CreatePopupTrayIcon();
 	void __fastcall _OnClick_PMenuTray(System::TObject* Sender);
 	void __fastcall _InitAllTagAndHint();

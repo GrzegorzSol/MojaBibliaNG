@@ -6,9 +6,13 @@
 #include <System.IOUtils.hpp>
 #include <wininet.h>
 #include <urlmon.h>
-
-#pragma link "urlmon.lib"
-#pragma link "wininet.lib"
+#if defined(_WIN64)
+	#pragma link "urlmon.a"
+	#pragma link "wininet.a"
+#else
+	#pragma link "urlmon.lib"
+	#pragma link "wininet.lib"
+#endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -22,7 +26,6 @@ enum {enTagUp_UpYes=0x1000, enTagUp_UpNo};
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
-bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected);
 bool bIsPushButton=false;
 //---------------------------------------------------------------------------
 __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
@@ -36,23 +39,24 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 {
 	this->ButtYes->Tag = enTagUp_UpYes;
 	this->ButtonNo->Tag = enTagUp_UpNo;
+	this->bIsConnected = false;
 
   this->LabeledEdCurrentVersion->Text = GlobalVar::Global_ustrVerAplicMain;
 	//--- Sprawdzenie połączenia z internetem
 	UnicodeString ustrReturnConect;
-	bool bRet = GsTypeConnected(ustrReturnConect);
+	GsTypeConnected(ustrReturnConect);
 
-	if(bRet)
-	//Jeśli polączenei powiodło się
+	if(this->bIsConnected)
 	{
 		this->Caption = Format("%s - %s", ARRAYOFCONST((this->Caption, ustrReturnConect)));
+		this->_GetIsUpdateVerify();
 	}
 	else
 	{
-	 throw(Exception("Brak dostępu do sieci"));
+		this->STextInfos->Caption = "Nie można połączyć się z siecią. Zamknij okienko, sprawdź połączenie i spróbuj powtórnie!";
+    this->LabeledEdDownLoadversion->Text = "Nie można odczytać wersji";
+    GlobalVar::iReturnUpdate = -1;
 	}
-
-	this->_GetIsUpdateVerify();
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadUpdateWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -79,7 +83,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	TCHAR pathTemp[MAX_PATH];
 	GetTempPath(MAX_PATH, pathTemp);
 
-	bool bRetDownload=false;
+	bool bRetDownload;//=false;
 
 	//bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
 	bRetDownload = this->_DownLoadFileFTPGet(GlobalVar::Global_custrLocalVersionFile, GlobalVar::Global_custrFTPSourceVersionFile);
@@ -91,11 +95,11 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	__int64 i64DonloadFile=0, i64LocalFile=0;
 
 	pStrBuilderDownload->Append(TFile::ReadAllText(GlobalVar::Global_custrLocalVersionFile, TEncoding::UTF8));
-	this->LabeledEdDownLoadversion->Text = pStrBuilderDownload->ToString();
+	this->LabeledEdDownLoadversion->Text = pStrBuilderDownload->ToString(true);
 
 	pStrBuilderDownload->Replace(".", ""); //Usunięcie kropek
 
-	if(!TryStrToInt64(pStrBuilderDownload->ToString(), i64DonloadFile))
+	if(!TryStrToInt64(pStrBuilderDownload->ToString(true), i64DonloadFile))
 	//jeśli nie udało się skonwertować na __int64, to musiał nastąpić błąd
 	{
 		delete pStrBuilderDownload; return;
@@ -103,7 +107,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	pStrBuilderDownload->Clear(); //Wyczyszczenie zawartości
 	pStrBuilderDownload->Append(GlobalVar::Global_ustrVerAplicMain);
 	pStrBuilderDownload->Replace(".", ""); //Usunięcie kropek
-	if(!TryStrToInt64(pStrBuilderDownload->ToString(), i64LocalFile))
+	if(!TryStrToInt64(pStrBuilderDownload->ToString(true), i64LocalFile))
 	//jeśli nie udało się skonwertować na __int64, to musiał nastąpić błąd
 	{
 		delete pStrBuilderDownload; return;
@@ -116,7 +120,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	}
 	else if(i64DonloadFile > i64LocalFile)
 	{
-		this->STextInfos->Caption = "Jest dostępna nowsza wersja na serwerze aktualizacyjnym, czy zaktualizować aplikację? Spowoduje to zaknięcie aplikacji, by pobrać i zainstalować poprawkę";
+		this->STextInfos->Caption = "Jest dostępna nowsza wersja na serwerze aktualizacyjnym, czy zaktualizować aplikację? Spowoduje to zaknięcie aplikacji, by pobrać i zainstalować poprawkę.";
 		GlobalVar::iReturnUpdate = 1;
 		this->PanelButtons->Visible = true;
     //Pobranie nowszej wersji
@@ -170,7 +174,7 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTPGet(const UnicodeString _dest
 	return bRet;
 }
 //=====================FUNKCJE NIE BĘDĄCE METODAMI KLASY=====================
-bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
+void __fastcall TReadUpdateWindow::GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 /**
 	OPIS METOD(FUNKCJI): Sprawdzanie czy komputer jest podłączony do internetu
 	OPIS ARGUMENTÓW:
@@ -178,7 +182,6 @@ bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	bool bInternetConnect=false;
 	DWORD State;
 	if(InternetGetConnectedState(&State, 0))
 	{
@@ -189,14 +192,13 @@ bool GsTypeConnected(UnicodeString &_ustrInfoTypeConnected)
 		if(State & INTERNET_CONNECTION_MODEM_BUSY) ustrTypeConect = "Modem zajęty";
 
 		_ustrInfoTypeConnected = "Typ połączenia: " + ustrTypeConect;
-		bInternetConnect = true;
+		this->bIsConnected = true;
 	}
 	else
 	{
-		//bInternetConnect = false;
+		this->bIsConnected = false;
 		_ustrInfoTypeConnected = "Brak połączenie z Internetem!!!";
 	}
-	return bInternetConnect;
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadUpdateWindow::ButtAllClick(TObject *Sender)

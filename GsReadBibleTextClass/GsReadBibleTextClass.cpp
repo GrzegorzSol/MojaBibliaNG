@@ -37,7 +37,6 @@
 	GsDebugClass::WriteDebug("");
 #endif
 #if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
-
 */
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
@@ -163,7 +162,6 @@ THashedStringList *__fastcall GsReadBibleTextItem::GetSelectBooks(const unsigned
 /****************************************************************************
  *                     Główna klasa ReadBibleTextClass                      *
  ****************************************************************************/
-const unsigned char cucMaxCountTranslates=12; //Maksymalna ilość tłumaczeń
 //NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
 int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
 /**
@@ -202,6 +200,9 @@ GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
+		GsDebugClass::WriteDebug("GsReadBibleTextClass::GsReadBibleTextClass()");
+	#endif
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Dokonano już inicjalizacji objektu GsReadBibleTextClass"));
 	//---
@@ -245,7 +246,7 @@ GsReadBibleTextClass::~GsReadBibleTextClass()
 	//Likwidacja objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	if(this->_SListInterLinear) {delete this->_SListInterLinear; this->_SListInterLinear = 0;}
 	GsReadBibleTextData::GsFreeGlobalImageList();  //Likwidacja zmiennych klasy
-	#if defined(_DEBUGINFO_)
+	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
 		GsDebugClass::WriteDebug("GsReadBibleTextClass::~GsReadBibleTextClass()");
 	#endif
 }
@@ -321,10 +322,10 @@ void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString c
 		UnicodeString _custrPath = Format("%s_%u_%s.html", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].FullNameBook, pGsTabSheetClass->_ShucIndexChapt+1,
 			pGsTabSheetClass->pGsTabSetClass->Tabs->Strings[pGsTabSheetClass->pGsTabSetClass->TabIndex])));
 		//Zapisanie pliku html, pod domyślna nazwą
-		TFile::WriteAllText(_custrPath, pGsTabSheetClass->pStrBuilderHtml->ToString(), TEncoding::UTF8);
+		TFile::WriteAllText(_custrPath, pGsTabSheetClass->pStrBuilderHtml->ToString(true), TEncoding::UTF8);
 	}
 	else
-	{TFile::WriteAllText(custrPath, pGsTabSheetClass->pStrBuilderHtml->ToString(), TEncoding::UTF8);}
+	{TFile::WriteAllText(custrPath, pGsTabSheetClass->pStrBuilderHtml->ToString(true), TEncoding::UTF8);}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextClass::_GetInfoNameTranslate(const int i, UnicodeString &NameTranslate)
@@ -603,7 +604,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 						}
             if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //Pełne polskie tłumaczenie
 						{
-							if(iIndexFav > -1) ///Werset jest na liście ulubinych 13.01.2019
+							if(iIndexFav > -1) ///Werset jest na liście ulubionych 13.01.2019
 							{
 								_Style_FavoriteStyle = "<span class=styleFavorite>"; //Styl zaznaczania ulubionego wersetu
 								_StyleFav_End = "</span>";
@@ -630,7 +631,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							//Nazwa tłumaczenia
 							pStringStream->WriteString(Format("<span class=\"styleTranslates\">[%s]</span>", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
 						}
-						else //Częściowe ryginalne, lub polskie tłumaczenie tłumaczenie
+						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{
 							pStringStream->WriteString(Format("<span class=\"styleVersOryg\">%s</span> <span title=\"%s\" class=\"styleOrygin\">%s </span>", ARRAYOFCONST((pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex], pTempHSList->Strings[iIndex]))));
 							//Nazwa tłumaczenia
@@ -872,6 +873,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	}
 	//---
 	GsReadBibleTextData::pGsTreeBibleClass = this;
+  this->OnMouseLeave = this->_OnMouseLeave;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTreeBibleClass::~GsTreeBibleClass()
@@ -1245,6 +1247,23 @@ void __fastcall GsTreeBibleClass::_SectionHeaderResize(THeaderControl* HeaderCon
 {
 	this->Refresh();
 }
+//---------------------------------------------------------------------------
+void __fastcall GsTreeBibleClass::_OnMouseLeave(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Metoda wywoływana podczas wyjścia wskaźnika myszy poza objekt //[02-11-2019]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(this->Parent);
+	if(!pTabSheet) return;
+	//---
+	if(pTabSheet->OnMouseLeave)
+	{
+		pTabSheet->OnMouseLeave(pTabSheet);
+	}
+}
 /****************************************************************************
 *                     Klasa GsListBoxSelectedVersClass                      *
 *****************************************************************************/
@@ -1585,7 +1604,6 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->pWebBrowser->Align = alClient;
 	this->pWebBrowser->Offline = true;
 	this->pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
-	this->pWebBrowser->SetFocus();
 	this->pWebBrowser->OnDragDrop = pPanelText->OnDragDrop;
 	this->pWebBrowser->OnDragOver = pPanelText->OnDragOver;
 	//Wybieralny tekst rozdziału
@@ -1611,6 +1629,9 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->pSplitterEd->Color = clMaroon;
 	this->pSplitterEd->MinSize = this->pGsEditorClass->Height / 2;
 	this->pSplitterEd->Visible = false;
+	//Aktywacja wczytanego tekstu
+  //this->SetFocus();
+	this->pWebBrowser->SetFocus();
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetClass::~GsTabSheetClass()
@@ -1797,6 +1818,17 @@ void __fastcall GsTabSheetClass::DestroyWnd()
 {
 	//Własny kod.
 	TTabSheet::DestroyWnd();
+}
+//---------------------------------------------------------------------------
+TTabSet* __fastcall GsTabSheetClass::GetTabSet()
+/**
+	OPIS METOD(FUNKCJI): Wyłuskanie wskażnika na zakładki tłumaczeń
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  return this->pGsTabSetClass;
 }
 /****************************************************************************
  *                            KLASA GsTabSetClass                           *
@@ -2727,6 +2759,18 @@ TProgressBar *__fastcall GsReadBibleTextData::GetCurrentNamberChaptOnSheet()
 	//---
 	return pGsTabSheetClass->pProgressBar;
 }
+//---------------------------------------------------------------------------
+TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
+/**
+	OPIS METOD(FUNKCJI): Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	return GsReadBibleTextData::pGsReadBibleTextClass->_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
+}
+//---------------------------------------------------------------------------
 /****************************************************************************
  *                          KLASA GsBarSelectVers                           *
  ****************************************************************************/
