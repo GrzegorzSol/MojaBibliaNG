@@ -48,11 +48,7 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 		"jednak o wszystkich takich zabiegach autor pragnie być poinformowany, razem z przedstawieniem zmodyfikowanego kodu.\n" +
 		"Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik.\n\n" +
 		"Jej rozwój rozpoczął się od 2007 roku (kolejne wersje były przeprojektowywane, zmieniane itd.). Więcej informacji znajduje się pod adresem \"https://www.facebook.com/MojaBiblia/\"\n\n",
-<<<<<<< HEAD
 								ustrInfoVerCompilation = UnicodeString("Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder Community 10.3.3 Version 26.0.36039.7899.\n") +
-=======
-								ustrInfoVerCompilation = UnicodeString("Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder Community 10.3.1 Version 26.0.33219.4899.\n") +
->>>>>>> fbbdb400f4cfa8322c74fdb8d1b4dd727fb5ecc4
 																				 "Skompilowany został za pomocą kompilatora C++ z powyższego pakietu, w wersji CLang\n",
 								ustrInfox64 = "\nAktualna wersja jest w EKSPERYMENTALNEJ wersji 64 bitowej!\n\n";
 	//---
