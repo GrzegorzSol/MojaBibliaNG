@@ -15,9 +15,14 @@ __published:	// IDE-managed Components
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
 private:	// User declarations
+<<<<<<< HEAD
 	GsEditorClass *_pGsEditorClass;
 	GsTabSheetClass *_pGsTabSheetClass; //Aktualna aktywna zakładka z rozdziałem
 	int _iGetTranslate; //Numer aktualnie wyświetlanego tłumaczenia w zakładce z tekstem
+=======
+	GsEditorClass *pGsEditorClass;
+	GsTabSheetClass *pGsTabSheetClass; //Aktualna aktywna zakładka z rozdziałem
+>>>>>>> fbbdb400f4cfa8322c74fdb8d1b4dd727fb5ecc4
 public:		// User declarations
 	__fastcall TChapterEditWindow(TComponent* Owner, TTabSheet *pTabSheet);
 };

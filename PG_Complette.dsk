@@ -1,24 +1,38 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp',0,1,63,78,90,0,0,{{29,275},{31,74},{'...'}},
-File_1=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.rc',0,1,1,21,18,0,0,,
+File_0=TSourceModule,'G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\GsComponents\GsEditorClass.cpp',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\uMain.cpp
-Module1=default.htm
-Count=2
+Module0=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
+Module1=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\MBUpdate\WinMBUpdate_main.cpp
+Module2=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp
+Module3=default.htm
+Module4=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp
+Count=5
 EditWindowCount=1
 
-[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\uMain.cpp]
+[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp]
+ModuleType=TSourceModule
+
+[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\MBUpdate\WinMBUpdate_main.cpp]
+ModuleType=TSourceModule
+
+[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp]
 ModuleType=TSourceModule
 
 [default.htm]
 ModuleType=TURLModule
 
+[G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp]
+ModuleType=TSourceModule
+
 [EditWindow0]
-ViewCount=2
-CurrentEditView=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\uMain.cpp
+ViewCount=5
+CurrentEditView=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
 View0=0
 View1=1
+View2=2
+View3=3
+View4=4
 PercentageSizes=1
 Create=1
 Visible=1
@@ -52,14 +66,47 @@ WelcomePageURL=bds:/default.htm
 
 [View1]
 CustomEditViewType=TEditView
-Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\uMain.cpp
-CursorX=1
-CursorY=1
-TopLine=1
+Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
+CursorX=171
+CursorY=817
+TopLine=724
+LeftCol=1
+Elisions={{68,8},{118,3},{'...'}}{{120,65},{154,0},{'...'}}{{156,49},{174,0},{'...'}}{{176,62},{269,0},{'...'}}{{271,64},{287,0},{'...'}}{{289,82},{343,0},{'...'}}{{345,83},{367,0},{'...'}}{{369,63},{381,0},{'...'}}{{383,62},{397,0},{'...'}}{{399,88},{409,0},{'...'}}{{411,55},{450,0},{'...'}}{{452,76},{464,0},{'...'}}{{466,62},{478,0},{'...'}}{{480,57},{502,0},{'...'}}{{504,78},{516,0},{'...'}}{{518,83},{536,0},{'...'}}{{538,86},{558,0},{'...'}}{{560,79},{613,0},{'...'}}{{615,78},{627,0},{'...'}}{{629,78},{643,0},{'...'}}{{645,120},{666,0},{'...'}}{{668,75},{682,0},{'...'}}{{684,73},{706,0},{'...'}}{{708,88},{722,0},{'...'}}{{724,80},{738,0},{'...'}}{{740,74},{759,0},{'...'}}{{761,79},{775,0},{'...'}}{{777,73},{790,0},{'...'}}{{792,85},{815,0},{'...'}}{{817,76},{861,0},{'...'}}{{863,106},{879,0},{'...'}}{{881,135},{932,0},{'...'}}{{934,71},{946,0},{'...'}}{{948,69},{1006,0},{'...'}}{{1008,71},{1019,0},{'...'}}{{1021,95},{1034,0},{'...'}}{{1036,77},{1054,0},{'...'}}{{1056,78},{1071,0},{'...'}}{{1073,78},{1088,0},{'...'}}{{1090,74},{1122,0},{'...'}}{{1124,74},{1146,0},{'...'}}
+Bookmarks=
+EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uMainWindow.cpp
+
+[View2]
+CustomEditViewType=TEditView
+Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp
+CursorX=57
+CursorY=74
+TopLine=15
+LeftCol=1
+Elisions={{32,67},{60,0},{'...'}}{{62,84},{72,0},{'...'}}{{74,56},{138,0},{'...'}}{{140,132},{175,0},{'...'}}{{177,60},{204,0},{'...'}}{{206,65},{232,0},{'...'}}
+Bookmarks=
+EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uReadUpdateWindow.cpp
+
+[View3]
+CustomEditViewType=TEditView
+Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\MBUpdate\WinMBUpdate_main.cpp
+CursorX=174
+CursorY=30
+TopLine=14
+LeftCol=1
+Elisions={{42,99},{74,0},{'...'}}{{76,80},{172,0},{'...'}}
+Bookmarks=
+EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\MBUpdate\WinMBUpdate_main.cpp
+
+[View4]
+CustomEditViewType=TEditView
+Module=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.cpp
+CursorX=173
+CursorY=14
+TopLine=7
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uGlobalVar.h
 
 [UndockedDesigner]
 Count=0
@@ -146,8 +193,8 @@ Width=5172
 Height=1417
 MaxLeft=-5
 MaxTop=-9
-ClientWidth=5120
-ClientHeight=1148
+ClientWidth=5109
+ClientHeight=1065
 TBDockHeight=1417
 LRDockWidth=2771
 Dockable=1
@@ -162,11 +209,11 @@ State=0
 Left=0
 Top=0
 Width=1599
-Height=4111
+Height=4037
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1599
-ClientHeight=4111
+ClientHeight=4037
 TBDockHeight=7157
 LRDockWidth=2000
 Dockable=1
@@ -230,11 +277,6 @@ Dockable=1
 StayOnTop=0
 SplitPos=149
 
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Position,
-ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,Font=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Padding=0,StyleElements=0,Touch=0,VertScrollBar=0
-
 [frmDesignPreview]
 PercentageSizes=1
 Create=1
@@ -243,12 +285,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2510
-Height=5963
+Width=1599
+Height=8444
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2510
-ClientHeight=5963
+ClientWidth=1599
+ClientHeight=8444
 TBDockHeight=5963
 LRDockWidth=2510
 Dockable=1
@@ -260,8 +302,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-12
-Top=-225
+Left=-9
+Top=-151
 Width=276
 Height=361
 MaxLeft=-1
@@ -484,8 +526,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=9
-Top=84
+Left=0
+Top=-24
 Width=1849
 Height=3139
 MaxLeft=-1
@@ -767,7 +809,7 @@ Dockable=1
 StayOnTop=0
 TabPosition=2
 ActiveTabID=ProjectManager
-TabDockClients=StructureView,ProjectManager,ClassBrowserTool,DataExplorerContainer,frmDesignPreview
+TabDockClients=StructureView,ProjectManager,ClassBrowserTool,frmDesignPreview,DataExplorerContainer
 
 [DockSite3]
 HostDockSite=DockLeftPanel
@@ -792,4 +834,7 @@ StayOnTop=0
 TabPosition=2
 ActiveTabID=PropertyInspector
 TabDockClients=PropertyInspector,ToolForm,TemplateView
+
+[ActiveProject]
+ActiveProject=1
 
