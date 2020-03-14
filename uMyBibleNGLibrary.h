@@ -4,8 +4,6 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <System.IniFiles.hpp>
-//#define _TWICIMAGE_ //Czy ma być używane obsługa jpg przez moduł buildera,
-											//czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)
 //---------------------------------------------------------------------------
 /****************************************************************************
 *                        Klasa GsListBoxMultiMClass                         *
@@ -39,10 +37,6 @@ class GsListViewMultiMClass : public TCustomListView
 		//---
     void __fastcall _OnMouseLeave(TObject *Sender);
 	private:
-	#if defined(_TWICIMAGE_) //Czy ma być używane obsługa jpg przez moduł buildera,
-													 //czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)
-		//void __fastcall _OnProgress(System::TObject* Sender, TProgressStage Stage, System::Byte PercentDone, bool RedrawNow, const System::Types::TRect &R, const System::UnicodeString Msg);
-	#endif
 };
 /****************************************************************************
 *                             Klasa GsPanelMultiM                           *
@@ -58,7 +52,6 @@ class GsPanelMultiM  : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 	private:
 		TImage *_ImageView;	//Objekt, klasy TImage do wyświetlania grafiki
-		//GsUtilityClass *pGsUtilityClass;
 		GsListViewMultiMClass *_pGsListViewMultiMClass;
 		TSplitter *_pSplitter;
 		TPageControl *_pPControlMainWindow; //Objekt klasy TPageControl na głównym oknie aplikacji

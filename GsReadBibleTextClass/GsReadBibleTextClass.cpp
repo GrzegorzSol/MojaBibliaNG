@@ -956,14 +956,14 @@ void __fastcall GsTreeBibleClass::DblClick()
 	GsTreeNodeClass *pSelectNode = dynamic_cast<GsTreeNodeClass *>(this->Selected);
 	if((pSelectNode == 0) || (pSelectNode->Level < 2)) return;
 	//---
-	//return;
+	GsReadBibleTextData::OpenSelectBookAndChapter(pSelectNode->ucIndexBook+1, 1);
+	/*
 	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
 	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA !!!
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pSelectNode->ucIndexBook, 0);
 	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
-	//TToolButton *pGetToolButton = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_PrevChapter - enImageIndex_NextChapter];
-	//pGetToolButton->Enabled = false;
+  */
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::GetImageIndex(TTreeNode* Node)
@@ -1227,14 +1227,16 @@ void __fastcall GsTreeBibleClass::_SelectPopupTreeBooksExecute(TObject *Sender)
 	//---
 	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(this->Selected);
 	if((pGsTreeNodeClass == 0) || (pGsTreeNodeClass->Level < 2)) return;
-
+	GsReadBibleTextData::OpenSelectBookAndChapter(pGsTreeNodeClass->ucIndexBook+1, pItem->Tag+1);
+	/*
 	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
 	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA !!!
 	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pGsTreeNodeClass->ucIndexBook, pItem->Tag);
 	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
-	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser/*, pGsTabSheetClass->pGsTabSetClass->TabIndex*/);
+	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
+	*/
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::_SectionHeaderResize(THeaderControl* HeaderControl, THeaderSection* Section)
@@ -1433,6 +1435,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	GsReadBibleTextData::_GsPageControl->Visible = true; //01-02-2020
 	//---
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
@@ -2673,7 +2676,7 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 	} //for(unsigned char i=0; i<uiTranslates; i++)
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextData::GetTextVersOfAdres(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers,
+void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers,
 	const unsigned char cucTrans, UnicodeString &ustrText)
 /**
 	OPIS METOD(FUNKCJI): Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
@@ -2758,6 +2761,68 @@ TProgressBar *__fastcall GsReadBibleTextData::GetCurrentNamberChaptOnSheet()
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	//---
 	return pGsTabSheetClass->pProgressBar;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::GetAdressFromId(UnicodeString &_ustrResult, int _iBook, int _iChapt, int _iVers)
+/**
+	OPIS METOD(FUNKCJI): Konwersja z podanych informacji typu int, numeru księgi, rozdziału i wersetu, na ciąg identyfikacyjny (001001001)
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	_ustrResult = "";
+	//--- Numer księgi
+	if(_iBook < 10)
+	{
+		_ustrResult = Format("00%u", ARRAYOFCONST((_iBook)));
+	}
+	else if(_iBook >= 10)
+	{
+		_ustrResult = Format("0%u", ARRAYOFCONST((_iBook)));
+	}
+	//--- Numer rozdziału
+	if(_iChapt < 10)
+	{
+		_ustrResult += Format("00%u", ARRAYOFCONST((_iChapt)));
+	}
+	else if((_iChapt >= 10) && (_iChapt < 100))
+	{
+		_ustrResult += Format("0%u", ARRAYOFCONST((_iChapt)));
+	}
+	else if(_iChapt >= 100)
+	{
+		_ustrResult += Format("%u", ARRAYOFCONST((_iChapt)));
+	}
+	//--- Werset
+  if(_iVers == 0) return;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _iChapt)
+/**
+	OPIS METOD(FUNKCJI): Otwarcie zakładki i wczytanie konkretnej księgi i rozdziału
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	int iBook;
+	if((_iBook < 1) && (_iBook > 73)) return;
+
+
+	if((_iBook >= 0) && (_iBook < 40)) iBook = _iBook + 1;
+	if((_iBook >= 40) && (_iBook < 67)) iBook = _iBook + 2;
+	if((_iBook >= 67) && (_iBook < 74)) iBook = _iBook + 3;
+	//---
+	if(GsReadBibleTextData::pGsTreeBibleClass->Selected == NULL)
+		{GsReadBibleTextData::pGsTreeBibleClass->Selected = GsReadBibleTextData::pGsTreeBibleClass->Items->Item[iBook];}
+	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
+	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
+	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA. NUMER ROZDZIAŁU LICZYMY OD ZERA !!!
+	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
+	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(_iBook-1, _iChapt-1);
+	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
+	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
 }
 //---------------------------------------------------------------------------
 TList *__fastcall GsReadBibleTextData::GetListAllTrChap()

@@ -181,7 +181,13 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	//OleInitialize(NULL);
+	if(TFile::Exists(GlobalVar::Global_custrPathBackgroundWindow))
+	{
+		//--- Wczytanie grafiki podkładu (dopuszczalne jest jej brak)
+    //this->ImageBackgroundWindow->Transparent = true;
+		this->ImageBackgroundWindow->Picture->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
+	}
+	//---
 	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
 		GsDebugClass::WriteDebug("TMainBibleWindow::FormCreate()");
 	#endif
@@ -276,6 +282,8 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	int iBook, iChapt;
+	//---
 	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
 		GsDebugClass::WriteDebug("TMainBibleWindow::FormActivate()");
 	#endif
@@ -283,6 +291,29 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true))
 	{
 		this->Act_UpdateExecute(this->Act_Update);
+	}
+	//---
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true))
+	//Odczyt poprzednio otwartych ksiąg
+	{
+		//Odczyt otwartych ksiąg podczas ostatniego zamknięcia aplikacji
+		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
+		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+		pHSListOpenBooksInExit->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, "");
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("pHSListOpenBooksInExit->Count: %u", ARRAYOFCONST((pHSListOpenBooksInExit->Count))));
+		#endif
+		for(int i=0; i<pHSListOpenBooksInExit->Count; i++)
+		{
+			iBook = pHSListOpenBooksInExit->Strings[i].SubString(1, 3).ToIntDef(1);
+			iChapt = pHSListOpenBooksInExit->Strings[i].SubString(4, 3).ToIntDef(1);
+			GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("%u - pHSListOpenBooksInExit->Strings[i] = %s; %u:%u", ARRAYOFCONST((i, pHSListOpenBooksInExit->Strings[i], iBook, iChapt))));
+			#endif
+		}
+
+		delete pHSListOpenBooksInExit;// pHSListOpenBooksInExit = 0;
 	}
 }
 //---------------------------------------------------------------------------
@@ -355,6 +386,31 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	#endif
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppWidth, this->Width);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppHeight, this->Height);
+	//---
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true))
+	//Zapis listy otwartych ksiąg i rozdziałów w momencie zamknięcia aplikacji
+	{
+		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
+		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+		UnicodeString ustrAdress;
+		for(int i=0; i<this->PageControlBibleText->PageCount; i++)
+		{
+			GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->Pages[i]);
+			if (pGsTabSheetClass)
+			{
+				GsReadBibleTextData::GetAdressFromId(ustrAdress, pGsTabSheetClass->_ShucIndexBook+1, pGsTabSheetClass->_ShucIndexChapt+1);
+				#if defined(_DEBUGINFO_)
+					GsDebugClass::WriteDebug(Format("ustrAdress: %s", ARRAYOFCONST((ustrAdress))));
+				#endif
+				pHSListOpenBooksInExit->Add(ustrAdress);
+			}
+		}
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("pHSListOpenBooksInExit->CommaText: %s", ARRAYOFCONST((pHSListOpenBooksInExit->CommaText))));
+		#endif
+		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, pHSListOpenBooksInExit->CommaText);
+		delete pHSListOpenBooksInExit;// pHSListOpenBooksInExit = 0;
+	}
 	//--- Zamknięcie klasy głównej do analizy Pisma
 	GsReadBibleTextData::CloseMyBible();
 	//Zwolnienie pamięci na konfiguracje aplikacji
@@ -606,6 +662,13 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 			this->Act_ResizeWork->Checked = false;
 			this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 		}
+		if(this->PageControlBibleText->PageCount == 0)
+		{
+			this->PageControlBibleText->Visible = false; //01-02-2020
+      #if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
+				GsDebugClass::WriteDebug("this->PageControlBibleText->Visible = false)");
+			#endif
+		}
 	}
 	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
 		GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-End");
@@ -700,7 +763,7 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
 	else {pSelectVersWindow = new TSelectVersWindow(this, pGsTabSheetClass->_ShucIndexBook, pGsTabSheetClass->_ShucIndexChapt);}
 	//---
 	if(!pSelectVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
-	pSelectVersWindow->ShowModal();
+	pSelectVersWindow->ShowModal(); //Musi być okno modalne!
   //Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	this->pGsLViewCommentsAllClass->ReloadAllVersComments(false);
 }

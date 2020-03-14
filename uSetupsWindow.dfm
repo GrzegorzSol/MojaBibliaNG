@@ -75,10 +75,6 @@ object SetupsWindow: TSetupsWindow
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GrBoxSetColors: TGroupBox
         Left = 0
         Top = 0
@@ -312,6 +308,8 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Flagi i prze'#322#261'czniki aplikacji'
       ImageIndex = 1
+      ExplicitLeft = 6
+      ExplicitTop = 23
       object SW_CBoxIsDisplaySplashScreen: TCheckBox
         AlignWithMargins = True
         Left = 3
@@ -364,15 +362,26 @@ object SetupsWindow: TSetupsWindow
         Caption = 'Czy sprawdza'#263' aktualizacje podczas uruchamiania aplikacji ?'
         TabOrder = 3
       end
+      object SW_CBoxReLoadBooks: TCheckBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 95
+        Width = 683
+        Height = 17
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        Caption = 
+          'Czy po ponownym uruchomieniu aplikacji, b'#281'd'#261' wczytywane ksi'#281'gi, ' +
+          'kt'#243're zosta'#322'y ostatnio zamkni'#281'te podczas opuszczania aplikacji?'
+        TabOrder = 4
+        ExplicitTop = 94
+        ExplicitWidth = 97
+      end
     end
     object SW_SheetPaths: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Scie'#380'ki dost'#281'pu'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_GrBoxSelectPathDirMulti: TGroupBox
         Left = 0
         Top = 0
@@ -484,10 +493,6 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Inne ustawienia'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object LabelSizeMainFont: TLabel
         Left = 19
         Top = 16
@@ -643,10 +648,6 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Wyb'#243'r t'#322'umacze'#324
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_ListViewAllTranslates: TListView
         AlignWithMargins = True
         Left = 12
@@ -792,7 +793,7 @@ object SetupsWindow: TSetupsWindow
     Height = 32
     Width = 32
     Left = 816
-    Top = 136
+    Top = 456
     Bitmap = {
       494C010105000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
@@ -1861,7 +1862,7 @@ object SetupsWindow: TSetupsWindow
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Left = 813
-    Top = 88
+    Top = 408
     Bitmap = {
       494C010106000800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
@@ -2138,13 +2139,13 @@ object SetupsWindow: TSetupsWindow
     Images = SW_ImgListSmallMain
     HideAfter = 750
     Left = 813
-    Top = 40
+    Top = 360
   end
   object SW_ImgListMainSmall: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Left = 813
-    Top = 184
+    Top = 504
     Bitmap = {
       494C010107003001040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020

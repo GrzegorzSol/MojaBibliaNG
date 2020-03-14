@@ -2,6 +2,7 @@ object SearchTextWindow: TSearchTextWindow
   Left = 0
   Top = 0
   ActiveControl = STW_LViewStatistic
+  AlphaBlend = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Zaawansowane wyszukiwanie tekstu.'
@@ -17,9 +18,11 @@ object SearchTextWindow: TSearchTextWindow
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnDeactivate = FormDeactivate
   OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 13
@@ -34,6 +37,10 @@ object SearchTextWindow: TSearchTextWindow
     OnChanging = STW_PControlChanging
     object STW_TabSheetInputText: TTabSheet
       Caption = 'Wprowadzanie szukanego tekstu'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object STW_LEditSearchText: TLabeledEdit
         Left = 3
         Top = 77
@@ -301,6 +308,10 @@ object SearchTextWindow: TSearchTextWindow
           'Lista wszystkich wynik'#243'w wyszukiwania, w formie wybieralnej list' +
           'y'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object STW_LViewResultSearch: TListView
           Left = 0
           Top = 0

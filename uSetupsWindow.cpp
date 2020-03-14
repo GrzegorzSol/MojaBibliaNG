@@ -21,7 +21,7 @@ TSetupsWindow *SetupsWindow;
 enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_OtherSetups, enPageSetup_Translates,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
 			enSetup_Save=10, enSetup_Return, enSetup_Cancel,
-			enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate,
+			enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
 			//Tagi dla przycisków i innych kontrolek
 			enTagControl_ButtFontMain=100,
 			enTagControl_ButtFontAdress,
@@ -67,6 +67,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_CBoxIsRequestEnd->Tag = enTag_IsRequestEnd;
 	this->SW_CBoxOnlyOne->Tag = enTag_IsOnlyOne;
 	this->SW_CBoxAutoFindUpdate->Tag = enTag_IsAutoFindUpdate;
+	this->SW_CBoxReLoadBooks->Tag = enTag_IsLoadBooksOnInit;
 	//Dodawanie grup do objektu, typu TListView
 	for(int i=0; i<enGroup_Count; i++)
 	{
@@ -166,6 +167,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->SW_CBoxIsRequestEnd->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true);
 	this->SW_CBoxOnlyOne->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, true);
 	this->SW_CBoxAutoFindUpdate->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true);
+	this->SW_CBoxReLoadBooks->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true);
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
 	this->SW_ColorBoxFavorities->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, clYellow);
@@ -264,6 +266,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, this->SW_CBoxIsRequestEnd->Checked);
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, this->SW_CBoxOnlyOne->Checked);
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, this->SW_CBoxAutoFindUpdate->Checked);
+  GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, this->SW_CBoxReLoadBooks->Checked);
 	//Zapis kolorów
     //Kolor zaznaczenie ulubionych wersetów
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, this->SW_ColorBoxFavorities->Selected);

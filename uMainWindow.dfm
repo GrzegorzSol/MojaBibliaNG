@@ -23,6 +23,18 @@ object MainBibleWindow: TMainBibleWindow
     885)
   PixelsPerInch = 96
   TextHeight = 13
+  object ImageBackgroundWindow: TImage
+    Left = 0
+    Top = 46
+    Width = 1188
+    Height = 820
+    Align = alClient
+    Stretch = True
+    ExplicitLeft = 464
+    ExplicitTop = 448
+    ExplicitWidth = 105
+    ExplicitHeight = 105
+  end
   object PageControlBibleText: TPageControl
     Left = 0
     Top = 46
@@ -33,6 +45,7 @@ object MainBibleWindow: TMainBibleWindow
     ParentShowHint = False
     ShowHint = False
     TabOrder = 1
+    Visible = False
     StyleElements = []
     OnChange = MBW_PageControlAllChange
     OnDrawTab = MBW_PageControlsAllDrawTab

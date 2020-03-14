@@ -4,9 +4,7 @@
 #include "uMyBibleNGLibrary.h"
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
-#if !defined(_TWICIMAGE_) //Jeśli używamy modułu z buildera
-	#include <Jpeg.hpp>
-#endif
+#include <Jpeg.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -293,21 +291,7 @@ void __fastcall GsListViewMultiMClass::DoSelectItem(TListItem* Item, bool Select
 	//Wyświetlenie wybranego zasobu multimedialnego w objekcie, klasy TImage
 	if(!TFile::Exists(Item->Caption)) return;
 	pGsPanelMultiM->_ImageView->Stretch = true;
-	#if defined(_TWICIMAGE_) //Czy ma być używane obsługa jpg przez moduł buildera,
-													 //czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)
-		//--- Test 11-07-2019
-		TWICImage *pWICImage = new TWICImage();
-		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
-		pWICImage->LoadFromFile(Item->Caption);
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("pWICImage->Width: %d", ARRAYOFCONST((pWICImage->Width))));
-		#endif
-		pGsPanelMultiM->_ImageView->Picture->Assign(pWICImage);
-		//pGsPanelMultiM->_ImageView->Picture->Bitmap->Assign(pWICImage);
-		delete pWICImage; pWICImage = 0;
-	#else
-		pGsPanelMultiM->_ImageView->Picture->LoadFromFile(Item->Caption);
-	#endif
+	pGsPanelMultiM->_ImageView->Picture->LoadFromFile(Item->Caption);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
@@ -394,17 +378,6 @@ void __fastcall GsListViewMultiMClass::_OnMouseLeave(TObject *Sender)
 	#endif
 }
 //---------------------------------------------------------------------------
-#if defined(_TWICIMAGE_) //Czy ma być używane obsługa jpg przez moduł buildera,
-												 //czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)
-/*
-void __fastcall GsListViewMultiMClass::_OnProgress(System::TObject* Sender, TProgressStage Stage, System::Byte PercentDone, bool RedrawNow, const System::Types::TRect &R, const System::UnicodeString Msg)
-{
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("GsListViewMultiMClass::_OnProgress()");
-	#endif
-}
-*/
-#endif
 /****************************************************************************
 *                           Klasa GsPanelMultiM                             *
 *****************************************************************************/
@@ -480,6 +453,7 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->_pPControlMainWindow->Visible = true; //01-02-2020
 	GsTabSheetGraphics *pGsTabSheetGraphics = new GsTabSheetGraphics(this->_pPControlMainWindow);
 	if(!pGsTabSheetGraphics) throw(Exception("Błąd inicjalizacji objektu GsTabSheetGraphics"));
 	//---
@@ -487,17 +461,7 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 	TListItem* pListItem = this->_pGsListViewMultiMClass->Selected;
 	pGsTabSheetGraphics->Caption = Format("\"%s\"", ARRAYOFCONST((TPath::GetFileName(pListItem->Caption))));
-  #if defined(_TWICIMAGE_) //Czy ma być używane obsługa jpg przez moduł buildera,
-													 //czy przez mechanizm wbudowany w Windows (Microsoft Windows Imaging Component)
-		//--- Test 11-07-2019
-		TWICImage *pWICImage = new TWICImage();
-		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
-		pWICImage->LoadFromFile(pListItem->Caption);
-		pGsTabSheetGraphics->_pImageFullDisplay->Picture->Assign(pWICImage);
-		delete pWICImage; pWICImage = 0;
-	#else
-		pGsTabSheetGraphics->_pImageFullDisplay->Picture->LoadFromFile(pListItem->Caption);
-	#endif
+	pGsTabSheetGraphics->_pImageFullDisplay->Picture->LoadFromFile(pListItem->Caption);
 }
 //---------------------------------------------------------------------------
 /****************************************************************************

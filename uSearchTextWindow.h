@@ -71,6 +71,8 @@ __published:	// IDE-managed Components
 	void __fastcall STW_PControlChanging(TObject *Sender, bool &AllowChange);
 	void __fastcall STW_LViewStatisticDrawItem(TCustomListView *Sender, TListItem *Item,
           TRect &Rect, TOwnerDrawState State);
+	void __fastcall FormDeactivate(TObject *Sender);
+	void __fastcall FormActivate(TObject *Sender);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety

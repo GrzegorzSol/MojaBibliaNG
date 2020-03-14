@@ -19,8 +19,9 @@ struct GlobalVar
 														 Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
 														 Global_custrGetDataDir,          //Ścieżka dostępu do katalogu z danymi aplikacji
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
-														 Global_custrPathFileStartDisplay,		//Ściezka dostępu do grafiki wyświetlanej podczas startu aplikacj
+														 //Global_custrPathFileStartDisplay,		//Ściezka dostępu do grafiki wyświetlanej podczas startu aplikacj
 														 //Global_custrExtendInfoTranslate,	//Rozszerzenie pliku z informacją o danym tłumaczeniu. Plik ten tworzy sie przez dodanie tego
+                             Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
 														 Global_custrExtendCommentsFiles, //Rozszerzenie plików z komentarzami
 														 //Global_custrExtendCommentsPlain, //Rozszerzenie plików z komentarzem, bez formatowania, jako czysty tekst
 														 Global_custrPathFileInterlinear,			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
@@ -44,12 +45,14 @@ struct GlobalVar
 														 GlobalIni_MainSection_Main,           //Główna sekcja Main pliku ini
 																GlobalIni_PathMultiM1, GlobalIni_PathMultiM2, GlobalIni_PathMultiM3, //Ścieżki dostępu do wybranych katalogów z multimediami
 																GlobalIni_AppWidth, GlobalIni_AppHeight, //Szerokość i wysokość głównego okna
+																GlobalIni_LoadBooksOnExit, //Lista otwartych ksią i rozdziałów w momencie zamknięcia aplikacji
 														 //----- Sekcje Flags pliku ini
 														 GlobalIni_FlagsSection_Main,          //Główna sekcja FLAGS pliku ini
 																GlobalIni_IsDisplaySplashStart, //Czy wyświetlać winiete startową podczas startu aplikacji
 																GlobalIni_IsRequestEnd,         //czy pytać o zamknięcie aplikacji
 																GlobalIni_IsOnlyOne,            //Dozwolona tylko jedna kopia aplikacji
 																GlobalIni_IsAutoFindUpdate,       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
+                                GlobalIni_IsLoadBooksOnInit, //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
 																//GlobalIni_IsStartInfo,          //Podczas startu aplikacji czy jest wyświetlane powitanie
 														 //----- Sekcje Colors pliku ini
 														 GlobalIni_ColorsSection_Main,         //Główna sekcja COLORS pliku ini
@@ -81,6 +84,7 @@ struct GlobalVar
 											//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
 											Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
 											Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
+ const static unsigned char cuchABlendValue; //Współczynnik przezroczystości okna, gdy jest nieaktywne
 //***************************************************************************
 	static TStringList *Global_SListPathMultiM;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 	static TMemIniFile *Global_ConfigFile;			 //Globalny wskażnik na plik konfiguracyjny

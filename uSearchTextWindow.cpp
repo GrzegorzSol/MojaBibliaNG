@@ -567,4 +567,26 @@ void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *S
 	}
 }
 //---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::FormDeactivate(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->AlphaBlendValue = GlobalVar::cuchABlendValue; //16-02-2020
+}
+//---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::FormActivate(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->AlphaBlendValue = 255; //16-02-2020
+}
+//---------------------------------------------------------------------------
 

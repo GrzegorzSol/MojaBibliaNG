@@ -219,11 +219,14 @@ class GsReadBibleTextData
 		//Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
 		static void __fastcall GetSelectVerAllTranslates(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers, THashedStringList *_HSListVers);
 		//Metoda zwraca dokładny tekst wersetu o konkretnym adresie i tłumaczeniu
-		static void __fastcall GetTextVersOfAdres(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers, const unsigned char cucTrans, UnicodeString &ustrText);
+		static void __fastcall GetTextVersOfAdress(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers, const unsigned char cucTrans, UnicodeString &ustrText);
+		//Otwarcie zakładki i wczytanie konkretnej księgi i rozdziału
+		static void __fastcall OpenSelectBookAndChapter(int _iBook, int _iChapt=0);
 		static inline TImageList *__fastcall GetImageList() {return GsReadBibleTextData::_GsImgListData;};
 		static void __fastcall LoadFirstChapt(const unsigned char cucBook); //Otwiera pierwszy rozdział wybranej księgi
 		static unsigned char __fastcall GetConvertIdToTreeView(const unsigned char cucID); //Tłumaczenie "płaskich" identyfikatorów, na pozycje w objekcie, klasy GsTreeBibleClass
 		static TProgressBar *__fastcall GetCurrentNamberChaptOnSheet();	//Metoda zwraca wskaźnik na progresbar miejsca aktualnego rozdziału, w odniesieniu do aktualnej księgi
+		static void __fastcall GetAdressFromId(UnicodeString &_ustrResult, int _iBook, int _iChapt, int _iVers=0); //Konwersja z podanych informacji typu int, numeru księgi, rozdziału i wersetu, na ciąg identyfikacyjny (001001001)
 		//Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
 		static TList *__fastcall GetListAllTrChap();
 };

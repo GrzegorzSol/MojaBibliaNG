@@ -186,7 +186,7 @@ void __fastcall GsChildBibleScheme::ViewSelectObject()
 */
 {
 	UnicodeString _ustrVers;
-	GsReadBibleTextData::GetTextVersOfAdres(this->ucBook, this->ucChapt+1, this->ucVers, this->ucTrans, _ustrVers);
+	GsReadBibleTextData::GetTextVersOfAdress(this->ucBook, this->ucChapt+1, this->ucVers, this->ucTrans, _ustrVers);
 	this->pGsMasterBibleScheme->_pVersDisplayText->Caption = Format("%s \"%s\"", ARRAYOFCONST((this->ustrVers, _ustrVers))); //Wybrany werset
 }
 //---------------------------------------------------------------------------
@@ -502,7 +502,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 					pGsChildBibleScheme->ucVers = pDataToOpen->RW_Vers;
 					pGsChildBibleScheme->ucTrans = pDataToOpen->RW_Trans;
 					//Podpowiedź w formie zawartości wersetu codeString
-					GsReadBibleTextData::GetTextVersOfAdres(pGsChildBibleScheme->ucBook, pGsChildBibleScheme->ucChapt+1, pGsChildBibleScheme->ucVers, pGsChildBibleScheme->ucTrans, _ustrVers);
+					GsReadBibleTextData::GetTextVersOfAdress(pGsChildBibleScheme->ucBook, pGsChildBibleScheme->ucChapt+1, pGsChildBibleScheme->ucVers, pGsChildBibleScheme->ucTrans, _ustrVers);
 					pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->ustrVers, _ustrVers)));
 
 					if(this->_pSelectObject) {this->_pSelectObject->Color = ColorObject[enColorNum_InActive];} //Kolor nieaktywny dlapoprzedniego objektu
@@ -633,7 +633,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 			GsChildBibleScheme *pChild = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 			if(pChild)
 			{
-				GsReadBibleTextData::GetTextVersOfAdres(pChild->ucBook, pChild->ucChapt+1, pChild->ucVers, pChild->ucTrans, _ustrVers);
+				GsReadBibleTextData::GetTextVersOfAdress(pChild->ucBook, pChild->ucChapt+1, pChild->ucVers, pChild->ucTrans, _ustrVers);
 				pStringStream->WriteString(Format("%s %s %s \"%s\" %s" ,ARRAYOFCONST((custrAdressVersRtf, pChild->ustrVers, custrVersRtf, _ustrVers, custrEndVersRtf))));
 			}
 		}
