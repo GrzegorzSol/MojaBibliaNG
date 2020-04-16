@@ -1011,7 +1011,7 @@ void __fastcall GsEditorClass::_InitImageList()
 		pMemoryStr->WriteBuffer(ID_PRINT_DIS, ARRAYSIZE(ID_PRINT_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
-		this->pTImageListActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		this->pTImageListInActive->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 4.Ikona - wyczyść
 		pMemoryStr->WriteBuffer(ID_CLEAR_DIS, ARRAYSIZE(ID_CLEAR_DIS)); //Zapis do strumienia danych

@@ -508,9 +508,17 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	}
 	//---
 	if(pGsTabSheetClass->pComboBox->ItemIndex!=iGetChap) pGsTabSheetClass->pComboBox->ItemIndex = iGetChap;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
-  //Kontrola aktywności przycisków przewijania rozdziałów do produ i do tyłu
-	TToolButton *pGetToolButtonPrev = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_PrevChapter - enImageIndex_NextChapter];
-	TToolButton *pGetToolButtonNext = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_NextChapter - enImageIndex_NextChapter];
+	//Kontrola aktywności przycisków przewijania do następnej, lub poprzedniej księgi
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("pGsTabSheetClass->_ShucIndexBook: %u", ARRAYOFCONST((pGsTabSheetClass->_ShucIndexBook))));
+	#endif
+	TToolButton *pGetNextBook = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToNextBook - enImageIndex_ToNextBook];
+	TToolButton *pGetPrevBook = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_ToNextBook];
+	pGetNextBook->Enabled = (pGsTabSheetClass->_ShucIndexBook < GsReadBibleTextData::GsNumberBooks-1);
+	pGetPrevBook->Enabled = (pGsTabSheetClass->_ShucIndexBook > 0);
+	//Kontrola aktywności przycisków przewijania rozdziałów do produ i do tyłu
+	TToolButton *pGetToolButtonPrev = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_NextChapter];
+	TToolButton *pGetToolButtonNext = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_PrevChapter];
 	pGetToolButtonNext->Enabled = pGsTabSheetClass->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].ucCountChapt-1;
 	pGetToolButtonPrev->Enabled = pGsTabSheetClass->_ShucIndexChapt > 0;
 
@@ -957,13 +965,6 @@ void __fastcall GsTreeBibleClass::DblClick()
 	if((pSelectNode == 0) || (pSelectNode->Level < 2)) return;
 	//---
 	GsReadBibleTextData::OpenSelectBookAndChapter(pSelectNode->ucIndexBook+1, 1);
-	/*
-	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
-	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
-	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA !!!
-	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pSelectNode->ucIndexBook, 0);
-	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
-  */
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::GetImageIndex(TTreeNode* Node)
@@ -1449,8 +1450,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->ImageIndex = enImageIndex_SelectChapter;
 	static const UnicodeString custrAllTranslatesTab = "Wszystkie tłumaczenia";
 	//---
-	const UnicodeString NameGraphicsButtons[] = {"Następny rozdział", "Poprzedni rozdział"},
-											NameTextButtons[] = {"Widok do czytania", "Widok do wybierania wersetów"};
+	const UnicodeString NameTextButtons[] = {"Widok do czytania", "Widok do wybierania wersetów"};
 	//Panel na TToolBar
 	TPanel *pPanelBox = new TPanel(this);
 	if(!pPanelBox) throw(Exception("Błąd inicjalizacji klasy TPanel"));
@@ -1503,7 +1503,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->pToolBarText->Images = GsReadBibleTextData::_GsImgListData;
 	this->pToolBarText->DisabledImages = GsReadBibleTextData::_GsImgListDataDisable;
 	this->pToolBarText->DrawingStyle = (Vcl::Comctrls::TTBDrawingStyle)Vcl::Comctrls::gdoGradient;
-	this->pToolBarText->HotTrackColor = clWebCornFlowerBlue;
+	this->pToolBarText->HotTrackColor = clGreen;//clWebCornFlowerBlue;
 	//--- Przyciski widoków na toolbarze
 	for(int i=ARRAYSIZE(NameTextButtons)-1; i>=0; i--)
 	{
@@ -1542,7 +1542,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	pToolButton->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego wersetu, lub rozdziału|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 	this->pToolButtonEdit = pToolButton;	//Przycisk do edycji
 		//Przewijanie rozdziałów
-	for(int i=enImageIndex_PrevChapter; i>=enImageIndex_NextChapter; i--)
+	for(int i=enImageIndex_ToPrevBook; i>=enImageIndex_ToNextBook; i--)
 	{
 		TToolButton *pToolButton = new TToolButton(this->pToolBar);
 		if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
@@ -1552,10 +1552,15 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 		pToolButton->Tag = pToolButton->ImageIndex;
 		pToolButton->OnClick = this->_OnClickButton;
 		pToolButton->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-		if(i == enImageIndex_PrevChapter)
+		//---
+		if(i == enImageIndex_ToNextBook)
+			pToolButton->Hint = Format("Wybór następnej księgi|Przewinięcie do następnej księgi|%u", ARRAYOFCONST((i)));
+		else if(i == enImageIndex_PrevChapter)
 			pToolButton->Hint = Format("Poprzedni rozdział|Przewinięcie zawartości wybranej księgi do poprzedniego rozdziału|%u", ARRAYOFCONST((i)));
 		else if(i == enImageIndex_NextChapter)
-      pToolButton->Hint = Format("Następny rozdział|Przewinięcie zawartości wybranej księgi do następnego rozdziału|%u", ARRAYOFCONST((i)));
+			pToolButton->Hint = Format("Następny rozdział|Przewinięcie zawartości wybranej księgi do następnego rozdziału|%u", ARRAYOFCONST((i)));
+		else if(i == enImageIndex_ToPrevBook)
+      pToolButton->Hint = Format("Wybór poprzedniej księgi|Przewinięcie do poprzedniej księgi|%u", ARRAYOFCONST((i)));
 	}
 	//***************** Stworzenie dolnego objektu, klasy MBNGTabSetClass, do wyboru wyświetlania
 	this->pGsTabSetClass = new GsTabSetClass(this);
@@ -1709,11 +1714,29 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 	//---
 	switch(pToolButton->Tag)  //Identyfikowanie, który przycisk został wybrany
 	{
+		case enImageIndex_ToNextBook:    //Następna księga
+		{
+			if(this->_ShucIndexBook < GsReadBibleTextData::GsNumberBooks-1)
+			{
+        this->_ShucIndexBook++;
+				this->pComboBox->ItemIndex = 0;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
+        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
+				//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
+				this->pComboBox->Clear();
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+				this->pComboBox->ItemIndex = 0;
+				#if defined(_DEBUGINFO_)
+					GsDebugClass::WriteDebug(Format("this->_ShucIndexBook: %u - %u", ARRAYOFCONST((this->_ShucIndexBook, GsReadBibleTextData::GsNumberBooks-1))));
+				#endif
+			}
+		}
+		break;
+		//---
 		case enImageIndex_NextChapter:     //Następny rozdział
 		{
-			TToolButton *pGetToolButton = this->pToolBar->Buttons[enImageIndex_PrevChapter - enImageIndex_NextChapter];
-			if(!pGetToolButton) throw(Exception("Błąd uzyskania wskaźnika na przycisk"));
-			pGetToolButton->Enabled = true;
 			if(this->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt-1)
 			{
 				this->_ShucIndexChapt++; //Następny rozdział
@@ -1728,20 +1751,39 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 		//---
 		case enImageIndex_PrevChapter:     //Poprzedni rozdział
 		{
-			TToolButton *pGetToolButton = this->pToolBar->Buttons[enImageIndex_NextChapter - enImageIndex_NextChapter];
-			if(!pGetToolButton) throw(Exception("Błąd uzyskania wskaźnika na przycisk"));
-			pGetToolButton->Enabled = true;
 			if(this->_ShucIndexChapt > 0)
 			{
 				this->_ShucIndexChapt--; //Poprzedni rozdział
-        this->pComboBox->ItemIndex--;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				this->pComboBox->ItemIndex--;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
 				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, this->_ShucIndexChapt);
-        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//pToolButton->Enabled = this->_ShucIndexChapt > 0;
 			}
 		}
 		break;
+		//---
+		case enImageIndex_ToPrevBook:    //Poprzednia księga
+		{
+			if(this->_ShucIndexBook > 0)
+			{
+				this->_ShucIndexBook--;
+				this->pComboBox->ItemIndex = 0;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
+        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
+        //Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
+				this->pComboBox->Clear();
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+				this->pComboBox->ItemIndex = 0;
+				#if defined(_DEBUGINFO_)
+					GsDebugClass::WriteDebug(Format("this->_ShucIndexBook: %u - %u", ARRAYOFCONST((this->_ShucIndexBook, 0))));
+				#endif
+			}
+		}
+		break;
+		//---
 		//---
 		case enImageIndex_ViewSelectText:	//18.Obraz widoku tekstu biblijnego do selekcji wersetów
 		{
@@ -2091,103 +2133,115 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 4.Ikona następnego rozdziału
+		//--- 4.Ikona następnej księgi
+			pMemoryStr->WriteBuffer(ID_TONEXT_BOOK, ARRAYSIZE(ID_TONEXT_BOOK)); 						//Zapis do strumienia danych
+			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+			GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+			pMemoryStr->Clear();
+		//--- 5.Ikona następnego rozdziału
 		pMemoryStr->WriteBuffer(ID_NEXTCHAPTER, ARRAYSIZE(ID_NEXTCHAPTER)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 5.Ikona poprzedniego rozdziału
+		//--- 6.Ikona poprzedniego rozdziału
 		pMemoryStr->WriteBuffer(ID_PREVCHAPTER, ARRAYSIZE(ID_PREVCHAPTER)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 6.Ikona wyświetlenia wybranego werseu
+		//--- 7.Ikona poprzedniej księgi
+			pMemoryStr->WriteBuffer(ID_TOPREV_BOOK, ARRAYSIZE(ID_TOPREV_BOOK)); 						//Zapis do strumienia danych
+			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+			GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+			pMemoryStr->Clear();
+		//--- 8.Ikona wyświetlenia wybranego werseu
 		pMemoryStr->WriteBuffer(ID_DISPLAYVERS, ARRAYSIZE(ID_DISPLAYVERS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 7.Ikona wyświetlenia wyboru tłumaczeń
+		//--- 9.Ikona wyświetlenia wyboru tłumaczeń
 		pMemoryStr->WriteBuffer(ID_TRANSLATES, ARRAYSIZE(ID_TRANSLATES)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 8.Ikona wyboru wiersza
+		//--- 10.Ikona wyboru wiersza
 		pMemoryStr->WriteBuffer(ID_SELECTVERS, ARRAYSIZE(ID_SELECTVERS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 9.Ikona informacji i pomocy
+		//--- 11.Ikona informacji i pomocy
 		pMemoryStr->WriteBuffer(ID_INFOHELP, ARRAYSIZE(ID_INFOHELP)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 10.Przeniesienie wybranego tekstu nazakładkę
+		//--- 12.Przeniesienie wybranego tekstu nazakładkę
 		pMemoryStr->WriteBuffer(ID_COPYTOSHEET, ARRAYSIZE(ID_COPYTOSHEET)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 11.Ikona kolumny greckich słów
+		//--- 13.Ikona kolumny greckich słów
 		pMemoryStr->WriteBuffer(ID_GRECWORD_COLUMN, ARRAYSIZE(ID_GRECWORD_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 12.Ikona kolumny greckich słów stronga
+		//--- 14.Ikona kolumny greckich słów stronga
 		pMemoryStr->WriteBuffer(ID_GRECSTRONG_COLUMN, ARRAYSIZE(ID_GRECSTRONG_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 13.Ikona kolumny greckich słów tłumaczenia
+		//--- 15.Ikona kolumny greckich słów tłumaczenia
 		pMemoryStr->WriteBuffer(ID_GRECDICTIONARY_COLUMN, ARRAYSIZE(ID_GRECDICTIONARY_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 14.Ikona kolumny greckich pozycja
+		//--- 16.Ikona kolumny greckich pozycja
 		pMemoryStr->WriteBuffer(ID_GRECWORDITEM_COLUMN, ARRAYSIZE(ID_GRECWORDITEM_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 15.Ikona przełącznika ulubionego wersetu
+		//--- 17.Ikona przełącznika ulubionego wersetu
 		pMemoryStr->WriteBuffer(ID_SELECTFAV_VERSET, ARRAYSIZE(ID_SELECTFAV_VERSET)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 16.Ikona zapisywania
+		//--- 18.Ikona zapisywania
 		pMemoryStr->WriteBuffer(ID_SAVEICON, ARRAYSIZE(ID_SAVEICON)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 17.Ikona usuwania
+		//--- 19.Ikona usuwania
 		pMemoryStr->WriteBuffer(ID_DELETEICON, ARRAYSIZE(ID_DELETEICON)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 18.Ikona do selekcji textu
+		//--- 20.Ikona do selekcji textu
 		pMemoryStr->WriteBuffer(ID_VIEWSELECTTEXT, ARRAYSIZE(ID_VIEWSELECTTEXT)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 19.Ikona do wyłącznie czytania teksty
+		//--- 21.Ikona do wyłącznie czytania teksty
 		pMemoryStr->WriteBuffer(ID_VIEWONLYREADTEXT, ARRAYSIZE(ID_VIEWONLYREADTEXT)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 20.Ikona do rozpoczęcia edycji
+		//--- 22.Ikona do rozpoczęcia edycji
 		pMemoryStr->WriteBuffer(ID_EDITTEXT, ARRAYSIZE(ID_EDITTEXT)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
@@ -2218,103 +2272,115 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 4.Ikona następnego rozdziału
+		//--- 4.Ikona następnej księgi
+			pMemoryStr->WriteBuffer(ID_TONEXT_BOOK_DIS, ARRAYSIZE(ID_TONEXT_BOOK_DIS)); 						//Zapis do strumienia danych
+			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+			GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+			pMemoryStr->Clear();
+		//--- 5.Ikona następnego rozdziału
 		pMemoryStr->WriteBuffer(ID_NEXTCHAPTER_DIS, ARRAYSIZE(ID_NEXTCHAPTER_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 5.Ikona poprzedniego rozdziału
+		//--- 6.Ikona poprzedniego rozdziału
 		pMemoryStr->WriteBuffer(ID_PREVCHAPTER_DIS, ARRAYSIZE(ID_PREVCHAPTER_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 6.Ikona wyświetlenia wybranego werseu
+    //--- 7.Ikona poprzedniej księgi
+			pMemoryStr->WriteBuffer(ID_TOPREV_BOOK_DIS, ARRAYSIZE(ID_TOPREV_BOOK_DIS)); 						//Zapis do strumienia danych
+			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+			GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+			pMemoryStr->Clear();
+		//--- 8.Ikona wyświetlenia wybranego werseu
 		pMemoryStr->WriteBuffer(ID_DISPLAYVERS_DIS, ARRAYSIZE(ID_DISPLAYVERS_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 7.Ikona wyświetlenia wyboru tłumaczeń
+		//--- 9.Ikona wyświetlenia wyboru tłumaczeń
 		pMemoryStr->WriteBuffer(ID_TRANSLATES_DIS, ARRAYSIZE(ID_TRANSLATES_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 8.Ikona wyboru wiersza
+		//--- 10.Ikona wyboru wiersza
 		pMemoryStr->WriteBuffer(ID_SELECTVERS_DIS, ARRAYSIZE(ID_SELECTVERS_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 9.Ikona informacji i pomocy
+		//--- 11.Ikona informacji i pomocy
 		pMemoryStr->WriteBuffer(ID_INFOHELP_DIS, ARRAYSIZE(ID_INFOHELP_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 10.Przeniesienie wybranego tekstu nazakładkę
+		//--- 12.Przeniesienie wybranego tekstu nazakładkę
 		pMemoryStr->WriteBuffer(ID_COPYTOSHEET_DIS, ARRAYSIZE(ID_COPYTOSHEET_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 11.Ikona kolumny greckich słów
+		//--- 13.Ikona kolumny greckich słów
 		pMemoryStr->WriteBuffer(ID_GRECWORD_COLUMN_DIS, ARRAYSIZE(ID_GRECWORD_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 12.Ikona kolumny greckich słów stronga
+		//--- 14.Ikona kolumny greckich słów stronga
 		pMemoryStr->WriteBuffer(ID_GRECSTRONG_COLUMN_DIS, ARRAYSIZE(ID_GRECSTRONG_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 13.Ikona kolumny greckich słów tłumaczenia
+		//--- 15.Ikona kolumny greckich słów tłumaczenia
 		pMemoryStr->WriteBuffer(ID_GRECDICTIONARY_COLUMN_DIS, ARRAYSIZE(ID_GRECDICTIONARY_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 14.Ikona kolumny greckich pozycja
+		//--- 16.Ikona kolumny greckich pozycja
 		pMemoryStr->WriteBuffer(ID_GRECWORDITEM_COLUMN_DIS, ARRAYSIZE(ID_GRECWORDITEM_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 15.Ikona przełącznika ulubionego wersetu
+		//--- 17.Ikona przełącznika ulubionego wersetu
 		pMemoryStr->WriteBuffer(ID_SELECTFAV_VERSET_DIS, ARRAYSIZE(ID_SELECTFAV_VERSET_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 16.Ikona zapisywania
+		//--- 18.Ikona zapisywania
 		pMemoryStr->WriteBuffer(ID_SAVEICON_DIS, ARRAYSIZE(ID_SAVEICON_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 17.Ikona usuwania
+		//--- 19.Ikona usuwania
 		pMemoryStr->WriteBuffer(ID_DELETEICON_DIS, ARRAYSIZE(ID_DELETEICON_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 18.Ikona do selekcji textu
+		//--- 20.Ikona do selekcji textu
 		pMemoryStr->WriteBuffer(ID_VIEWSELECTTEXT_DIS, ARRAYSIZE(ID_VIEWSELECTTEXT_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 19.Ikona do wyłącznie czytania teksty
+		//--- 21.Ikona do wyłącznie czytania teksty
 		pMemoryStr->WriteBuffer(ID_VIEWONLYREADTEXT_DIS, ARRAYSIZE(ID_VIEWONLYREADTEXT_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 20.Ikona do rozpoczęcia edycji
+		//--- 22.Ikona do rozpoczęcia edycji
 		pMemoryStr->WriteBuffer(ID_EDITTEXT_DIS, ARRAYSIZE(ID_EDITTEXT_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon

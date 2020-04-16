@@ -44,24 +44,26 @@ enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_Book,            //2.Pojedyńcza księga
 			enImageIndex_SelectChapter,   //3.Wybór rozdziału
 			//--- Przyciski
-			enImageIndex_NextChapter,     //4.Następny rozdział
-			enImageIndex_PrevChapter,     //5.Poprzedni rozdział
-			enImageIndex_DisplayVers,     //6.Wyświetl wybrany werset
-			enImageIndex_Translates,      //7.Wybór tłumaczenia
-			enImageIndex_SelectVers,			//8.Wybór wiersza
-			enImageIndex_InfoHelp,        //9.Informacja i pomoc
-			enImageIndex_CopyToSheet,			//10.Przeniesienie wybranego tekstu na zakładkę
+			enImageIndex_ToNextBook,    //4.Następna księga
+			enImageIndex_NextChapter,     //5.Następny rozdział
+			enImageIndex_PrevChapter,     //6.Poprzedni rozdział
+			enImageIndex_ToPrevBook,    //7.Poprzednia księga
+			enImageIndex_DisplayVers,     //8.Wyświetl wybrany werset
+			enImageIndex_Translates,      //9.Wybór tłumaczenia
+			enImageIndex_SelectVers,			//10.Wybór wiersza
+			enImageIndex_InfoHelp,        //11.Informacja i pomoc
+			enImageIndex_CopyToSheet,			//12.Przeniesienie wybranego tekstu na zakładkę
 			//---Ikony do słownika i korkondancji grecko-polskiej
-			enImageIndex_GrecWordColumn,  //11.Obraz kolumny greckiego słowa
-			enImageIndex_GrecStrongColumn,//12.Obraz kolumny numeracji Stronga
-			enImageIndex_GrecDictionaryColumn, //13.Obraz kolumny tłumaczenia
-			enImageIndex_GrecWordItem,    //14.Obraz pozycji w słowniku grecko-polskim
-			enImageIndex_SelectFavVerset, //15.Obraz zaznaczania ulubionego wersetu
-			enImageIndex_Save,            //16.Obraz zapisywania
-			enImageIndex_Delete,          //17.Obraz kasowania
-			enImageIndex_ViewSelectText,	//18.Obraz widoku tekstu biblijnego do selekcji wersetów
-			enImageIndex_ReadOnlyText,    //19.Obraz widoku tekstu biblijnego tylko do przeglądania
-			enImageIndex_EditText,        //20.Obraz rozpoczęcia edycji
+			enImageIndex_GrecWordColumn,  //13.Obraz kolumny greckiego słowa
+			enImageIndex_GrecStrongColumn,//14.Obraz kolumny numeracji Stronga
+			enImageIndex_GrecDictionaryColumn, //15.Obraz kolumny tłumaczenia
+			enImageIndex_GrecWordItem,    //16.Obraz pozycji w słowniku grecko-polskim
+			enImageIndex_SelectFavVerset, //17.Obraz zaznaczania ulubionego wersetu
+			enImageIndex_Save,            //18.Obraz zapisywania
+			enImageIndex_Delete,          //19.Obraz kasowania
+			enImageIndex_ViewSelectText,	//20.Obraz widoku tekstu biblijnego do selekcji wersetów
+			enImageIndex_ReadOnlyText,    //21.Obraz widoku tekstu biblijnego tylko do przeglądania
+			enImageIndex_EditText,        //22.Obraz rozpoczęcia edycji
 			enImageIndex_Count            //Ilość grafik w objekcie GsReadBibleTextData::GsImgListData, typu TImageList
 		 };
 //Deklaracja niektórych klas
