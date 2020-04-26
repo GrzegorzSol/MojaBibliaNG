@@ -19,11 +19,9 @@ struct GlobalVar
 														 Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
 														 Global_custrGetDataDir,          //Ścieżka dostępu do katalogu z danymi aplikacji
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
-														 //Global_custrPathFileStartDisplay,		//Ściezka dostępu do grafiki wyświetlanej podczas startu aplikacj
-														 //Global_custrExtendInfoTranslate,	//Rozszerzenie pliku z informacją o danym tłumaczeniu. Plik ten tworzy sie przez dodanie tego
-                             Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
+														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
+														 Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
 														 Global_custrExtendCommentsFiles, //Rozszerzenie plików z komentarzami
-														 //Global_custrExtendCommentsPlain, //Rozszerzenie plików z komentarzem, bez formatowania, jako czysty tekst
 														 Global_custrPathFileInterlinear,			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
 														 Global_custrPathMultimediaFilesData,//Ścieżka dostępu do danych multimedialnych
 														 Global_custrPathFileFavoriteVers,    //Ścieżka dostępu do pliku z listą ulubionych wersetów

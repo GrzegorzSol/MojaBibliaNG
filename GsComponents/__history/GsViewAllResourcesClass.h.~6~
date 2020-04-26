@@ -1,0 +1,20 @@
+#ifndef GsViewAllResourcesClassH
+#define GsViewAllResourcesClassH
+
+#include <Vcl.ComCtrls.hpp>
+//---------------------------------------------------------------------------
+class GsViewAllResourcesClass : public TCustomListView
+{
+  public:
+		__fastcall GsViewAllResourcesClass(TComponent* Owner);
+		__fastcall virtual ~GsViewAllResourcesClass();
+	protected:
+		virtual void __fastcall CreateWnd();
+		virtual void __fastcall DestroyWnd();
+		//virtual void __fastcall DoSelectItem(TListItem* Item, bool Selected);
+		//virtual void __fastcall DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
+	private:
+    void __fastcall _CreateAllColumns(); //Tworzenie kolumn
+};
+//---------------------------------------------------------------------------
+#endif

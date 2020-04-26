@@ -64,6 +64,7 @@ __published:	// IDE-managed Components
 	TAction *Act_Update;
 	TAction *Act_EditChapter;
 	TImage *ImageBackgroundWindow;
+	TAction *Act_MailChapt;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -96,6 +97,7 @@ __published:	// IDE-managed Components
 	void __fastcall PageControlToolsMouseEnter(TObject *Sender);
 	void __fastcall TabSheetAllToolsMouseLeave(TObject *Sender);
 	void __fastcall Act_EditChapterExecute(TObject *Sender);
+	void __fastcall Act_MailChaptExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

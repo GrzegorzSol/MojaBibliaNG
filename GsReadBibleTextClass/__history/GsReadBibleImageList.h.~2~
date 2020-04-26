@@ -1,0 +1,9 @@
+#ifndef GsReadBibleImageListH
+#define GsReadBibleImageListH
+//---------------------------------------------------------------------------
+GsReadBibleImageList(TImageList *_pImgListEnable, TImageList _*pImgListDisable)
+{
+
+}
+//---------------------------------------------------------------------------
+#endif

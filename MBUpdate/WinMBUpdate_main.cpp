@@ -22,15 +22,16 @@ HWND Global_ListBox, Global_ProgressBar, Global_Timer;
 HANDLE Global_hSemaphore;
 
 TCHAR Global_lpszPathExistsOldApplic[MAX_PATH],  //Ścieżka dostępu do katalogu lokalnej, istniejącej aplikacji
+			Global_lpszPathExistsOldApplic_x64[MAX_PATH],  //Ścieżka dostępu do katalogu lokalnej, istniejącej aplikacji 64 bitowej
+			//---
 			Global_lpszDownloadedNewApplic[MAX_PATH],  //Ścieżka dostępu do pliku pobranego, aplikacji
+			Global_lpszDownloadedNewApplic_x64[MAX_PATH],  //Ścieżka dostępu do pliku pobranego, aplikacji 64 bitowej
+			//---
 			Global_lpszMutexName[Global_ciMaxSizeMutexName],//Pełna nazwa mutexa
-			Global_lpszDirNameUpd[MAX_PATH] = TEXT("MojaBibliaNG");
+			Global_lpszDirNameUpd[MAX_PATH] = TEXT("MojaBibliaNG"); //Katalog
 
-#if defined(_MBTESTING_)
-	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG Testing.exe");          //Nazwa lokalna aplikacji
-#else
-	const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG.exe");          //Nazwa lokalna aplikacji
-#endif
+const	TCHAR Global_lpcszNameApplic[Global_cuMaxLenName] = TEXT("Moja Biblia NG.exe"),          //Nazwa lokalna aplikacji
+						Global_lpcszNameApplic_x64[Global_cuMaxLenName] = TEXT("Moja Biblia NG x64.exe");      //Nazwa lokalna aplikacji 64bitowej
 /*
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
@@ -53,18 +54,29 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 	//Tworzenie pełnej nazwy mutexa
 	StringCchPrintf(Global_lpszMutexName, Global_ciMaxSizeMutexName, TEXT("MutexName_%s"), Global_lpcszNameApplic);
 	//Ścieżka dostępu do katalogu aplikacji
-	GetCurrentDirectory(MAX_PATH, Global_lpszPathExistsOldApplic); //Ścieżka dostępu do katalogu lokalnej aplikacji
+	GetCurrentDirectory(MAX_PATH, Global_lpszPathExistsOldApplic); //Ścieżka dostępu do katalogu lokalnej aplikacji, czyli katalogu aktualnego projektu!
+  GetCurrentDirectory(MAX_PATH, Global_lpszPathExistsOldApplic_x64); //Ścieżka dostępu do katalogu lokalnej aplikacji, czyli katalogu aktualnego projektu!
 	PathAppend(Global_lpszPathExistsOldApplic, Global_lpcszNameApplic);
-
+	PathAppend(Global_lpszPathExistsOldApplic_x64, Global_lpcszNameApplic_x64);
+	//Katalog tymczasowy, do którego sa pobirane aktualizacje
 	GetTempPath(MAX_PATH, Global_lpszDownloadedNewApplic); //Pobranie ściezki dostępu do katalogu tymczsowego
-
-	PathAppend(Global_lpszDownloadedNewApplic, Global_lpszDirNameUpd); //Ściezka dostępu do pobranej aplikacji
+  GetTempPath(MAX_PATH, Global_lpszDownloadedNewApplic_x64); //Pobranie ściezki dostępu do katalogu tymczsowego
+	//Tworzenie ścieżki dostępu do pobranych aplikacji (ścieżka źródłowa)
+	PathAppend(Global_lpszDownloadedNewApplic, Global_lpszDirNameUpd); //Ściezka dostępu do katalogu pobranej aplikacji
 	PathAppend(Global_lpszDownloadedNewApplic, Global_lpcszNameApplic); //Ściezka dostępu do pobranej aplikacji
-	/*
-	MessageBox(NULL, Global_lpszPathExistsOldApplic, TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-	MessageBox(NULL, Global_lpszDownloadedNewApplic, TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-	return 0;
-  */
+	//Tworzenie ścieżki dostępu do istniejących, starych aplikacji (ścieżka docelowa)
+	PathAppend(Global_lpszDownloadedNewApplic_x64, Global_lpszDirNameUpd); //Ściezka dostępu do katalogu pobranej aplikacji 64 bitowej
+	PathAppend(Global_lpszDownloadedNewApplic_x64, Global_lpcszNameApplic_x64); //Ściezka dostępu do pobranej aplikacji 64 bitowej
+	#if defined(_MBTESTING_) //jeśli w stanie testów
+		const int ciSizeTempEnv = 1024;
+		TCHAR lpszInfo[ciSizeTempEnv];
+		StringCchPrintf(lpszInfo, ciSizeTempEnv, TEXT("%s\n%s\n-----\n%s\n%s"), Global_lpszPathExistsOldApplic, Global_lpszPathExistsOldApplic_x64,
+			Global_lpszDownloadedNewApplic, Global_lpszDownloadedNewApplic_x64);
+
+		MessageBox(NULL, lpszInfo, TEXT("Nowa wersja"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+		//return 0;
+	#endif
+
 	Global_hLBoxBrush = CreateSolidBrush(RGB(160, 160, 220));			//Pędzel dla podkładu pod kontrolkę LISTBOX
   Sleep(1000);
 	iRet = DialogBox(Global_hThisInstance, MAKEINTRESOURCE(DIALOG_UPDATE), NULL, DialogProc);
@@ -98,21 +110,24 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			//Ustawienie ikonki, na pasku okna dialogu
 			SetClassLongPtr(hDlg, GCLP_HICON, (LONG_PTR)LoadIcon(Global_hThisInstance, MAKEINTRESOURCE(ICON_UPDATE))); //Ikonka aplikacji
 			//Właściwe działanie
-			Global_hSemaphore = CreateSemaphore(NULL, 0, 1, Global_lpszMutexName);
-			if((Global_hSemaphore != 0) && (GetLastError() == ERROR_ALREADY_EXISTS))
-			{
+			#if !defined(_MBTESTING_) //Jeśli aplikacje NIE JEST w trybie testowym
+				Global_hSemaphore = CreateSemaphore(NULL, 0, 1, Global_lpszMutexName);
+				if((Global_hSemaphore != 0) && (GetLastError() == ERROR_ALREADY_EXISTS))
+				{
+					CloseHandle(Global_hSemaphore);
+					SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Aplikacja nie została zamknięta, więc nie mogę przeprowadzić aktualizacji. Zamknij aplikacje i spróbuj ponownie."));
+					return true;
+				}
 				CloseHandle(Global_hSemaphore);
-				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Aplikacja nie została zamknięta, więc nie mogę przeprowadzić aktualizacji. Zamknij aplikacje i spróbuj ponownie."));
-				return true;
-			}
-			CloseHandle(Global_hSemaphore);
+    	#endif
       SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Przeprowadzam aktualizacje..."));
-
+			//Kopiowanie aktualizacji
 			BOOL b=FALSE;
 
-			bool result = CopyFileEx(Global_lpszDownloadedNewApplic, Global_lpszPathExistsOldApplic, NULL , NULL, &b, NULL);
+			bool result32 = CopyFileEx(Global_lpszDownloadedNewApplic, Global_lpszPathExistsOldApplic, NULL , NULL, &b, NULL);
+			bool result64 = CopyFileEx(Global_lpszDownloadedNewApplic_x64, Global_lpszPathExistsOldApplic_x64, NULL , NULL, &b, NULL);
 
-			if(!result)
+			if((!result32) || (!result64))
 			{
 				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Kopiowanie nie powiodło się!!! Zamknij okienko aktualizacji"));
 				//ShellExecute(NULL, NULL , Global_lpcszNameApplic, NULL, NULL, SW_SHOWNORMAL);
@@ -123,7 +138,9 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				//DeleteFile(Global_lpszDownloadedNewApplic);
 				SetTimer(hDlg, IDT_TIMER, cITimerTime, (TIMERPROC) NULL);
 				SendMessage(Global_ListBox, LB_ADDSTRING, 0, (LPARAM)TEXT("Aktualizacja zakończyła się pełnym sukcesem, teraz zostanie uruchomiona zaktualizowana aplikacja \"Moja Biblia NG\""));
-				ShellExecute(NULL, NULL , Global_lpcszNameApplic, NULL, NULL, SW_SHOWNORMAL);
+				#if !defined(_MBTESTING_) //Jeśli aplikacje NIE JEST w trybie testowym
+					ShellExecute(NULL, NULL , Global_lpcszNameApplic, NULL, NULL, SW_SHOWNORMAL);
+				#endif
 				//SendMessage(hDlg, WM_CLOSE, 0, 0);
 			}
 		}

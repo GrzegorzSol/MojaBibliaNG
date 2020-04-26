@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.068,=G:\rodzina\Programowanie\BuilderCPP\File1.cpp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.525,G:\rodzina\Programowanie\BuilderCPP\Project1PCH1.h=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinHeaders.h</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.803,=G:\rodzina\Programowanie\BuilderCPP\Project1PCH1.h</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.039,G:\rodzina\Programowanie\BuilderCPP\File1.cpp=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\WinMBUpdate_main.cpp</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.937,G:\rodzina\Programowanie\BuilderCPP\Project1.cbproj=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupd.cbproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.045,=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.rc</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.950,=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\MBUpdate\winmbupdext.h</Transaction>
+  </Transactions>
+</BorlandProject>

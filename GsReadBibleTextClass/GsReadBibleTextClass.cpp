@@ -160,7 +160,7 @@ THashedStringList *__fastcall GsReadBibleTextItem::GetSelectBooks(const unsigned
 	return this->_pHListAllListBooks[uiSelectBook];
 }
 /****************************************************************************
- *                     Główna klasa ReadBibleTextClass                      *
+ *                     Główna klasa GsReadBibleTextClass                      *
  ****************************************************************************/
 //NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
 int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
@@ -317,6 +317,7 @@ void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString c
 {
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) return;
+	//---
 	if(custrPath==0)
 	{
 		UnicodeString _custrPath = Format("%s_%u_%s.html", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].FullNameBook, pGsTabSheetClass->_ShucIndexChapt+1,
@@ -1841,6 +1842,18 @@ void __fastcall GsTabSheetClass::_OnSaveComments(System::TObject* Sender)
   GsReadBibleTextData::pGsLViewCommentsAllClass->ReloadAllVersComments(false);
 }
 //---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_GetHTMLText(UnicodeString &_ustrTextHTML)
+/**
+	OPIS METOD(FUNKCJI): Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	_ustrTextHTML = "";
+  _ustrTextHTML = this->pStrBuilderHtml->ToString();
+}
+//---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::CreateWnd()
 /**
 	OPIS METOD(FUNKCJI): Tworzenie kontrolki
@@ -2641,6 +2654,21 @@ void __fastcall GsReadBibleTextData::WriteCurrentSheetText(const UnicodeString c
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::pGsReadBibleTextClass->SaveCurrentSheetText(custrPath);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::GetTextHTMLCurrentSheet(UnicodeString &_ustrTextHTML)
+/**
+	OPIS METOD(FUNKCJI): Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+  GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(!pGsTabSheetClass) return;
+	//---
+	pGsTabSheetClass->_GetHTMLText(_ustrTextHTML);
 }
 //---------------------------------------------------------------------------
 GsReadBibleTextItem *__fastcall GsReadBibleTextData::GetTranslate(const unsigned char cucNumberTrans)
@@ -4012,6 +4040,9 @@ __fastcall GsListBoxVersClass::GsListBoxVersClass(TComponent* Owner) : TCustomLi
 	this->Style = lbOwnerDrawVariable;
 	this->StyleElements = TStyleElements(); //Musi być
 	this->Color = clWebWheat;
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("GsListBoxVersClass::GsListBoxVersClass()");
+	#endif
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxVersClass::~GsListBoxVersClass()
@@ -4071,7 +4102,7 @@ void __fastcall GsListBoxVersClass::DrawItem(int Index, const TRect &Rect, TOwne
 	if(!this->Items->Strings[Index].IsEmpty())
 	{
 		MyRect.Left += 4; MyRect.Right -= 4;
-		DrawText(pCanvas->Handle, this->Items->Strings[Index].c_str(), -1, &MyRect, DT_WORDBREAK);
+		DrawText(pCanvas->Handle, this->Items->Strings[Index].c_str(), -1, &MyRect, DT_SINGLELINE | DT_VCENTER);
 	}
 	else
 	{
@@ -4091,15 +4122,12 @@ void __fastcall GsListBoxVersClass::MeasureItem(int Index, int &Height)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TRect Rect = this->ClientRect; Rect.Left += 4; Rect.Right -= 4;
-
 	this->Canvas->Font = this->Font;
-  if(!this->Items->Strings[Index].IsEmpty())
-	{
-		DrawText(this->Canvas->Handle, this->Items->Strings[Index].c_str(), -1, &Rect, DT_CALCRECT | DT_WORDBREAK);
-		Height = Rect.Height() + 2;
-	}
-  else Height = 4;
+
+	if(!this->Items->Strings[Index].IsEmpty())
+		Height = -(this->Font->Height - 8);
+	else
+		Height = 4;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListBoxVersClass::Resize()

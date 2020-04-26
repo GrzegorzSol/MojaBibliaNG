@@ -1,6 +1,4 @@
-﻿//---------------------------------------------------------------------------
-
-#include <vcl.h>
+﻿#include <vcl.h>
 #pragma hdrstop
 
 #include "uSelectVersWindow.h"

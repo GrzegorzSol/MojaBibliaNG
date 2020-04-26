@@ -214,6 +214,7 @@ class GsReadBibleTextData
 		static unsigned char __fastcall CountTranslates();	//Metoda zwraca ilość tłumaczeń
 		static void __fastcall GetInfoNameTranslate(const unsigned char i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
 		static void __fastcall WriteCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
+    static void __fastcall GetTextHTMLCurrentSheet(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 		static GsReadBibleTextItem *__fastcall GetTranslate(const unsigned char cucNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 		static void __fastcall DisplayListText(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
 		static THashedStringList *__fastcall GetSelectBoksInTranslate(GsReadBibleTextItem *pGsReadBibleTextItem, const signed char scIndexBook); //Wyodrębnienie konkretnej księgi(sciIndex), z wybranej struktury tłumaczenia (GetTranslate)
@@ -301,7 +302,7 @@ class GsReadBibleTextClass
 	virtual ~GsReadBibleTextClass();
 		//---
 	inline static UnicodeString __fastcall GetVersionClass() {return Format("Biblioteka: \"GsReadBibleTextClass\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
-	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich pzekładów
+	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich przekładów
 	void __fastcall DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
 	void __fastcall DisplayAllTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate=-1); //Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
 	void __fastcall SaveCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
@@ -426,6 +427,7 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSelectBoxChapter(System::TObject* Sender);
 	void __fastcall _OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
 	void __fastcall _OnSaveComments(System::TObject* Sender);
+	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń

@@ -49,6 +49,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uMyBibleNGLibrary.h"
 #include "uReadUpdateWindow.h"
 #include "uChapterEditWindow.h"
+#include "uSendingMailWindow.h"
 #include <System.IOUtils.hpp>
 #include <System.Zip.hpp>
 //---------------------------------------------------------------------------
@@ -79,6 +80,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImageUpdate,                   //11.Sprawdzanie aktualizacji i ewentualny aktualizacje
 			enImageLogoApplication,          //12.Ikona z główną grafiką aplikacji
 			enImageEditChapter,              //13.Edycja rozdziału
+			enImage_MailChapt,               //14.Wyśli emailem rozdział
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -109,6 +111,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enTagFacePage,        //Odnośnik do strony facebook
 			enTagUpdate,          //Sprawdzanie aktualizacji i ewentualny aktualizacje
 			enTagEditChapter,     //Edycja rozdziału
+			enTagMailChapt,       //Wyśli emailem rozdział
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,            //Zakładka z narzędziami
 			//Numery dla przycisków na taskbarze
@@ -283,7 +286,9 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 */
 {
 	int iBook, iChapt;
+	static bool sbIsNextOpen; //24-04-2020. Zmienna statyczna która zapobiega powtórnemu uruchomieniu metody
 	//---
+	if(sbIsNextOpen) return;
 	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
 		GsDebugClass::WriteDebug("TMainBibleWindow::FormActivate()");
 	#endif
@@ -314,6 +319,11 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 		}
 
 		delete pHSListOpenBooksInExit;// pHSListOpenBooksInExit = 0;
+
+		sbIsNextOpen = true;
+		//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
+		this->Act_MailChapt->Enabled = ((this->PageControlBibleText->PageCount > 0) &&
+			(dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->ActivePage)));
 	}
 }
 //---------------------------------------------------------------------------
@@ -498,6 +508,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_Update->Hint = Format("Otwarcie okna sprawdzania i akualizacji.|Otwarcie okna, do sprawdzania wersji na serwerze i ewentualnej aktualizacji.|%u", ARRAYOFCONST((this->Act_Update->ImageIndex)));
 	this->Act_EditChapter->Tag = enTagEditChapter;
 	this->Act_EditChapter->Hint = Format("Otwarcie okna do edycji rozdziału|Otwarcie okna, do edycji aktalnie aktywnego razdziału.|%u", ARRAYOFCONST((this->Act_EditChapter->ImageIndex)));
+	this->Act_MailChapt->Tag = enTagMailChapt;
+	this->Act_MailChapt->Hint = Format("Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
@@ -648,7 +660,9 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 			GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-delete pActiveSheet");
 		#endif
 		pAction->Enabled = (this->PageControlBibleText->PageCount > 0);
-		this->Act_EditChapter->Enabled = pAction->Enabled;
+		this->Act_EditChapter->Enabled = ((this->PageControlBibleText->PageCount > 0) && (dynamic_cast<GsTabSheetClass *>(pActiveSheet)));
+    //Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
+		this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 		#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
 			GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-pAction->Enabled");
 		#endif
@@ -1113,6 +1127,8 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 		this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 		this->Act_CloseSheetActive->Enabled = true;
 		this->Act_EditChapter->Enabled = true;
+    //Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
+		this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 	}
 }
 //---------------------------------------------------------------------------
@@ -1192,7 +1208,7 @@ void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	//MessageBox(NULL, TEXT("Funkcje jeszcze nie aktywna"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -1206,6 +1222,25 @@ void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
 	pChapterEditWindow->ShowModal();
 
 	//this->PageControlBibleText->SetFocus(); pTabSheet->SetFocus(); pTabSheet->SetFocusText();
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Wysłąnie emailem aktualnego rozdziału
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	UnicodeString ustrTextHTML;
+	GsReadBibleTextData::GetTextHTMLCurrentSheet(ustrTextHTML);
+
+	TSendingMailWindow *pTSendingMailWindow = new TSendingMailWindow(this, ustrTextHTML);
+	if(!pTSendingMailWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TChapterEditWindow"));
+	pTSendingMailWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 
