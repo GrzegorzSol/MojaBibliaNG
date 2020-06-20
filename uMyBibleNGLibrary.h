@@ -4,6 +4,7 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <System.IniFiles.hpp>
+#include "GsComponents\GsDirect2DLiteClass.h"
 //---------------------------------------------------------------------------
 /****************************************************************************
 *                        Klasa GsListBoxMultiMClass                         *
@@ -51,7 +52,7 @@ class GsPanelMultiM  : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-		TImage *_ImageView;	//Objekt, klasy TImage do wyświetlania grafiki
+		GsDirect2DLiteClass *pGsDirect2DLiteClass;
 		GsListViewMultiMClass *_pGsListViewMultiMClass;
 		TSplitter *_pSplitter;
 		TPageControl *_pPControlMainWindow; //Objekt klasy TPageControl na głównym oknie aplikacji
@@ -66,12 +67,8 @@ class GsTabSheetGraphics : public TTabSheet //Klasa całkowicie PRYWATNA!
 
 	__fastcall GsTabSheetGraphics(TComponent* Owner);
 	__fastcall virtual ~GsTabSheetGraphics();
-	//---
-	void __fastcall _OnMouseWhellUp(System::TObject* Sender, System::Classes::TShiftState Shift, const System::Types::TPoint &MousePos, bool &Handled);
-	void __fastcall _OnMouseWhellDown(System::TObject* Sender, System::Classes::TShiftState Shift, const System::Types::TPoint &MousePos, bool &Handled);
-	//---
-	TScrollBox *_pScrollBox;
-	TImage *_pImageFullDisplay;
+  //---
+	GsDirect2DLiteClass *pGsDirect2DLiteClassFull;
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();

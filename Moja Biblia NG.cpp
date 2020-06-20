@@ -6,15 +6,14 @@
 //---------------------------------------------------------------------------
 USEFORM("uMainWindow.cpp", MainBibleWindow);
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
-USEFORM("uReadUpdateWindow.cpp", ReadUpdateWindow);
+USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
+USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
-USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 //---------------------------------------------------------------------------
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------

@@ -1,10 +1,8 @@
-﻿//---------------------------------------------------------------------------
-#pragma hdrstop
+﻿#pragma hdrstop
 
 #include "uMyBibleNGLibrary.h"
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
-#include <Jpeg.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -47,26 +45,28 @@ __fastcall GsListViewMultiMClass::GsListViewMultiMClass(TComponent* Owner) : TCu
 	this->RowSelect = true;
 	this->ViewStyle = vsReport;
 	this->ItemIndex = -1;
-  this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
+	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
 	//---
 	this->_pListFile = new TList(); //Lista plików
 	if(!this->_pListFile) throw(Exception("Błąd inicjalizacji objektu TList"));
 	//---
-  SHFILEINFO shfi;
+	SHFILEINFO shfi;
 	DWORD iHnd;
 	this->_pImageList = new TImageList(this);
 	if(!this->_pImageList) throw(Exception("Błąd inicjalizacji objektu TImageList"));
+
 	this->_pImageList->DrawingStyle = dsTransparent;
 	this->_pImageList->ShareImages = true;
 	this->_pImageList->ColorDepth = cd32Bit;
-	iHnd = SHGetFileInfo(TEXT(""), 0, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX |
-			SHGFI_SHELLICONSIZE | SHGFI_SMALLICON);
+	iHnd = SHGetFileInfo(TEXT(""), 0, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_ICON |
+			SHGFI_SHELLICONSIZE | SHGFI_LARGEICON);// SHGFI_SMALLICON);
 	if(iHnd != 0) this->_pImageList->Handle = iHnd;
 	DestroyIcon(shfi.hIcon);	//Musi być
-  this->SmallImages = this->_pImageList;
+	this->SmallImages = this->_pImageList;
+	this->LargeImages = this->_pImageList;
 
+	this->OnMouseLeave = this->_OnMouseLeave;
 	this->_CreateColumns();
-  this->OnMouseLeave = this->_OnMouseLeave;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListViewMultiMClass::~GsListViewMultiMClass()
@@ -141,7 +141,8 @@ void __fastcall GsListViewMultiMClass::CreateWnd()
 			ustrTempLowerName = LowerCase(SDirMultiMList[i]);
 			if((TPath::GetExtension(ustrTempLowerName) != ".jpg") &&
 			   (TPath::GetExtension(ustrTempLowerName) != ".jpeg") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".bmp")) continue;
+				 (TPath::GetExtension(ustrTempLowerName) != ".bmp") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".png")) continue; //07-06-2020
 			//---
 			pMultiData = new MULTIDATA();
 			if(!pMultiData) throw(Exception("Błąd inicjalizacji objektu MULTIDATA"));
@@ -177,7 +178,17 @@ void __fastcall GsListViewMultiMClass::_CreateColumns()
 	{
 		NewColumn = this->Columns->Add();
 		NewColumn->Caption = ustrColumsNames[iColumns];
-		NewColumn->AutoSize = true;
+		switch(iColumns)
+		{
+			case enColumn_Name:
+				NewColumn->AutoSize = true;
+			break;
+			//---
+			case enColumn_Size:
+				NewColumn->Width = 78;
+			break;
+		}
+		//
   }
 }
 //---------------------------------------------------------------------------
@@ -290,8 +301,10 @@ void __fastcall GsListViewMultiMClass::DoSelectItem(TListItem* Item, bool Select
 	if(!pGsPanelMultiM) return;
 	//Wyświetlenie wybranego zasobu multimedialnego w objekcie, klasy TImage
 	if(!TFile::Exists(Item->Caption)) return;
-	pGsPanelMultiM->_ImageView->Stretch = true;
-	pGsPanelMultiM->_ImageView->Picture->LoadFromFile(Item->Caption);
+
+	pGsPanelMultiM->pGsDirect2DLiteClass->GsD2DLite_LoadPicture(Item->Caption);
+	InvalidateRect(pGsPanelMultiM->pGsDirect2DLiteClass->Handle, NULL, true);
+
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
@@ -316,6 +329,7 @@ void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::T
 	{
 		this->Canvas->Brush->Color = clWebDarkOrange;
 	}
+  this->Canvas->Font = this->Font;
 	this->Canvas->FillRect(RectBounds);
 	this->Canvas->Font->Color = clWindowText;
 
@@ -365,6 +379,8 @@ void __fastcall GsListViewMultiMClass::_OnMouseLeave(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	//Metoda okazała sie nieprzydatna, więc zostanie wyłączona, a w przyszłości zlikwidowana. - 24-05-2020
+	return;
 	TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(this->Parent->Parent); //1.Parent - TPanel
                                                                           //2.Parent - TTabSheet
 	if(!pTabSheet) return;
@@ -393,12 +409,12 @@ __fastcall GsPanelMultiM::GsPanelMultiM(TComponent* Owner, TPageControl *_pPCont
 	this->DoubleBuffered = true;
 	this->BorderStyle = bsNone;
 	//---
-	this->_ImageView = new TImage(this);	//Objekt, klasy TImage do wyświetlania grafiki podglądu
-	if(!this->_ImageView) throw(Exception("Błąd inicjalizacji objektu TImage"));
-	this->_ImageView->Parent = this;
-	this->_ImageView->Align = alBottom;
-	this->_ImageView->Height = this->_ImageView->Width;
-	this->_ImageView->OnClick = this->_ImageOnClick;
+	this->pGsDirect2DLiteClass = new GsDirect2DLiteClass(this);
+	if(!this->pGsDirect2DLiteClass) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
+	this->pGsDirect2DLiteClass->Parent = this;
+	this->pGsDirect2DLiteClass->Align = alBottom;
+	this->pGsDirect2DLiteClass->Height = this->pGsDirect2DLiteClass->Width;
+	this->pGsDirect2DLiteClass->OnClick = this->_ImageOnClick;;
 	//===
 	this->_pSplitter = new TSplitter(this);
 	if(!this->_pSplitter) throw(Exception("Błąd inicjalizacji objektu TSplitter"));
@@ -461,7 +477,8 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 	TListItem* pListItem = this->_pGsListViewMultiMClass->Selected;
 	pGsTabSheetGraphics->Caption = Format("\"%s\"", ARRAYOFCONST((TPath::GetFileName(pListItem->Caption))));
-	pGsTabSheetGraphics->_pImageFullDisplay->Picture->LoadFromFile(pListItem->Caption);
+	pGsTabSheetGraphics->pGsDirect2DLiteClassFull->GsD2DLite_LoadPicture(pListItem->Caption);
+	InvalidateRect(pGsTabSheetGraphics->pGsDirect2DLiteClassFull->Handle, NULL, true);
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
@@ -472,21 +489,10 @@ __fastcall GsTabSheetGraphics::GsTabSheetGraphics(TComponent* Owner) : TTabSheet
 {
   this->DoubleBuffered = true;
   //---
-	this->_pScrollBox = new TScrollBox(this);
-	if(!this->_pScrollBox) throw(Exception("Błąd inicjalizacji objektu TScrollBox"));
-	this->_pScrollBox->Parent = this;
-	this->_pScrollBox->DoubleBuffered = true;
-	this->_pScrollBox->Align = alClient;
-	this->_pScrollBox->VertScrollBar->Tracking = true;
-	this->_pScrollBox->HorzScrollBar->Tracking = true;
-	this->_pScrollBox->OnMouseWheelUp = this->_OnMouseWhellUp;
-	this->_pScrollBox->OnMouseWheelDown = this->_OnMouseWhellDown;
-	//---
-	this->_pImageFullDisplay = new TImage(this->_pScrollBox); //Główne object dla grafiki
-	if(!this->_pScrollBox) throw(Exception("Błąd inicjalizacji objektu TImage"));
-  //---
-	this->_pImageFullDisplay->Parent = this->_pScrollBox;
-  this->_pImageFullDisplay->AutoSize = true;
+	this->pGsDirect2DLiteClassFull = new GsDirect2DLiteClass(this);
+	if(!this->pGsDirect2DLiteClassFull) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
+	this->pGsDirect2DLiteClassFull->Parent = this;
+  this->pGsDirect2DLiteClassFull->Align = alClient;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetGraphics::~GsTabSheetGraphics()
@@ -510,7 +516,7 @@ void __fastcall GsTabSheetGraphics::CreateWnd()
 {
   TTabSheet::CreateWnd();
 	//Własny kod.
-  Application->MainForm->ActiveControl = this->_pScrollBox;
+  Application->MainForm->ActiveControl = this;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetGraphics::DestroyWnd()
@@ -525,39 +531,4 @@ void __fastcall GsTabSheetGraphics::DestroyWnd()
 	TTabSheet::DestroyWnd();
 }
 //---------------------------------------------------------------------------
-void __fastcall GsTabSheetGraphics::_OnMouseWhellUp(System::TObject* Sender, System::Classes::TShiftState Shift, const System::Types::TPoint &MousePos, bool &Handled)
-/**
-	OPIS METOD(FUNKCJI): Kółko myszki pokręcone zostało w górę
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	int iW = this->_pScrollBox->ClientWidth,
-			iH = this->_pScrollBox->ClientHeight;
-
-	TPoint PointClient  = ScreenToClient(MousePos);
-	if(PointClient.Y <= iH / 2)
-		this->_pScrollBox->VertScrollBar->Position -= 4;
-	if(PointClient.Y > iW / 2)
-    this->_pScrollBox->HorzScrollBar->Position -= 4;
-}
-//----------------------------------------------------------------------------
-void __fastcall GsTabSheetGraphics::_OnMouseWhellDown(System::TObject* Sender, System::Classes::TShiftState Shift, const System::Types::TPoint &MousePos, bool &Handled)
-/**
-	OPIS METOD(FUNKCJI): Kółko myszki pokręcone zostało w dół
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-  int iW = this->_pScrollBox->ClientWidth,
-			iH = this->_pScrollBox->ClientHeight;
-
-	TPoint PointClient  = ScreenToClient(MousePos);
-	if(PointClient.Y <= iH / 2)
-		this->_pScrollBox->VertScrollBar->Position += 4;
-	if(PointClient.Y > iW / 2)
-		this->_pScrollBox->HorzScrollBar->Position += 4;
-}
 //----------------------------------------------------------------------------

@@ -47,7 +47,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uViewAllResourcesWindow.h"
 #include "uInformationsAppWindow.h"
 #include "uMyBibleNGLibrary.h"
-#include "uReadUpdateWindow.h"
 #include "uChapterEditWindow.h"
 #include "uSendingMailWindow.h"
 #include <System.IOUtils.hpp>
@@ -204,9 +203,9 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	UnicodeString ustrVersion = Library::GetInfo();
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 	#if defined(_WIN64)
-		this->Caption = Format("Moja Biblia NG wersja beta x64 (CLang - eksperymentalna) v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
+		this->Caption = Format("Moja Biblia NG wersja beta x64 v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
 	#else
-		this->Caption = Format("Moja Biblia NG wersja beta x32 (CLang) v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
+		this->Caption = Format("Moja Biblia NG wersja beta x32 v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
 	#endif
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);
@@ -1030,56 +1029,13 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TAction *pAction = dynamic_cast<TAction *>(Sender);
-	if(!pAction) return;
-	//---
-  //Uzyskanie ścieżki dostepu do katalogu Temp
-	TCHAR pathTemp[MAX_PATH];
-	GetTempPath(MAX_PATH, pathTemp);
+	MessageBox(NULL, (UnicodeString("Nistety moduł pobierania aktualizacji został wyłączony ze wzgledu na problemy z serwerem. ") +
+			"Proszę o pobieranie pełnej paczki z pod adresu \"https://sourceforge.net/projects/moja-biblia-ng/\" \n" +
+			"Po zamknieciu okienka, zostanie uruchomiona domyślna przeglądarka, z załadowaną stroną, do pobierania całej paczki z aplikacją.\n\n"
+			"Przepraszam za utrudnienia, ale nie wynikają one z mojej winy :(").c_str(),
+			TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 
-	GlobalVar::Global_custrLocalVersionFile = TPath::Combine(pathTemp, GlobalVar::Global_custrNameIVerFile); //Pobrany plik wersjji - pathTemp + GlobalVar::Global_custrNameIVerFile,
-	GlobalVar::Global_custrLocalApplicFile = TPath::Combine(pathTemp, TPath::GetFileNameWithoutExtension(Application->ExeName)) + ".zip"; //Pobrane archiwum poprawki - ...Temp\Nazwa_aplikacji.exe - Plik
-	//---
-	TReadUpdateWindow *pReadUpdateWindow = new TReadUpdateWindow(this);
-	if(!pReadUpdateWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TReadUpdateWindow"));
-	pReadUpdateWindow->ShowModal();
-	if(GlobalVar::iReturnUpdate != 1) return;
-
-	UnicodeString ustrPathDirExtract;
-	//Rozpakowanie archiwum aktualizacyjnego
-	if(TFile::Exists(GlobalVar::Global_custrLocalApplicFile))
-	//Jeśli istnieje pobrane archiwum
-	{
-		ustrPathDirExtract = TPath::GetDirectoryName(GlobalVar::Global_custrLocalApplicFile); //Katalog na pliki rozpakowane z archiwum
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("GlobalVar::Global_custrLocalApplicFile: %s, ustrPathDirExtract: %s", ARRAYOFCONST((GlobalVar::Global_custrLocalApplicFile, ustrPathDirExtract))));
-		#endif
-
-		TZipFile *pZipFile = new TZipFile();
-		pZipFile->ExtractZipFile(GlobalVar::Global_custrLocalApplicFile, ustrPathDirExtract);
-
-		UnicodeString ustrPathWinMBUpdate = TPath::Combine(pathTemp, GlobalVar::Global_ustrNameDirUpdate);
-		ustrPathWinMBUpdate = TPath::Combine(ustrPathWinMBUpdate, GlobalVar::Global_custrNameUpd);
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("ustrPathWinMBUpdate: %s", ARRAYOFCONST((ustrPathWinMBUpdate))));
-			GsDebugClass::WriteDebug(Format("GlobalVar::Global_ustrPathApplicUpdate: %s", ARRAYOFCONST((GlobalVar::Global_ustrPathApplicUpdate))));
-		#endif
-
-		TFile::Copy(ustrPathWinMBUpdate, GlobalVar::Global_ustrPathApplicUpdate, true); //Kopiowanie aplikacji aktualizacyjnej do katalogu z główną aplikacją
-
-		//TFile::Delete(ustrPathWinMBUpdate); //Kasowanie programy aktualizacyjnego z katalogu temp
-		//TFile::Delete(GlobalVar::Global_custrLocalVersionFile); //Kasowanie pliku wersji
-		//TFile::Delete(GlobalVar::Global_custrLocalApplicFile);  //Kasowanie archiwum z łatkami z katalogu temp
-
-		//Kasowanie niepotrzebnych plików
-		delete pZipFile;
-		if(TFile::Exists(GlobalVar::Global_ustrPathApplicUpdate))
-		//Jesli istnieje aplikacja do kopiowania nowej wersji na starą
-		{
-			this->Close();
-			ShellExecute(NULL, NULL , GlobalVar::Global_ustrPathApplicUpdate.c_str(), NULL, NULL, SW_SHOWNORMAL);
-		}
-	}
+	ShellExecute(this->Handle, NULL , TEXT("https://sourceforge.net/projects/moja-biblia-ng/"), NULL, NULL, SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::SplitViewMainOpened(TObject *Sender)
@@ -1112,7 +1068,7 @@ void __fastcall TMainBibleWindow::PageControlToolsChanging(TObject *Sender,
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI): Zamknięcie objektu klasy, TSplitView, po wybraniu księgi, lub rozdziału
+	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -1121,6 +1077,9 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
 	//---
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("PageControlBibleTextEnter");
+	#endif
 	if(pPageControl->PageCount > 0)
 	{
 		this->Act_ResizeWork->Checked = true;
@@ -1143,7 +1102,7 @@ void __fastcall TMainBibleWindow::PageControlToolsMouseEnter(TObject *Sender)
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
 	//---
-	if((this->PageControlBibleText->PageCount == 0) /*|| (pPageControl->ActivePageIndex != enPageTools_Books)*/) return;
+	if(this->PageControlBibleText->PageCount == enPageTools_Books) return;// || (this->PageControlBibleText->PageCount == enPageTools_Multimedials)) return;
 	//Jeśli nie ma rzadnej wczytanej księgi, metoda nie zadziała
 	this->Act_ResizeWork->Checked = false;
 	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
@@ -1160,7 +1119,10 @@ void __fastcall TMainBibleWindow::TabSheetAllToolsMouseLeave(TObject *Sender)
 	TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(Sender);
 	if(!pTabSheet) return;
 	//---
-	if((this->PageControlBibleText->PageCount == 0) /*|| (this->PageControlTools->ActivePageIndex != enPageTools_Books)*/) return;
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("pTabSheet = %s", ARRAYOFCONST((pTabSheet->Caption))));
+	#endif
+	if(this->PageControlBibleText->PageCount == 0) return;
 	//Jeśli nie ma rzadnej wczytanej księgi, to nie można zamknąć zakładek
 	this->Act_ResizeWork->Checked = true;
 	this->Act_ResizeWorkExecute(this->Act_ResizeWork);

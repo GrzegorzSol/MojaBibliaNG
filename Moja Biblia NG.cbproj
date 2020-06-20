@@ -145,9 +145,9 @@
         <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Release>7562</VerInfo_Release>
-        <VerInfo_Build>23727</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7562.23727;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+        <VerInfo_Release>7608</VerInfo_Release>
+        <VerInfo_Build>23774</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7608.23774;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
         <DynamicRTL>false</DynamicRTL>
         <UsePackages>false</UsePackages>
         <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib</LinkPackageStatics>
@@ -164,13 +164,17 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib</LinkPackageStatics>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Release>7562</VerInfo_Release>
-        <VerInfo_Build>23727</VerInfo_Build>
+        <VerInfo_Release>7608</VerInfo_Release>
+        <VerInfo_Build>23773</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7562.23727;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7608.23773;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
         <Icon_MainIcon>Moja Biblia NG_Icon2.ico</Icon_MainIcon>
     </PropertyGroup>
     <ItemGroup>
+        <CppCompile Include="GsComponents\GsDirect2DLiteClass.cpp">
+            <DependentOn>GsComponents\GsDirect2DLiteClass.h</DependentOn>
+            <BuildOrder>23</BuildOrder>
+        </CppCompile>
         <CppCompile Include="GsComponents\GsEditorClass.cpp">
             <DependentOn>GsComponents\GsEditorClass.h</DependentOn>
             <BuildOrder>11</BuildOrder>
@@ -239,12 +243,6 @@
             <DependentOn>uMyBibleNGLibrary.h</DependentOn>
             <BuildOrder>6</BuildOrder>
         </CppCompile>
-        <CppCompile Include="uReadUpdateWindow.cpp">
-            <Form>ReadUpdateWindow</Form>
-            <FormType>dfm</FormType>
-            <DependentOn>uReadUpdateWindow.h</DependentOn>
-            <BuildOrder>20</BuildOrder>
-        </CppCompile>
         <CppCompile Include="uSchemeVersWindow.cpp">
             <Form>SchemeVersWindow</Form>
             <FormType>dfm</FormType>
@@ -281,7 +279,6 @@
             <DependentOn>uViewAllResourcesWindow.h</DependentOn>
             <BuildOrder>16</BuildOrder>
         </CppCompile>
-        <FormResources Include="uReadUpdateWindow.dfm"/>
         <FormResources Include="uMainWindow.dfm"/>
         <FormResources Include="uInformationsAppWindow.dfm"/>
         <FormResources Include="uSchemeVersWindow.dfm"/>

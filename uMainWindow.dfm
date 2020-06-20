@@ -149,7 +149,7 @@ object MainBibleWindow: TMainBibleWindow
       Top = 0
       Width = 300
       Height = 820
-      ActivePage = TabSheetAllCommentsVers
+      ActivePage = TabSheetMultimedials
       Align = alClient
       Images = ImageListSmall
       MultiLine = True
@@ -183,6 +183,10 @@ object MainBibleWindow: TMainBibleWindow
       object TabSheetAllCommentsVers: TTabSheet
         Caption = 'Lista werset'#243'w ulubionych, i tych do kt'#243'rych istniej'#261' komentarze'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object STextHeaderListCommentVers: TStaticText
           Left = 0
           Top = 0
