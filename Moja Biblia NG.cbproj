@@ -7,7 +7,7 @@
         <MainSource>Moja Biblia NG.cpp</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -78,7 +78,8 @@
         <SanitizedProjectName>Moja_Biblia_NG</SanitizedProjectName>
         <IncludePath>GsReadBibleTextClass\;GsComponents\;$(IncludePath)</IncludePath>
         <ILINK_LibraryPath>GsReadBibleTextClass\;GsComponents\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
-        <SubProcessesNumber>4</SubProcessesNumber>
+        <SubProcessesNumber>6</SubProcessesNumber>
+        <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CloudService;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;FMXTee;FmxTeeUI;ibmonitor;ibxbindings;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;svn;Tee;TeeDB;TeeUI;tethering;vcl;vclactnband;vcldb;vcldsnap;vclFireDAC;vclib;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -145,14 +146,15 @@
         <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Release>7608</VerInfo_Release>
-        <VerInfo_Build>23774</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7608.23774;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+        <VerInfo_Release>7723</VerInfo_Release>
+        <VerInfo_Build>24036</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7723.24036;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
         <DynamicRTL>false</DynamicRTL>
         <UsePackages>false</UsePackages>
         <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib</LinkPackageStatics>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <Icon_MainIcon>Moja Biblia NG_Icon1.ico</Icon_MainIcon>
+        <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -164,16 +166,17 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib</LinkPackageStatics>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Release>7608</VerInfo_Release>
-        <VerInfo_Build>23773</VerInfo_Build>
+        <VerInfo_Release>7723</VerInfo_Release>
+        <VerInfo_Build>24036</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7608.23773;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.7723.24036;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
         <Icon_MainIcon>Moja Biblia NG_Icon2.ico</Icon_MainIcon>
+        <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
     </PropertyGroup>
     <ItemGroup>
-        <CppCompile Include="GsComponents\GsDirect2DLiteClass.cpp">
-            <DependentOn>GsComponents\GsDirect2DLiteClass.h</DependentOn>
-            <BuildOrder>23</BuildOrder>
+        <CppCompile Include="GsComponents\GsDirect2DClass.cpp">
+            <DependentOn>GsComponents\GsDirect2DClass.h</DependentOn>
+            <BuildOrder>22</BuildOrder>
         </CppCompile>
         <CppCompile Include="GsComponents\GsEditorClass.cpp">
             <DependentOn>GsComponents\GsEditorClass.h</DependentOn>
@@ -222,6 +225,12 @@
         <CppCompile Include="uGlobalVar.cpp">
             <DependentOn>uGlobalVar.h</DependentOn>
             <BuildOrder>4</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="uImageAndTextWindow.cpp">
+            <Form>ImageAndTextWindow</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>uImageAndTextWindow.h</DependentOn>
+            <BuildOrder>23</BuildOrder>
         </CppCompile>
         <CppCompile Include="uInformationsAppWindow.cpp">
             <Form>InformationsAppWindow</Form>
@@ -280,15 +289,16 @@
             <BuildOrder>16</BuildOrder>
         </CppCompile>
         <FormResources Include="uMainWindow.dfm"/>
+        <FormResources Include="uImageAndTextWindow.dfm"/>
         <FormResources Include="uInformationsAppWindow.dfm"/>
-        <FormResources Include="uSchemeVersWindow.dfm"/>
-        <FormResources Include="uViewAllResourcesWindow.dfm"/>
-        <FormResources Include="uSetupsWindow.dfm"/>
         <FormResources Include="uSendingMailWindow.dfm"/>
-        <FormResources Include="uSelectVersWindow.dfm"/>
+        <FormResources Include="uSetupsWindow.dfm"/>
+        <FormResources Include="uViewAllResourcesWindow.dfm"/>
+        <FormResources Include="uSchemeVersWindow.dfm"/>
         <FormResources Include="uSearchTextWindow.dfm"/>
-        <FormResources Include="uDictGrecPolWindow.dfm"/>
+        <FormResources Include="uSelectVersWindow.dfm"/>
         <FormResources Include="uChapterEditWindow.dfm"/>
+        <FormResources Include="uDictGrecPolWindow.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

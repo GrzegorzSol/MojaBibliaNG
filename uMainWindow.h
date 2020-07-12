@@ -42,7 +42,6 @@ __published:	// IDE-managed Components
 	TTaskbar *TaskbarMain;
 	TPageControl *PageControlTools;
 	TTabSheet *TabSheetBooks;
-	TTabSheet *TabSheetMultimedials;
 	TCoolBar *CoolBarMain;
 	TActionToolBar *ActionToolBarTools;
 	TAction *Act_CorcordanceDictionaryGrec;
@@ -65,6 +64,7 @@ __published:	// IDE-managed Components
 	TAction *Act_EditChapter;
 	TImage *ImageBackgroundWindow;
 	TAction *Act_MailChapt;
+	TAction *Act_ImageAndText;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -98,6 +98,7 @@ __published:	// IDE-managed Components
 	void __fastcall TabSheetAllToolsMouseLeave(TObject *Sender);
 	void __fastcall Act_EditChapterExecute(TObject *Sender);
 	void __fastcall Act_MailChaptExecute(TObject *Sender);
+	void __fastcall Act_ImageAndTextExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

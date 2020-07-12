@@ -1629,7 +1629,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->pGsEditorClass->Align = alBottom;
 	this->pGsEditorClass->Height = 160;
 	this->pGsEditorClass->Visible = false;
-	/**/this->pGsEditorClass->OnSave = this->_OnSaveComments;
+	this->pGsEditorClass->OnSave = this->_OnSaveComments;
   //Splitter
 	this->pSplitterEd = new TSplitter(pPanelText);
 	if(!this->pSplitterEd) throw(Exception("Błąd inicjalizacji klasy TSplitter"));

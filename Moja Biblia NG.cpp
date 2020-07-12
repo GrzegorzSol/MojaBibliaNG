@@ -14,6 +14,7 @@ USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
+USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 //---------------------------------------------------------------------------
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------

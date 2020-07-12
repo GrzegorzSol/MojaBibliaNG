@@ -4,8 +4,9 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <System.IniFiles.hpp>
-#include "GsComponents\GsDirect2DLiteClass.h"
+#include "GsDirect2DClass.h"
 //---------------------------------------------------------------------------
+//MOŻLIWE ŻE CAŁA BIBLIOTEKA ZOTANIE PRZENIESIONA DO BIBLIOTEKI GsReadBibleTextClass
 /****************************************************************************
 *                        Klasa GsListBoxMultiMClass                         *
 *****************************************************************************/
@@ -52,7 +53,7 @@ class GsPanelMultiM  : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-		GsDirect2DLiteClass *pGsDirect2DLiteClass;
+		GsDirect2DClass *pGsDirect2DClass;
 		GsListViewMultiMClass *_pGsListViewMultiMClass;
 		TSplitter *_pSplitter;
 		TPageControl *_pPControlMainWindow; //Objekt klasy TPageControl na głównym oknie aplikacji
@@ -61,17 +62,32 @@ class GsPanelMultiM  : public TCustomPanel
 /****************************************************************************
 *                          Klasa GsTabSheetGraphics                         *
 *****************************************************************************/
-class GsTabSheetGraphics : public TTabSheet //Klasa całkowicie PRYWATNA!
+class GsTabSheetGraphics : public TTabSheet
 {
 	friend class GsPanelMultiM;
-
-	__fastcall GsTabSheetGraphics(TComponent* Owner);
-	__fastcall virtual ~GsTabSheetGraphics();
-  //---
-	GsDirect2DLiteClass *pGsDirect2DLiteClassFull;
+	public:
+		inline GsDirect2DClass *__fastcall GetD2DObject() {return this->pGsDirect2DClassFull;}
+		__fastcall GsTabSheetGraphics(TComponent* Owner);
+		__fastcall virtual ~GsTabSheetGraphics();
+	private:
+		GsDirect2DClass *pGsDirect2DClassFull;
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 };
-//---------------------------------------------------------------------------
+/****************************************************************************
+*                          Klasa GsPanelSelectVersImage                          *
+*****************************************************************************/
+class GsPanelSelectVersImage  : public TCustomPanel
+{
+	friend class GsTabSheetGraphics;
+
+	__fastcall GsPanelSelectVersImage(TComponent* Owner);
+	__fastcall virtual ~GsPanelSelectVersImage();
+	protected:
+		virtual void __fastcall CreateWnd();
+		virtual void __fastcall DestroyWnd();
+	private:
+    UnicodeString ustrSelectVers;
+};
 #endif

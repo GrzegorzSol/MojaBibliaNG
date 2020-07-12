@@ -302,8 +302,8 @@ void __fastcall GsListViewMultiMClass::DoSelectItem(TListItem* Item, bool Select
 	//Wyświetlenie wybranego zasobu multimedialnego w objekcie, klasy TImage
 	if(!TFile::Exists(Item->Caption)) return;
 
-	pGsPanelMultiM->pGsDirect2DLiteClass->GsD2DLite_LoadPicture(Item->Caption);
-	InvalidateRect(pGsPanelMultiM->pGsDirect2DLiteClass->Handle, NULL, true);
+	pGsPanelMultiM->pGsDirect2DClass->GsD2D_LoadPicture(Item->Caption);
+	InvalidateRect(pGsPanelMultiM->pGsDirect2DClass->Handle, NULL, true);
 
 }
 //---------------------------------------------------------------------------
@@ -409,12 +409,12 @@ __fastcall GsPanelMultiM::GsPanelMultiM(TComponent* Owner, TPageControl *_pPCont
 	this->DoubleBuffered = true;
 	this->BorderStyle = bsNone;
 	//---
-	this->pGsDirect2DLiteClass = new GsDirect2DLiteClass(this);
-	if(!this->pGsDirect2DLiteClass) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
-	this->pGsDirect2DLiteClass->Parent = this;
-	this->pGsDirect2DLiteClass->Align = alBottom;
-	this->pGsDirect2DLiteClass->Height = this->pGsDirect2DLiteClass->Width;
-	this->pGsDirect2DLiteClass->OnClick = this->_ImageOnClick;;
+	this->pGsDirect2DClass = new GsDirect2DClass(this);
+	if(!this->pGsDirect2DClass) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
+	this->pGsDirect2DClass->Parent = this;
+	this->pGsDirect2DClass->Align = alBottom;
+	this->pGsDirect2DClass->Height = this->pGsDirect2DClass->Width;
+	this->pGsDirect2DClass->OnClick = this->_ImageOnClick;;
 	//===
 	this->_pSplitter = new TSplitter(this);
 	if(!this->_pSplitter) throw(Exception("Błąd inicjalizacji objektu TSplitter"));
@@ -435,6 +435,7 @@ __fastcall GsPanelMultiM::~GsPanelMultiM()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelMultiM::CreateWnd()
@@ -477,8 +478,9 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 	TListItem* pListItem = this->_pGsListViewMultiMClass->Selected;
 	pGsTabSheetGraphics->Caption = Format("\"%s\"", ARRAYOFCONST((TPath::GetFileName(pListItem->Caption))));
-	pGsTabSheetGraphics->pGsDirect2DLiteClassFull->GsD2DLite_LoadPicture(pListItem->Caption);
-	InvalidateRect(pGsTabSheetGraphics->pGsDirect2DLiteClassFull->Handle, NULL, true);
+	pGsTabSheetGraphics->pGsDirect2DClassFull->GsD2D_LoadPicture(pListItem->Caption);
+
+  pGsTabSheetGraphics->SetFocus();
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
@@ -489,10 +491,10 @@ __fastcall GsTabSheetGraphics::GsTabSheetGraphics(TComponent* Owner) : TTabSheet
 {
   this->DoubleBuffered = true;
   //---
-	this->pGsDirect2DLiteClassFull = new GsDirect2DLiteClass(this);
-	if(!this->pGsDirect2DLiteClassFull) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
-	this->pGsDirect2DLiteClassFull->Parent = this;
-  this->pGsDirect2DLiteClassFull->Align = alClient;
+	this->pGsDirect2DClassFull = new GsDirect2DClass(this);
+	if(!this->pGsDirect2DClassFull) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
+	this->pGsDirect2DClassFull->Parent = this;
+  this->pGsDirect2DClassFull->Align = alClient;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetGraphics::~GsTabSheetGraphics()
@@ -503,7 +505,9 @@ __fastcall GsTabSheetGraphics::~GsTabSheetGraphics()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("GsTabSheetGraphics::~GsTabSheetGraphics()");
+	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetGraphics::CreateWnd()
@@ -516,7 +520,6 @@ void __fastcall GsTabSheetGraphics::CreateWnd()
 {
   TTabSheet::CreateWnd();
 	//Własny kod.
-  Application->MainForm->ActiveControl = this;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetGraphics::DestroyWnd()
@@ -531,4 +534,52 @@ void __fastcall GsTabSheetGraphics::DestroyWnd()
 	TTabSheet::DestroyWnd();
 }
 //---------------------------------------------------------------------------
+/****************************************************************************
+*                          Klasa GsPanelSelectVers                          *
+*****************************************************************************/
+__fastcall GsPanelSelectVersImage::GsPanelSelectVersImage(TComponent* Owner) : TCustomPanel(Owner)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->DoubleBuffered = true;
+}
 //----------------------------------------------------------------------------
+__fastcall GsPanelSelectVersImage::~GsPanelSelectVersImage()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+
+}
+//----------------------------------------------------------------------------
+void __fastcall GsPanelSelectVersImage::CreateWnd()
+/**
+	OPIS METOD(FUNKCJI): Tworzenie kontrolki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCustomPanel::CreateWnd();
+	//Własny kod.
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelSelectVersImage::DestroyWnd()
+/**
+	OPIS METOD(FUNKCJI): Niszczenie kontrolki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //Własny kod.
+	TCustomPanel::DestroyWnd();
+}
+//---------------------------------------------------------------------------

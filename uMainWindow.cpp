@@ -46,9 +46,9 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uSchemeVersWindow.h"
 #include "uViewAllResourcesWindow.h"
 #include "uInformationsAppWindow.h"
-#include "uMyBibleNGLibrary.h"
 #include "uChapterEditWindow.h"
 #include "uSendingMailWindow.h"
+#include "uImageAndTextWindow.h"
 #include <System.IOUtils.hpp>
 #include <System.Zip.hpp>
 //---------------------------------------------------------------------------
@@ -60,7 +60,7 @@ TMainBibleWindow *MainBibleWindow;
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 	GsDebugClass::WriteDebug("");
 #endif
-#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
+#if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug("");
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -80,6 +80,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImageLogoApplication,          //12.Ikona z główną grafiką aplikacji
 			enImageEditChapter,              //13.Edycja rozdziału
 			enImage_MailChapt,               //14.Wyśli emailem rozdział
+			enImage_ImageAndText,            //15.Tworzenie grafiki z tekstem
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -94,8 +95,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enPMenuTray=0, //Początkowa pozycja w menu Tray
 			//Panele objektu MBW_PControlTools, klasy TPageControl
 			enPageTools_Books=0, //Zakładka z drzewem ksiąg biblijnych
-			enPageTools_Multimedials, //Zakładka z danymi multimedialnymi
-      enPageTools_CommentsVers, //Zakładka ze wszystkimi komentarzami
+			enPageTools_CommentsVers, //Zakładka ze wszystkimi komentarzami
 			//Tagi dla kontrolek
 			enTagCloseSheet=100,  //Zamknięcie aktywnej zakładki
 			enTagSaveChaptToHTML, //Zapis rozdziału z bierzącej zakładki, jako pliku html
@@ -111,6 +111,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enTagUpdate,          //Sprawdzanie aktualizacji i ewentualny aktualizacje
 			enTagEditChapter,     //Edycja rozdziału
 			enTagMailChapt,       //Wyśli emailem rozdział
+			enTagImageAndText,            //15.Tworzenie grafiki z tekstem
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,            //Zakładka z narzędziami
 			//Numery dla przycisków na taskbarze
@@ -232,11 +233,6 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->TrayIconMain->BalloonHint = "Oprogramowanie do studiowania Pisma Świętego";
   //this->MBW_TrayIconMain->Icon = Application->Icon;
 	this->_CreatePopupTrayIcon(); //Tworzenie menu podręcznego dla traya
-	//Stworzenie zawartości zakładki z multimediami
-	GsPanelMultiM *pGsPanelMultiM = new GsPanelMultiM(this->TabSheetMultimedials, this->PageControlBibleText);
-	if(!pGsPanelMultiM) throw(Exception("Błąd inicjalizacji objektu GsPanelMultiM"));
-	pGsPanelMultiM->Parent = this->TabSheetMultimedials;
-	pGsPanelMultiM->Align = alClient;
 	this->PageControlTools->ActivePage = this->TabSheetBooks;  //Domyślnie aktywna zakładka
 	static UnicodeString ustrHintTBarButtons[] = {"Informacje o aktualnie wczytanym rozdziele", "Informacje o aplikacji"};
 	//---
@@ -509,6 +505,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_EditChapter->Hint = Format("Otwarcie okna do edycji rozdziału|Otwarcie okna, do edycji aktalnie aktywnego razdziału.|%u", ARRAYOFCONST((this->Act_EditChapter->ImageIndex)));
 	this->Act_MailChapt->Tag = enTagMailChapt;
 	this->Act_MailChapt->Hint = Format("Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
+	this->Act_ImageAndText->Tag = enTagImageAndText;
+	this->Act_ImageAndText->Hint = Format("Tworzenie grafiki z tekstem biblijnym, lub innym|Moduł do tworzenia grafiki w formie podkładu i dowolnego tekstu.|%u", ARRAYOFCONST((this->Act_ImageAndText->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
@@ -1194,7 +1192,7 @@ void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	UnicodeString ustrTextHTML;
@@ -1203,6 +1201,22 @@ void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
 	TSendingMailWindow *pTSendingMailWindow = new TSendingMailWindow(this, ustrTextHTML);
 	if(!pTSendingMailWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TChapterEditWindow"));
 	pTSendingMailWindow->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_ImageAndTextExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	TImageAndTextWindow *pTImageAndTextWindow = new TImageAndTextWindow(this);
+	if(!pTImageAndTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TImageAndTextWindow"));
+	pTImageAndTextWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 
