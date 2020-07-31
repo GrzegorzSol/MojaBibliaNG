@@ -2,7 +2,7 @@
 #pragma hdrstop
 
 #include "uImageAndTextWindow.h"
-#include "uGlobalvar.h"
+#include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -19,7 +19,7 @@ MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFO
 */
 enum {
 				//Numery ikon
-				enIcon_CloseSheet, enIcon_SaveAs, enIcon_Save, enIcon_Text, enIcon_ResizeWorkPanel,
+				enIcon_CloseSheet, enIcon_SaveAs, enIcon_Save, enIcon_Text, enIcon_ResizeWorkPanel, enIcon_OnlyText,
 				//Numery zakładek po lewej stronie
 				enSheet_SelectImage=0, enSheet_ToolsImage,
 				//Tagi objektów, klasy TPageControl
@@ -27,18 +27,17 @@ enum {
 				//Tagi dla ikon
 				enIconTag_CloseSheet=200, enIconTag_SaveAs, enIconTag_Save, enIconTag_Text, enIconTag_ResizeWorkPanel,
 				//Tagi dla objektu, klasy TComboBox
-				enTagCBox_ColorFont=300, enTagCBox_SelectFont, enTagCBox_SizeFont,
+				enTagCBox_ColorFont=300, enTagCBox_ColorFont2, enTagCBox_SelectFont, enTagCBox_SizeFont,
 				//Tagi dla objektów, klasy TTrackBar
-				enTagTrBar_Opacity=400,
-				//Tagi dla przycisków TButton
-				enTagAcceptText=500, enTagAcceptOptionsText
+				enTagTrBar_Opacity=400, enTagTrBar_Rotation,
+				//Tagi dla objektów, klasy TCheckBox
+				enTagChBox_IsGradientColor=500
 		 };
-UnicodeString ustrFontname[] = {"Arial", "Times New Roman", "Gabriola", "Impact", "Seagull", "Segoe Script", "Segoe UI", "Tahoma", "Verdana",
-																"Comic Sans MS", "Calibri"},
-							ustrFontSize[] = {"10", "12", "16", "18", "24", "28", "36", "48", "72", "98", "102", "122", "148"};
+UnicodeString ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"},
+							ustrCaptionShettNoText = "Tylko tekst";
 //---------------------------------------------------------------------------
-__fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner)
-	: TForm(Owner)
+__fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner, const UnicodeString ustrInput)
+	: TForm(Owner), _ustrInputText(ustrInput)
 /**
 	OPIS METOD(FUNKCJI): Konstruktor klasy TImageAndTextWindow
 	OPIS ARGUMENTÓW:
@@ -46,23 +45,46 @@ __fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->_IsStart = true; //Uruchomienie okna
 	//Stworzenie zawartości zakładki z multimediami
-	GsPanelMultiM *pGsPanelMultiM = new GsPanelMultiM(this->TabSheetSelectImages, this->PControlImageAndText);
-	if(!pGsPanelMultiM) throw(Exception("Błąd inicjalizacji objektu GsPanelMultiM"));
-	pGsPanelMultiM->Parent = this->TabSheetSelectImages;
-	pGsPanelMultiM->Align = alClient;
+	this->_pGsPanelMultiM = new GsPanelMultiM(this->TabSheetSelectImages, this->PControlImageAndText);
+	if(!this->_pGsPanelMultiM) throw(Exception("Błąd inicjalizacji objektu GsPanelMultiM"));
+	this->_pGsPanelMultiM->Parent = this->TabSheetSelectImages;
+	this->_pGsPanelMultiM->Align = alClient;
 
 	this->PControlTools->ActivePageIndex = enSheet_SelectImage;
 
 	this->_InitTagAndHint();
-	//Inicjalizacja objektów, klasy TCombobox
-	for(unsigned int i=0; i<ARRAYSIZE(ustrFontname); i++)
+
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::FormShow(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GsListViewMultiMClass *pGsListViewMultiMClass = this->_pGsPanelMultiM->GetGsListViewMultiMClass();
+	if(!pGsListViewMultiMClass || pGsListViewMultiMClass->Items->Count==0) return;
+  this->_pGsPanelMultiM->SetFocus(); //Bardzo ważne!!! 25-07-2020
+	//---
+	pGsListViewMultiMClass->ItemIndex = 0;
+
+  //Inicjalizacja objektów, klasy TCombobox
+	THashedStringList *pTHashedStringList = new THashedStringList();//this->_pGsPanelMultiM->GetFonstList();
+	if(pTHashedStringList)
 	{
-		this->CBoxSelectFont->AddItem(ustrFontname[i], 0);
+		D2D_CreateFontsList(pTHashedStringList);
+		this->CBoxSelectFont->Items->Assign(pTHashedStringList);
+		this->CBoxSelectFont->Sorted = true;
+
+		int iIndexFontName = this->CBoxSelectFont->Items->IndexOf(CFNameFont);
+		this->CBoxSelectFont->ItemIndex = iIndexFontName;
+
+    delete pTHashedStringList;
 	}
-	int iIndexFontName = this->CBoxSelectFont->Items->IndexOf(CFNameFont);
-	this->CBoxSelectFont->ItemIndex = iIndexFontName;
+  //---
 	for(unsigned int i=0; i<ARRAYSIZE(ustrFontSize); i++)
 	{
 		this->CBoxSizeFont->AddItem(ustrFontSize[i], 0);
@@ -72,8 +94,6 @@ __fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner)
 	//---
 	this->TrBarOpacityBrush->Max = CFOpacityBrush * 10;
 	this->TrBarOpacityBrush->Position = this->TrBarOpacityBrush->Max;
-	//---
-	this->_bChangeOptionsText = false;  //true jesli zmieniono parametr tekstu
 }
 //---------------------------------------------------------------------------
 void __fastcall TImageAndTextWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -99,6 +119,7 @@ void __fastcall TImageAndTextWindow::_InitTagAndHint()
 	this->PControlImageAndText->Tag = enPControl_ImageDisplay;
 	//---
 	this->TrBarOpacityBrush->Tag = enTagTrBar_Opacity;
+	this->TrBarRotationText->Tag = enTagTrBar_Rotation;
 	//---
 	this->Act_CloseActiveSheet->Tag = enIconTag_CloseSheet;
 	this->Act_CloseActiveSheet->Hint = Format("Zamknięcie zakładki|Zamknięcie aktualnie aktywnej zakładki z grafiką|%u", ARRAYOFCONST((this->Act_CloseActiveSheet->ImageIndex)));
@@ -110,33 +131,15 @@ void __fastcall TImageAndTextWindow::_InitTagAndHint()
 	this->Act_Text->Hint = Format("Przełącznik widocznosci tekstu|Przełącznik umożliwijący nakładanie tekst na wczytany obrazek.|%u", ARRAYOFCONST((this->Act_Text->ImageIndex)));
 	this->Act_ResizeWorkPanel->Tag = enIconTag_ResizeWorkPanel;
 	this->Act_ResizeWorkPanel->Hint = Format("Przełącznik widocznosci lewego panelu z narzedziami|Przełącznik umożliwijący schowanie, lub odkrycie lewego panelu z narzedziami.|%u", ARRAYOFCONST((this->Act_ResizeWorkPanel->ImageIndex)));
-  //Tagi dla objektu, klasy TComboBox
+	this->Act_OnlyText->Tag = enIcon_OnlyText;
+	this->Act_OnlyText->Hint = Format("Wyswietlanie samego tekstu|Wyświetlany jest sam tekst, brak obrazka w formie podkładu.|%u", ARRAYOFCONST((this->Act_OnlyText->ImageIndex)));
+	//Tagi dla objektu, klasy TComboBox
 	this->CBoxSelectColorText->Tag = enTagCBox_ColorFont;
+	this->CBoxSelectColorText2->Tag = enTagCBox_ColorFont2;
 	this->CBoxSelectFont->Tag = enTagCBox_SelectFont;
 	this->CBoxSizeFont->Tag = enTagCBox_SizeFont;
-	//tagi dla objektu, klasy TButton
-	this->ButtDisplayNewText->Tag = enTagAcceptText;
-	this->ButtAcceptAllOptionsText->Tag = enTagAcceptOptionsText;
-}
-//---------------------------------------------------------------------------
-void __fastcall TImageAndTextWindow::_ReadAllParameters(const GsDirect2DClass *pGsDirect2DClass)
-/**
-	OPIS METOD(FUNKCJI): Odczytuje wszystkie parametry dla obrazka (objektu, klasy GsDirect2DClass)
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-  this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
-	this->CBoxSelectColorText->Selected = pGsDirect2DClass->StandartColorText;
-	//Odczyt używanego kroju czcionki
-	int iIndexFont = this->CBoxSelectFont->Items->IndexOf(pGsDirect2DClass->NameFont);
-	this->CBoxSelectFont->ItemIndex = iIndexFont;
-	//Odczyt wielkośći czcionki
-	int iIndexFontSize = this->CBoxSizeFont->Items->IndexOf(UnicodeString((int)pGsDirect2DClass->SizeFont));
-	this->CBoxSizeFont->ItemIndex = iIndexFontSize;
-	//Odczyt przezroczystości
-	this->TrBarOpacityBrush->Position = (int)(pGsDirect2DClass->OpacityBrush * 10.0);
+	//Tagi dla objektów, klasy TCheckBox
+	this->ChBoxIsDoubleColor->Tag = enTagChBox_IsGradientColor;
 }
 //---------------------------------------------------------------------------
 void __fastcall TImageAndTextWindow::Act_CloseActiveSheetExecute(TObject *Sender)
@@ -161,14 +164,30 @@ void __fastcall TImageAndTextWindow::Act_CloseActiveSheetExecute(TObject *Sender
 		this->Act_Save->Enabled = this->Act_CloseActiveSheet->Enabled;
 		this->Act_Text->Enabled = this->Act_CloseActiveSheet->Enabled;
 		this->SplitViewImageAndText->Opened = !this->Act_CloseActiveSheet->Enabled;
-
-		this->MemoImageAndText->Enabled = this->Act_CloseActiveSheet->Enabled;
-		this->ButtDisplayNewText->Enabled = this->Act_CloseActiveSheet->Enabled;
-		this->ButtAcceptAllOptionsText->Enabled = this->Act_CloseActiveSheet->Enabled;
-		this->CBoxSelectColorText->Enabled = this->Act_CloseActiveSheet->Enabled;
-		this->CBoxSelectFont->Enabled = this->Act_CloseActiveSheet->Enabled;
-		this->CBoxSizeFont->Enabled = this->Act_CloseActiveSheet->Enabled;
+		this->_SetupAllEnable(this->Act_CloseActiveSheet->Enabled);
 	}
+	//---
+	if(this->PControlImageAndText->PageCount == 0)
+	{
+		this->CBoxSelectColorText->Selected = CFStandardColorText;
+		this->ChBoxIsDoubleColor->Checked = false;
+		this->CBoxSelectColorText2->Selected = this->CBoxSelectColorText->Selected;
+    //Odczyt używanego kroju czcionki
+		int iIndexFont = this->CBoxSelectFont->Items->IndexOf(CFNameFont);
+		this->CBoxSelectFont->ItemIndex = iIndexFont;
+		//Odczyt wielkośći czcionki
+		int iIndexFontSize = this->CBoxSizeFont->Items->IndexOf(UnicodeString((int)CFSizeFont));
+		this->CBoxSizeFont->ItemIndex = iIndexFontSize;
+		this->TrBarOpacityBrush->Position = 0;
+		this->TrBarRotationText->Position = 0;
+
+		this->PControlTools->ActivePageIndex = enSheet_SelectImage;
+		this->PControlTools->SetFocus(); //Bardzo wazne!!!
+	}
+	else
+	{
+		this->PControlImageAndTextChange(this->PControlImageAndText);
+  }
 }
 //---------------------------------------------------------------------------
 GsDirect2DClass *__fastcall TImageAndTextWindow::_GetDirect2DFromActiveSheet()
@@ -198,12 +217,13 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextEnter(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TImageAndTextWindow::PControlImageAndTextEnter");
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("TImageAndTextWindow::PControlImageAndTextEnter()");
 	#endif
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
 	//---
+	//this->Act_CloseActiveSheet->Enabled = true;
 	if(pPageControl->PageCount > 0)
 	{
 		this->Act_CloseActiveSheet->Enabled = true;
@@ -218,10 +238,30 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextEnter(TObject *Sender)
 		{
 			//Na wybranej zakładce, jest uaktywnione wyświetlanie tekstu na grafice, lub nie
 			this->Act_Text->Checked = pGsDirect2DClass->IsDisplayText;
-			this->_ReadAllParameters(pGsDirect2DClass);
+			if(!this->_ustrInputText.IsEmpty())
+			//Przy KAŻDEJ nowej zakładce wpisywany jest tekst, który był podany przy konstruktorze
+			{
+				#if defined(_DEBUGINFO_)
+					GsDebugClass::WriteDebug(Format("this->_ustrInputText: %s", ARRAYOFCONST((this->_ustrInputText))));
+				#endif
+				pGsDirect2DClass->TextWrite = this->_ustrInputText;
+			}
+			this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
+			this->ChBoxIsDoubleColor->Checked = pGsDirect2DClass->IsGradientColorFont;
+			//Odczyt używanego kroju czcionki
+			int iIndexFont = this->CBoxSelectFont->Items->IndexOf(pGsDirect2DClass->NameFont);
+			this->CBoxSelectFont->ItemIndex = iIndexFont;
+			//Odczyt używanego koloru
+			this->CBoxSelectColorText->Selected = pGsDirect2DClass->StandartColorText;
+			this->CBoxSelectColorText2->Selected = this->CBoxSelectColorText->Selected;
+			//Odczyt wielkośći czcionki
+			int iIndexFontSize = this->CBoxSizeFont->Items->IndexOf(UnicodeString((int)pGsDirect2DClass->SizeFont));
+			this->CBoxSizeFont->ItemIndex = iIndexFontSize;
+			//Odczyt przezroczystości
+			this->TrBarOpacityBrush->Position = (int)(pGsDirect2DClass->OpacityBrush * 10.0);
+			this->TrBarRotationText->Position = (int)pGsDirect2DClass->RotationText;
+			this->_SetupAllEnable(this->Act_Text->Checked);
 		}
-		this->_bChangeOptionsText = false;  //true jesli zmieniono parametr tekstu
-		this->ButtAcceptAllOptionsText->Enabled = this->_bChangeOptionsText;
 	}
 }
 //---------------------------------------------------------------------------
@@ -248,7 +288,13 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextDrawTab(TCustomTabContr
 			{
 				pPControl->Canvas->Font->Color = clYellow;
 				pPControl->Canvas->Brush->Color = clRed;
-        if(this->SplitViewImageAndText->CompactWidth == 0) this->SplitViewImageAndText->CompactWidth = Rect.GetWidth();
+				if(this->SplitViewImageAndText->CompactWidth == 0)
+				{
+          #if defined(_DEBUGINFO_)
+						GsDebugClass::WriteDebug(Format("CompactWidth: %d", ARRAYOFCONST((Rect.GetWidth()))));
+					#endif
+					this->SplitViewImageAndText->CompactWidth = Rect.GetWidth();
+				}
 			}
 			pPControl->Canvas->Font->Orientation = 900;
 			pPControl->Canvas->FillRect(Rect);
@@ -267,6 +313,72 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextDrawTab(TCustomTabContr
 			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 			break;
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::PControlImageAndTextChange(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):Zmiana aktywnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPageControl *pPControl = dynamic_cast<TPageControl *>(Sender);
+	if(!pPControl) return;
+	//---
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("TImageAndTextWindow::PControlImageAndTextChange");
+	#endif
+	switch(pPControl->Tag)
+	{
+		case enPControl_ImageDisplay:
+		{
+			GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
+			if(pGsDirect2DClass)
+			{
+				this->Act_Text->Checked = pGsDirect2DClass->IsDisplayText;
+				this->_SetupAllEnable(this->Act_Text->Checked);
+				//Odczyt tekstu
+				this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
+				//czy uzywane dwa kolory do cieniowania
+				this->ChBoxIsDoubleColor->Checked = pGsDirect2DClass->IsGradientColorFont;
+				//Odczyt używanego kroju czcionki
+				int iIndexFont = this->CBoxSelectFont->Items->IndexOf(pGsDirect2DClass->NameFont);
+				this->CBoxSelectFont->ItemIndex = iIndexFont;
+				//Odczyt używanego koloru
+				this->CBoxSelectColorText->Selected = pGsDirect2DClass->StandartColorText;
+        this->CBoxSelectColorText2->Selected = pGsDirect2DClass->StandartColorText2;
+				//Odczyt wielkośći czcionki
+				int iIndexFontSize = this->CBoxSizeFont->Items->IndexOf(UnicodeString((int)pGsDirect2DClass->SizeFont));
+				this->CBoxSizeFont->ItemIndex = iIndexFontSize;
+				//Odczyt przezroczystości
+				this->TrBarOpacityBrush->Position = (int)(pGsDirect2DClass->OpacityBrush * 10.0);
+				//Odczyt obrotu
+				this->TrBarRotationText->Position = (int)pGsDirect2DClass->RotationText;
+			}
+		}
+		break;
+		//---
+		case enPControl_ImageTools:
+
+		break;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::PControlToolsMouseDown(TObject *Sender,
+					TMouseButton Button, TShiftState Shift, int X, int Y)
+/**
+	OPIS METOD(FUNKCJI):Kliknięto na zakładki narżedzi
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TPageControl *pPControl = dynamic_cast<TPageControl *>(Sender);
+	if(!pPControl) return;
+	//---
+	this->SplitViewImageAndText->Opened = true;
+	this->Act_ResizeWorkPanel->Checked = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TImageAndTextWindow::Act_SaveAsExecute(TObject *Sender)
@@ -288,7 +400,7 @@ void __fastcall TImageAndTextWindow::Act_SaveAsExecute(TObject *Sender)
 	pSaveDialog->Title = "Podaj nazwę projektu do zapisu";
 	pSaveDialog->Filter = UnicodeString("Pliki typu jpg(*.jpg)|*.JPG|") +
 												"Plik typu png(*.png)|*.PNG|" +
-												"Plik typu gif(*.gif)|*.GIF|" +
+												//"Plik typu gif(*.gif)|*.GIF|" +
 												"Plik typu tiff(*.tiff)|*.TIFF|" +
 												"Plik typu bmp(*.bmp)|*.BMP|"
 												"Domyślny typ pliku(*.*)|*.*";
@@ -313,6 +425,7 @@ void __fastcall TImageAndTextWindow::Act_SaveAsExecute(TObject *Sender)
 					if(pGsDirect2DClass)
 					{
 						pGsDirect2DClass->GsD2D_SavePicture(ustrPathSaveFile);
+						//pGsDirect2DClass->GsD2D_SavePictureOriginal(ustrPathSaveFile);
 					}
         }
 			}
@@ -352,21 +465,25 @@ void __fastcall TImageAndTextWindow::Act_TextExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("Act_TextExecute");
+	#endif
 	GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
 	if(pGsDirect2DClass)
 	{
 		pGsDirect2DClass->IsDisplayText = pAction->Checked;
-		if(pAction->Checked) this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
-		//Objekty aktywne, zależnie od tego czy jest załączony przełącznik w głównym menu, do wyświetlania tekstu
-		this->MemoImageAndText->Enabled = pAction->Checked;
-		this->ButtDisplayNewText->Enabled = pAction->Checked;
-		this->ButtAcceptAllOptionsText->Enabled = pAction->Checked && this->_bChangeOptionsText;
-		this->CBoxSelectColorText->Enabled = pAction->Checked;
-		this->CBoxSelectFont->Enabled = pAction->Checked;
-		this->CBoxSizeFont->Enabled = pAction->Checked;
-		this->TrBarOpacityBrush->Enabled = pAction->Checked;
-		//---
-		this->_ReadAllParameters(pGsDirect2DClass);
+		//if(pAction->Checked)
+		this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
+    this->ChBoxIsDoubleColor->Checked = pGsDirect2DClass->IsGradientColorFont;
+
+		this->_SetupAllEnable(pAction->Checked);
+
+		if(pAction->Checked)
+		{
+			this->SplitViewImageAndText->Opened = true;
+			this->PControlTools->ActivePageIndex = enSheet_ToolsImage;
+      this->PControlTools->SetFocus(); //Bardzo wazne!!!
+    }
 	}
 }
 //---------------------------------------------------------------------------
@@ -378,73 +495,46 @@ void __fastcall TImageAndTextWindow::Act_ResizeWorkPanelExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	this->SplitViewImageAndText->Opened = pAction->Checked;
 }
 //---------------------------------------------------------------------------
-void __fastcall TImageAndTextWindow::PControlImageAndTextChange(TObject *Sender)
+void __fastcall TImageAndTextWindow::Act_OnlyTextExecute(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI):Zmiana aktywnej zakładki
+	OPIS METOD(FUNKCJI):Wyswietlanie i operacje na samym tekście, zaden obrazek nie jest wyswietlany
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TPageControl *pPControl = dynamic_cast<TPageControl *>(Sender);
-	if(!pPControl) return;
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
 	//---
-	switch(pPControl->Tag)
+	GsTabSheetGraphics *pGsTabSheetGraphics = this->_pGsPanelMultiM->NewSheetOnlyText(); /**/
+	if(pGsTabSheetGraphics)
 	{
-		case enPControl_ImageDisplay:
-		{
-			GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
-			if(pGsDirect2DClass)
-			{
-				//Na wybranej zakładce, jest uaktywnione wyświetlanie tekstu na grafice, lub nie
-				this->Act_Text->Checked = pGsDirect2DClass->IsDisplayText;
-				this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
-        //Objekty aktywne, zależnie od tego czy na zakładce jest object z załączoną flaga wyswietlania tekstu
-				this->MemoImageAndText->Enabled = this->Act_Text->Checked;
-				this->ButtDisplayNewText->Enabled = this->Act_Text->Checked;
-				//this->ButtAcceptAllOptionsText->Enabled = this->Act_Text->Checked;
-				this->CBoxSelectColorText->Enabled = this->Act_Text->Checked;
-				this->CBoxSelectFont->Enabled = this->Act_Text->Checked;
-				this->CBoxSizeFont->Enabled = this->Act_Text->Checked;
-				this->TrBarOpacityBrush->Enabled = this->Act_Text->Checked;
-
-				this->_ReadAllParameters(pGsDirect2DClass);
-
-        this->_bChangeOptionsText = false;  //true jesli zmieniono parametr tekstu
-		this->ButtAcceptAllOptionsText->Enabled = this->_bChangeOptionsText;
-			}
-		}
-		break;
-		//---
-		case enPControl_ImageTools:
-
-		break;
-	}
+		pGsTabSheetGraphics->Caption = ustrCaptionShettNoText;
+		this->Act_Text->Checked = true;
+		this->Act_TextExecute(this->Act_Text);
+  }
 }
 //---------------------------------------------------------------------------
-void __fastcall TImageAndTextWindow::PControlToolsMouseDown(TObject *Sender,
-					TMouseButton Button, TShiftState Shift, int X, int Y)
+void __fastcall TImageAndTextWindow::MemoImageAndTextChange(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI):Kliknięto na zakładki narżedzi
+	OPIS METOD(FUNKCJI):Zmiana tekstu
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TPageControl *pPControl = dynamic_cast<TPageControl *>(Sender);
-	if(!pPControl) return;
+	TMemo *pMemo = dynamic_cast<TMemo *>(Sender);
+	if(!pMemo) return;
 	//---
-	this->SplitViewImageAndText->Opened = true;
-	this->Act_ResizeWorkPanel->Checked = true;
 }
 //---------------------------------------------------------------------------
-void __fastcall TImageAndTextWindow::ButtAllClick(TObject *Sender)
+void __fastcall TImageAndTextWindow::ButtDisplayNewTextClick(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):Zmiana tekstu
 	OPIS ARGUMENTÓW:
@@ -458,22 +548,7 @@ void __fastcall TImageAndTextWindow::ButtAllClick(TObject *Sender)
 	GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
 	if(pGsDirect2DClass)
 	{
-		switch(pButton->Tag)
-		{
-			case enTagAcceptText:
-				pGsDirect2DClass->TextWrite = this->MemoImageAndText->Text;
-				break;
-			//---
-			case enTagAcceptOptionsText:
-				pGsDirect2DClass->StandartColorText = this->CBoxSelectColorText->Selected;
-				pGsDirect2DClass->NameFont = this->CBoxSelectFont->Items->Strings[this->CBoxSelectFont->ItemIndex];
-				pGsDirect2DClass->SizeFont = (float)this->CBoxSizeFont->Items->Strings[this->CBoxSizeFont->ItemIndex].ToDouble();
-				pGsDirect2DClass->OpacityBrush = (float)((float)this->TrBarOpacityBrush->Position / 10.0f);
-
-				this->_bChangeOptionsText = false;  //true jesli zmieniono parametr tekstu
-				this->ButtAcceptAllOptionsText->Enabled = this->_bChangeOptionsText;
-				break;
-		}
+		pGsDirect2DClass->TextWrite = this->MemoImageAndText->Text;
 	}
 }
 //---------------------------------------------------------------------------
@@ -491,29 +566,154 @@ void __fastcall TImageAndTextWindow::CBoxSelectColorTextGetColors(TCustomColorBo
 	Items->AddObject("clWebBurlywood", (TObject *)clWebBurlywood);
 }
 //---------------------------------------------------------------------------
-void __fastcall TImageAndTextWindow::SelectChangeOptionsText(TObject *Sender)
+void __fastcall TImageAndTextWindow::CBoxAllSelect(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI):Zmiana parametrów tekstu
+	OPIS METOD(FUNKCJI):Dodanie kolorów do listy
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("this->_IsStart: %d", ARRAYOFCONST(((int)this->_IsStart))));
-	#endif
-	if(!this->_IsStart)
+	GsDirect2DClass *pGsDirect2DClass =  this->_GetDirect2DFromActiveSheet();
+	if(!pGsDirect2DClass) return;
+	//---
+	if(Sender->ClassNameIs("TColorBox"))
 	{
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("Sender: %s", ARRAYOFCONST((Sender->ClassName()))));
-		#endif
-		this->_bChangeOptionsText = true;  //true jesli zmieniono parametr tekstu
-		this->ButtAcceptAllOptionsText->Enabled = this->_bChangeOptionsText;
+		TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
+		if(!pColorBox) return;
+		//---
+		switch(pColorBox->Tag)
+		{
+			case enTagCBox_ColorFont:
+				pGsDirect2DClass->StandartColorText = pColorBox->Selected;
+				this->CBoxSelectColorText2->Selected = pColorBox->Selected;
+			break;
+			//---
+			case enTagCBox_ColorFont2:
+				pGsDirect2DClass->StandartColorText2 = pColorBox->Selected;
+			break;
+		}
 	}
-	else
-  {
-    this->_IsStart = false;
+	else if(Sender->ClassNameIs("TComboBox"))
+	{
+		TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
+		if(!pCBox) return;
+		//---
+		switch(pCBox->Tag)
+		{
+			case enTagCBox_SelectFont:
+				pGsDirect2DClass->NameFont = pCBox->Items->Strings[pCBox->ItemIndex];
+			break;
+			//---
+			case enTagCBox_SizeFont:
+				pGsDirect2DClass->SizeFont = (float)pCBox->Items->Strings[pCBox->ItemIndex].ToDouble();
+      break;
+    }
 	}
 }
 //---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::TrBarAllChange(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTrackBar *pTrBar = dynamic_cast<TTrackBar *>(Sender);
+	if(!pTrBar) return;
+	//---
+	GsDirect2DClass *pGsDirect2DClass =  this->_GetDirect2DFromActiveSheet();
+	if(!pGsDirect2DClass) return;
+	//---
+	switch(pTrBar->Tag)
+	{
+		case enTagTrBar_Opacity:
+			pGsDirect2DClass->OpacityBrush = (float)((float)pTrBar->Position / 10.0f);
+		break;
+		//---
+		case enTagTrBar_Rotation:
+      pGsDirect2DClass->RotationText = (float)pTrBar->Position;
+    break;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::_SetupAllEnable(const bool _bEnable)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  GsDirect2DClass *pGsDirect2DClass =  this->_GetDirect2DFromActiveSheet();
+	if(!pGsDirect2DClass) return;
+	//---
+	//Na wybranej zakładce, jest uaktywnione wyświetlanie tekstu na grafice, lub nie
+	//Objekty aktywne, zależnie od tego czy na zakładce jest object z załączoną flaga wyswietlania tekstu
+	this->MemoImageAndText->Enabled = _bEnable;
+	this->ChBoxIsDoubleColor->Enabled = _bEnable;
+	this->ButtDisplayNewText->Enabled = _bEnable;
+	this->CBoxSelectColorText->Enabled = _bEnable;
+	this->CBoxSelectFont->Enabled = _bEnable;
+	this->CBoxSizeFont->Enabled = _bEnable;
+	this->TrBarOpacityBrush->Enabled = _bEnable;
+
+	this->LabelColorText->Enabled = _bEnable;
+	this->LabelNameFont->Enabled = _bEnable;
+	this->LabelSizeFont->Enabled = _bEnable;
+	this->LabelSetOpacityBrush->Enabled = _bEnable;
+	this->LabelRotationText->Enabled = _bEnable;
+	this->TrBarOpacityBrush->Enabled = _bEnable;
+	this->TrBarRotationText->Enabled = _bEnable;
+
+	this->LabelColorText2->Enabled = _bEnable && this->ChBoxIsDoubleColor->Checked;
+	this->CBoxSelectColorText2->Enabled = _bEnable && this->ChBoxIsDoubleColor->Checked;
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::ChBoxAllClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GsDirect2DClass *pGsDirect2DClass =  this->_GetDirect2DFromActiveSheet();
+	if(!pGsDirect2DClass) return;
+	//---
+	TCheckBox *pChBox = dynamic_cast<TCheckBox *>(Sender);
+	if(!pChBox) return;
+	//---
+	switch(pChBox->Tag)
+	{
+		case enTagChBox_IsGradientColor:
+			pGsDirect2DClass->IsGradientColorFont = pChBox->Checked;
+
+			this->LabelColorText2->Enabled = pChBox->Checked;;
+			this->CBoxSelectColorText2->Enabled = pChBox->Checked;
+			pGsDirect2DClass->StandartColorText2 = this->CBoxSelectColorText2->Selected;
+		break;
+		//---
+  }
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::SplitViewImageAndTextOpened(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TSplitView *pSView = dynamic_cast<TSplitView *>(Sender);
+	if(!pSView) return;
+	//---
+	this->_pGsPanelMultiM->RefreshListView();
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("SplitViewImageAndTextOpened");
+	#endif
+}
+//---------------------------------------------------------------------------
+
 

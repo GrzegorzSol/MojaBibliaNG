@@ -49,7 +49,12 @@ __published:	// IDE-managed Components
 	TComboBox *CBoxSizeFont;
 	TTrackBar *TrBarOpacityBrush;
 	TLabel *LabelSetOpacityBrush;
-	TButton *ButtAcceptAllOptionsText;
+	TLabel *LabelColorText2;
+	TColorBox *CBoxSelectColorText2;
+	TLabel *LabelRotationText;
+	TTrackBar *TrBarRotationText;
+	TCheckBox *ChBoxIsDoubleColor;
+	TAction *Act_OnlyText;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall Act_CloseActiveSheetExecute(TObject *Sender);
 	void __fastcall PControlImageAndTextEnter(TObject *Sender);
@@ -60,20 +65,26 @@ __published:	// IDE-managed Components
 	void __fastcall Act_TextExecute(TObject *Sender);
 	void __fastcall Act_ResizeWorkPanelExecute(TObject *Sender);
 	void __fastcall PControlImageAndTextChange(TObject *Sender);
-	void __fastcall ButtAllClick(TObject *Sender);
+	void __fastcall MemoImageAndTextChange(TObject *Sender);
+	void __fastcall ButtDisplayNewTextClick(TObject *Sender);
 	void __fastcall CBoxSelectColorTextGetColors(TCustomColorBox *Sender, TStrings *Items);
+	void __fastcall CBoxAllSelect(TObject *Sender);
 	void __fastcall PControlToolsMouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
-	void __fastcall SelectChangeOptionsText(TObject *Sender);
+	void __fastcall TrBarAllChange(TObject *Sender);
+	void __fastcall ChBoxAllClick(TObject *Sender);
+	void __fastcall SplitViewImageAndTextOpened(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
+	void __fastcall Act_OnlyTextExecute(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall _InitTagAndHint();
-	void __fastcall _ReadAllParameters(const GsDirect2DClass *pGsDirect2DClass);
 	GsDirect2DClass *__fastcall _GetDirect2DFromActiveSheet();
-	bool _bChangeOptionsText,  //true jesli zmieniono parametr tekstu
-       _IsStart;
+  GsPanelMultiM *_pGsPanelMultiM;
+	void __fastcall _SetupAllEnable(const bool _bEnable);
+  UnicodeString _ustrInputText;
 public:		// User declarations
-	__fastcall TImageAndTextWindow(TComponent* Owner);
+	__fastcall TImageAndTextWindow(TComponent* Owner, const UnicodeString ustrInput = "");
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TImageAndTextWindow *ImageAndTextWindow;

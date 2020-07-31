@@ -166,10 +166,6 @@ object MainBibleWindow: TMainBibleWindow
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
         OnMouseLeave = TabSheetAllToolsMouseLeave
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
       object TabSheetAllCommentsVers: TTabSheet
         Caption = 'Lista werset'#243'w ulubionych, i tych do kt'#243'rych istniej'#261' komentarze'

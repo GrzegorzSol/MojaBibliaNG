@@ -65,7 +65,6 @@ __fastcall GsListViewMultiMClass::GsListViewMultiMClass(TComponent* Owner) : TCu
 	this->SmallImages = this->_pImageList;
 	this->LargeImages = this->_pImageList;
 
-	this->OnMouseLeave = this->_OnMouseLeave;
 	this->_CreateColumns();
 }
 //---------------------------------------------------------------------------
@@ -303,8 +302,10 @@ void __fastcall GsListViewMultiMClass::DoSelectItem(TListItem* Item, bool Select
 	if(!TFile::Exists(Item->Caption)) return;
 
 	pGsPanelMultiM->pGsDirect2DClass->GsD2D_LoadPicture(Item->Caption);
-	InvalidateRect(pGsPanelMultiM->pGsDirect2DClass->Handle, NULL, true);
-
+	InvalidateRect(pGsPanelMultiM->pGsDirect2DClass->Handle, NULL, false);
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("GsListViewMultiMClass::DoSelectItem()");
+	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
@@ -371,29 +372,6 @@ void __fastcall GsListViewMultiMClass::ColClick(TListColumn* Column)
 	this->Refresh();
 }
 //---------------------------------------------------------------------------
-void __fastcall GsListViewMultiMClass::_OnMouseLeave(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Metoda wywoływana podczas wyjścia wskaźnika myszy poza objekt //[03-11-2019]
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	//Metoda okazała sie nieprzydatna, więc zostanie wyłączona, a w przyszłości zlikwidowana. - 24-05-2020
-	return;
-	TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(this->Parent->Parent); //1.Parent - TPanel
-                                                                          //2.Parent - TTabSheet
-	if(!pTabSheet) return;
-	//---
-  if(pTabSheet->OnMouseLeave)
-	{
-		pTabSheet->OnMouseLeave(pTabSheet);
-	}
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("GsListViewMultiMClass::_OnMouseLeave, parent: %s", ARRAYOFCONST((this->Parent->Parent->ClassName()))));
-	#endif
-}
-//---------------------------------------------------------------------------
 /****************************************************************************
 *                           Klasa GsPanelMultiM                             *
 *****************************************************************************/
@@ -435,7 +413,26 @@ __fastcall GsPanelMultiM::~GsPanelMultiM()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	//
+}
+//---------------------------------------------------------------------------
+GsTabSheetGraphics *__fastcall GsPanelMultiM::NewSheetOnlyText()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->_pPControlMainWindow->Visible = true; //01-02-2020
+	GsTabSheetGraphics *pGsTabSheetGraphics = new GsTabSheetGraphics(this->_pPControlMainWindow);
+	if(!pGsTabSheetGraphics) throw(Exception("Błąd inicjalizacji objektu GsTabSheetGraphics"));
+	//---
+  pGsTabSheetGraphics->PageControl = this->_pPControlMainWindow; //Umieszczanie objektu klasy na objekcie typu TPageControl
+	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 
+	this->_pPControlMainWindow->SetFocus();
+	return  pGsTabSheetGraphics;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelMultiM::CreateWnd()
@@ -448,6 +445,7 @@ void __fastcall GsPanelMultiM::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
+
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelMultiM::DestroyWnd()
@@ -470,6 +468,9 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("GsPanelMultiM::_ImageOnClick()");
+	#endif
 	this->_pPControlMainWindow->Visible = true; //01-02-2020
 	GsTabSheetGraphics *pGsTabSheetGraphics = new GsTabSheetGraphics(this->_pPControlMainWindow);
 	if(!pGsTabSheetGraphics) throw(Exception("Błąd inicjalizacji objektu GsTabSheetGraphics"));
@@ -477,10 +478,14 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	pGsTabSheetGraphics->PageControl = this->_pPControlMainWindow; //Umieszczanie objektu klasy na objekcie typu TPageControl
 	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 	TListItem* pListItem = this->_pGsListViewMultiMClass->Selected;
-	pGsTabSheetGraphics->Caption = Format("\"%s\"", ARRAYOFCONST((TPath::GetFileName(pListItem->Caption))));
-	pGsTabSheetGraphics->pGsDirect2DClassFull->GsD2D_LoadPicture(pListItem->Caption);
 
-  pGsTabSheetGraphics->SetFocus();
+	if(pListItem!=NULL)
+	{
+		pGsTabSheetGraphics->Caption = Format("\"%s\"", ARRAYOFCONST((TPath::GetFileName(pListItem->Caption))));
+		pGsTabSheetGraphics->pGsDirect2DClass->GsD2D_LoadPicture(pListItem->Caption);
+	}
+	//pGsTabSheetGraphics->SetFocus();
+	this->_pPControlMainWindow->SetFocus();
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
@@ -491,10 +496,10 @@ __fastcall GsTabSheetGraphics::GsTabSheetGraphics(TComponent* Owner) : TTabSheet
 {
   this->DoubleBuffered = true;
   //---
-	this->pGsDirect2DClassFull = new GsDirect2DClass(this);
-	if(!this->pGsDirect2DClassFull) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
-	this->pGsDirect2DClassFull->Parent = this;
-  this->pGsDirect2DClassFull->Align = alClient;
+	this->pGsDirect2DClass = new GsDirect2DClass(this);
+	if(!this->pGsDirect2DClass) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
+	this->pGsDirect2DClass->Parent = this;
+  this->pGsDirect2DClass->Align = alClient;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetGraphics::~GsTabSheetGraphics()

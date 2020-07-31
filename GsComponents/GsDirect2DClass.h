@@ -2,6 +2,7 @@
 #define GsDirect2DClassH
 //---------------------------------------------------------------------------
 #include <Vcl.ExtCtrls.hpp>
+#include <System.IniFiles.hpp>
 #include <d2d1.h>
 #include <dwrite.h>
 
@@ -11,13 +12,15 @@
 #endif
 //Domyślne wartosci dla składowych klasy, które są stałe
 const bool CFIsDisplayText = false;
-const UnicodeString CFNameFont = "Arial",
-										CFTextWrite = "Testowy tekst";
+const UnicodeString CFNameFont = "Arial";
+const UnicodeString CFTextWrite = "Testowy tekst";
 const float CFSizeFont = 72.0f,
 						CFRotationText = 0.0f,
 						CFOpacityBrush = 1.0f;
-const D2D1::ColorF::Enum CFD2DColorText = D2D1::ColorF::Black;
-const TColor CFStandardColorText = clBlack;
+const D2D1::ColorF::Enum CFD2DColorText = D2D1::ColorF::Black, CFD2DColorText2 = D2D1::ColorF::White;
+const TColor CFStandardColorText = clBlack, CFStandardColorText2 = clWhite;
+
+bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont);
 //---------------------------------------------------------------------------
 class GsDirect2DClass : public TCustomPanel
 {
@@ -25,14 +28,17 @@ class GsDirect2DClass : public TCustomPanel
 		__fastcall GsDirect2DClass(TComponent* Owner);
 		__fastcall virtual ~GsDirect2DClass();
 		//---
+		static bool IsInitListfonts; //Lista czcionek została wczytana, lub nie
+		const static UnicodeString csVersion;
+		//---
 		void __fastcall GsD2D_LoadPicture(const UnicodeString custrPathImage, const bool _bAutosize=true);
 		void __fastcall GsD2D_SavePicture(const UnicodeString custrPathSaveImage);
 		void __fastcall GsD2D_SavePictureOriginal(const UnicodeString custrPathSaveImage);
-    const static UnicodeString csVersion;
 		//---
 		BEGIN_MESSAGE_MAP
 			VCL_MESSAGE_HANDLER(WM_SIZE, TWMSize, WMSize);
 			VCL_MESSAGE_HANDLER(WM_PAINT, TWMPaint, WMPaint);
+			VCL_MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, WMErasebackground);
 		END_MESSAGE_MAP(TCustomPanel);
 		//---
 		__property TNotifyEvent OnClick = {read=FOnClick, write=FOnClick};
@@ -41,29 +47,35 @@ class GsDirect2DClass : public TCustomPanel
 		__property float SizeFont = {read = FSizeFont, write = _SetSizeFont};
 		__property UnicodeString TextWrite = {read = FTextWrite, write = _SetTextWrite};
 		__property D2D1::ColorF::Enum D2DColorText = {read = FD2DColorText, write = _SetD2DColorText};
+		__property D2D1::ColorF::Enum D2DColorText2 = {read = FD2DColorText2, write = _SetD2DColorText2};
 		__property TColor StandartColorText = {read = FStandardColorText, write = _SetStandardColorText};
+		__property TColor StandartColorText2 = {read = FStandardColorText2, write = _SetStandardColorText2};
 		__property float RotationText = {read = FRotationText, write = _SetRotationText};
 		__property float OpacityBrush = {read = FOpacityBrush, write = _SetOpacityBrush};
+		__property bool IsModified = {read = FIsModified, write = FIsModified, default = false};
+		__property bool IsGradientColorFont = {read = FIsGradientColorFont, write = _SetGradientText, default = false};
+		__property bool IsLoadedImage = {read = FIsLoadedImage, default = false};
 
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		void __fastcall WMSize(TWMSize &Message);
 		void __fastcall WMPaint(TWMPaint &Message);
+		void __fastcall WMErasebackground(TWMEraseBkgnd &Message);
 		DYNAMIC void __fastcall Click();
 		HRESULT __fastcall CreateDeviceResources(HWND hWnd);
 		
 	private:
 		//Metody obsługujace zmienne i parametry
 			//Prywatne flagi
-		bool FIsDisplayText;
+		bool FIsDisplayText, FIsModified, FIsGradientColorFont, FIsLoadedImage;
 		UnicodeString FNameFont;
 		float FSizeFont,
 					FRotationText,
 					FOpacityBrush;
 		UnicodeString FTextWrite;
-		D2D1::ColorF::Enum FD2DColorText;
-		TColor FStandardColorText;
+		D2D1::ColorF::Enum FD2DColorText, FD2DColorText2;
+		TColor FStandardColorText, FStandardColorText2;
 			//Zachowanie całej klasy
 		TNotifyEvent FOnClick;
 			//Metody obsługujace parametry
@@ -72,11 +84,15 @@ class GsDirect2DClass : public TCustomPanel
 		void __fastcall _SetSizeFont(const float _SizeFont);
 		void __fastcall _SetTextWrite(const UnicodeString _TextWrite);
 		void __fastcall _SetD2DColorText(const D2D1::ColorF::Enum _ColorText);
+		void __fastcall _SetD2DColorText2(const D2D1::ColorF::Enum _ColorText);
 		void __fastcall _SetStandardColorText(const TColor _TColorText);
+    void __fastcall _SetStandardColorText2(const TColor _TColorText);
 		void __fastcall _ReCreateTextFont();
 		void __fastcall _SetRotationText(const float _fRotationAngle);
 		void __fastcall _SetOpacityBrush(const float _fOpacityBrush);
-		//---
+		void __fastcall _SetGradientText(const bool _IsDoubleColorFont);
+
+		void __fastcall _CreateGradientBrushDrawText(const D2D1_RECT_F &rectangle, const D2D1_RECT_F &rectTextMetric);
 		void __fastcall _SaveIWICBitmapSource(IWICBitmapSource *pIWICBitmapSource , const UnicodeString custrPathSaveImage, unsigned int _uiWidth, unsigned int _uiHeight);
 		//Prywatne zmienne
 		UnicodeString _ustrPathImage;
@@ -92,7 +108,8 @@ class GsDirect2DClass : public TCustomPanel
 		//DirectWrite
 		IDWriteFactory* pIDWriteFactory;
 		IDWriteTextFormat* pIDWriteTextFormat;
-    ID2D1SolidColorBrush *pID2D1SolidColorBrush1;
+    IDWriteTextLayout *pIDWriteTextLayout;
+		ID2D1SolidColorBrush *pID2D1SolidColorBrush1, *pID2D1SolidColorBrush2;
 };
 //---------------------------------------------------------------------------
 #endif
