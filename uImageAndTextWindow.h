@@ -17,6 +17,7 @@
 #include <Vcl.WinXCtrls.hpp>
 
 #include "uMyBibleNGLibrary.h"
+#include <Vcl.Buttons.hpp>
 //---------------------------------------------------------------------------
 class TImageAndTextWindow : public TForm
 {
@@ -55,6 +56,8 @@ __published:	// IDE-managed Components
 	TTrackBar *TrBarRotationText;
 	TCheckBox *ChBoxIsDoubleColor;
 	TAction *Act_OnlyText;
+	TRadioGroup *RGroupSelectEffects;
+	TGroupBox *GrBoxEffects;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall Act_CloseActiveSheetExecute(TObject *Sender);
 	void __fastcall PControlImageAndTextEnter(TObject *Sender);
@@ -76,6 +79,7 @@ __published:	// IDE-managed Components
 	void __fastcall SplitViewImageAndTextOpened(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall Act_OnlyTextExecute(TObject *Sender);
+	void __fastcall RGroupSelectEffectsClick(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall _InitTagAndHint();

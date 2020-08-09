@@ -4,16 +4,35 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <System.IniFiles.hpp>
 #include <d2d1.h>
+#include <d2d1_1.h>
 #include <dwrite.h>
 
 //#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif
+//Stałe efektów graficznych
+enum EnEffectsGfx {
+										//Efekty kompatybilne z Windows 7 i 8
+										EfGfx_NoEffect=0x1000, EfGfx_GaussianBlur, EfGfx_HueRotation, EfGfx_DirectionalBlur, EfGfx_ConvolveMatrix,
+										EfGfx_Morphology, EfGfx_DiscreteTransfer, EfGfx_GammaTransfer, EfGfx_LuminanceToAlpha, EfGfx_3DPerspectiveTransform,
+										EfGfx_BitmapSource, EfGfx_Brightness,
+										//Efekty kompatybilne z Windows 10
+										EfGfx_EdgeDetection, EfGfx_Emboss, EfGfx_Posterize, EfGfx_Vignette,
+									};
+const UnicodeString ustrListNameEffects[] = { //Efekty działajace na Windows 7
+																							"Bez efektu", "GaussianBlur", "HueRotation", "DirectionalBlur", "ConvolveMatrix",
+																							"Morphology", "DiscreteTransfer", "GammaTransfer", "LuminanceToAlpha",
+																							"3DPerspectiveTransform", "BitmapSource-Flip", "Brightness",
+																							//Efekty działajace, tylko na minimum Windows 10
+																							"EdgeDetection(Win10)", "Emboss(Win10)", "Posterize(Win10)", "Vignette(Win10)"
+																						},
+										//Zdefiniowane wielkości czcionek
+                    ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"};
 //Domyślne wartosci dla składowych klasy, które są stałe
 const bool CFIsDisplayText = false;
-const UnicodeString CFNameFont = "Arial";
-const UnicodeString CFTextWrite = "Testowy tekst";
+const UnicodeString CFNameFont = "Arial",
+										CFTextWrite = "Testowy tekst";
 const float CFSizeFont = 72.0f,
 						CFRotationText = 0.0f,
 						CFOpacityBrush = 1.0f;
@@ -55,6 +74,9 @@ class GsDirect2DClass : public TCustomPanel
 		__property bool IsModified = {read = FIsModified, write = FIsModified, default = false};
 		__property bool IsGradientColorFont = {read = FIsGradientColorFont, write = _SetGradientText, default = false};
 		__property bool IsLoadedImage = {read = FIsLoadedImage, default = false};
+      //Efekty
+		__property bool IsApplyEfects = {read = FIsApplyEfects, default = false};
+		__property EnEffectsGfx SetApplyEffect = {read = FSetApplyEffect, write = _SetApplyEfects};
 
 	protected:
 		virtual void __fastcall CreateWnd();
@@ -66,9 +88,14 @@ class GsDirect2DClass : public TCustomPanel
 		HRESULT __fastcall CreateDeviceResources(HWND hWnd);
 		
 	private:
+		void __fastcall _ScaleBitmapSource(const int _iWidth, const int _iHeight); //Scalowanie objektu typu IWICBitmapSource, na objekt typu ID2D1Bitmap
+		void __fastcall _PaintNoEfects(const RECT &rRect, const D2D1_RECT_F &rectangle); //Malowanie bez żadnych efektów
+		void __fastcall _PaintApplyEfects(const RECT &rRect, const D2D1_RECT_F &rectangle); //Malowaniez wybranymi efektami efektów
+		ID2D1Effect* __fastcall _ApplyEffect(ID2D1Image *Image, ID2D1Bitmap *pBitmap2=NULL); //Wywoływanie efektów
 		//Metody obsługujace zmienne i parametry
 			//Prywatne flagi
-		bool FIsDisplayText, FIsModified, FIsGradientColorFont, FIsLoadedImage;
+		bool FIsDisplayText, FIsModified, FIsGradientColorFont, FIsLoadedImage, FIsApplyEfects;
+		EnEffectsGfx FSetApplyEffect;
 		UnicodeString FNameFont;
 		float FSizeFont,
 					FRotationText,
@@ -91,7 +118,9 @@ class GsDirect2DClass : public TCustomPanel
 		void __fastcall _SetRotationText(const float _fRotationAngle);
 		void __fastcall _SetOpacityBrush(const float _fOpacityBrush);
 		void __fastcall _SetGradientText(const bool _IsDoubleColorFont);
-
+		//Metody efektów graficznych
+		void __fastcall _SetApplyEfects(const EnEffectsGfx _FSetApplyEffect);
+		//---
 		void __fastcall _CreateGradientBrushDrawText(const D2D1_RECT_F &rectangle, const D2D1_RECT_F &rectTextMetric);
 		void __fastcall _SaveIWICBitmapSource(IWICBitmapSource *pIWICBitmapSource , const UnicodeString custrPathSaveImage, unsigned int _uiWidth, unsigned int _uiHeight);
 		//Prywatne zmienne
@@ -99,12 +128,16 @@ class GsDirect2DClass : public TCustomPanel
 		//Ile skalować projekt, który zakłada 96-DPI pikseli
 		float _dpiScaleX;
 		float _dpiScaleY;
+    bool IsWindows10; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 		//Direct2D
 		IWICImagingFactory *pIWICImagingFactory;
 		ID2D1Factory *pID2D1Factory;
 		ID2D1HwndRenderTarget *pID2D1HwndRenderTarget;
 		ID2D1Bitmap *pID2D1Bitmap;
 		IWICFormatConverter *pIWICFormatConverter;
+		ID2D1DeviceContext *pID2D1DeviceContext;
+		IWICBitmapScaler *pIWICBitmapScaler; //Przeskalowana bitmapa do wymierów aktualnych okna.
+                                         //W metodzie _ScaleBitmapSource, przeksztaucana jest w objet, klasy ID2D1Bitmap
 		//DirectWrite
 		IDWriteFactory* pIDWriteFactory;
 		IDWriteTextFormat* pIDWriteTextFormat;

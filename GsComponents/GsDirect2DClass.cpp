@@ -1,6 +1,9 @@
 ﻿#include "GsDirect2DClass.h"
 #include <Vcl.Graphics.hpp>
 #include <System.IOUtils.hpp>
+#include <d2d1_1.h>
+//#include <d2d1_3.h>
+#include <D2D1Effects_2.h>
 /*
 	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
 		//Your code.
@@ -14,6 +17,7 @@
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug("");
 #endif
+MessageBox(NULL, TEXT("Aplikacja do uruchomienia wymaga systemu operacyjnego w wersji minimalnej 6.1 (Windows 7 sp1)"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 */
 #if defined(__BORLANDC__) && defined(_WIN64)
 	#pragma link "D2d1.a"
@@ -26,8 +30,10 @@
 #pragma package(smart_init)
 
 const float DEFAULT_DPI = 96.0f;   // Domyślne DPI, które mapuje rozdzielczość obrazu bezpośrednio do rozdzielczości ekranu
+//Funkcje pomocnicze
+bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont);
 //Nadanie wartości składnikom statycznym
-const UnicodeString GsDirect2DClass::csVersion = "0.6.4689.9047";
+const UnicodeString GsDirect2DClass::csVersion = "0.8.3875.8430";
 bool GsDirect2DClass::IsInitListfonts = false; //Lista czcionek została wczytana, lub nie, w tej klasie
 //---------------------------------------------------------------------------
 template<class Interface>
@@ -49,6 +55,10 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 */
 {
 	this->DoubleBuffered = true;
+	this->IsWindows10 = TOSVersion::Check(10);
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("%s: v%u.%d build: %d", ARRAYOFCONST((TOSVersion::Name, TOSVersion::Major, TOSVersion::Minor, TOSVersion::Build))));
+	#endif
 	//Trzeba wszystkie wskaźniki zainicjować wartością NULL!!!
 	//Direct2D
 	this->pID2D1Bitmap=NULL;
@@ -56,6 +66,8 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 	this->pIWICImagingFactory=NULL;
 	this->pID2D1Factory=NULL;
 	this->pID2D1HwndRenderTarget=NULL;
+	this->pID2D1DeviceContext=NULL;
+	this->pIWICBitmapScaler=NULL;
 	//DirectWrite
 	this->pIDWriteFactory=NULL;
 	this->pIDWriteTextFormat=NULL;
@@ -75,7 +87,10 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 	this->FOpacityBrush = CFOpacityBrush;
 	this->FIsModified = false;
 	this->FIsDisplayText = false;
-  this->FIsGradientColorFont = false;
+	this->FIsGradientColorFont = false;
+	this->FIsApplyEfects = false;
+	//Efekty
+	this->FSetApplyEffect = EfGfx_NoEffect;
 
 	//Uzyskanie informacje o dpi
 	HDC screen = GetDC(0);
@@ -100,6 +115,8 @@ __fastcall GsDirect2DClass::~GsDirect2DClass()
 	SafeRelease(&this->pIWICImagingFactory);
 	SafeRelease(&this->pID2D1Factory);
 	SafeRelease(&this->pID2D1HwndRenderTarget);
+	SafeRelease(&this->pID2D1DeviceContext);
+	SafeRelease(&this->pIWICBitmapScaler);
 	//DirectWrite
 	SafeRelease(&this->pIDWriteFactory);
 	SafeRelease(&this->pIDWriteTextFormat);
@@ -161,9 +178,6 @@ void __fastcall GsDirect2DClass::GsD2D_LoadPicture(const UnicodeString custrPath
 			//Ustaw wymiary komponentu klasy, na wymiary obrazu, by móc umieścic objekt, klasy
 			//w klasie, objektu TScrollBox, w celu skalowania obrazu
 			this->Width = uiWidth; this->Height = uiHeight;
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("%ux%u", ARRAYOFCONST((uiWidth, uiHeight))));
-			#endif
 		}
 
 		hr = this->CreateDeviceResources(this->Handle);
@@ -182,9 +196,6 @@ void __fastcall GsDirect2DClass::GsD2D_LoadPicture(const UnicodeString custrPath
 	}
 	__finally
 	{
-    #if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("__finally");
-		#endif
 		SafeRelease(&pIWICBitmapDecoder);
 		SafeRelease(&pIWICBitmapFrameDecode);
 		//InvalidateRect(this->Handle, NULL, true);
@@ -200,9 +211,6 @@ void __fastcall GsDirect2DClass::GsD2D_SavePicture(const UnicodeString custrPath
 */
 {
 	if(!this->pIWICImagingFactory) return;// || !this->pIWICFormatConverter) return;
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("GsDirect2DClass::GsD2D_SavePicture()");
-	#endif
 	//---
 	HRESULT hr=S_OK;
 	IWICBitmap *tpIWICBitmap=NULL;
@@ -422,10 +430,6 @@ void __fastcall GsDirect2DClass::WMSize(TWMSize &Message)
 			throw(Exception("Błąd funkcji Resize())"));
 		}
 	}
-
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("WMSize");
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
@@ -436,31 +440,45 @@ void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  HRESULT hr = S_OK;
-	TPaintStruct Ps;
+	HRESULT hr = S_OK;
 	RECT rRect;
-	int iWidth, iHeight;
 
 	::GetClientRect(this->Handle, &rRect);
-	iWidth = rRect.right - rRect.left;
-	iHeight = rRect.bottom - rRect.top;
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("WMPaint");
-	#endif
 
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("iWidth=%d, iHeight=%d", ARRAYOFCONST((iWidth, iHeight))));
-	#endif
-	//D2D1_RECT_F rectangle = D2D1::RectF(0.0f, 0.0f, iWidth, iHeight);
 	D2D1_RECT_F rectangle = D2D1::RectF(static_cast<float>(rRect.left) / this->_dpiScaleX, static_cast<float>(rRect.top) / this->_dpiScaleY,
 																			static_cast<float>(rRect.right) / this->_dpiScaleX, static_cast<float>(rRect.bottom) / this->_dpiScaleY);
 
+	hr = this->CreateDeviceResources(this->Handle);
+	if(FAILED(hr)) return; //Wyjście jeśli metoda CreateDeviceResources zwróciła nie powodzenie.
+												 //Błąd tworzenia objektu, klasy ID2D1HwndRenderTarget, lub ID2D1SolidColorBrush
+	//---
+	if(!this->FIsApplyEfects)
+	{
+		//Bez efektów
+		this->_PaintNoEfects(rRect, rectangle);
+	}
+	else
+	{
+		this->_PaintApplyEfects(rRect, rectangle);
+  }
+}
+//---------------------------------------------------------------------------
+void __fastcall GsDirect2DClass::_PaintNoEfects(const RECT &rRect, const D2D1_RECT_F &rectangle)
+/**
+	OPIS METOD(FUNKCJI):Malowanie bez żadnych efektów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	HRESULT hr = S_OK;
+	PAINTSTRUCT Ps;
+	int iWidth = rRect.right - rRect.left;
+	int iHeight = rRect.bottom - rRect.top;
+
 	if(BeginPaint(this->Handle, &Ps))
 	{
-		//Utwórz cel renderowania, jeśli nie został jeszcze utworzony
-		hr = this->CreateDeviceResources(this->Handle);
-
-		if(SUCCEEDED(hr) && !(this->pID2D1HwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
+		if(!(this->pID2D1HwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
 		{
 			this->pID2D1HwndRenderTarget->BeginDraw();
 			this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -481,14 +499,14 @@ void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
 			}
 			else
 			{
-        //Czyszczenie okna
+				//Czyszczenie okna
 				this->pID2D1HwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Gray));
-      }
+			}
 
 			if(this->FIsDisplayText)
 			{
 				if(this->FRotationText != 0.00f) this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(this->FRotationText, D2D1::Point2F(this->Width / 2, this->Height / 2)));
-        //tworzenie objektu klasy IDWriteTextLayout
+				//tworzenie objektu klasy IDWriteTextLayout
 				SafeRelease(&this->pIDWriteTextLayout);
 				hr = this->pIDWriteFactory->CreateTextLayout(this->FTextWrite.c_str(), this->FTextWrite.Length(), this->pIDWriteTextFormat,
 					iWidth, iHeight, &this->pIDWriteTextLayout);
@@ -500,7 +518,7 @@ void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
 				if(FAILED(hr)) throw(Exception("Błąd metody GetMetrics())"));
 
 				D2D1_RECT_F rectTextMetric = D2D1::RectF(textMetrics.left, textMetrics.top, textMetrics.left + textMetrics.width, textMetrics.top + textMetrics.height);
-        //Podjęcie akcji rysowania tekstu zależnie od ustawień
+				//Podjęcie akcji rysowania tekstu zależnie od ustawień
 				if(this->FIsGradientColorFont) //Cieniowanie tekstu
 				{
 					this->_CreateGradientBrushDrawText(rectangle, rectTextMetric);
@@ -508,7 +526,7 @@ void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
 				else
 				{
 					this->pID2D1HwndRenderTarget->DrawTextLayout(D2D1::Point2F(0, 0), pIDWriteTextLayout, this->pID2D1SolidColorBrush1);
-        }
+				}
 			}
 
 			hr = this->pID2D1HwndRenderTarget->EndDraw();
@@ -521,11 +539,279 @@ void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
 				//Wymuszenie odświerzania
 				hr = InvalidateRect(this->Handle, NULL, false)? S_OK : E_FAIL;
 			}
-		}
+		} //(this->pID2D1HwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
 		EndPaint(this->Handle, &Ps);
+	} //if(BeginPaint(this->Handle, &Ps))
+}
+//---------------------------------------------------------------------------
+void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1_RECT_F &rectangle)
+/**
+	OPIS METOD(FUNKCJI): Malowaniez wybranymi efektami efektów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  HRESULT hr = S_OK;
+	PAINTSTRUCT Ps;
+	int iWidth = rRect.right - rRect.left;
+	int iHeight = rRect.bottom - rRect.top;
+	ID2D1Image *pID2D1Image=NULL;
+	ID2D1Effect *pID2D1Effect=NULL;
+
+	//Skalowanie grafiki
+	this->_ScaleBitmapSource(iWidth, iHeight);
+
+  if(BeginPaint(this->Handle, &Ps))
+	{
+		if(!(this->pID2D1HwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
+		{
+			//D2DBitmapy mogły zostać zwolnione z powodu utraty urządzenia.
+			//Jeśli tak, odtwórz ją ze źródłowej bitmapy
+
+			this->pID2D1HwndRenderTarget->BeginDraw();
+      this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+
+      //Rysowanie obrazu i skalowanie go do bieżących wymiarów okna
+			if (this->pID2D1Bitmap)
+			{
+				pID2D1Effect = this->_ApplyEffect(pID2D1Image);
+				//Czy metoda zwróciła niepusty wskaźnik (sprawdzanie sytemu Windows, dla efektów)
+				if(pID2D1Effect) this->pID2D1DeviceContext->DrawImage(pID2D1Effect);
+			}
+			else
+			{
+				//Czyszczenie okna
+				this->pID2D1HwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Gray));
+			}
+
+      if(this->FIsDisplayText)
+			{
+				if(this->FRotationText != 0.00f) this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(this->FRotationText, D2D1::Point2F(this->ClientWidth / 2, this->ClientHeight / 2)));
+				//tworzenie objektu klasy IDWriteTextLayout
+				SafeRelease(&this->pIDWriteTextLayout);
+				hr = this->pIDWriteFactory->CreateTextLayout(this->FTextWrite.c_str(), this->FTextWrite.Length(), this->pIDWriteTextFormat,
+					iWidth, iHeight, &this->pIDWriteTextLayout);
+				if(FAILED(hr)) throw(Exception("Błąd metody CreateTextLayout())"));
+				//Pobieranie realnego wymiaru tekstu
+				DWRITE_TEXT_METRICS textMetrics;
+				ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
+				hr = this->pIDWriteTextLayout->GetMetrics(&textMetrics);
+				if(FAILED(hr)) throw(Exception("Błąd metody GetMetrics())"));
+
+				D2D1_RECT_F rectTextMetric = D2D1::RectF(textMetrics.left, textMetrics.top, textMetrics.left + textMetrics.width, textMetrics.top + textMetrics.height);
+				//Podjęcie akcji rysowania tekstu zależnie od ustawień
+				if(this->FIsGradientColorFont) //Cieniowanie tekstu
+				{
+					this->_CreateGradientBrushDrawText(rectangle, rectTextMetric);
+				}
+				else
+				{
+					this->pID2D1HwndRenderTarget->DrawTextLayout(D2D1::Point2F(0, 0), pIDWriteTextLayout, this->pID2D1SolidColorBrush1);
+				}
+			}
+			hr = this->pID2D1HwndRenderTarget->EndDraw();
+			//W przypadku utraty urządzenia, odrzucić D2D render target i D2DBitmapę
+			//Będą odtworzone w następnej procesie renderingu
+			if (hr == D2DERR_RECREATE_TARGET)
+			{
+				SafeRelease(&this->pID2D1Bitmap);
+				SafeRelease(&this->pID2D1HwndRenderTarget);
+				//Wymuszenie odświerzania
+				hr = InvalidateRect(this->Handle, NULL, false)? S_OK : E_FAIL;
+			}
+		}//(this->pID2D1HwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
+		EndPaint(this->Handle, &Ps);
+	} //if(BeginPaint(this->Handle, &Ps))
+
+  SafeRelease(&pID2D1Effect);
+	SafeRelease(&pID2D1Image);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsDirect2DClass::_ScaleBitmapSource(const int _iWidth, const int _iHeight)
+/**
+	OPIS METOD(FUNKCJI): Scalowanie objektu typu IWICBitmapSource, na objekt typu ID2D1Bitmap
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	HRESULT hr = S_OK;
+
+  //Skalowanie grafiki
+	SafeRelease(&this->pID2D1Bitmap);
+	SafeRelease(&this->pIWICBitmapScaler);
+	if(this->pIWICFormatConverter)// && !this->pID2D1Bitmap)
+	{
+		//Przeskalowanie grafiki, do wymiarów okna, gdyż objektu klasy ID2D1Image, nie da się skalować na okno
+		this->pIWICImagingFactory->CreateBitmapScaler(&this->pIWICBitmapScaler);
+		if(FAILED(hr)) throw(Exception("Błąd funkcji CreateBitmapScaler())"));
+		//Skalowanie obrazka po konwersji
+		hr = this->pIWICBitmapScaler->Initialize(this->pIWICFormatConverter, _iWidth, _iHeight, WICBitmapInterpolationModeFant);
+		if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
+
+		hr = this->pID2D1HwndRenderTarget->CreateBitmapFromWicBitmap(this->pIWICBitmapScaler, NULL, &this->pID2D1Bitmap);
+		if(FAILED(hr)) throw(Exception("Błąd metody CreateBitmapFromWicBitmap())"));
+	} //if(this->pIWICFormatConverter)
+}
+//---------------------------------------------------------------------------
+ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bitmap *pBitmap2)
+/**
+	OPIS METOD(FUNKCJI): Tworzenie efektów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  HRESULT hr = S_OK;
+	ID2D1Effect *pEffect=NULL;
+	CLSID effectId;
+
+	if((!this->IsWindows10) && (this->FSetApplyEffect > EfGfx_Brightness))
+	{
+		MessageBox(NULL, TEXT("Aktualnie wybrany efekt wymaga minimum Windows 10!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		return 0;
+  }
+
+	switch(this->FSetApplyEffect)
+	{
+		case EfGfx_GaussianBlur: effectId = CLSID_D2D1GaussianBlur; break;
+		case EfGfx_HueRotation: effectId = CLSID_D2D1HueRotation; break;
+		case EfGfx_DirectionalBlur: effectId = CLSID_D2D1DirectionalBlur; break;
+		case EfGfx_ConvolveMatrix: effectId = CLSID_D2D1ConvolveMatrix; break;
+		case EfGfx_Morphology: effectId = CLSID_D2D1Morphology; break;
+		case EfGfx_DiscreteTransfer: effectId = CLSID_D2D1DiscreteTransfer; break;
+		case EfGfx_GammaTransfer: effectId = CLSID_D2D1GammaTransfer; break;
+		case EfGfx_LuminanceToAlpha: effectId = CLSID_D2D1LuminanceToAlpha; break;
+		case EfGfx_3DPerspectiveTransform: effectId = CLSID_D2D13DPerspectiveTransform; break;
+		case EfGfx_BitmapSource: effectId = CLSID_D2D1BitmapSource; break;
+		case EfGfx_Brightness: effectId = CLSID_D2D1Brightness; break;
+		//EFEKTY KTÓRE DZIAŁAJA TYLKO W WERSJI SYTEMU MINIMUM WINDOWS 10
+		case EfGfx_EdgeDetection: effectId = CLSID_D2D1EdgeDetection; break;
+		case EfGfx_Emboss: effectId = CLSID_D2D1Emboss; break;
+		case EfGfx_Posterize: effectId = CLSID_D2D1Posterize; break;
+		case EfGfx_Vignette: effectId = CLSID_D2D1Vignette; break;
+
+		default: effectId = CLSID_D2D1GaussianBlur;
 	}
 
-  //return SUCCEEDED(hr) ? 0 : 1;
+	hr = this->pID2D1DeviceContext->CreateEffect(effectId, &pEffect);
+	if(!SUCCEEDED(hr)) throw(Exception("Błąd metody CreateEffect()"));
+
+  pEffect->SetInput(0, this->pID2D1Bitmap);
+  switch(this->FSetApplyEffect)
+	{
+		case EfGfx_NoEffect: SafeRelease(&pEffect); pEffect = NULL; return 0;
+		case EfGfx_GaussianBlur: break;
+		case EfGfx_HueRotation: pEffect->SetValue(D2D1_HUEROTATION_PROP_ANGLE, 90.0f); break;
+		case EfGfx_DirectionalBlur: pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, 7.0f); break;
+		case EfGfx_ConvolveMatrix:
+		{
+			float matrix[9] = {-1, -1, -1, -1, 9, -1, -1, -1, -1};
+			pEffect->SetValue(D2D1_CONVOLVEMATRIX_PROP_KERNEL_MATRIX, matrix);
+    }
+		break;
+		//---
+		case EfGfx_Morphology:
+		{
+			pEffect->SetValue(D2D1_MORPHOLOGY_PROP_MODE, D2D1_MORPHOLOGY_MODE_ERODE);
+			pEffect->SetValue(D2D1_MORPHOLOGY_PROP_WIDTH, 14);
+    }
+		break;
+		//---
+		case EfGfx_DiscreteTransfer:
+		{
+      float table[3] = {0.0f, 0.5f, 1.0f};
+			pEffect->SetValue(D2D1_DISCRETETRANSFER_PROP_RED_TABLE, table);
+			pEffect->SetValue(D2D1_DISCRETETRANSFER_PROP_GREEN_TABLE, table);
+			pEffect->SetValue(D2D1_DISCRETETRANSFER_PROP_BLUE_TABLE, table);
+		}
+		break;
+		//---
+		case EfGfx_GammaTransfer:
+		{
+			pEffect->SetValue(D2D1_GAMMATRANSFER_PROP_RED_EXPONENT, 0.25f);
+			pEffect->SetValue(D2D1_GAMMATRANSFER_PROP_GREEN_EXPONENT, 0.25f);
+			pEffect->SetValue(D2D1_GAMMATRANSFER_PROP_BLUE_EXPONENT, 0.25f);
+		}
+		break;
+		//---
+		case EfGfx_LuminanceToAlpha:
+		{
+			//Wynik LuminanceToAlpha jest nakładany na białą powierzchnię, aby pokazać krycie.
+			ID2D1Effect *floodEffect=NULL;
+			this->pID2D1DeviceContext->CreateEffect(CLSID_D2D1Flood, &floodEffect);
+			if(!SUCCEEDED(hr)) throw(Exception("Błąd metody CreateEffect()"));
+
+			floodEffect->SetValue(D2D1_FLOOD_PROP_COLOR, D2D1::Vector4F(1.0f, 1.0f, 1.0f, 1.0f));
+			ID2D1Effect *compositeEffect=NULL;
+			this->pID2D1DeviceContext->CreateEffect(CLSID_D2D1Composite, &compositeEffect);
+			if(!SUCCEEDED(hr)) throw(Exception("Błąd metody CreateEffect()"));
+
+			compositeEffect->SetInputEffect(0, floodEffect);
+			compositeEffect->SetInputEffect(1, pEffect);
+
+			SafeRelease(&floodEffect);
+			SafeRelease(&pEffect);
+			return compositeEffect;
+		}
+		break;
+		//---
+		case EfGfx_3DPerspectiveTransform:
+		{
+			pEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_PERSPECTIVE_ORIGIN, D2D1::Vector3F(0.0f, 192.0f, 0.0f));
+			pEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, D2D1::Vector3F(0.0f, 30.0f, 0.0f));
+			//pEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, 1000.0f);
+      this->pID2D1HwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+		}
+		break;
+		//---
+		case EfGfx_BitmapSource:
+		{
+			pEffect->SetValue(D2D1_BITMAPSOURCE_PROP_WIC_BITMAP_SOURCE, this->pIWICBitmapScaler);
+      pEffect->SetValue(D2D1_BITMAPSOURCE_PROP_ORIENTATION, D2D1_BITMAPSOURCE_ORIENTATION_FLIP_HORIZONTAL);
+		}
+		break;
+		//---
+		case EfGfx_Brightness: pEffect->SetValue(D2D1_BRIGHTNESS_PROP_BLACK_POINT, D2D1::Vector2F(0.0f, 0.2f)); break;
+		//EFEKTY KTÓRE DZIAŁAJA TYLKO W WERSJI SYTEMU MINIMUM WINDOWS 10
+		case EfGfx_EdgeDetection:
+		{
+			pEffect->SetValue(D2D1_EDGEDETECTION_PROP_STRENGTH, 0.5f);
+			pEffect->SetValue(D2D1_EDGEDETECTION_PROP_BLUR_RADIUS, 0.0f);
+			pEffect->SetValue(D2D1_EDGEDETECTION_PROP_MODE, D2D1_EDGEDETECTION_MODE_SOBEL);
+			pEffect->SetValue(D2D1_EDGEDETECTION_PROP_OVERLAY_EDGES, false);
+			pEffect->SetValue(D2D1_EDGEDETECTION_PROP_ALPHA_MODE, D2D1_ALPHA_MODE_PREMULTIPLIED);
+		}
+		break;
+		//---
+		case EfGfx_Emboss:
+		{
+			pEffect->SetValue(D2D1_EMBOSS_PROP_HEIGHT, 9.0f);
+			pEffect->SetValue(D2D1_EMBOSS_PROP_DIRECTION, 90.0f);
+		}
+		break;
+		//---
+		case EfGfx_Posterize:
+		{
+			pEffect->SetValue(D2D1_POSTERIZE_PROP_RED_VALUE_COUNT, 4);
+			pEffect->SetValue(D2D1_POSTERIZE_PROP_GREEN_VALUE_COUNT, 4);
+			pEffect->SetValue(D2D1_POSTERIZE_PROP_BLUE_VALUE_COUNT, 4);
+		}
+		break;
+		//---
+		case EfGfx_Vignette:
+		{
+			//pEffect->SetValue(D2D1_VIGNETTE_PROP_COLOR, );
+			pEffect->SetValue(D2D1_VIGNETTE_PROP_TRANSITION_SIZE, 0.2f);
+			pEffect->SetValue(D2D1_VIGNETTE_PROP_STRENGTH, 0.5f);
+		}
+		break;
+		//---
+	}
+	pEffect->GetOutput(&Image);
+
+	return pEffect;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDirect2DClass::WMErasebackground(TWMEraseBkgnd &Message)
@@ -536,9 +822,6 @@ void __fastcall GsDirect2DClass::WMErasebackground(TWMEraseBkgnd &Message)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("WMErasebackground");
-	#endif
 	Message.Result = 1;
 }
 //---------------------------------------------------------------------------
@@ -562,9 +845,6 @@ HRESULT __fastcall GsDirect2DClass::CreateDeviceResources(HWND hWnd)
 
 		if(SUCCEEDED(hr))
 		{
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("CreateDeviceResources");
-			#endif
 			//Stworzenie parametrów dla tworzenia i używania techniki D2D
 			D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties();
 
@@ -577,6 +857,13 @@ HRESULT __fastcall GsDirect2DClass::CreateDeviceResources(HWND hWnd)
 
 			hr = this->pID2D1Factory->CreateHwndRenderTarget(renderTargetProperties, D2D1::HwndRenderTargetProperties(hWnd, size), &this->pID2D1HwndRenderTarget);
 			if(FAILED(hr)) throw(Exception("Błąd funkcji CreateHwndRenderTarget())"));
+
+      if (!this->pID2D1DeviceContext)
+			{
+				this->pID2D1HwndRenderTarget->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&this->pID2D1DeviceContext));
+				if(FAILED(hr)) throw(Exception("Błąd funkcji QueryInterface())"));
+			}
+
 			this->pID2D1HwndRenderTarget->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT); //Antyaliasing dla tekstu
 			//Tworzenie koloru pędzla do napisania tekstu
 			hr = this->pID2D1HwndRenderTarget->CreateSolidColorBrush(D2D1::ColorF(this->D2DColorText), &this->pID2D1SolidColorBrush1);
@@ -598,9 +885,6 @@ void __fastcall GsDirect2DClass::Click()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("Click");
-	#endif
 	//Jeśli istnieje zewnętrzna metoda OnClick() to ją wywołaj
 	if(this->FOnClick) this->FOnClick(this);
 }
@@ -841,6 +1125,28 @@ void __fastcall GsDirect2DClass::_SetGradientText(const bool _IsDoubleColorFont)
 
 	InvalidateRect(this->Handle, NULL, false);
 }
+//---------------------------------------------------------------------------
+void __fastcall GsDirect2DClass::_SetApplyEfects(const EnEffectsGfx _FSetApplyEffect)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(_FSetApplyEffect == EfGfx_NoEffect)
+	{
+		this->FIsApplyEfects = false;
+	}
+	else
+	{
+		this->FIsApplyEfects = true; //By wywołać this->_PaintApplyEfects, podczas odświerzania
+	}
+	this->FSetApplyEffect = _FSetApplyEffect;
+
+	InvalidateRect(this->Handle, NULL, false);
+}
+//---------------------------------------------------------------------------
 //=========================Funkcje swobodne==================================
 bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 /**
@@ -937,3 +1243,5 @@ bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 	//---
 	return bResult;
 }
+//---------------------------------------------------------------------------
+

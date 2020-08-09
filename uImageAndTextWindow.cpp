@@ -31,10 +31,11 @@ enum {
 				//Tagi dla objektów, klasy TTrackBar
 				enTagTrBar_Opacity=400, enTagTrBar_Rotation,
 				//Tagi dla objektów, klasy TCheckBox
-				enTagChBox_IsGradientColor=500
+				enTagChBox_IsGradientColor=500,
+				//Numery małych ikon
+				enSmallIcon_ApplyText = 0
 		 };
-UnicodeString ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"},
-							ustrCaptionShettNoText = "Tylko tekst";
+UnicodeString ustrCaptionShettNoText = "Tylko tekst";
 //---------------------------------------------------------------------------
 __fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner, const UnicodeString ustrInput)
 	: TForm(Owner), _ustrInputText(ustrInput)
@@ -54,7 +55,15 @@ __fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner, const Uni
 	this->PControlTools->ActivePageIndex = enSheet_SelectImage;
 
 	this->_InitTagAndHint();
-
+	//Interface ustawiania efektów
+	//this->ImageListSmallImageAndText->GetBitmap(enSmallIcon_Effects, this->SButtApplyEffects->Glyph);
+	this->RGroupSelectEffects->Items->BeginUpdate();
+	for(int i=0; i<ARRAYSIZE(ustrListNameEffects); i++)
+	{
+		this->RGroupSelectEffects->Items->Add(ustrListNameEffects[i]);
+	}
+  this->RGroupSelectEffects->ItemIndex = 0;
+	this->RGroupSelectEffects->Items->EndUpdate();
 }
 //---------------------------------------------------------------------------
 void __fastcall TImageAndTextWindow::FormShow(TObject *Sender)
@@ -241,11 +250,15 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextEnter(TObject *Sender)
 			if(!this->_ustrInputText.IsEmpty())
 			//Przy KAŻDEJ nowej zakładce wpisywany jest tekst, który był podany przy konstruktorze
 			{
-				#if defined(_DEBUGINFO_)
-					GsDebugClass::WriteDebug(Format("this->_ustrInputText: %s", ARRAYOFCONST((this->_ustrInputText))));
-				#endif
 				pGsDirect2DClass->TextWrite = this->_ustrInputText;
 			}
+      #if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("IsLoadedImage: %d", ARRAYOFCONST(((int)pGsDirect2DClass->IsLoadedImage))));
+			#endif
+      //Uaktywnij panel efektów, tylko wtedy, gdy obrazek jest wczytany
+			this->RGroupSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
+			this->RGroupSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect; //Odczyt efektu na nowej zakładce
+			//Wyświetlanie tekstu
 			this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
 			this->ChBoxIsDoubleColor->Checked = pGsDirect2DClass->IsGradientColorFont;
 			//Odczyt używanego kroju czcionki
@@ -290,9 +303,6 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextDrawTab(TCustomTabContr
 				pPControl->Canvas->Brush->Color = clRed;
 				if(this->SplitViewImageAndText->CompactWidth == 0)
 				{
-          #if defined(_DEBUGINFO_)
-						GsDebugClass::WriteDebug(Format("CompactWidth: %d", ARRAYOFCONST((Rect.GetWidth()))));
-					#endif
 					this->SplitViewImageAndText->CompactWidth = Rect.GetWidth();
 				}
 			}
@@ -326,9 +336,6 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextChange(TObject *Sender)
 	TPageControl *pPControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPControl) return;
 	//---
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TImageAndTextWindow::PControlImageAndTextChange");
-	#endif
 	switch(pPControl->Tag)
 	{
 		case enPControl_ImageDisplay:
@@ -355,6 +362,9 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextChange(TObject *Sender)
 				this->TrBarOpacityBrush->Position = (int)(pGsDirect2DClass->OpacityBrush * 10.0);
 				//Odczyt obrotu
 				this->TrBarRotationText->Position = (int)pGsDirect2DClass->RotationText;
+        //Odczyt czy został wczytany obrazek, czy sam tekst
+				this->RGroupSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
+				this->RGroupSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect;
 			}
 		}
 		break;
@@ -416,9 +426,6 @@ void __fastcall TImageAndTextWindow::Act_SaveAsExecute(TObject *Sender)
 			if(pSaveDialog->Execute())
 			{
 				ustrPathSaveFile = pSaveDialog->FileName.LowerCase();
-        #if defined(_DEBUGINFO_)
-					GsDebugClass::WriteDebug(Format("ustrPathSaveFile: %s", ARRAYOFCONST((ustrPathSaveFile))));
-				#endif
 				if(this->PControlImageAndText->PageCount > 0)
 				{
 					GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
@@ -465,9 +472,6 @@ void __fastcall TImageAndTextWindow::Act_TextExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("Act_TextExecute");
-	#endif
 	GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
 	if(pGsDirect2DClass)
 	{
@@ -482,8 +486,8 @@ void __fastcall TImageAndTextWindow::Act_TextExecute(TObject *Sender)
 		{
 			this->SplitViewImageAndText->Opened = true;
 			this->PControlTools->ActivePageIndex = enSheet_ToolsImage;
-      this->PControlTools->SetFocus(); //Bardzo wazne!!!
-    }
+			this->PControlTools->SetFocus(); //Bardzo wazne!!!
+		}
 	}
 }
 //---------------------------------------------------------------------------
@@ -511,8 +515,9 @@ void __fastcall TImageAndTextWindow::Act_OnlyTextExecute(TObject *Sender)
 {
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
+  this->PControlTools->SetFocus(); //Bardzo wazne!!!
 	//---
-	GsTabSheetGraphics *pGsTabSheetGraphics = this->_pGsPanelMultiM->NewSheetOnlyText(); /**/
+	GsTabSheetGraphics *pGsTabSheetGraphics = this->_pGsPanelMultiM->NewSheetOnlyText();
 	if(pGsTabSheetGraphics)
 	{
 		pGsTabSheetGraphics->Caption = ustrCaptionShettNoText;
@@ -710,10 +715,25 @@ void __fastcall TImageAndTextWindow::SplitViewImageAndTextOpened(TObject *Sender
 	if(!pSView) return;
 	//---
 	this->_pGsPanelMultiM->RefreshListView();
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("SplitViewImageAndTextOpened");
-	#endif
 }
 //---------------------------------------------------------------------------
-
+void __fastcall TImageAndTextWindow::RGroupSelectEffectsClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TRadioGroup *pRGroup = dynamic_cast<TRadioGroup *>(Sender);
+	if(!pRGroup) return;
+	//---
+  GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
+	if(pGsDirect2DClass)
+	{
+		EnEffectsGfx _EnEffectsGfx = static_cast<EnEffectsGfx>(EfGfx_NoEffect + pRGroup->ItemIndex);
+		pGsDirect2DClass->SetApplyEffect = _EnEffectsGfx;
+	}
+}
+//---------------------------------------------------------------------------
 

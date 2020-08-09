@@ -303,9 +303,6 @@ void __fastcall GsListViewMultiMClass::DoSelectItem(TListItem* Item, bool Select
 
 	pGsPanelMultiM->pGsDirect2DClass->GsD2D_LoadPicture(Item->Caption);
 	InvalidateRect(pGsPanelMultiM->pGsDirect2DClass->Handle, NULL, false);
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("GsListViewMultiMClass::DoSelectItem()");
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
@@ -468,9 +465,6 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("GsPanelMultiM::_ImageOnClick()");
-	#endif
 	this->_pPControlMainWindow->Visible = true; //01-02-2020
 	GsTabSheetGraphics *pGsTabSheetGraphics = new GsTabSheetGraphics(this->_pPControlMainWindow);
 	if(!pGsTabSheetGraphics) throw(Exception("Błąd inicjalizacji objektu GsTabSheetGraphics"));
@@ -510,9 +504,6 @@ __fastcall GsTabSheetGraphics::~GsTabSheetGraphics()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("GsTabSheetGraphics::~GsTabSheetGraphics()");
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetGraphics::CreateWnd()

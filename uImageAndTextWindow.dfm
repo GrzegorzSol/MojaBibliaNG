@@ -85,24 +85,16 @@ object ImageAndTextWindow: TImageAndTextWindow
       object TabSheetSelectImages: TTabSheet
         Caption = 'Lista grafik'
         ImageIndex = -1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
       object TabSheetTools: TTabSheet
         Caption = 'Narz'#281'dzia'
         ImageIndex = -1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object GrBoxImageAndText1: TGroupBox
           AlignWithMargins = True
           Left = 3
           Top = 3
           Width = 266
-          Height = 278
+          Height = 246
           Align = alTop
           Caption = 'Tekst wyswietlany na tle wczytanego obrazka'
           TabOrder = 0
@@ -111,16 +103,17 @@ object ImageAndTextWindow: TImageAndTextWindow
             Left = 5
             Top = 18
             Width = 256
-            Height = 224
+            Height = 192
             Align = alClient
             Enabled = False
             TabOrder = 0
             OnChange = MemoImageAndTextChange
+            ExplicitHeight = 207
           end
           object ButtDisplayNewText: TButton
             AlignWithMargins = True
             Left = 5
-            Top = 248
+            Top = 216
             Width = 256
             Height = 25
             Align = alBottom
@@ -130,17 +123,19 @@ object ImageAndTextWindow: TImageAndTextWindow
             Images = ImageListSmallImageAndText
             TabOrder = 1
             OnClick = ButtDisplayNewTextClick
+            ExplicitTop = 248
           end
         end
         object GrBoxImageAndText2: TGroupBox
           AlignWithMargins = True
           Left = 3
-          Top = 287
+          Top = 255
           Width = 266
           Height = 290
           Align = alTop
           Caption = 'Inne parametry tekstu'
           TabOrder = 1
+          ExplicitTop = 287
           object LabelColorText: TLabel
             AlignWithMargins = True
             Left = 5
@@ -288,6 +283,34 @@ object ImageAndTextWindow: TImageAndTextWindow
             TabOrder = 6
             WordWrap = True
             OnClick = ChBoxAllClick
+          end
+        end
+        object GrBoxEffects: TGroupBox
+          AlignWithMargins = True
+          Left = 3
+          Top = 551
+          Width = 266
+          Height = 225
+          Align = alClient
+          Caption = 'Efekty wybranej grafiki'
+          TabOrder = 2
+          ExplicitTop = 583
+          ExplicitHeight = 193
+          object RGroupSelectEffects: TRadioGroup
+            AlignWithMargins = True
+            Left = 5
+            Top = 18
+            Width = 256
+            Height = 202
+            Align = alClient
+            Caption = 'Wyb'#243'r efektu'
+            Columns = 2
+            Ctl3D = True
+            Enabled = False
+            ParentCtl3D = False
+            TabOrder = 0
+            OnClick = RGroupSelectEffectsClick
+            ExplicitHeight = 170
           end
         end
       end
