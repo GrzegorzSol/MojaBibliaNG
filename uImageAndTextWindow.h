@@ -56,8 +56,8 @@ __published:	// IDE-managed Components
 	TTrackBar *TrBarRotationText;
 	TCheckBox *ChBoxIsDoubleColor;
 	TAction *Act_OnlyText;
-	TRadioGroup *RGroupSelectEffects;
 	TGroupBox *GrBoxEffects;
+	TListBox *LBoxSelectEffects;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall Act_CloseActiveSheetExecute(TObject *Sender);
 	void __fastcall PControlImageAndTextEnter(TObject *Sender);
@@ -79,7 +79,9 @@ __published:	// IDE-managed Components
 	void __fastcall SplitViewImageAndTextOpened(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall Act_OnlyTextExecute(TObject *Sender);
-	void __fastcall RGroupSelectEffectsClick(TObject *Sender);
+	void __fastcall LBoxSelectEffectsClick(TObject *Sender);
+	void __fastcall LBoxSelectEffectsDrawItem(TWinControl *Control, int Index,
+          TRect &Rect, TOwnerDrawState State);
 
 private:	// User declarations
 	void __fastcall _InitTagAndHint();

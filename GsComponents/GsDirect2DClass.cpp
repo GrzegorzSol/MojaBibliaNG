@@ -55,8 +55,7 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 */
 {
 	this->DoubleBuffered = true;
-	this->IsWindows10 = TOSVersion::Check(10);
-  #if defined(_DEBUGINFO_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug(Format("%s: v%u.%d build: %d", ARRAYOFCONST((TOSVersion::Name, TOSVersion::Major, TOSVersion::Minor, TOSVersion::Build))));
 	#endif
 	//Trzeba wszystkie wskaźniki zainicjować wartością NULL!!!
@@ -667,12 +666,6 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 	ID2D1Effect *pEffect=NULL;
 	CLSID effectId;
 
-	if((!this->IsWindows10) && (this->FSetApplyEffect > EfGfx_Brightness))
-	{
-		MessageBox(NULL, TEXT("Aktualnie wybrany efekt wymaga minimum Windows 10!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
-		return 0;
-  }
-
 	switch(this->FSetApplyEffect)
 	{
 		case EfGfx_GaussianBlur: effectId = CLSID_D2D1GaussianBlur; break;
@@ -691,6 +684,11 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 		case EfGfx_Emboss: effectId = CLSID_D2D1Emboss; break;
 		case EfGfx_Posterize: effectId = CLSID_D2D1Posterize; break;
 		case EfGfx_Vignette: effectId = CLSID_D2D1Vignette; break;
+		case EfGfx_Grayscale: effectId = CLSID_D2D1Grayscale; break;
+		case EfGfx_HighlightsShadows: effectId = CLSID_D2D1HighlightsShadows; break;
+		case EfGfx_Invert: effectId = CLSID_D2D1Invert; break;
+		case EfGfx_Sepia: effectId = CLSID_D2D1Sepia; break;
+		case EfGfx_Sharpen: effectId = CLSID_D2D1Sharpen; break;
 
 		default: effectId = CLSID_D2D1GaussianBlur;
 	}
@@ -808,6 +806,33 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 		}
 		break;
 		//---
+		case EfGfx_Grayscale: break;
+		//---
+		case EfGfx_HighlightsShadows:
+		{
+			pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_HIGHLIGHTS, 0.0f);
+			pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_SHADOWS, 0.5f);
+			pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_CLARITY, 0.2f);
+			pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_LINEAR);
+			pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_MASK_BLUR_RADIUS, 1.0f);
+		}
+		break;
+		//---
+		case EfGfx_Invert: break;
+		//---
+		case EfGfx_Sepia:
+		{
+			pEffect->SetValue(D2D1_SEPIA_PROP_INTENSITY, 0.75f);
+			pEffect->SetValue(D2D1_SEPIA_PROP_ALPHA_MODE, D2D1_ALPHA_MODE_PREMULTIPLIED);
+		}
+		break;
+		//---
+		case EfGfx_Sharpen:
+		{
+			pEffect->SetValue(D2D1_SHARPEN_PROP_SHARPNESS, 1.0f);
+			pEffect->SetValue(D2D1_SHARPEN_PROP_THRESHOLD, 0.5f);
+		}
+		break;
 	}
 	pEffect->GetOutput(&Image);
 

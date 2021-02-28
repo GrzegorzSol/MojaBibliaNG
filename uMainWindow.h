@@ -65,6 +65,8 @@ __published:	// IDE-managed Components
 	TImage *ImageBackgroundWindow;
 	TAction *Act_MailChapt;
 	TAction *Act_ImageAndText;
+	TAction *Act_Help;
+	TAction *Act_Tips;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -99,6 +101,8 @@ __published:	// IDE-managed Components
 	void __fastcall Act_EditChapterExecute(TObject *Sender);
 	void __fastcall Act_MailChaptExecute(TObject *Sender);
 	void __fastcall Act_ImageAndTextExecute(TObject *Sender);
+	void __fastcall Act_HelpExecute(TObject *Sender);
+	void __fastcall Act_TipsExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;
@@ -110,6 +114,7 @@ private:	// User declarations
 	void __fastcall _InitAllTagAndHint();
 	void __fastcall _OnDblClick_ListComment(System::TObject* Sender);
 	void __fastcall _OnDblClick_ListFavorities(System::TObject* Sender);
+	void __fastcall _DisplayHelp(TAction *_pAction);
 	//---
 public:		// User declarations
 	__fastcall TMainBibleWindow(TComponent* Owner);

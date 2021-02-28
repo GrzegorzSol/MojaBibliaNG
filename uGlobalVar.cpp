@@ -32,6 +32,16 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameUpd),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
 										GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
 										GlobalVar::Global_ustrNameDirUpdate = "MojaBibliaNG",//nazwa katalogu z poprawkami
+										//----- Ustawienia dotyczące pomocy i tipsów
+										GlobalVar::Global_ustrDirHelp = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HelpData"),	//Ścieżka dostępu do katalogu z plikami pomocy
+										GlobalVar::Global_ustrExtPathHelp = "hlpmb",				//Rozszerzenie plików pomocy
+										GlobalVar::Global_ustrCoreNameHelp = "FileHlp", //Główny rdzeń nazwy, do której będzie przyczepiony indeks pomocy
+                      //---
+										GlobalVar::Global_ustrExPathTipsImageHelp = "timg",//Rozszerzenie grafiki to tipsów
+										GlobalVar::Global_ustrCorePathNameImageTips = "ImageTips", //Główny rdzeń nazwy pliku graficznego, do której będzie przyczepiony indeks pomocy tipsów
+											//---
+										GlobalVar::Global_ustrCoreNameFileTips = "FileTips", //Rdzeń nazwy pliku wskazówek
+										GlobalVar::Global_ustrExPathFileTips = "tfhlp",//Rozszerzenie plików wskazówek
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -47,6 +57,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_IsOnlyOne="IsOnlyOne",            //Dozwolona tylko jedna kopia aplikacji
 												GlobalVar::GlobalIni_IsAutoFindUpdate="IsAutoFindUpdate",       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
 												GlobalVar::GlobalIni_IsLoadBooksOnInit="IsLoadBooksOnInit", //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
+												GlobalVar::GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
 										//----- Sekcje Colors pliku ini
 										GlobalVar::GlobalIni_ColorsSection_Main="COLORS",       //Główna sekcja COLORS pliku ini
 												GlobalVar::GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",       //Kolor zaznaczenie ulubionych wersetów
@@ -78,6 +89,7 @@ UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja bibli
 							GlobalVar::Global_custrLocalVersionFile = "", //Ścieżka dostępu lokalna, do pobranego pliku wersji
 							GlobalVar::Global_custrLocalApplicFile = ""; //Ścieżka dostępu lokalna, do pobranej aplikacji
 const unsigned char GlobalVar::cuchABlendValue = 200; //Współczynnik przezroczystości okna, gdy jest nieaktywne
+bool GlobalVar::IsWindows10 = false; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 //***************************************************************************
 TStringList *GlobalVar::Global_SListPathMultiM=0;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 TMemIniFile *GlobalVar::Global_ConfigFile=0;			 //Globalny wskażnik na plik konfiguracyjny
@@ -86,5 +98,5 @@ THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=0; //String lista d
 int GlobalVar::iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
 																//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 																//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
-										 						//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
+																//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
 

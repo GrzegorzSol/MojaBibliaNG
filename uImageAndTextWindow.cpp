@@ -33,7 +33,7 @@ enum {
 				//Tagi dla objektów, klasy TCheckBox
 				enTagChBox_IsGradientColor=500,
 				//Numery małych ikon
-				enSmallIcon_ApplyText = 0
+				enSmallIcon_ApplyText = 0, enSmallIcon_Effects
 		 };
 UnicodeString ustrCaptionShettNoText = "Tylko tekst";
 //---------------------------------------------------------------------------
@@ -56,14 +56,11 @@ __fastcall TImageAndTextWindow::TImageAndTextWindow(TComponent* Owner, const Uni
 
 	this->_InitTagAndHint();
 	//Interface ustawiania efektów
-	//this->ImageListSmallImageAndText->GetBitmap(enSmallIcon_Effects, this->SButtApplyEffects->Glyph);
-	this->RGroupSelectEffects->Items->BeginUpdate();
-	for(int i=0; i<ARRAYSIZE(ustrListNameEffects); i++)
-	{
-		this->RGroupSelectEffects->Items->Add(ustrListNameEffects[i]);
-	}
-  this->RGroupSelectEffects->ItemIndex = 0;
-	this->RGroupSelectEffects->Items->EndUpdate();
+	this->LBoxSelectEffects->Items->BeginUpdate();
+  for(UnicodeString ustr : ustrListNameEffects)
+		{this->LBoxSelectEffects->Items->Add(ustr);}
+	this->LBoxSelectEffects->ItemIndex = 0;
+	this->LBoxSelectEffects->Items->EndUpdate();
 }
 //---------------------------------------------------------------------------
 void __fastcall TImageAndTextWindow::FormShow(TObject *Sender)
@@ -256,8 +253,8 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextEnter(TObject *Sender)
 				GsDebugClass::WriteDebug(Format("IsLoadedImage: %d", ARRAYOFCONST(((int)pGsDirect2DClass->IsLoadedImage))));
 			#endif
       //Uaktywnij panel efektów, tylko wtedy, gdy obrazek jest wczytany
-			this->RGroupSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
-			this->RGroupSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect; //Odczyt efektu na nowej zakładce
+			this->LBoxSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
+			this->LBoxSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect; //Odczyt efektu na nowej zakładce
 			//Wyświetlanie tekstu
 			this->MemoImageAndText->Text = pGsDirect2DClass->TextWrite;
 			this->ChBoxIsDoubleColor->Checked = pGsDirect2DClass->IsGradientColorFont;
@@ -363,8 +360,8 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextChange(TObject *Sender)
 				//Odczyt obrotu
 				this->TrBarRotationText->Position = (int)pGsDirect2DClass->RotationText;
         //Odczyt czy został wczytany obrazek, czy sam tekst
-				this->RGroupSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
-				this->RGroupSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect;
+				this->LBoxSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
+				this->LBoxSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect;
 			}
 		}
 		break;
@@ -717,7 +714,7 @@ void __fastcall TImageAndTextWindow::SplitViewImageAndTextOpened(TObject *Sender
 	this->_pGsPanelMultiM->RefreshListView();
 }
 //---------------------------------------------------------------------------
-void __fastcall TImageAndTextWindow::RGroupSelectEffectsClick(TObject *Sender)
+void __fastcall TImageAndTextWindow::LBoxSelectEffectsClick(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -725,15 +722,57 @@ void __fastcall TImageAndTextWindow::RGroupSelectEffectsClick(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TRadioGroup *pRGroup = dynamic_cast<TRadioGroup *>(Sender);
-	if(!pRGroup) return;
+	TListBox *pLBox = dynamic_cast<TListBox *>(Sender);
+	if(!pLBox) return;
 	//---
-  GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
+	if(pLBox->ItemIndex == -1) return;
+  //---
+	GsDirect2DClass *pGsDirect2DClass = this->_GetDirect2DFromActiveSheet();
 	if(pGsDirect2DClass)
 	{
-		EnEffectsGfx _EnEffectsGfx = static_cast<EnEffectsGfx>(EfGfx_NoEffect + pRGroup->ItemIndex);
+		EnEffectsGfx _EnEffectsGfx = static_cast<EnEffectsGfx>(EfGfx_NoEffect + pLBox->ItemIndex);
+
+		if((!GlobalVar::IsWindows10) && (_EnEffectsGfx > EfGfx_Brightness)) //23-08-2020
+		{
+			MessageBox(NULL, TEXT("Aktualnie wybrany efekt wymaga minimum Windows 10!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			return;
+		}
+
 		pGsDirect2DClass->SetApplyEffect = _EnEffectsGfx;
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TImageAndTextWindow::LBoxSelectEffectsDrawItem(TWinControl *Control,
+					int Index, TRect &Rect, TOwnerDrawState State)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TListBox *pLBox = dynamic_cast<TListBox *>(Control);
+	if(!pLBox) return;
+	//---
+	TRect MyRect = Rect;
+	int iHeight = MyRect.Bottom - MyRect.Top;
+	TCanvas *pCanvas = pLBox->Canvas;
+	//---
+	if(Index > (EfGfx_Brightness - EfGfx_NoEffect))
+		{pCanvas->Font->Color = clRed;}
+  else
+		{pCanvas->Font->Color = pLBox->Font->Color;}
+
+	if(State.Contains(odSelected))
+	{
+		pCanvas->Brush->Color = clYellow;
+	}
+
+	pCanvas->FillRect(MyRect);
+	this->ImageListSmallImageAndText->Draw(pCanvas, 2, MyRect.Top + ((iHeight / 2) - (this->ImageListSmallImageAndText->Height / 2)), enSmallIcon_Effects);
+	MyRect.Left += (4 + this->ImageListSmallImageAndText->Width);
+
+	DrawText(pCanvas->Handle, pLBox->Items->Strings[Index].c_str(), -1, &MyRect, DT_SINGLELINE | DT_VCENTER);
 }
 //---------------------------------------------------------------------------
 

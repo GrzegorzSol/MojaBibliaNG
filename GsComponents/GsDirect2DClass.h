@@ -18,14 +18,17 @@ enum EnEffectsGfx {
 										EfGfx_Morphology, EfGfx_DiscreteTransfer, EfGfx_GammaTransfer, EfGfx_LuminanceToAlpha, EfGfx_3DPerspectiveTransform,
 										EfGfx_BitmapSource, EfGfx_Brightness,
 										//Efekty kompatybilne z Windows 10
-										EfGfx_EdgeDetection, EfGfx_Emboss, EfGfx_Posterize, EfGfx_Vignette,
+										EfGfx_EdgeDetection, EfGfx_Emboss, EfGfx_Posterize, EfGfx_Vignette, EfGfx_Grayscale, EfGfx_HighlightsShadows,
+										EfGfx_Invert, EfGfx_Sepia, EfGfx_Sharpen
 									};
 const UnicodeString ustrListNameEffects[] = { //Efekty działajace na Windows 7
 																							"Bez efektu", "GaussianBlur", "HueRotation", "DirectionalBlur", "ConvolveMatrix",
 																							"Morphology", "DiscreteTransfer", "GammaTransfer", "LuminanceToAlpha",
 																							"3DPerspectiveTransform", "BitmapSource-Flip", "Brightness",
 																							//Efekty działajace, tylko na minimum Windows 10
-																							"EdgeDetection(Win10)", "Emboss(Win10)", "Posterize(Win10)", "Vignette(Win10)"
+																							"EdgeDetection(Win10)", "Emboss(Win10)", "Posterize(Win10)", "Vignette(Win10)",
+																							"Grayscale(Win10)", "HighlightsShadows(Win10)", "Invert(Win10)", "Sepia(Win10)",
+																							"Sharpen(Win10)"
 																						},
 										//Zdefiniowane wielkości czcionek
                     ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"};
@@ -128,7 +131,6 @@ class GsDirect2DClass : public TCustomPanel
 		//Ile skalować projekt, który zakłada 96-DPI pikseli
 		float _dpiScaleX;
 		float _dpiScaleY;
-    bool IsWindows10; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 		//Direct2D
 		IWICImagingFactory *pIWICImagingFactory;
 		ID2D1Factory *pID2D1Factory;

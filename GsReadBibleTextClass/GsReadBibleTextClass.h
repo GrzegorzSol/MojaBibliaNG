@@ -64,6 +64,7 @@ enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_ViewSelectText,	//20.Obraz widoku tekstu biblijnego do selekcji wersetów
 			enImageIndex_ReadOnlyText,    //21.Obraz widoku tekstu biblijnego tylko do przeglądania
 			enImageIndex_EditText,        //22.Obraz rozpoczęcia edycji
+      enImageIndex_DisplayInfoTranslates, //23.Obraz wyświetlania informacji o przekładach, lub wybranym przekładzie, rozdziale
 			enImageIndex_Count            //Ilość grafik w objekcie GsReadBibleTextData::GsImgListData, typu TImageList
 		 };
 //Deklaracja niektórych klas
@@ -281,6 +282,7 @@ class GsReadBibleTextItem
 	public:
 		EnTypeTranslate enTypeTranslate; //Typ tłumaczenia, typu EnTypeTranslate (całe pismo, grecki nt. itd.)
 		UnicodeString NameTranslate;	//Nazwa tłumaczenia
+		int uiAllVersCount;  //Ilość wszystkich wersetów
 };
 /****************************************************************************
  *                        Klasa GsReadBibleTextClass                        *
@@ -428,18 +430,22 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
 	void __fastcall _OnSaveComments(System::TObject* Sender);
 	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+	void __fastcall _DisplayInfosTranslates(const int iTab=-1); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń
-	TWebBrowser *pWebBrowser;
+	TWebBrowser *pWebBrowser,
+							*pWebBrowserinfoTranslations;
 	TComboBox *pComboBox; //Lista do wyboru konkretnego rodziału, już bybranej księgi
 	TProgressBar *pProgressBar; //Pionowy wskaźnik, umiejscowienia pozycji w rozdziale
 	TStringBuilder *pStrBuilderHtml;	//Tekst html aktualnie wczytanego rozdziału z wybranej księgi
 	GsListBoxSelectedVersClass *pLBoxSelectText;	//Lista ulubionych wersetów
 	GsEditorClass *pGsEditorClass;               //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd;
+  TPanel *pPanelInfoTraslates;
 	//--- Niektóre przyciski na TToolbarach
-	TToolButton *pToolButtonEdit;	//Przycisk do edycji
+	TToolButton *pToolButtonEdit,	//Przycisk do edycji
+              *pToolButtonInfoTranslates;//Przycisk do informacji o przekładach
 	public:
 		unsigned char _ShucIndexBook,       //Numer księgi
 									_ShucIndexChapt;      //Numer rozdziału

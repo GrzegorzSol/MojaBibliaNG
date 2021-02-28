@@ -90,6 +90,7 @@ GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTransl
 		_tempHStringList = new THashedStringList();	//String lista z całym tłumaczeniem
 		if(!_tempHStringList) throw(Exception("Błąd inicjalizacji listy na pojedyńczą księge tłumaczenia"));
 		_tempHStringList->LoadFromFile(_PathTransl, TEncoding::UTF8); //Wczytanie całego tłumaczenia
+		this->uiAllVersCount = _tempHStringList->Count - 1;  //Ilość wszystkich wersetów(pierwszy werset to nazwa tłumaczenia)
 		this->NameTranslate = _tempHStringList->Strings[0]; //Nazwa tłumaczenia
 		//----- Zarezerwowanie tablicy objektów, klasy THashedStringList dla poszczególnych ksiąg.
 		for(int iIndex=0; iIndex<GsReadBibleTextData::GsNumberBooks; iIndex++)
@@ -200,7 +201,7 @@ GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug("GsReadBibleTextClass::GsReadBibleTextClass()");
 	#endif
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
@@ -246,7 +247,7 @@ GsReadBibleTextClass::~GsReadBibleTextClass()
 	//Likwidacja objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	if(this->_SListInterLinear) {delete this->_SListInterLinear; this->_SListInterLinear = 0;}
 	GsReadBibleTextData::GsFreeGlobalImageList();  //Likwidacja zmiennych klasy
-	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug("GsReadBibleTextClass::~GsReadBibleTextClass()");
 	#endif
 }
@@ -456,7 +457,7 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 	}
 	__finally
 	{
-    if(pStringStream) {delete pStringStream; /*pStringStream = 0;*/}
+    if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -1438,6 +1439,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::_GsPageControl->Visible = true; //01-02-2020
+	TToolButton *pToolButton = nullptr;
 	//---
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
@@ -1508,7 +1510,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	//--- Przyciski widoków na toolbarze
 	for(int i=ARRAYSIZE(NameTextButtons)-1; i>=0; i--)
 	{
-		TToolButton *pToolButton = new TToolButton(this->pToolBarText);
+		pToolButton = new TToolButton(this->pToolBarText);
 		if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
 		pToolButton->Parent = this->pToolBarText;
 		pToolButton->ImageIndex = enImageIndex_ReadOnlyText - i;
@@ -1528,24 +1530,35 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 			pToolButton->Hint = Format("Widok do przeglądania i wybierania wersetów|Widoku tekstu biblijnego do przeglądania, oraz wybierania wersetów z aktualnego rozdziału|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
     }
 	}
-	//--- Przyciski nawigacji na toolbarze
+	//--- Przyciski nawigacji i innych na toolbarze
+		//Wyświetlanie informacji o wybranym tłumaczeniu, lub tłumaczeniach, oraz rozdziałach
+	this->pToolButtonInfoTranslates = new TToolButton(this->pToolBar);
+	if(!this->pToolButtonInfoTranslates) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
+	this->pToolButtonInfoTranslates->Parent = this->pToolBar;
+	this->pToolButtonInfoTranslates->ImageIndex = enImageIndex_DisplayInfoTranslates;
+	this->pToolButtonInfoTranslates->ShowHint = true;
+	this->pToolButtonInfoTranslates->Tag = this->pToolButtonInfoTranslates->ImageIndex;
+	this->pToolButtonInfoTranslates->OnClick = this->_OnClickButton;
+	this->pToolButtonInfoTranslates->AllowAllUp = true;
+	this->pToolButtonInfoTranslates->Style = tbsCheck;
+	this->pToolButtonInfoTranslates->CustomHint = GsReadBibleTextData::_GsBalloonHint;
+	this->pToolButtonInfoTranslates->Hint = Format("Informacje o przekładach|Wyświetlenie informacji o wszystkich, dostępnych przekładach, lub o bierzącym przekładzie i rozdziale|%u", ARRAYOFCONST((this->pToolButtonInfoTranslates->ImageIndex)));
 		//Rozpoczęcie edycji komentarza do zaznaczonego wersetu
-	TToolButton *pToolButton = new TToolButton(this->pToolBar);
-	if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
-	pToolButton->Parent = this->pToolBar;
-	pToolButton->ImageIndex = enImageIndex_EditText;
-	pToolButton->ShowHint = true;
-	pToolButton->Tag = pToolButton->ImageIndex;
-	pToolButton->OnClick = this->_OnClickButton;
-	pToolButton->AllowAllUp = true;
-  pToolButton->Style = tbsCheck;
-	pToolButton->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	pToolButton->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego wersetu, lub rozdziału|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
-	this->pToolButtonEdit = pToolButton;	//Przycisk do edycji
+	this->pToolButtonEdit = new TToolButton(this->pToolBar);
+	if(!this->pToolButtonEdit) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
+	this->pToolButtonEdit->Parent = this->pToolBar;
+	this->pToolButtonEdit->ImageIndex = enImageIndex_EditText;
+	this->pToolButtonEdit->ShowHint = true;
+	this->pToolButtonEdit->Tag = this->pToolButtonEdit->ImageIndex;
+	this->pToolButtonEdit->OnClick = this->_OnClickButton;
+	this->pToolButtonEdit->AllowAllUp = true;
+	this->pToolButtonEdit->Style = tbsCheck;
+	this->pToolButtonEdit->CustomHint = GsReadBibleTextData::_GsBalloonHint;
+	this->pToolButtonEdit->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego wersetu, lub rozdziału|%u", ARRAYOFCONST((this->pToolButtonEdit->ImageIndex)));
 		//Przewijanie rozdziałów
 	for(int i=enImageIndex_ToPrevBook; i>=enImageIndex_ToNextBook; i--)
 	{
-		TToolButton *pToolButton = new TToolButton(this->pToolBar);
+		pToolButton = new TToolButton(this->pToolBar);
 		if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
 		pToolButton->Parent = this->pToolBar;
 		pToolButton->ImageIndex = i;
@@ -1583,7 +1596,25 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 		if(pGsReadBibleTextItem) {if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) this->pGsTabSetClass->Tabs->Add(pGsReadBibleTextItem->NameTranslate);}
 	}
 	this->pGsTabSetClass->TabIndex = 0; //Domyślna zakładka rodzaju tłumaczenia (wszyskie tłumaczenia)
-  //Inicjalizacja panelu, dla wyświetlania kontrolek, związanych z tekstem.
+	//----- Wyświetlanie informacji o wybranym tłumaczeniu, lub tłumaczeniach 27-02-2021
+	this->pPanelInfoTraslates = new TPanel(this);
+	if(!this->pPanelInfoTraslates) throw(Exception("Błąd inicjalizacji klasy TPanel"));
+	this->pPanelInfoTraslates->Parent = this;
+	this->pPanelInfoTraslates->Align = alBottom;
+	this->pPanelInfoTraslates->Height = 128;
+	this->pPanelInfoTraslates->ShowCaption = false;
+	this->pPanelInfoTraslates->BorderStyle = bsSingle;
+	//---
+	this->pWebBrowserinfoTranslations = new TWebBrowser(this->pPanelInfoTraslates);
+	if(!this->pWebBrowserinfoTranslations) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->pWebBrowserinfoTranslations->TOleControl::Parent = this->pPanelInfoTraslates;
+	this->pWebBrowserinfoTranslations->Align = alClient;
+	this->pWebBrowserinfoTranslations->Offline = true;
+	this->pWebBrowserinfoTranslations->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
+  this->pPanelInfoTraslates->Visible = false;
+	this->pWebBrowserinfoTranslations->Visible = pPanelInfoTraslates->Visible;
+	this->_DisplayInfosTranslates();
+	//Inicjalizacja panelu, dla wyświetlania kontrolek, związanych z tekstem.
 	TPanel *pPanelText = new TPanel(this);
 	if(!pPanelText) throw(Exception("Błąd inicjalizacji klasy TPanel"));
 	pPanelText->Parent = this;
@@ -1715,6 +1746,28 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 	//---
 	switch(pToolButton->Tag)  //Identyfikowanie, który przycisk został wybrany
 	{
+    case enImageIndex_ToPrevBook:    //Poprzednia księga
+		{
+			if(this->_ShucIndexBook > 0)
+			{
+				this->_ShucIndexBook--;
+				this->pComboBox->ItemIndex = 0;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
+        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
+        //Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
+				this->pComboBox->Clear();
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+				this->pComboBox->ItemIndex = 0;
+				#if defined(_DEBUGINFO_)
+					GsDebugClass::WriteDebug(Format("this->_ShucIndexBook: %u - %u", ARRAYOFCONST((this->_ShucIndexBook, 0))));
+				#endif
+				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
+			}
+		}
+		break;
+		//---
 		case enImageIndex_ToNextBook:    //Następna księga
 		{
 			if(this->_ShucIndexBook < GsReadBibleTextData::GsNumberBooks-1)
@@ -1732,6 +1785,7 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				#if defined(_DEBUGINFO_)
 					GsDebugClass::WriteDebug(Format("this->_ShucIndexBook: %u - %u", ARRAYOFCONST((this->_ShucIndexBook, GsReadBibleTextData::GsNumberBooks-1))));
 				#endif
+        this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
 			}
 		}
 		break;
@@ -1746,6 +1800,7 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//pToolButton->Enabled = this->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt-1;
+				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
 			}
 		}
 		break;
@@ -1760,31 +1815,10 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//pToolButton->Enabled = this->_ShucIndexChapt > 0;
+				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
 			}
 		}
 		break;
-		//---
-		case enImageIndex_ToPrevBook:    //Poprzednia księga
-		{
-			if(this->_ShucIndexBook > 0)
-			{
-				this->_ShucIndexBook--;
-				this->pComboBox->ItemIndex = 0;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
-				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
-        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
-				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
-        //Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
-				this->pComboBox->Clear();
-				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
-					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
-				this->pComboBox->ItemIndex = 0;
-				#if defined(_DEBUGINFO_)
-					GsDebugClass::WriteDebug(Format("this->_ShucIndexBook: %u - %u", ARRAYOFCONST((this->_ShucIndexBook, 0))));
-				#endif
-			}
-		}
-		break;
-		//---
 		//---
 		case enImageIndex_ViewSelectText:	//18.Obraz widoku tekstu biblijnego do selekcji wersetów
 		{
@@ -1804,7 +1838,14 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 			this->pSplitterEd->Visible = pToolButton->Down;
 		}
 		break;
-  }
+		//---
+		case enImageIndex_DisplayInfoTranslates: //Wyświetlanie informacji o przekładach
+		{
+			this->pPanelInfoTraslates->Visible = pToolButton->Down;
+			this->pWebBrowserinfoTranslations->Visible = pToolButton->Down;
+    }
+		break;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnSelectBoxChapter(System::TObject* Sender)
@@ -1852,6 +1893,70 @@ void __fastcall GsTabSheetClass::_GetHTMLText(UnicodeString &_ustrTextHTML)
 {
 	_ustrTextHTML = "";
   _ustrTextHTML = this->pStrBuilderHtml->ToString();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_DisplayInfosTranslates(const int iTab)
+/**
+	OPIS METOD(FUNKCJI): Metoda wyświetla informacje o przekładach i wybranym rozdziale
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("iTab: %d", ARRAYOFCONST((iTab))));
+	#endif
+
+	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
+	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(!pGsTabSheetClass) return;
+
+	try
+	{
+		pStringStream->WriteString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+		pStringStream->WriteString(UnicodeString("<html><head>") +
+																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+																		"<title>Informacja o tłumaczeniach</title>" +
+																		"<style type=\"text/css\">" +
+																		".styleColorValue {color: #4B0082; font-size:12pt;font-family:Arial; font-weight:bold; background-position:center;}" +
+																		".styleText {color: #000000; font-size:12pt;font-family:Arial;}" +
+																		"body {background-color:#CCCCEE; font-size:12pt;font-family:Arial;}" +
+																		"</style></head><body>");
+
+		if(iTab==-1)
+		//Informacje o wszystkich tłumaczeniach
+		{
+			pStringStream->WriteString("<span class=\"styleColorValue\">Nazwa tłumaczenia: </span><span class=\"styleText\">Wszystkie, dostępne tłumaczenia</span>");
+		}
+		else
+		//Wybrane tłumaczenie
+		{
+			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::pGsReadBibleTextClass->GetTranslateClass(iTab); //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Nazwa tłumaczenia: </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
+			pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Ilość wszystkich wersetów w tłumaczeniu: </span><span class=\"styleText\">%d wersetów</span>", ARRAYOFCONST((pGsReadBibleTextItem->uiAllVersCount))));
+      pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrana księga: </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].FullNameBook))));
+			pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrany rozdział: </span><span class=\"styleText\">%d</span>", ARRAYOFCONST((this->_ShucIndexChapt+1))));
+			//GsReadBibleTextData::pGsReadBibleTextClass->_ListAllTrChap->Items[iTab]
+		}
+
+		pStringStream->WriteString("</body></html>");
+    pStringStream->Position = 0;
+
+		//Wczytanie do objektu, klasy TWebBrowser (this->pWebBrowserinfoTranslations) zawartości objeltu, klasy TStringStream (pStringStream)
+		IPersistStreamInit *psi;
+
+		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+		if(SUCCEEDED(this->pWebBrowserinfoTranslations->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+			{psi->Load(sa);}
+	}
+	__finally
+	{
+		if(pStringStream) delete pStringStream;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::CreateWnd()
@@ -1953,11 +2058,14 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 	if(!this->bIsCreate)
 	{
 		GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+    if(!pGsTabSheetClass) return;
 		//Ponowne wczytanie wszystkich tłumaczeń, dla wybranej księgi i rozdziału, by przy przełączaniu zakładek wyboru tłumacznia
 		//nie wyświetlano tekstu z sąsiedniej zakładki ksiegi i rozdziału!
 		GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pGsTabSheetClass->_ShucIndexBook, pGsTabSheetClass->_ShucIndexChapt);
 		//Od NewTab odejmowane jast 1, gdyż pierwsza pozycja zakładek to nie konkretne tłumaczenie, lecz wszystkie tłumaczenia
 		if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, NewTab-1);
+
+		pGsTabSheetClass->_DisplayInfosTranslates(NewTab-1);
 	}
 	else
   {
@@ -2147,11 +2255,11 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 4.Ikona następnej księgi
-			pMemoryStr->WriteBuffer(ID_TONEXT_BOOK, ARRAYSIZE(ID_TONEXT_BOOK)); 						//Zapis do strumienia danych
-			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
-			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
-			GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
-			pMemoryStr->Clear();
+		pMemoryStr->WriteBuffer(ID_TONEXT_BOOK, ARRAYSIZE(ID_TONEXT_BOOK)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//--- 5.Ikona następnego rozdziału
 		pMemoryStr->WriteBuffer(ID_NEXTCHAPTER, ARRAYSIZE(ID_NEXTCHAPTER)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
@@ -2165,11 +2273,11 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 7.Ikona poprzedniej księgi
-			pMemoryStr->WriteBuffer(ID_TOPREV_BOOK, ARRAYSIZE(ID_TOPREV_BOOK)); 						//Zapis do strumienia danych
-			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
-			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
-			GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
-			pMemoryStr->Clear();
+		pMemoryStr->WriteBuffer(ID_TOPREV_BOOK, ARRAYSIZE(ID_TOPREV_BOOK)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//--- 8.Ikona wyświetlenia wybranego werseu
 		pMemoryStr->WriteBuffer(ID_DISPLAYVERS, ARRAYSIZE(ID_DISPLAYVERS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
@@ -2256,6 +2364,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pMemoryStr->Clear();
 		//--- 22.Ikona do rozpoczęcia edycji
 		pMemoryStr->WriteBuffer(ID_EDITTEXT, ARRAYSIZE(ID_EDITTEXT)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 23.Ikona do wyświetlania informacji o przekładach
+		pMemoryStr->WriteBuffer(ID_INFOSTRANSLATES, ARRAYSIZE(ID_INFOSTRANSLATES)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
@@ -2395,6 +2509,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pMemoryStr->Clear();
 		//--- 22.Ikona do rozpoczęcia edycji
 		pMemoryStr->WriteBuffer(ID_EDITTEXT_DIS, ARRAYSIZE(ID_EDITTEXT_DIS)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+    //--- 23.Ikona do wyświetlania informacji o przekładach
+		pMemoryStr->WriteBuffer(ID_INFOSTRANSLATES_DIS, ARRAYSIZE(ID_INFOSTRANSLATES_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList

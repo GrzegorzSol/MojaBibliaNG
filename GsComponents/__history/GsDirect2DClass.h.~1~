@@ -1,0 +1,101 @@
+﻿#ifndef GsDirect2DClassH
+#define GsDirect2DClassH
+//---------------------------------------------------------------------------
+#include <Vcl.ExtCtrls.hpp>
+#include <d2d1.h>
+#include <dwrite.h>
+
+#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
+#if defined(_DEBUGINFO_)
+	#include "GsDebugClass.h"
+#endif
+//Domyślne wartosci dla składowych klasy, które są stałe
+const bool CFIsDisplayText = false;
+const UnicodeString CFNameFont = "Arial",
+										CFTextWrite = "Testowy tekst";
+const float CFSizeFont = 72.0f,
+						CFRotationText = 0.0f,
+						CFOpacityBrush = 1.0f;
+const D2D1::ColorF::Enum CFD2DColorText = D2D1::ColorF::Black;
+const TColor CFStandardColorText = clBlack;
+//---------------------------------------------------------------------------
+class GsDirect2DClass : public TCustomPanel
+{
+	public:
+		__fastcall GsDirect2DClass(TComponent* Owner);
+		__fastcall virtual ~GsDirect2DClass();
+		//---
+		void __fastcall GsD2D_LoadPicture(const UnicodeString custrPathImage, const bool _bAutosize=true);
+		void __fastcall GsD2D_SavePicture(const UnicodeString custrPathSaveImage);
+		void __fastcall GsD2D_SavePictureOriginal(const UnicodeString custrPathSaveImage);
+    const static UnicodeString csVersion;
+		//---
+		BEGIN_MESSAGE_MAP
+			VCL_MESSAGE_HANDLER(WM_SIZE, TWMSize, WMSize);
+			VCL_MESSAGE_HANDLER(WM_PAINT, TWMPaint, WMPaint);
+			VCL_MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, WMErasebackground);
+		END_MESSAGE_MAP(TCustomPanel);
+		//---
+		__property TNotifyEvent OnClick = {read=FOnClick, write=FOnClick};
+		__property bool IsDisplayText = {read = FIsDisplayText, write = _SetDisplayText, default = false};
+		__property UnicodeString NameFont = {read = FNameFont, write = _SetNameFont};
+		__property float SizeFont = {read = FSizeFont, write = _SetSizeFont};
+		__property UnicodeString TextWrite = {read = FTextWrite, write = _SetTextWrite};
+		__property D2D1::ColorF::Enum D2DColorText = {read = FD2DColorText, write = _SetD2DColorText};
+		__property TColor StandartColorText = {read = FStandardColorText, write = _SetStandardColorText};
+		__property float RotationText = {read = FRotationText, write = _SetRotationText};
+		__property float OpacityBrush = {read = FOpacityBrush, write = _SetOpacityBrush};
+		__property bool IsModified = {read = FIsModified, write = FIsModified, default = false};
+
+	protected:
+		virtual void __fastcall CreateWnd();
+		virtual void __fastcall DestroyWnd();
+		void __fastcall WMSize(TWMSize &Message);
+		void __fastcall WMPaint(TWMPaint &Message);
+		void __fastcall WMErasebackground(TWMEraseBkgnd &Message);
+		DYNAMIC void __fastcall Click();
+		HRESULT __fastcall CreateDeviceResources(HWND hWnd);
+		
+	private:
+		//Metody obsługujace zmienne i parametry
+			//Prywatne flagi
+		bool FIsDisplayText, FIsModified;
+		UnicodeString FNameFont;
+		float FSizeFont,
+					FRotationText,
+					FOpacityBrush;
+		UnicodeString FTextWrite;
+		D2D1::ColorF::Enum FD2DColorText;
+		TColor FStandardColorText;
+			//Zachowanie całej klasy
+		TNotifyEvent FOnClick;
+			//Metody obsługujace parametry
+		void __fastcall _SetDisplayText(const bool _IsDisplayText);
+		void __fastcall _SetNameFont(const UnicodeString _NameFont);
+		void __fastcall _SetSizeFont(const float _SizeFont);
+		void __fastcall _SetTextWrite(const UnicodeString _TextWrite);
+		void __fastcall _SetD2DColorText(const D2D1::ColorF::Enum _ColorText);
+		void __fastcall _SetStandardColorText(const TColor _TColorText);
+		void __fastcall _ReCreateTextFont();
+		void __fastcall _SetRotationText(const float _fRotationAngle);
+		void __fastcall _SetOpacityBrush(const float _fOpacityBrush);
+		//---
+		void __fastcall _SaveIWICBitmapSource(IWICBitmapSource *pIWICBitmapSource , const UnicodeString custrPathSaveImage, unsigned int _uiWidth, unsigned int _uiHeight);
+		//Prywatne zmienne
+		UnicodeString _ustrPathImage;
+		//Ile skalować projekt, który zakłada 96-DPI pikseli
+		float _dpiScaleX;
+		float _dpiScaleY;
+		//Direct2D
+		IWICImagingFactory *pIWICImagingFactory;
+		ID2D1Factory *pID2D1Factory;
+		ID2D1HwndRenderTarget *pID2D1HwndRenderTarget;
+		ID2D1Bitmap *pID2D1Bitmap;
+		IWICFormatConverter *pIWICFormatConverter;
+		//DirectWrite
+		IDWriteFactory* pIDWriteFactory;
+		IDWriteTextFormat* pIDWriteTextFormat;
+    ID2D1SolidColorBrush *pID2D1SolidColorBrush1;
+};
+//---------------------------------------------------------------------------
+#endif

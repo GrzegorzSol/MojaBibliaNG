@@ -21,9 +21,6 @@ const UnicodeString GlobalSizeFontText = "\\fs20",
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 	GsDebugClass::WriteDebug("");
 #endif
-#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
-	GsDebugClass::WriteDebug("");
-#endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 //---------------------------------------------------------------------------
@@ -42,7 +39,7 @@ __fastcall TChapterEditWindow::TChapterEditWindow(TComponent* Owner, TTabSheet *
 		this->Caption = this->_pGsTabSheetClass->Caption;
 	}
 	this->_iGetTranslate = this->_pGsTabSheetClass->GetTabSet()->TabIndex; //Numer aktualnie wyświetlanego tłumaczenia w zakładce z tekstem
-	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug(Format("%u", ARRAYOFCONST((this->_iGetTranslate))));
 	#endif
 }

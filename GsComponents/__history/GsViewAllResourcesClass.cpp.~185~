@@ -1,0 +1,293 @@
+﻿#pragma hdrstop
+
+#include "GsViewAllResourcesClass.h"
+#include "uGlobalVar.h"
+#include <System.IOUtils.hpp>
+#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "GsViewAllResourcesDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+/*
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
+#endif
+*/
+//Dane dla kolumn
+enum {enColumn_Name, enColumn_Comment, enColumn_TypeResource, enColumn_Size, enColumn_Path, enColumn_Count};
+const UnicodeString cstrColumnNames[] = {"Nazwa zasobu", "Komentarz do zasobu", "Typ zasobu", "Wielkość", "Miejsce"};
+//Dane dla grup
+enum {enGroup_Translate, enGroup_Graphics, enGroup_Count};
+const UnicodeString cstrGroupName[] = {"Dostępne tłumaczenia", "Zarejestrowana grafika"},
+										cstrGroupFooter[] = {"Koniec listy dostępnych tłumaczeń", "Koniec listy grafik"},
+										cstrGroupSubTitle[] = {"Lista wszystkich dostępnych tłumaczeń w aplikacji. Jeśli sa dostępne tłumaczenia oryginale (greckie i hebrajskie), to też są wyświetlane na tej liście",
+																					 "Wszyskie dostępne i zarejestrowane grafiki"};
+
+__fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) : TCustomListView(Owner)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->_pImages = new TImageList(this);
+	if(!this->_pImages) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
+  this->_pImages->Height = 32; this->_pImages->Width = 32;
+	this->_pImages->ColorDepth = cd32Bit;     //Głębia kolorów przyszłych obrazków
+	this->_pImages->DrawingStyle = dsTransparent;
+	this->_InitAllImage();
+	//---
+	this->DoubleBuffered = true;
+	this->OwnerDraw = true;
+	this->ReadOnly = true;
+	this->RowSelect = true;
+	this->ViewStyle = vsReport;
+	this->SmallImages  = this->_pImages;
+	//this->GroupHeaderImages = this->_pImages;
+	for(int iGroup=0; iGroup<enGroup_Count; iGroup++)
+	{
+		TListGroup *group = this->Groups->Add();
+		if(group)
+		{
+      group->State = TListGroupStateSet() << lgsNormal << lgsCollapsible;
+			group->Header = cstrGroupName[iGroup];
+			group->HeaderAlign = taCenter;
+			group->Footer = cstrGroupFooter[iGroup];
+			group->FooterAlign = taCenter;
+  		group->Subtitle = cstrGroupSubTitle[iGroup];
+			//group->TitleImage = 0;
+    }
+	}
+	this->GroupView = true;
+  //---
+	this->_CreateAllColumns();
+}
+//---------------------------------------------------------------------------
+__fastcall GsViewAllResourcesClass::~GsViewAllResourcesClass()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::CreateWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCustomListView::CreateWnd();
+	//Własny kod.
+  this->_LoadAllResources();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::DestroyWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	//Własny kod.
+	TCustomListView::DestroyWnd();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
+{
+	TRect RectBounds = Item->DisplayRect(drBounds);
+	TRect RectLabel = Item->DisplayRect(drLabel);
+	TRect RectIcon = Item->DisplayRect(drIcon);
+	TRect RectSubItem = RectBounds;
+
+
+	switch(Item->GroupID)
+	{
+		case enGroup_Translate:
+			this->Canvas->Brush->Color = clCream;
+		break;
+		case enGroup_Graphics:
+      this->Canvas->Brush->Color = clMoneyGreen;
+		break;
+  }
+	this->Canvas->FillRect(Rect);
+
+  if(State.Contains(odSelected))
+	{
+		this->Canvas->Brush->Color = clWebGreenYellow;
+	}
+
+	this->_pImages->Draw(this->Canvas, 0, (RectIcon.Top + (RectIcon.Height() / 2)) - (this->_pImages->Height / 2), Item->ImageIndex);
+	DrawText(this->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+	for(int iColumn=1; iColumn<this->Columns->Count; iColumn++)
+	{
+		 //Wymiary następnej kolumny
+		 RectSubItem.Left += this->Column[iColumn-1]->Width+1;
+		 RectSubItem.Right = RectSubItem.Left + this->Column[iColumn]->Width;
+		 #if defined(_DEBUGINFO_)
+			 //GsDebugClass::WriteDebug(Format("RectSubItem.Left: %d, RectSubItem.Right: %d", ARRAYOFCONST((RectSubItem.Left, RectSubItem.Right))));
+		 #endif
+		 //DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+
+		 if(iColumn == this->Columns->Count - 1) DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_PATH_ELLIPSIS);
+		 else DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::_CreateAllColumns()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TListColumn  *NewColumn;
+
+	//Dodawanie kolumn
+	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(cstrColumnNames); iColumns++)
+	{
+		NewColumn = this->Columns->Add();
+		NewColumn->Caption = cstrColumnNames[iColumns];
+		NewColumn->AutoSize = true;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::_LoadAllResources()
+/**
+	OPIS METOD(FUNKCJI): Tworzenie kompletnej listy wszystkich zasobów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TListItem *NewItem;
+	TStringDynArray SDirList, SDirMultiMList;
+	UnicodeString ustrExt, ustrTempLowerName;
+	__int64 i64Size;
+	TFileStream *pFileStream;
+  //Tworzenie listy katalogów z grafiką
+  TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
+	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+  SListTemp->Add(GlobalVar::Global_custrPathMultimediaFilesData);
+	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1, ""));
+	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, ""));
+	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, ""));
+
+	this->Items->BeginUpdate();
+	//Lista tłumaczeń
+  SDirList = TDirectory::GetFiles(GlobalVar::Global_custrGetDataDir);
+	for(int i=0; i<SDirList.Length; i++)
+	{
+		ustrExt = TPath::GetExtension(SDirList[i]);
+
+		if((ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) &&     //Pełne tłumaczenie
+			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) &&  //Grecki oryginał
+			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)      //Hebrajski oryginał
+			) continue;
+		//---
+		NewItem = this->Items->Add();
+		if(NewItem)
+		{
+			NewItem->Caption = TPath::GetFileNameWithoutExtension(SDirList[i]);
+			NewItem->GroupID = enGroup_Translate;
+      NewItem->ImageIndex = enImageRes_TranslationType;
+			//
+			if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) NewItem->SubItems->Add("Pełne tłumaczenie");
+			else if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) NewItem->SubItems->Add("Oryginalne greckie tłumaczenie");
+			else if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg) NewItem->SubItems->Add("Oryginalne hebrajskie tłumaczenie");
+			else NewItem->SubItems->Add("---");
+			//
+			if((ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) ||     //Pełne tłumaczenie
+				 (ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) ||  //Grecki oryginał
+				 (ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)      //Hebrajski oryginał
+				) NewItem->SubItems->Add("Tłumaczenie tekstu biblijnego"); else NewItem->SubItems->Add("---");
+			//
+			pFileStream = TFile::OpenRead(SDirList[i]);
+			if(pFileStream)
+			{
+				NewItem->SubItems->Add(Format("%u", ARRAYOFCONST((pFileStream->Size))));
+			}
+			NewItem->SubItems->Add(TPath::GetDirectoryName(SDirList[i]));
+		}
+	}
+	//Lista grafik
+	for(int iSelectDir=0; iSelectDir<SListTemp->Count; iSelectDir++)
+	{
+    if(SListTemp->Strings[iSelectDir].IsEmpty()) continue;
+		SDirMultiMList = TDirectory::GetFiles(SListTemp->Strings[iSelectDir]);
+		for(int i=0; i<SDirMultiMList.Length; i++)
+		{
+			ustrTempLowerName = LowerCase(SDirMultiMList[i]);
+			if((TPath::GetExtension(ustrTempLowerName) != ".jpg") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".jpeg") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".bmp")) continue;
+			//---
+			NewItem = this->Items->Add();
+			if(NewItem)
+			{
+				NewItem->Caption = TPath::GetFileNameWithoutExtension(SDirMultiMList[i]);
+				NewItem->GroupID = enGroup_Graphics;
+				NewItem->ImageIndex = enImageRes_Pictures;
+
+				NewItem->SubItems->Add("Plik graficzny");
+				NewItem->SubItems->Add("Grafika zarejestrowana w aplikacji");
+				pFileStream = TFile::OpenRead(SDirMultiMList[i]);
+				if(pFileStream)
+				{
+					NewItem->SubItems->Add(Format("%u", ARRAYOFCONST((pFileStream->Size))));
+				}
+				NewItem->SubItems->Add(TPath::GetDirectoryName(SDirMultiMList[i]));
+			}
+		}
+		SDirMultiMList.Length = 0;
+	}
+	if(SListTemp) {delete SListTemp;}
+	this->Items->EndUpdate();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::_InitAllImage()
+/**
+	OPIS METOD(FUNKCJI): Tworzenie listy obrazów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TIcon *pIcon=0;
+	TMemoryStream *pMemoryStr=0;
+
+  try
+	{
+		pIcon = new TIcon();
+		if(!pIcon) throw(Exception("Błąd metody TIcon"));
+		pMemoryStr = new TMemoryStream();
+		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
+		//--- 0.Ikona - Tłumaczenie
+		pMemoryStr->WriteBuffer(IMAGE_TRANSLATION, ARRAYSIZE(IMAGE_TRANSLATION)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->_pImages->AddIcon(pIcon);                				//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 1.Ikona - Grafika
+    pMemoryStr->WriteBuffer(IMAGE_PICTURES, ARRAYSIZE(IMAGE_PICTURES)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->_pImages->AddIcon(pIcon);                				//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+	}
+  __finally
+	{
+		//--- Zwolnienie objektu, klasy TIcon i TMemoryStream
+		if(pIcon) {delete pIcon;}
+		if(pMemoryStr) {delete pMemoryStr;}
+	}
+}
+//---------------------------------------------------------------------------
