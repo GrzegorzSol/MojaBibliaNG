@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SetupsWindow</class>
+ <widget class="QDialog" name="SetupsWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1073</width>
+    <height>659</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Ustawienia aplikacji</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QListWidget" name="SW_ButGroupSections">
+       <property name="maximumSize">
+        <size>
+         <width>280</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTabWidget" name="SW_PControlSelected">
+       <property name="tabShape">
+        <enum>QTabWidget::Rounded</enum>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="tabBarAutoHide">
+        <bool>false</bool>
+       </property>
+       <widget class="QWidget" name="SW_SheetLajout">
+        <attribute name="icon">
+         <iconset resource="MojaBibliaLite.qrc">
+          <normaloff>:/Setups/gfx/Kolory małe.png</normaloff>:/Setups/gfx/Kolory małe.png</iconset>
+        </attribute>
+        <attribute name="title">
+         <string>Ustawienie wyglądu aplikacji</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="SW_SheetFlags">
+        <attribute name="icon">
+         <iconset resource="MojaBibliaLite.qrc">
+          <normaloff>:/Setups/gfx/Ustawienie flag małe.png</normaloff>:/Setups/gfx/Ustawienie flag małe.png</iconset>
+        </attribute>
+        <attribute name="title">
+         <string>Flagi przełączniki aplikacji</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="leftMargin">
+            <number>9</number>
+           </property>
+           <property name="topMargin">
+            <number>9</number>
+           </property>
+           <property name="rightMargin">
+            <number>9</number>
+           </property>
+           <property name="bottomMargin">
+            <number>9</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="SW_IsDisplaySplash">
+             <property name="text">
+              <string>Czy wyświetlać winiete aplikacji, przy jej starcie?</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="SW_SheetPaths">
+        <attribute name="icon">
+         <iconset resource="MojaBibliaLite.qrc">
+          <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+        </attribute>
+        <attribute name="title">
+         <string>Wybór katalogu z multimediami</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="leftMargin">
+            <number>9</number>
+           </property>
+           <property name="topMargin">
+            <number>9</number>
+           </property>
+           <property name="rightMargin">
+            <number>9</number>
+           </property>
+           <property name="bottomMargin">
+            <number>9</number>
+           </property>
+           <item>
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>9</number>
+             </property>
+             <property name="topMargin">
+              <number>9</number>
+             </property>
+             <property name="rightMargin">
+              <number>9</number>
+             </property>
+             <property name="bottomMargin">
+              <number>9</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLineEdit" name="SW_LEditPathMedias_1">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLineEdit" name="SW_LEditPathMedias_2">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLineEdit" name="SW_LEditPathMedias_3">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_2">
+               <property name="text">
+                <string>Wybierz katalog...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="MojaBibliaLite.qrc">
+                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_3">
+               <property name="text">
+                <string>Wybierz katalog...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="MojaBibliaLite.qrc">
+                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLineEdit" name="SW_LEditPathMedias_4">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_4">
+               <property name="text">
+                <string>Wybierz katalog...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="MojaBibliaLite.qrc">
+                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_1">
+               <property name="text">
+                <string>Wybierz katalog...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="MojaBibliaLite.qrc">
+                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="SW_ButtSetupSave">
+       <property name="text">
+        <string>Zapisz konfiguracje</string>
+       </property>
+       <property name="icon">
+        <iconset resource="MojaBibliaLite.qrc">
+         <normaloff>:/Setups/gfx/Zapisz.png</normaloff>:/Setups/gfx/Zapisz.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="SW_ButtSetupHelp">
+       <property name="text">
+        <string>Pomoc...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="MojaBibliaLite.qrc">
+         <normaloff>:/Search/gfx/HelpReg.png</normaloff>:/Search/gfx/HelpReg.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="SW_ButtSetupCancel">
+       <property name="text">
+        <string>Anuluj</string>
+       </property>
+       <property name="icon">
+        <iconset resource="MojaBibliaLite.qrc">
+         <normaloff>:/Setups/gfx/Anuluj.png</normaloff>:/Setups/gfx/Anuluj.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>SW_ButtonSelectPathmedia_1</tabstop>
+  <tabstop>SW_ButtonSelectPathmedia_2</tabstop>
+  <tabstop>SW_ButtonSelectPathmedia_3</tabstop>
+  <tabstop>SW_ButtonSelectPathmedia_4</tabstop>
+  <tabstop>SW_LEditPathMedias_1</tabstop>
+  <tabstop>SW_LEditPathMedias_2</tabstop>
+  <tabstop>SW_LEditPathMedias_3</tabstop>
+  <tabstop>SW_LEditPathMedias_4</tabstop>
+  <tabstop>SW_ButGroupSections</tabstop>
+  <tabstop>SW_PControlSelected</tabstop>
+  <tabstop>SW_ButtSetupSave</tabstop>
+  <tabstop>SW_IsDisplaySplash</tabstop>
+  <tabstop>SW_ButtSetupHelp</tabstop>
+  <tabstop>SW_ButtSetupCancel</tabstop>
+ </tabstops>
+ <resources>
+  <include location="MojaBibliaLite.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>SW_ButtSetupCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>SetupsWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1032</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>721</x>
+     <y>621</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

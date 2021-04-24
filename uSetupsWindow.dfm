@@ -65,7 +65,7 @@ object SetupsWindow: TSetupsWindow
     Width = 697
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetFlags
+    ActivePage = SW_OthersSetups
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -75,6 +75,10 @@ object SetupsWindow: TSetupsWindow
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GrBoxSetColors: TGroupBox
         Left = 0
         Top = 0
@@ -308,8 +312,10 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Flagi i prze'#322#261'czniki aplikacji'
       ImageIndex = 1
-      ExplicitLeft = 6
-      ExplicitTop = 23
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SW_CBoxIsDisplaySplashScreen: TCheckBox
         AlignWithMargins = True
         Left = 3
@@ -374,14 +380,27 @@ object SetupsWindow: TSetupsWindow
           'Czy po ponownym uruchomieniu aplikacji, b'#281'd'#261' wczytywane ksi'#281'gi, ' +
           'kt'#243're zosta'#322'y ostatnio zamkni'#281'te podczas opuszczania aplikacji?'
         TabOrder = 4
-        ExplicitTop = 94
-        ExplicitWidth = 97
+      end
+      object SW_CBoxTips: TCheckBox
+        Left = 3
+        Top = 118
+        Width = 358
+        Height = 17
+        CustomHint = SW_BalloonHint
+        Caption = 
+          'Czy okno szybkich podpowiedzi ma sie pojawia'#263' przy starcie aplik' +
+          'acji'
+        TabOrder = 5
       end
     end
     object SW_SheetPaths: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Scie'#380'ki dost'#281'pu'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SW_GrBoxSelectPathDirMulti: TGroupBox
         Left = 0
         Top = 0
@@ -493,6 +512,10 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Inne ustawienia'
       ImageIndex = 3
+      ExplicitLeft = 6
+      ExplicitTop = 23
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object LabelSizeMainFont: TLabel
         Left = 19
         Top = 16
@@ -507,7 +530,7 @@ object SetupsWindow: TSetupsWindow
       end
       object LabelSizeFontAdress: TLabel
         Left = 19
-        Top = 44
+        Top = 62
         Width = 331
         Height = 22
         CustomHint = SW_BalloonHint
@@ -519,7 +542,7 @@ object SetupsWindow: TSetupsWindow
       end
       object LabelFontNameTranslates: TLabel
         Left = 19
-        Top = 72
+        Top = 110
         Width = 331
         Height = 22
         CustomHint = SW_BalloonHint
@@ -555,7 +578,7 @@ object SetupsWindow: TSetupsWindow
       end
       object SpEditSizeTranslatesFont: TSpinEdit
         Left = 356
-        Top = 73
+        Top = 111
         Width = 47
         Height = 22
         CustomHint = SW_BalloonHint
@@ -579,7 +602,7 @@ object SetupsWindow: TSetupsWindow
       end
       object SpEditSizeAdressFont: TSpinEdit
         Left = 356
-        Top = 45
+        Top = 63
         Width = 47
         Height = 22
         CustomHint = SW_BalloonHint
@@ -603,9 +626,9 @@ object SetupsWindow: TSetupsWindow
       end
       object ButtFontNameMainText: TButton
         Left = 424
-        Top = 16
-        Width = 148
-        Height = 23
+        Top = 12
+        Width = 220
+        Height = 32
         CustomHint = SW_BalloonHint
         Caption = 'Typ czcionki'
         ImageIndex = 5
@@ -617,9 +640,9 @@ object SetupsWindow: TSetupsWindow
       end
       object ButtFontNameAdress: TButton
         Left = 424
-        Top = 44
-        Width = 148
-        Height = 23
+        Top = 58
+        Width = 220
+        Height = 32
         CustomHint = SW_BalloonHint
         Caption = 'Typ czcionki'
         ImageIndex = 5
@@ -631,9 +654,9 @@ object SetupsWindow: TSetupsWindow
       end
       object ButtFontNameTranslates: TButton
         Left = 424
-        Top = 72
-        Width = 148
-        Height = 23
+        Top = 106
+        Width = 220
+        Height = 32
         CustomHint = SW_BalloonHint
         Caption = 'Typ czcionki'
         ImageIndex = 5
@@ -648,6 +671,10 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Wyb'#243'r t'#322'umacze'#324
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SW_ListViewAllTranslates: TListView
         AlignWithMargins = True
         Left = 12

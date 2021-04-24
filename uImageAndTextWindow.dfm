@@ -93,6 +93,10 @@ object ImageAndTextWindow: TImageAndTextWindow
       object TabSheetTools: TTabSheet
         Caption = 'Narz'#281'dzia'
         ImageIndex = -1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object GrBoxImageAndText1: TGroupBox
           AlignWithMargins = True
           Left = 3

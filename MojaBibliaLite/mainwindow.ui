@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1400</width>
+    <height>780</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1400</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>32</width>
+    <height>32</height>
+   </size>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>false</bool>
+      </property>
+      <property name="handleWidth">
+       <number>2</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QTabWidget" name="PageControlTools">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <property name="tabPosition">
+        <enum>QTabWidget::West</enum>
+       </property>
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="TabSheetBooks">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <attribute name="title">
+         <string>Strona</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="TabSheetMultiMedia">
+        <attribute name="title">
+         <string>Strona</string>
+        </attribute>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="MainToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="ActCloseActiveSheet"/>
+   <addaction name="ActSaveToFile"/>
+   <addaction name="ActSearch"/>
+   <addaction name="separator"/>
+   <addaction name="ActSetups"/>
+   <addaction name="separator"/>
+   <addaction name="ActResizeText"/>
+  </widget>
+  <widget class="QStatusBar" name="MainStatusBar">
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <action name="ActCloseActiveSheet">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MojaBibliaLite.qrc">
+     <normaloff>:/MainToolBar/gfx/ZamknięcieAktywnejZakładki.png</normaloff>:/MainToolBar/gfx/ZamknięcieAktywnejZakładki.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zamknięcie aktywnej zakładki</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/ZamknięcieAktywnejZakładki.png&quot;/&gt; Zamknięcie aktywnej zakładki&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ActSaveToFile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MojaBibliaLite.qrc">
+     <normaloff>:/MainToolBar/gfx/ZapiszDoPliku.png</normaloff>:/MainToolBar/gfx/ZapiszDoPliku.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zapis do pliku</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/ZapiszDoPliku.png&quot;/&gt; Zapis do pliku&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ActSearch">
+   <property name="icon">
+    <iconset resource="MojaBibliaLite.qrc">
+     <normaloff>:/MainToolBar/gfx/Wyszukiwania.png</normaloff>:/MainToolBar/gfx/Wyszukiwania.png</iconset>
+   </property>
+   <property name="text">
+    <string>Wuszukiwanie w księgach</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/Wyszukiwania.png&quot;/&gt; Wyszukiwanie teskstu w księgach biblijnych&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ActSetups">
+   <property name="icon">
+    <iconset resource="MojaBibliaLite.qrc">
+     <normaloff>:/MainToolBar/gfx/Ustawienia.png</normaloff>:/MainToolBar/gfx/Ustawienia.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ustawienia aplikacji</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/Ustawienia.png&quot;/&gt;  Ustawienia aplikacji&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ActResizeText">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MojaBibliaLite.qrc">
+     <normaloff>:/MainToolBar/gfx/ZmianaObszaru.png</normaloff>:/MainToolBar/gfx/ZmianaObszaru.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zmiana obszaru wyswietlania tekstu</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/ZmianaObszaru.png&quot;/&gt;  Zmiana obszaru wyswietlania tekstu&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="MojaBibliaLite.qrc"/>
+ </resources>
+ <connections/>
+</ui>

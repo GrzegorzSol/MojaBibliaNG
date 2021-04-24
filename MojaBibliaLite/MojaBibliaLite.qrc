@@ -1,0 +1,44 @@
+<RCC>
+    <qresource prefix="/MainToolBar">
+        <file>gfx/Ustawienia.png</file>
+        <file>gfx/Wyszukiwania.png</file>
+        <file>gfx/ZapiszDoPliku.png</file>
+        <file>gfx/ZamknięcieAktywnejZakładki.png</file>
+        <file>gfx/ZmianaObszaru.png</file>
+    </qresource>
+    <qresource prefix="/TreeBooks">
+        <file>gfx/GrupaKsiąg.png</file>
+        <file>gfx/Księga.png</file>
+        <file>gfx/PismoŚwięte.png</file>
+        <file>gfx/MenuRozdział.png</file>
+    </qresource>
+    <qresource prefix="/SheetText">
+        <file>gfx/NastępnaKsięga.png</file>
+        <file>gfx/PoprzedniaKsięga.png</file>
+        <file>gfx/NastępnyRozdział.png</file>
+        <file>gfx/PoprzedniRozdział.png</file>
+        <file>gfx/PrzekładBiblii.png</file>
+        <file>gfx/WybierzRozdział.png</file>
+    </qresource>
+    <qresource prefix="/Search">
+        <file>gfx/HelpReg.png</file>
+        <file>gfx/WybórZakresu.png</file>
+        <file>gfx/Tłumaczenia.png</file>
+        <file>gfx/Szukaj.png</file>
+        <file>gfx/KsięgaStat.png</file>
+        <file>gfx/StatystykaWyszukiwania.png</file>
+    </qresource>
+    <qresource prefix="/Setups">
+        <file>gfx/Zapisz.png</file>
+        <file>gfx/Kolory małe.png</file>
+        <file>gfx/Ustawienie flag małe.png</file>
+        <file>gfx/KatalogZMediami16x16.png</file>
+        <file>gfx/Anuluj.png</file>
+    </qresource>
+    <qresource prefix="/Other">
+        <file>gfx/ZakładkaMultimediów.png</file>
+    </qresource>
+    <qresource prefix="/Logo">
+        <file>gfx/SearchLogo.png</file>
+    </qresource>
+</RCC>

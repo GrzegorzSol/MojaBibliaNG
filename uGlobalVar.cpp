@@ -12,17 +12,23 @@
 const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName), //Ścieżka dostępu do katalogu głównego programu;
 										GlobalVar::Global_custrNameIVerFile = "MBibleNG.iver",        //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
 										GlobalVar::Global_custrGetVersionUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
-										GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
+										#if defined(_DEBUGINFO_)
+											GlobalVar::Global_custrGetDataDir = "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\",
+										#else
+											GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
+										#endif
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 										GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.bmp"),//Grafika z podkładem okna głównego
+										GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.png"),//Logo w oknie wyszukiwania
 										GlobalVar::Global_custrExtendCommentsFiles = ".bfc", //Rozszerzenie plików z komentarzami
 										//GlobalVar::Global_custrExtendCommentsPlain = "tfc", //Rozszerzenie plików z komentarzem, bez formatowania, jako czysty tekst
 										GlobalVar::Global_custrPathFileInterlinear = TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
 										GlobalVar::Global_custrPathMultimediaFilesData = TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
 										GlobalVar::Global_custrPathFileFavoriteVers = TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),    //Ścieżka dostępu do pliku z listą ulubionych wersetów
-										GlobalVar::Global_custrPathdirComments = TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
-                    //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+										GlobalVar::Global_custrPathDirComments = TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
+										GlobalVar::Global_custrPathHistorySearch = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),    //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
+										//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
 										GlobalVar::Global_custrFTPSourceVersionFile = "/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver", //Ścieżka sieciowa do pliku wersji
 										GlobalVar::Global_custrFTPSourceApplicFile = "/public_html/wp-content/uploads/MojaBibliaNG/MojaBibliaNG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
 										GlobalVar::Global_custrHostName = "ftp.nasz-salem.pl", //Adres hosta
@@ -91,10 +97,10 @@ UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja bibli
 const unsigned char GlobalVar::cuchABlendValue = 200; //Współczynnik przezroczystości okna, gdy jest nieaktywne
 bool GlobalVar::IsWindows10 = false; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 //***************************************************************************
-TStringList *GlobalVar::Global_SListPathMultiM=0;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
-TMemIniFile *GlobalVar::Global_ConfigFile=0;			 //Globalny wskażnik na plik konfiguracyjny
+TStringList *GlobalVar::Global_SListPathMultiM=nullptr;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
+TMemIniFile *GlobalVar::Global_ConfigFile=nullptr;			 //Globalny wskażnik na plik konfiguracyjny
 TStringDynArray GlobalVar::SDirTranslatesList;     //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
-THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=0; //String lista do wszystkich ulubionych wesrsetów
+THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=nullptr; //String lista do wszystkich ulubionych wesrsetów
 int GlobalVar::iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
 																//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 																//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji

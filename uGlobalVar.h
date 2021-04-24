@@ -40,11 +40,13 @@ struct GlobalVar
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 														 Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
+                             Global_custrPathSearchLogo,//Logo w oknie wyszukiwania
 														 Global_custrExtendCommentsFiles, //Rozszerzenie plików z komentarzami
 														 Global_custrPathFileInterlinear,			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
 														 Global_custrPathMultimediaFilesData,//Ścieżka dostępu do danych multimedialnych
 														 Global_custrPathFileFavoriteVers,    //Ścieżka dostępu do pliku z listą ulubionych wersetów
-														 Global_custrPathdirComments,      //Katalog do pojedyńczych plików z komentarzami do wersetów
+														 Global_custrPathDirComments,      //Katalog do pojedyńczych plików z komentarzami do wersetów
+                             Global_custrPathHistorySearch,    //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 														 //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
 														 Global_custrFTPSourceVersionFile, //Ścieżka sieciowa do pliku wersji
 														 Global_custrFTPSourceApplicFile, //Ścieżka sieciowa do głównego pliku aplikacji

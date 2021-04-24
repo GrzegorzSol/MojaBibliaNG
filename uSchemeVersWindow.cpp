@@ -7,6 +7,16 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TSchemeVersWindow *SchemeVersWindow;
+/*
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
+	GsDebugClass::WriteDebug("");
+#endif
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug("");
+#endif
+MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+*/
 const UnicodeString ustrCaptionWindow = "Projektowanie logicznych powiązań między wersetami";
 enum {enImgScheme_AddLink,
 			enImgScheme_DeleteLink,
@@ -99,6 +109,17 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 	this->pGsMasterBibleScheme->AddNewObjectScheme();
 	this->ActCreateFileFromScheme->Enabled = true;
 	this->ActDeleteLink->Enabled = true;
+	if(!this->ActViewEditor->Checked)
+	//28-03-2021 - Jeśli został dodany element do schematu, automatycznie wyświetlany jest edytor, by nie spowodować błędu fokusa
+	//w wypadku próby wyświetlenia w edytorze dokumentu, przy równoczesnym jego ukryciu.
+	//Edytor bedzie mógł być ukryty gdy nie będzie żadnego elementu.
+	//Sprawdzane jest to w metodzie ActDeleteLinkExecute, gdy zostanie skasowany ostatni element
+	{
+		this->ActViewEditor->Checked = true;
+		this->ActViewEditorExecute(this->ActViewEditor);
+  }
+	this->ActViewEditor->Enabled = false; //Zablokowanie wyłączania edytora - 28-03-2021
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActDeleteLinkExecute(TObject *Sender)
@@ -115,6 +136,8 @@ void __fastcall TSchemeVersWindow::ActDeleteLinkExecute(TObject *Sender)
 	this->pGsMasterBibleScheme->DeleteObjectScheme();
 	this->ActCreateFileFromScheme->Enabled = (this->pGsMasterBibleScheme->GetCountObjectScheme() > 0);
 	this->ActDeleteLink->Enabled = this->ActCreateFileFromScheme->Enabled;
+  //Brak elementów, można włączać i wyłączać edytor - 28-03-2021
+	this->ActViewEditor->Enabled = (this->pGsMasterBibleScheme->GetCountObjectScheme() == 0);
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActSaveExecute(TObject *Sender)
@@ -157,7 +180,7 @@ void __fastcall TSchemeVersWindow::ActCreateFileFromSchemeExecute(TObject *Sende
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-  this->pGsMasterBibleScheme->ViewProjectDocument();
+	this->pGsMasterBibleScheme->ViewProjectDocument();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActViewEditorExecute(TObject *Sender)

@@ -9,6 +9,7 @@
 #include "uSetupsWindow.h"
 #include <System.IOUtils.hpp>
 #include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -146,8 +147,8 @@ void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_SListOldConfig) {delete this->_SListOldConfig; this->_SListOldConfig = 0;} //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
-	if(this->_HSListViewAllTr) {delete this->_HSListViewAllTr; this->_HSListViewAllTr = 0;} //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
+	if(this->_SListOldConfig) {delete this->_SListOldConfig; this->_SListOldConfig = nullptr;} //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
+	if(this->_HSListViewAllTr) {delete this->_HSListViewAllTr; this->_HSListViewAllTr = nullptr;} //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_ReadAllConfig()
@@ -162,12 +163,17 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->SW_LEditPath1->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1, "");
 	this->SW_LEditPath2->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, "");
 	this->SW_LEditPath3->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, "");
+	//Sprawdzenie poprawności ścieżki dostępu
+	this->_VaidatePathMedia(this->SW_LEditPath1, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1);
+	this->_VaidatePathMedia(this->SW_LEditPath2, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2);
+	this->_VaidatePathMedia(this->SW_LEditPath3, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3);
 	//Flagi
 	this->SW_CBoxIsDisplaySplashScreen->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, true);
 	this->SW_CBoxIsRequestEnd->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true);
 	this->SW_CBoxOnlyOne->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, true);
 	this->SW_CBoxAutoFindUpdate->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true);
 	this->SW_CBoxReLoadBooks->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true);
+	this->SW_CBoxTips->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true);
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
 	this->SW_ColorBoxFavorities->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, clYellow);
@@ -246,6 +252,24 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	if(pSListExcludeTrans) {delete pSListExcludeTrans;}
 }
 //---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey) //30-03-2021
+/**
+	OPIS METOD(FUNKCJI): Niewłaściwa ścierzka dostępu do katalogu z mediami
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(pLEditPath->Text.IsEmpty()) return;
+	if(!TDirectory::Exists(pLEditPath->Text))
+	{
+		UnicodeString ustrPathError = Format("Ścieżka dostępu: %s jest nie właściwa. Prawdopodobnie wybrany katalog nie istnieje! Proszę wybrać istniejący katalog.", ARRAYOFCONST((pLEditPath->Text)));
+		MessageBox(NULL, ustrPathError.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		pLEditPath->Text= "";
+		GlobalVar::Global_ConfigFile->WriteString(ustrSection, ustrkey, "");
+	}
+}
+//---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_WriteAllConfig()
 /**
 	OPIS METOD(FUNKCJI): Zapis wszystkich ustawień aplikacji
@@ -267,6 +291,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, this->SW_CBoxOnlyOne->Checked);
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, this->SW_CBoxAutoFindUpdate->Checked);
   GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, this->SW_CBoxReLoadBooks->Checked);
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, this->SW_CBoxTips->Checked);
 	//Zapis kolorów
     //Kolor zaznaczenie ulubionych wersetów
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, this->SW_ColorBoxFavorities->Selected);
@@ -319,7 +344,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
     }
 	}
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, pSListExcludeTrans->CommaText);
-	if(pSListExcludeTrans) {delete pSListExcludeTrans; /*pSListExcludeTrans = 0;*/}
+	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();
 }
@@ -421,7 +446,7 @@ UnicodeString __fastcall TSetupsWindow::_SelectMultimediaDir(UnicodeString _ustr
 		ustrSelect = pFileOpenDialog->FileName;
 	else ustrSelect = _ustrPath;
 
-	if(pFileOpenDialog) {delete pFileOpenDialog; /*pFileOpenDialog = 0;*/}
+	if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
 	return ustrSelect;
 }
 //---------------------------------------------------------------------------
@@ -605,7 +630,7 @@ void __fastcall TSetupsWindow::ButtFontSelectClick(TObject *Sender)
 		}
 	}
 
-	if(pFontDialog) {delete pFontDialog; /*pFontDialog = 0;*/}
+	if(pFontDialog) {delete pFontDialog; pFontDialog = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SpEditSizeFontChange(TObject *Sender)

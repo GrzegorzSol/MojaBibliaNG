@@ -441,7 +441,7 @@ void __fastcall TImageAndTextWindow::Act_SaveAsExecute(TObject *Sender)
 	}
 	__finally
 	{
-		if(pSaveDialog) {delete pSaveDialog; pSaveDialog = 0;}
+		if(pSaveDialog) {delete pSaveDialog; pSaveDialog = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------

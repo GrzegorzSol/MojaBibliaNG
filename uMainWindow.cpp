@@ -52,12 +52,11 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uHelpMyBibleWindow.h"
 #include "uFastTipsWindow.h"
 #include <System.IOUtils.hpp>
-//#include <System.Zip.hpp>
-//#include <new>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TMainBibleWindow *MainBibleWindow;
+int Global_WidthTabTools = 0;
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
@@ -140,9 +139,6 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
 	#endif
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("TMainBibleWindow::TMainBibleWindow() - Mutex: \"%s\"", ARRAYOFCONST((GlobalVar::Global_ustrMutexName))));
-	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10);
 	//----- Sprawdzanie istnienia odpowiednich katalogów
@@ -175,9 +171,9 @@ __fastcall TMainBibleWindow::~TMainBibleWindow()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(GlobalVar::Global_SListPathMultiM) {delete GlobalVar::Global_SListPathMultiM; GlobalVar::Global_SListPathMultiM = 0;}
+	if(GlobalVar::Global_SListPathMultiM) {delete GlobalVar::Global_SListPathMultiM; GlobalVar::Global_SListPathMultiM = nullptr;}
 	#if defined(_DEBUGINFO_) //Konsola debuggera
-		GsDebugClass::WriteDebug("TMainBibleWindow::~TMainBibleWindow()");
+		//GsDebugClass::WriteDebug("TMainBibleWindow::~TMainBibleWindow()");
 		MessageBox(NULL, TEXT("Wstrzymanie zamykania aplikacji, w celu przeglądu komunikatów konsoli!"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 		GsDebugClass::CloseDebug();
 	#endif
@@ -191,6 +187,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	//OleInitialize(NULL);
 	if(TFile::Exists(GlobalVar::Global_custrPathBackgroundWindow))
 	{
 		//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
@@ -198,9 +195,6 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 		this->ImageBackgroundWindow->Picture->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
 	}
 	//---
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormCreate()");
-	#endif
 	TThumbBarButton *pNewThumbBarButton;
   //--- Tworzenie głównego objektu z tłmaczeniami, klasy GsReadBibleTextClass.
 	//    KLASA MUSI BYĆ ZAINICOWANA METODĄ InitMyBible(), PRZED JAKIM KOLWIEK UŻYWANIEM BIBLIOTEKI GsReadBibleTextClass
@@ -253,9 +247,6 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	//---
 	if((enNumTaskBar_NumberButtons == this->ActionManagerOther->ActionCount) && (enNumTaskBar_NumberButtons == ARRAYSIZE(ustrHintTBarButtons)))
 	{
-    #if defined(_DEBUGINFO_)
-			//GsDebugClass::WriteDebug(Format("this->ActionManagerOther->Count: %d", ARRAYOFCONST((this->ActionManagerOther->ActionCount))));
-		#endif
 		for(int iButton=0; iButton<enNumTaskBar_NumberButtons; iButton++)
 		{
 			pNewThumbBarButton = this->TaskbarMain->TaskBarButtons->Add();
@@ -266,17 +257,15 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 				pNewThumbBarButton->Hint = ustrHintTBarButtons[iButton];
 			}
 		}
-		#if defined(_DEBUGINFO_)
-			//GsDebugClass::WriteDebug(Format("this->TaskbarMain->TaskBarButtons->Count: %d", ARRAYOFCONST((this->TaskbarMain->TaskBarButtons->Count))));
-		#endif
 	}
 
 	this->TaskbarMain->ApplyChanges();
 	//ustawienie wartości domyślnej dla szerokości, do której zostanie zwinięty objekt, klasy TSplitView.
 	//Dokładna szerokość określana jest w metodzie TMainBibleWindow::MBW_PageControlsAllDrawTab() tylko jednokrotnie!
-	this->SplitViewMain->CompactWidth = 0;
 	//Szerokość lewego kontenera przycisków
 	this->ActionToolBarMain->Width = this->Width / 2;
+
+	this->ImageBackgroundWindow->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->GlobalTextDragDrop;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
@@ -291,9 +280,6 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	static bool sbIsNextOpen; //24-04-2020. Zmienna statyczna która zapobiega powtórnemu uruchomieniu metody
 	//---
 	if(sbIsNextOpen) return;
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormActivate()");
-	#endif
 	//Sprawdzanie aktualizacji podczas startu aplikacji
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true))
 	{
@@ -307,26 +293,24 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
 		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 		pHSListOpenBooksInExit->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, "");
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("pHSListOpenBooksInExit->Count: %u", ARRAYOFCONST((pHSListOpenBooksInExit->Count))));
-		#endif
 		for(int i=0; i<pHSListOpenBooksInExit->Count; i++)
 		{
 			iBook = pHSListOpenBooksInExit->Strings[i].SubString(1, 3).ToIntDef(1);
 			iChapt = pHSListOpenBooksInExit->Strings[i].SubString(4, 3).ToIntDef(1);
 			GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("%u - pHSListOpenBooksInExit->Strings[i] = %s; %u:%u", ARRAYOFCONST((i, pHSListOpenBooksInExit->Strings[i], iBook, iChapt))));
-			#endif
 		}
 
-		delete pHSListOpenBooksInExit;// pHSListOpenBooksInExit = 0;
+		delete pHSListOpenBooksInExit; pHSListOpenBooksInExit = nullptr;
 
 		sbIsNextOpen = true;
 		//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
 		this->Act_MailChapt->Enabled = ((this->PageControlBibleText->PageCount > 0) &&
 			(dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->ActivePage)));
 	}
+	//Stan przycisku zmiany obszaru tekstu 12-04-2021
+	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
+	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
+	this->Act_SaveChaptToHTML->Enabled = (this->PageControlBibleText->PageCount > 0);
 	//---
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
   //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
@@ -345,17 +329,11 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()");
-	#endif
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true) &&
 		 GlobalVar::iReturnUpdate != 1)
 	{
 		TTaskDialog *pTaskDialog = new TTaskDialog(this);
 		if(!pTaskDialog) throw(Exception("Błąd inicjalizacji objektu TTaskDialog"));
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-if(!pTaskDialog)");
-		#endif
 		pTaskDialog->Caption = "Pytanie aplikacji";
 		pTaskDialog->Title = "Czy rzeczywiście chcesz opuścić apilkacje?";
 
@@ -363,34 +341,16 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
 		pTaskDialog->MainIcon = tdiWarning;
 		pTaskDialog->DefaultButton = tcbNo;
 		pTaskDialog->CommonButtons = TTaskDialogCommonButtons() << tcbYes << tcbNo;
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-pTaskDialog->CommonButtons");
-		#endif
 		pTaskDialog->ModalResult = mrNo;
 		pTaskDialog->Flags = TTaskDialogFlags() << tfUseHiconMain << tfExpandedByDefault << tfPositionRelativeToWindow;
-    #if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-pTaskDialog->Flags");
-		#endif
 		if(this->ImageListMainActive) this->ImageListMainActive->GetIcon(enImageLogoApplication, pTaskDialog->CustomMainIcon);
-    #if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-if(this->ImageListMainActive)");
-		#endif
 		if(pTaskDialog->Execute())
 		{
 			if(pTaskDialog->ModalResult == mrYes) CanClose = true; else CanClose = false;
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-if(pTaskDialog->ModalResult == mrYes)");
-			#endif
 		}
 		if(pTaskDialog) {delete pTaskDialog;}
-    #if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-if(pTaskDialog))");
-		#endif
 	}
 	else CanClose = true;
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormCloseQuery()-Koniec");
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -401,9 +361,6 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormClose()");
-	#endif
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppWidth, this->Width);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppHeight, this->Height);
 	//---
@@ -419,17 +376,11 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 			if (pGsTabSheetClass)
 			{
 				GsReadBibleTextData::GetAdressFromId(ustrAdress, pGsTabSheetClass->_ShucIndexBook+1, pGsTabSheetClass->_ShucIndexChapt+1);
-				#if defined(_DEBUGINFO_)
-					GsDebugClass::WriteDebug(Format("ustrAdress: %s", ARRAYOFCONST((ustrAdress))));
-				#endif
 				pHSListOpenBooksInExit->Add(ustrAdress);
 			}
 		}
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("pHSListOpenBooksInExit->CommaText: %s", ARRAYOFCONST((pHSListOpenBooksInExit->CommaText))));
-		#endif
 		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, pHSListOpenBooksInExit->CommaText);
-		delete pHSListOpenBooksInExit;// pHSListOpenBooksInExit = 0;
+		delete pHSListOpenBooksInExit; pHSListOpenBooksInExit = nullptr;
 	}
 	//--- Zamknięcie klasy głównej do analizy Pisma
 	GsReadBibleTextData::CloseMyBible();
@@ -438,7 +389,7 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	{
 		GlobalVar::Global_ConfigFile->UpdateFile();	//Zrzut pliku ini z pamięci, do pliku ini
 		delete GlobalVar::Global_ConfigFile;
-		GlobalVar::Global_ConfigFile = 0;
+		GlobalVar::Global_ConfigFile = nullptr;
 	}
 }
 //---------------------------------------------------------------------------
@@ -450,9 +401,6 @@ void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormDestroy()");
-	#endif
 	//OleUninitialize();
 }
 //---------------------------------------------------------------------------
@@ -465,9 +413,6 @@ void __fastcall TMainBibleWindow::FormResize(TObject *Sender)
 */
 {
 
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::FormResize()");
-	#endif
 	//Główna część panelu zajmuje 75% szerokości oka
 	this->StatusBarMain->Panels->Items[enPanelMain_InfoText]->Width = (int)(0.75 * this->Width);
 }
@@ -658,58 +603,34 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
     return;
 	}
 	//---
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()");
-	#endif
 	if((this->PageControlBibleText->PageCount == 0)  || (this->PageControlBibleText->ActivePageIndex == -1)) return;
 	//---
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-TAction *pAction");
-	#endif
-	//---
 	TTabSheet* pActiveSheet = this->PageControlBibleText->ActivePage;
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-TTabSheet* pActiveSheet");
-	#endif
 	if(pActiveSheet)
 	{
 		if(pActiveSheet->ClassNameIs("GsTabSheetSelectVersClass")) GsReadBibleTextData::GsSheetListVers = 0; //Jeśli to zakładka z listą wybranych wersetów,
 																																																				 //globalny wskaźnik na zakładkę zostanie wyzerowany
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-pActiveSheet->ClassNameIs");
-		#endif
-		delete pActiveSheet;
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-delete pActiveSheet");
-		#endif
+		delete pActiveSheet; pActiveSheet = nullptr;
 		pAction->Enabled = (this->PageControlBibleText->PageCount > 0);
 		this->Act_EditChapter->Enabled = ((this->PageControlBibleText->PageCount > 0) && (dynamic_cast<GsTabSheetClass *>(pActiveSheet)));
     //Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
 		this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-pAction->Enabled");
-		#endif
 		//---
 		if((this->PageControlBibleText->PageCount == 0) && (this->PageControlTools->ActivePageIndex == enPageTools_Books)) //[02-11-2019]
 		//Otwieranie zakładki z wyborem ksiąg, w wypadku, gdy żadna księga nie jest wczytana, i aktywną zakładką jest zakładka wyboru ksiąg
 		{
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-if((this->PageControlBibleText->PageCount == 0)");
-			#endif
 			this->Act_ResizeWork->Checked = false;
 			this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 		}
 		if(this->PageControlBibleText->PageCount == 0)
 		{
 			this->PageControlBibleText->Visible = false; //01-02-2020
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("this->PageControlBibleText->Visible = false)");
-			#endif
 		}
 	}
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TMainBibleWindow::Act_CloseSheetActiveExecute()-End");
-	#endif
+  //Stan przycisku zmiany obszaru tekstu 12-04-2021
+	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
+	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
+	this->Act_SaveChaptToHTML->Enabled = (this->PageControlBibleText->PageCount > 0);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
@@ -816,7 +737,7 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
     return;
 	}
 	//---
-	TSelectVersWindow *pSelectVersWindow;//=0;
+	TSelectVersWindow *pSelectVersWindow=nullptr;
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->ActivePage);
 	if(!pGsTabSheetClass) {pSelectVersWindow = new TSelectVersWindow(this);} //Brak zakładki z załadowaną księgą i rozdziałem
 	//Jest zakładka z załadowaną księgą i rozdziałem, więc domyślnie startowym tekstem będzie pierwszy werset z załadowanej księgi i rozdziały,
@@ -933,7 +854,10 @@ void __fastcall TMainBibleWindow::Act_ResizeWorkExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	//this->PageControlTools->Visible = !pAction->Checked;
-	this->SplitViewMain->Opened = !pAction->Checked;
+	//this->SplitViewMain->Opened = !pAction->Checked;
+	if(pAction->Checked)
+		this->PanelTools->Width = Global_WidthTabTools;
+	else this->PanelTools->Width = 300;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_OtherInfoTaskbarButtonExecute(TObject *Sender)
@@ -976,9 +900,6 @@ void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
 	{
 		case enTagPageControlBibleText: //Zakładki z tekstem
 		{
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("Zakładki z tekstem");
-			#endif
 			//TTabSheet *pTabSheet = pPageControl->ActivePage;
 			GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(pPageControl->ActivePage);
 			if(!pGsTabSheetClass)
@@ -999,30 +920,9 @@ void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
 		//---
 		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
 		{
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)");
-			#endif
 		}
     break;
 	}
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_SplitTreeTextCanResize(TObject *Sender,
-					int &NewSize, bool &Accept)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TSplitter *pSplitter = dynamic_cast<TSplitter *>(Sender);
-	if(!pSplitter) return;
-	//---
-	const int ciMaxSize = 580,
-						ciMinSize = 280;
-	//--- Nie możesz więcej przesunąć splittera niż, na szerokość ciMaxSize pikseli
-	if((NewSize > ciMaxSize) || (NewSize < ciMinSize)) Accept = false;//NewSize = sciMaxSize;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *Control,
@@ -1052,7 +952,8 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 			}
 			pPControl->Canvas->FillRect(Rect);
 			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2) + 2, pActSheet->ImageIndex);
-			MyRect.Inflate(-pPControl->Images->Width - 4, 0);
+			//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
+			MyRect.Left += (pPControl->Images->Width + 4);
 			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
 		}
 		break;
@@ -1063,9 +964,9 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 			{
 				pPControl->Canvas->Font->Color = clBlack;
 				pPControl->Canvas->Brush->Color = clWebDarkOrange;
-				//Ustwienie szerokosci "ucha" aktywnej zakładki, do jakiej bedzie się zwijać objekt, klasy TSplitView. Szerokość ustawia się tylko raz, gdy jest ustawiona na
-        //domyślną wartość równą zero, później już nie jest modyfikowana - 06-10-2019
-				if(this->SplitViewMain->CompactWidth == 0) this->SplitViewMain->CompactWidth = Rect.GetWidth();
+				//Ustwienie szerokosci "ucha" aktywnej zakładki, do jakiej bedzie się zwijać objekt, klasy TPanel.
+				//if(this->PanelTools->Width == 24) this->PanelTools->Width = Rect.GetWidth();
+				Global_WidthTabTools = Rect.GetWidth();
 			}
 			pPControl->Canvas->FillRect(Rect);
 			pPControl->Canvas->Font->Orientation = 900;
@@ -1124,37 +1025,9 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 	ShellExecute(this->Handle, NULL , TEXT("https://sourceforge.net/projects/moja-biblia-ng/"), NULL, NULL, SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::SplitViewMainOpened(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Objekt, klasy TSplitView został otwarty
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TSplitView *pSplitView = dynamic_cast<TSplitView *>(Sender);
-	if(!pSplitView) return;
-	//---
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::PageControlToolsChanging(TObject *Sender,
-					bool &AllowChange)
-/**
-	OPIS METOD(FUNKCJI): Zezwolenie na zmianę zakładki w zakładkach z narzędziami
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-  TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
-	if(!pPageControl) return;
-	//---
-	if(!this->SplitViewMain->Opened) AllowChange = false;
-}
-//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI):
+	OPIS METOD(FUNKCJI): Zdarzenie związane z aktywacją zakładki, wykorzystywane do wykrywania pojawienia się pierwszej zakładki
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -1162,56 +1035,18 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 {
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
+  //Stan przycisku zmiany obszaru tekstu 12-04-2021
+	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
+	this->Act_ResizeWork->Checked = (pPageControl->PageCount > 0);
+  this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
+	this->Act_SaveChaptToHTML->Enabled = (pPageControl->PageCount > 0);
 	//---
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("PageControlBibleTextEnter");
-	#endif
-	if(pPageControl->PageCount > 0)
-	{
-		this->Act_ResizeWork->Checked = true;
-		this->Act_ResizeWorkExecute(this->Act_ResizeWork);
-		this->Act_CloseSheetActive->Enabled = true;
-		this->Act_EditChapter->Enabled = true;
-    //Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
-		this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
-	}
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::PageControlToolsMouseEnter(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Myszka nad objektem TPageControl //[03-11-2019]
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
-	if(!pPageControl) return;
-	//---
-	if(this->PageControlBibleText->PageCount == enPageTools_Books) return;// || (this->PageControlBibleText->PageCount == enPageTools_Multimedials)) return;
-	//Jeśli nie ma rzadnej wczytanej księgi, metoda nie zadziała
-	this->Act_ResizeWork->Checked = false;
 	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::TabSheetAllToolsMouseLeave(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Myszka poza objektem TTabSheet //[03-11-2019]
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(Sender);
-	if(!pTabSheet) return;
-	//---
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("pTabSheet = %s", ARRAYOFCONST((pTabSheet->Caption))));
-	#endif
-	if(this->PageControlBibleText->PageCount == 0) return;
-	//Jeśli nie ma rzadnej wczytanej księgi, to nie można zamknąć zakładek
-	this->Act_ResizeWork->Checked = true;
-	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+	this->Act_CloseSheetActive->Enabled = (pPageControl->PageCount > 0);
+	this->Act_EditChapter->Enabled = (pPageControl->PageCount > 0);
+	//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
+	this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
@@ -1241,9 +1076,6 @@ void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
 		if(ustrClassName == custrClassExplorerName)
 		{
 			Handled = true; //Zablokowanie działania myszy dla objektu klasy TWebBrowser [09-11-2019]
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("TMainBibleWindow::_AppMessage()-szClassName: %s", ARRAYOFCONST((ustrClassName))));
-			#endif
 		}
 	}
 }
@@ -1379,6 +1211,19 @@ void __fastcall TMainBibleWindow::Act_TipsExecute(TObject *Sender)
 	TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
 	if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
 	pTFastTipsWindow->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
+          TObject *Source, int X, int Y, TDragState State, bool &Accept)
+/**
+	OPIS METOD(FUNKCJI): Główna metoda wywoływana podczas przeciągania elementu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //Akceptacja jeśli jest to objekt odpowiedniej klasy
+	Accept = Source->ClassNameIs("GsTreeBibleClass");
 }
 //---------------------------------------------------------------------------
 

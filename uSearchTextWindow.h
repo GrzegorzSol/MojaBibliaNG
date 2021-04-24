@@ -26,9 +26,6 @@ class TSearchTextWindow : public TForm
 __published:	// IDE-managed Components
 	TPageControl *STW_PControlSet;
 	TTabSheet *STW_TabSheetInputText;
-	TLabeledEdit *STW_LEditSearchText;
-	TGridPanel *STW_GrPanelButtons;
-	TButton *STW_ButtonSearchStart;
 	TCheckBox *STW_ChBoxIsRegEx;
 	TTabSheet *STW_TabSheetStatistick;
 	TGroupBox *STW_GroBoxSetupSearchText;
@@ -38,19 +35,27 @@ __published:	// IDE-managed Components
 	TImageList *ImgListSmallSearch;
 	TWebBrowser *STW_WBrowserResultSearch;
 	TTabSheet *STW_TabSheetViewListView;
-	TComboBox *STW_CBoxSelectRangeSearch;
-	TLabel *STW_LabelInfoRange;
-	TComboBox *STW_CBoxStartSelectRange;
-	TComboBox *STW_CBoxStopSelectRange;
-	TLabel *STW_LabelInfoTo;
-	TLabel *STW_LabelInfoSelectTranslates;
-	TComboBox *STW_CBoxSelectTranslates;
 	TStatusBar *STW_StBarInfos;
 	TListView *STW_LViewResultSearch;
 	TWebBrowser *STW_WBrowserSelectItemResult;
 	TButton *STW_ButtonHelpRegExp;
 	TBalloonHint *BalloonHintSearch;
 	TListView *STW_LViewStatistic;
+	TComboBox *STW_CBoxHistorySearchText;
+	TLabel *STW_InfoSearchTextLabel;
+	TPanel *STW_PanelButtons;
+	TButton *STW_ButtonSearchStart;
+	TPanel *STW_PanelImage;
+	TPanel *STW_PanelSelectSearchParam;
+	TComboBox *STW_CBoxStopSelectRange;
+	TLabel *STW_LabelInfoTo;
+	TComboBox *STW_CBoxStartSelectRange;
+	TComboBox *STW_CBoxSelectTranslates;
+	TLabel *STW_LabelInfoSelectTranslates;
+	TComboBox *STW_CBoxSelectRangeSearch;
+	TLabel *STW_LabelInfoRange;
+	TImage *STW_ImageLogoSearch;
+	TStaticText *STW_STextLogoSearch;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);
 	void __fastcall CBoxCloseUp(TObject *Sender);
@@ -73,6 +78,9 @@ __published:	// IDE-managed Components
           TRect &Rect, TOwnerDrawState State);
 	void __fastcall FormDeactivate(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
+	void __fastcall STW_CBoxHistorySearchTextChange(TObject *Sender);
+	void __fastcall STW_PControlViewsTextDrawTab(TCustomTabControl *Control, int TabIndex,
+          const TRect &Rect, bool Active);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety

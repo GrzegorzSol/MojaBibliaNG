@@ -76,12 +76,12 @@ __fastcall GsListViewMultiMClass::~GsListViewMultiMClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_pImageList) {delete this->_pImageList; this->_pImageList = 0;}
+	if(this->_pImageList) {delete this->_pImageList; this->_pImageList = nullptr;}
 	if(this->_pListFile)
 	{
 		this->ClearList();
 		delete this->_pListFile;
-		this->_pListFile = 0;
+		this->_pListFile = nullptr;
 	}
 }
 //---------------------------------------------------------------------------
@@ -97,7 +97,7 @@ void __fastcall GsListViewMultiMClass::ClearList()
 	for(int i=0; i<this->_pListFile->Count; i++)
 	{
 		pMultiData = static_cast<PMULTIDATA>(this->_pListFile->Items[i]);
-		if(pMultiData) {delete pMultiData; /*pMultiData = 0;*/}
+		if(pMultiData) {delete pMultiData; pMultiData = nullptr;}
 	}
 	this->_pListFile->Clear();
 }
@@ -158,7 +158,7 @@ void __fastcall GsListViewMultiMClass::CreateWnd()
 		SDirMultiMList.Length = 0;
 	}
 	this->_pListFile->Sort(this->SortListFiles);
-	if(SListTemp) {delete SListTemp; /*SListTemp = 0;*/}
+	if(SListTemp) {delete SListTemp; SListTemp = nullptr;}
 
 	this->Items->Count = this->_pListFile->Count;
 	this->Items->EndUpdate();

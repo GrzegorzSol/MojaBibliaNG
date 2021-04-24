@@ -32,7 +32,7 @@ __fastcall TSelectVersWindow::TSelectVersWindow(TComponent* Owner, const unsigne
 */
 {
 	//Sprawdzenie i ewentualne stworzenie katalogu z plikami komentarzy
-	if(!TDirectory::Exists(GlobalVar::Global_custrPathdirComments)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathdirComments);
+	if(!TDirectory::Exists(GlobalVar::Global_custrPathDirComments)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathDirComments);
 
 }
 //---------------------------------------------------------------------------
@@ -93,8 +93,8 @@ void __fastcall TSelectVersWindow::FormActivate(TObject *Sender)
 */
 {
 	this->_pGsPanelSelectVers->IsVisibleSetTranslate = false; //Wybór tłumaczenia niewidoczny. MUSI być wywołany w metodzie OnShow(), okna!!!
-	this->_pGsPanelSelectVers->IsVisibleIONoteEditors = false; //Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
-  //this->_pGsPanelSelectVers->DisplayStart();
+	//this->_pGsPanelSelectVers->IsVisibleIONoteEditors = false; //Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
+	//this->_pGsPanelSelectVers->DisplayStart();
 	/*
 	KOLEJNOŚĆ WYWOŁYWANIA:
 		1.GsPanelSelectVers::_SetupDisplayTranslate() -> GsPanelSelectVers::FIsSetTranslate

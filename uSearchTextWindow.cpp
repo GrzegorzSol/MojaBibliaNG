@@ -1,17 +1,25 @@
-﻿//---------------------------------------------------------------------------
-
-#include <vcl.h>
+﻿#include <vcl.h>
 #pragma hdrstop
 
 #include "uSearchTextWindow.h"
 #include "GsReadBibleTextClass\GsReadBibleTextClass.h"
 #include <System.RegularExpressions.hpp>
 #include "uGlobalVar.h"
+#include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TSearchTextWindow *SearchTextWindow;
-static StatisticFindView TableStatisticFindView[GsReadBibleTextData::GsNumberBooks]; //Tablica wyników wyszukiwań, dla statystyki
+/*
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
+	GsDebugClass::WriteDebug("");
+#endif
+#if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug("");
+#endif
+MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+*/
 //---
 enum {  //Numery zakładek w ustawieniach wyszukiwania
 				enIndexSetInputSearch, enIndexStatisticSearch,
@@ -29,6 +37,10 @@ enum {  //Numery zakładek w ustawieniach wyszukiwania
 				enImageSearch_StopSelect,          //4.Końcowa księga zakresu wyszukiwania
 				enImageSearch_Translates,          //5.Wybór tłumaczenia
 				enImageSearch_SelectRange,         //6.Wybór zakresu wyszukiwania
+				enImageSearch_Statistic,           //7.Zakładka statystyki wyszukiwania
+				enImageSearch_InputText,           //8.Zakładka wprowadzania tekstu szukanego
+				enImageSearch_ResultListHTML,      //9.Zakładka wyników wyszukiwania w formie html
+        enImageSearch_ResultListSelect,    //10.Zakładka wyników wyszukiwania z możliwością wyboru
 				enImageSearch_Count,
 				//Stałe numerów kolumn dla listy statystyki
 				enColumn_NameBook=0, enColumn_CountFind, enColumn_Progres, enColumn_Count,
@@ -53,7 +65,8 @@ const static UnicodeString ustrInoRegSearch = UnicodeString(". - (kropka)=dowoln
 		"a|b - dopasuje wyrażenie  a lub wyrażenie  b\n" +
 		"* 	 - dopasuj zero lub więcej wyrażeń znaku poprzedzający operator\n" +
 		"+ 	 - jeden lub więcej elementów poprzedzających operator\n" +
-		"{n} - poprzedzający element pasuje dokładnie n razy";
+		"{n} - poprzedzający element pasuje dokładnie n razy",
+													ustrTextLogoSearch = "DzAp 17:11\n\"...przyjęli oni Słowo z całą gotowością i codziennie BADALI Pisma, czy tak się rzeczy mają\"";
 //Nazwy kolumn dla listy statystyki
 const static UnicodeString ustrNameColumn[] = {"Nazwa księgi", "Ilość wystąpień", "Wskaźnik"};
 //---------------------------------------------------------------------------
@@ -65,10 +78,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	const unsigned char cucLimitGroupBooks[] = {39, 66, 73};
-	enum {enLimit_OldTestament, enLimit_NewTestament, enLimit_Apocryfics=73};
-  //---
-	if(Screen->DesktopHeight > 800) this->Height = 795; else this->Height = 600; //Wysokość okna, zależna od wysokości ekranu
+	if(Screen->DesktopHeight > 800) this->Height = 860; else this->Height = 600; //Wysokość okna, zależna od wysokości ekranu
 	this->STW_WBrowserResultSearch->Navigate(WideString("about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
   this->STW_WBrowserSelectItemResult->Navigate(WideString("about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
 	this->STW_PControlSet->ActivePageIndex = enIndexSetInputSearch; //Domyślnie aktywna zakładka, po stworzeniu okna
@@ -100,7 +110,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 		}
     this->STW_CBoxSelectTranslates->ItemIndex = 0;  //Domyślne pierwsze, dostępne tłumaczenie
 	}
-	this->STW_LEditSearchText->Hint = "Pole tekstowe do wprowadzania szukanego tekstu.";
+	this->STW_CBoxHistorySearchText->Hint = "Pole tekstowe do wprowadzania szukanego tekstu.";
 	this->STW_ChBoxIsRegEx->Hint = "Czy wyszukiwanie będzie używało wyrażeń regularnych";
 	this->STW_ButtonHelpRegExp->Hint = "Pomoc w wyszukiwaniu za pomocą wyrażeń regularnych.";
 	this->STW_CBoxSelectRangeSearch->Hint = Format("Zakres wyszukiwania|Wybór zakresu ksiąg, które będą brane pod uwagę podczas wyszukiwania|%u", ARRAYOFCONST((enImageSearch_SelectRange)));
@@ -108,8 +118,31 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	this->STW_CBoxStopSelectRange->Hint = Format("Końcowa księga w wyszukiwaniu|Początkowa księga w zakresie wyszukiwania, zdefiniowanym przez użytkownika|%u", ARRAYOFCONST((enImageSearch_StopSelect)));
 	this->STW_CBoxSelectTranslates->Hint = Format("Wybór tłumaczenia|Wybór tłumaczenia do przeszukania|%u", ARRAYOFCONST((enImageSearch_Translates)));
 	this->STW_ButtonSearchStart->Hint = Format("Rozpoczęcie wyszukiwania|Rozpoczęcie wyszukiwania według ustawionych parametrów|%u", ARRAYOFCONST((this->STW_ButtonSearchStart->ImageIndex)));
+
+	//Logo wyszukiwania
+	if(TFile::Exists(GlobalVar::Global_custrPathSearchLogo))
+	{
+		TWICImage *pWICImage = new TWICImage();
+		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+		pWICImage->LoadFromFile(GlobalVar::Global_custrPathSearchLogo);
+		this->STW_ImageLogoSearch->Picture->Assign(pWICImage);
+		delete pWICImage; pWICImage = nullptr;
+		this->STW_STextLogoSearch->Caption = ustrTextLogoSearch;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	const unsigned char cucLimitGroupBooks[] = {39, 66, 73};
+	enum {enLimit_OldTestament, enLimit_NewTestament, enLimit_Apocryfics=73};
 	//----- Ustawienia objektu, klasy TListView dla statystyki
-	TListColumn *NewColumn;//=0;
+	TListColumn *NewColumn=nullptr;
 	TImageList *pImgList = GsReadBibleTextData::GetImageListData();
 	if(!pImgList) throw(Exception("Błąd wyłuskania objektu TImageList"));
 	this->STW_LViewStatistic->SmallImages = pImgList;
@@ -117,7 +150,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	for(int i=0; i<GsReadBibleTextData::GsNumberGroups; i++)
 	{
 		TListGroup *NewGroup = this->STW_LViewStatistic->Groups->Add();
-		NewGroup->State << lgsNormal << lgsCollapsible;
+		NewGroup->State = TListGroupStateSet() << lgsNormal << lgsCollapsible;
 		NewGroup->Header = GsReadBibleTextData::GsNamesTableNameGroupBook[i];
 		NewGroup->HeaderAlign = taCenter;
 	}
@@ -132,7 +165,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 			case enColumn_NameBook:
 			{
 				NewColumn->AutoSize = false;
-        NewColumn->Width = 200;
+				NewColumn->Width = 200;
 			}
 			break;
 			//---
@@ -153,20 +186,23 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 		if(i<cucLimitGroupBooks[enLimit_OldTestament]) NewItem->GroupID = 0;
 		else if(i>=cucLimitGroupBooks[enLimit_OldTestament] && i<cucLimitGroupBooks[enLimit_NewTestament]) NewItem->GroupID = 1;
 		else if(i>=cucLimitGroupBooks[enLimit_NewTestament]) NewItem->GroupID = 2;
+		//Zaalokowanie prywatnych danych w każdej pozycji, która reprezentuje kolejną księgę biblijną.
+		//W tych danych będą przechowywane ilości wystąpień szukanego słowa w danej księdze
+		PStatisticFindView MyDataStatistic = new StatisticFindView();
+		if(!MyDataStatistic) throw(Exception("Błąd inicjalizacji objektu PStatisticFindView"));
+		MyDataStatistic->uiCountFind = 0;
+		NewItem->Data = MyDataStatistic;
 	}
 	this->STW_LViewStatistic->Items->EndUpdate();
-}
-//---------------------------------------------------------------------------
-void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
+	//Lista zawierające wszystkie znalezione wersety
 	this->_pHSListSearchResult = new THashedStringList();
 	if(!this->_pHSListSearchResult) throw(Exception("Błąd tworzenia tymczasowego objektu THashedStringList"));
+	//Lista dotyczczasowych tekstów wyszukiwanych
+	//this->_pHListSearchesText = new THashedStringList();
+	//if(!this->_pHListSearchesText) throw(Exception("Błąd tworzenia tymczasowego objektu THashedStringList"));
+
+	if(TFile::Exists(GlobalVar::Global_custrPathHistorySearch))
+		{this->STW_CBoxHistorySearchText->Items->LoadFromFile(GlobalVar::Global_custrPathHistorySearch, TEncoding::UTF8);}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::FormDestroy(TObject *Sender)
@@ -177,7 +213,25 @@ void __fastcall TSearchTextWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_pHSListSearchResult) {delete this->_pHSListSearchResult; this->_pHSListSearchResult = 0;}
+	if(this->_pHSListSearchResult) {delete this->_pHSListSearchResult; this->_pHSListSearchResult = nullptr;}
+
+	this->STW_CBoxHistorySearchText->Items->SaveToFile(GlobalVar::Global_custrPathHistorySearch, TEncoding::UTF8);
+	//Zwalnianie prywatnych danych związanych z objektem TListitem, dla poszczególnych ksiąg
+	for(int i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	{
+		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[i];
+		if(MyItem)
+		{
+			if(MyItem->Data)
+			{
+				PStatisticFindView MyDataStatistic = static_cast<PStatisticFindView>(MyItem->Data);
+				if(MyDataStatistic)
+				{
+					delete MyDataStatistic; MyDataStatistic = nullptr;
+				}
+      }
+    }
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -212,8 +266,9 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	const UnicodeString custrStyleF = "<span class=styleFound>";
 	TRegExOptions regOptions = TRegExOptions() << roSingleLine << roIgnoreCase;
 	signed char scTempStart, scTempStop;
+	PStatisticFindView MyDataStatistic=nullptr;
 	//---
-	if(this->STW_LEditSearchText->Text.IsEmpty()) return; //Jeśli pole tekstu do wyszukanie jest puste, opuść metodę
+	if(this->STW_CBoxHistorySearchText->Text.IsEmpty()) return; //Jeśli pole tekstu do wyszukanie jest puste, opuść metodę
 	//---- Wyłuskanie tłumaczenia
 	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->STW_CBoxSelectTranslates->ItemIndex);
 	if(!pGsReadBibleTextItem || (pGsReadBibleTextItem->enTypeTranslate != enTypeTr_Full)) return; //Wyjście, gdy nie udało sie wyłuskać tłumaczenia
@@ -236,36 +291,48 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	else return;
 	//---
 	this->_pHSListSearchResult->Clear();
-	ZeroMemory(TableStatisticFindView, sizeof(TableStatisticFindView)); //Wyzerowanie tablicy statystyki wyszukiwania
 	for(signed char scIndex=scTempStart; scIndex<=scTempStop; scIndex++)
 	{
 		pBookListText = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, scIndex);
+		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[scIndex];
+		//Wyłuskanie danych dla pozycji, która reprezentuje księgę. W tej danej będzie przechowywana ilość wystąpień szukanego słowa dla każdej księgi
+		if(MyItem)
+		{
+			if(MyItem->Data)
+			{
+				MyDataStatistic = static_cast<PStatisticFindView>(MyItem->Data);
+				MyDataStatistic->uiCountFind=0;
+			}
+		}
+		//---
 		if(pBookListText)
 		{
 			for(int i=0; i<pBookListText->Count; i++)
 			{
-				iIndexTable = System::Sysutils::StrToInt(pBookListText->Strings[i].SubString(1, 3)) - 1; //Numer księgi liczony od 0.
+				//iIndexTable = System::Sysutils::StrToInt(pBookListText->Strings[i].SubString(1, 3)) - 1; //Numer księgi liczony od 0.
+				iIndexTable = pBookListText->Strings[i].SubString(1, 3).ToInt() - 1; //Numer księgi liczony od 0.
+				//---
 				if(this->STW_ChBoxIsRegEx->Checked) //Wyszukiwanie za pomocą wyrażeń regularnych
 				{
-					if(System::Regularexpressions::TRegEx::IsMatch(pBookListText->Strings[i], this->STW_LEditSearchText->Text, regOptions))
+					if(System::Regularexpressions::TRegEx::IsMatch(pBookListText->Strings[i], this->STW_CBoxHistorySearchText->Text, regOptions))
 					{
 						this->_pHSListSearchResult->AddObject(pBookListText->Strings[i].SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-						TableStatisticFindView[iIndexTable].uiCountFind++;
+						MyDataStatistic->uiCountFind++;
 					}
 				}
 				else //Wyszukiwanie tradycyjne
 				{
-					iPositionSearch = System::Sysutils::AnsiLowerCase(pBookListText->Strings[i]).Pos(System::Sysutils::AnsiLowerCase(this->STW_LEditSearchText->Text));
+					iPositionSearch = System::Sysutils::AnsiLowerCase(pBookListText->Strings[i]).Pos(System::Sysutils::AnsiLowerCase(this->STW_CBoxHistorySearchText->Text));
 					if(iPositionSearch > 0)
 					{
 						//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia
 						ustrTemp = pBookListText->Strings[i].Insert(custrStyleF, iPositionSearch); //Wstawienie początku stylu, przed słowem szukanym
 						//Wstawienie zakończenia stylu po szukanym słowie, plus wcześniej wstawionym stylu.
-						ustrTemp = ustrTemp.Insert("</span>", iPositionSearch + this->STW_LEditSearchText->Text.Length() + custrStyleF.Length());
+						ustrTemp = ustrTemp.Insert("</span>", iPositionSearch + this->STW_CBoxHistorySearchText->Text.Length() + custrStyleF.Length());
 						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-						TableStatisticFindView[iIndexTable].uiCountFind++;
+            MyDataStatistic->uiCountFind++;
 					} //if(iPositionSearch > 0)
 				} //if(this->STW_ChBoxIsRegEx->Checked)
 			} //for(int i=0; i<pBookListText->Count; i++)
@@ -279,6 +346,24 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	this->STW_LViewResultSearch->Items->EndUpdate();
 	this->STW_WBrowserResultSearch->SetFocus();
 	this->STW_StBarInfos->SimpleText = Format("Znaleziono %u pozycji", ARRAYOFCONST((this->_pHSListSearchResult->Count)));
+	//Dodawanie do objekstu, klasy TComboBox sów wyszukiwanych 15-04-2021
+	bool bIsDuplicate=false; //Zmienna oznaczająca że jest(true), lub nie (false) duplicat w słowie szukanym
+	const int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
+                                       //Gdy zostanie ona przekroczona, zostanie usunięte najstarsze słowo, by dodać najnowsze
+
+	for(int i=0; i<this->STW_CBoxHistorySearchText->Items->Count; i++)
+	{
+		if(STW_CBoxHistorySearchText->Text.LowerCase() == this->STW_CBoxHistorySearchText->Items->Strings[i].LowerCase())
+		{
+			bIsDuplicate = true; break;
+    }
+	}
+
+	if(!bIsDuplicate)
+	{
+		if(ciMaxHistorySearchText <= this->STW_CBoxHistorySearchText->Items->Count) this->STW_CBoxHistorySearchText->Items->Delete(0);
+		this->STW_CBoxHistorySearchText->Items->Add(STW_CBoxHistorySearchText->Text);  //Lista dotyczczasowych tekstów wyszukiwanych
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
@@ -306,7 +391,7 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 			{
 				GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(pCBox->ItemIndex);
 				if(!pGsReadBibleTextItem) return;
-				this->STW_ButtonSearchStart->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !this->STW_LEditSearchText->Text.IsEmpty());
+				this->STW_CBoxHistorySearchText->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !this->STW_CBoxHistorySearchText->Text.IsEmpty());
       }
 		break;
 		//
@@ -349,7 +434,7 @@ void __fastcall TSearchTextWindow::STW_ChBoxIsRegExClick(TObject *Sender)
 	TCheckBox *pChBox = dynamic_cast<TCheckBox *>(Sender);
 	if(!pChBox) return;
 	//---
-	this->STW_LEditSearchText->Clear();
+	this->STW_CBoxHistorySearchText->Text = "";
   this->STW_ButtonHelpRegExp->Enabled = pChBox->Checked;
 }
 //---------------------------------------------------------------------------
@@ -487,9 +572,10 @@ void __fastcall TSearchTextWindow::STW_CBoxSearchDrawItem(TWinControl *Control,
       this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_Translates);
     break;
   }
-	Rect.Left += 18;
+	//Rect.Left += 18;
+	Rect.Left += (this->ImgListSmallSearch->Width + 2);
 
-	DrawTextW(pCanvas->Handle, pCBox->Items->Strings[Index].c_str(), -1, &Rect, DT_SINGLELINE | DT_VCENTER);
+	DrawText(pCanvas->Handle, pCBox->Items->Strings[Index].c_str(), -1, &Rect, DT_SINGLELINE | DT_VCENTER);
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_PControlChanging(TObject *Sender,
@@ -516,7 +602,7 @@ void __fastcall TSearchTextWindow::STW_PControlChanging(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *Sender,
-          TListItem *Item, TRect &Rect, TOwnerDrawState State)
+					TListItem *Item, TRect &Rect, TOwnerDrawState State)
 /**
 	OPIS METOD(FUNKCJI): Własne rysowanie objektu klasy TListView
 	OPIS ARGUMENTÓW:
@@ -526,20 +612,50 @@ void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *S
 {
 	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
-  //---
+	//---
 	TRect RectBounds = Item->DisplayRect(drBounds);
 	TRect RectLabel = Item->DisplayRect(drLabel);
 	TRect RectIcon = Item->DisplayRect(drIcon);
 	float fBarFind;//=0;
-	if(State.Contains(odSelected))
+	unsigned int uiCountSearch=0;
+	//---
+	if(Item->Data)
+	//Odzcyt z danych prywatnych pozycji ilości znalezionych słów dla danej księgi, którą reprezentuje pozycja
 	{
-		pLView->Canvas->Brush->Color = clYellow;
+		PStatisticFindView MyDataStatisti = static_cast<PStatisticFindView>(Item->Data);
+		uiCountSearch = MyDataStatisti->uiCountFind;
 	}
-  pLView->Canvas->FillRect(RectBounds);
-	pLView->SmallImages->Draw(pLView->Canvas, RectIcon.Left, RectIcon.Top + 1, enImageIndex_Book);
+	//---
+	if(State.Contains(odSelected))
+	//Selekcja pozycji
+	{
+		if(uiCountSearch > 0)
+		//Są wyniki wyszukiwania dla ksiegi
+		{
+			pLView->Canvas->Brush->Color = clYellow;
+		}
+		else
+		//Brak wyników wyszukiwania dla ksiegi
+		{
 
+		}
+	}
+	//---
+	if(uiCountSearch > 0)
+	//Są wyniki wyszukiwania dla ksiegi 16-04-2021
+	{
+		pLView->Canvas->FillRect(RectBounds);
+		pLView->SmallImages->Draw(pLView->Canvas, RectIcon.Left, RectIcon.Top + 1, enImageIndex_Book);
+	}
+	else
+	//Brak wyników wyszukiwania dla ksiegi
+	{
+		pLView->Canvas->Font->Color = clGray;
+	}
+	//---
   RectLabel.Left += 2;
 	DrawText(pLView->Canvas->Handle,  Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+	//---
 	TRect RectSubItem = RectBounds;
 	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
 	{
@@ -547,21 +663,23 @@ void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *S
 		RectSubItem.Left += pLView->Column[iColumn]->Width + 1;
 		if(iColumn==pLView->Columns->Count - 2) RectSubItem.Right = pLView->ClientRect.Right;
 		else RectSubItem.Right += pLView->Column[iColumn + 1]->Width;
-		if((TableStatisticFindView[Item->Index].uiCountFind > 0) && (iColumn == enColumn_CountFind-1))
+		if((uiCountSearch > 0) && (iColumn == enColumn_CountFind-1))
 		{
 			pLView->Canvas->Font->Style = TFontStyles() << fsBold;
 			pLView->Canvas->Font->Color = clRed;
-			DrawText(pLView->Canvas->Handle, UnicodeString(TableStatisticFindView[Item->Index].uiCountFind).c_str() , -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+			DrawText(pLView->Canvas->Handle, UnicodeString(uiCountSearch).c_str() , -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 		}
-		else if((TableStatisticFindView[Item->Index].uiCountFind > 0) && (iColumn == enColumn_Progres-1))
+		else if((uiCountSearch > 0) && (iColumn == enColumn_Progres-1))
 		//Rysowanie wykresu
 		{
 			fBarFind = (float)RectSubItem.Width() / (float)this->_pHSListSearchResult->Count;
 			pLView->Canvas->Brush->Color = clGreen;
 
-			RectSubItem.Right = RectSubItem.Left + (fBarFind * (float)TableStatisticFindView[Item->Index].uiCountFind);
+			RectSubItem.Right = RectSubItem.Left + (fBarFind * (float)uiCountSearch);
+      RectSubItem.Inflate(0, -4, 0, -4);
 			pLView->Canvas->FillRect(RectSubItem);
 			pLView->Canvas->Brush->Color = clBlue;
+
 			pLView->Canvas->FrameRect(RectSubItem);
 		}
 	}
@@ -587,6 +705,69 @@ void __fastcall TSearchTextWindow::FormActivate(TObject *Sender)
 */
 {
 	this->AlphaBlendValue = 255; //16-02-2020
+}
+//---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::STW_CBoxHistorySearchTextChange(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Zmieniłeś tekst wyszukiwany w polu objektu, klasy TComboBox
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
+	if(!pCBox) return;
+	//--- Kontrola wyszukiwanie tylko w wypadku nie pustego pola tekstowego
+	//GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->STW_CBoxSelectTranslates->ItemIndex);
+	//if(!pGsReadBibleTextItem) return;
+	//this->STW_ButtonSearchStart->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !pCBox->Text.IsEmpty());
+	this->STW_ButtonSearchStart->Enabled = (!pCBox->Text.IsEmpty());
+}
+//---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::STW_PControlViewsTextDrawTab(TCustomTabControl *Control,
+					int TabIndex, const TRect &Rect, bool Active)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
+	if(!pPControl) return;
+	//-----
+  TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
+	if(!pActSheet) return;
+  //---
+	TRect MyRect(Rect);
+	switch(pPControl->Tag)
+	{
+		case enTag_PControlSet: //Zakładki z tekstem
+		{
+			if(Active)
+			{
+				pPControl->Canvas->Font->Color = clWhite;
+				pPControl->Canvas->Brush->Color = clWebMaroon;
+			}
+		}
+		break;
+		//---
+   case enTag_PCcontrolViewText: //Zakładki z tekstem
+		{
+			if(Active)
+			{
+				pPControl->Canvas->Font->Color = clYellow;
+				pPControl->Canvas->Brush->Color = clWebDarkSlategray;//clWebDarkMagenta;
+			}
+		}
+		break;
+	}
+
+	pPControl->Canvas->FillRect(Rect);
+  pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2) + 2, pActSheet->ImageIndex);
+	//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
+	MyRect.Left += (pPControl->Images->Width + 4);
+	DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
 }
 //---------------------------------------------------------------------------
 

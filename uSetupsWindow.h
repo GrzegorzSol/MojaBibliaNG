@@ -82,6 +82,7 @@ __published:	// IDE-managed Components
 	TCheckBox *SW_CBoxOnlyOne;
 	TCheckBox *SW_CBoxAutoFindUpdate;
 	TCheckBox *SW_CBoxReLoadBooks;
+	TCheckBox *SW_CBoxTips;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -100,6 +101,7 @@ private:	// User declarations
 	THashedStringList	*_HSListViewAllTr; //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
 	void __fastcall _ReadAllConfig(); //Odczyt wszystkich ustawień aplikacji i ustawienie komponentów
 	void __fastcall _WriteAllConfig();//Zapis wszystkich ustawień aplikacji
+	void __fastcall _VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey); //Niewłaściwa ścierzka dostępu do katalogu z mediami //30-03-2021
 public:		// User declarations
 	__fastcall TSetupsWindow(TComponent* Owner);
 };

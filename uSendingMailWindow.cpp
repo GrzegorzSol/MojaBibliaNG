@@ -15,9 +15,6 @@ enum {enTag_ButtSendingMail=100};
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 	GsDebugClass::WriteDebug("");
 #endif
-#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
-	GsDebugClass::WriteDebug("");
-#endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 //---------------------------------------------------------------------------

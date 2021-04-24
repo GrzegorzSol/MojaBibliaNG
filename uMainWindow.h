@@ -19,7 +19,7 @@
 #include <Vcl.ToolWin.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ActnColorMaps.hpp>
-#include <Vcl.WinXCtrls.hpp>
+#include <Vcl.WinXCtrls.hpp> //!!!
 //#include <Vcl.AppEvnts.hpp>
 //---------------------------------------------------------------------------
 class TMainBibleWindow : public TForm
@@ -40,16 +40,11 @@ __published:	// IDE-managed Components
 	TTrayIcon *TrayIconMain;
 	TPopupMenu *PMenuTray;
 	TTaskbar *TaskbarMain;
-	TPageControl *PageControlTools;
-	TTabSheet *TabSheetBooks;
 	TCoolBar *CoolBarMain;
 	TActionToolBar *ActionToolBarTools;
 	TAction *Act_CorcordanceDictionaryGrec;
-	TTabSheet *TabSheetAllCommentsVers;
 	TImageList *ImageListSmall;
 	TAction *Act_ProjectSchemeVers;
-	TStaticText *STextHeaderListCommentVers;
-	TStaticText *STextHeaderFavorteListVers;
 	TAction *Act_Infomations;
 	TStandardColorMap *StandardColorMapMain;
 	TAction *Act_ViewAllResources;
@@ -58,7 +53,6 @@ __published:	// IDE-managed Components
 	TActionManager *ActionManagerOther;
 	TAction *Act_OtherInfoTaskbarButton;
 	TAction *Act_OtherInfoApplicTaskBarButton;
-	TSplitView *SplitViewMain;
 	TAction *Act_FacePage;
 	TAction *Act_Update;
 	TAction *Act_EditChapter;
@@ -67,6 +61,12 @@ __published:	// IDE-managed Components
 	TAction *Act_ImageAndText;
 	TAction *Act_Help;
 	TAction *Act_Tips;
+	TPanel *PanelTools;
+	TPageControl *PageControlTools;
+	TTabSheet *TabSheetBooks;
+	TTabSheet *TabSheetAllCommentsVers;
+	TStaticText *STextHeaderListCommentVers;
+	TStaticText *STextHeaderFavorteListVers;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -80,7 +80,6 @@ __published:	// IDE-managed Components
 	void __fastcall TrayIconMainBalloonClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 	void __fastcall MBW_PageControlAllChange(TObject *Sender);
-	void __fastcall MBW_SplitTreeTextCanResize(TObject *Sender, int &NewSize, bool &Accept);
 	void __fastcall Act_CorcordanceDictionaryGrecExecute(TObject *Sender);
 	void __fastcall MBW_PageControlsAllDrawTab(TCustomTabControl *Control, int TabIndex,
           const TRect &Rect, bool Active);
@@ -93,16 +92,14 @@ __published:	// IDE-managed Components
 	void __fastcall Act_FacePageExecute(TObject *Sender);
 	void __fastcall Act_UpdateExecute(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
-	void __fastcall SplitViewMainOpened(TObject *Sender);
-	void __fastcall PageControlToolsChanging(TObject *Sender, bool &AllowChange);
 	void __fastcall PageControlBibleTextEnter(TObject *Sender);
-	void __fastcall PageControlToolsMouseEnter(TObject *Sender);
-	void __fastcall TabSheetAllToolsMouseLeave(TObject *Sender);
 	void __fastcall Act_EditChapterExecute(TObject *Sender);
 	void __fastcall Act_MailChaptExecute(TObject *Sender);
 	void __fastcall Act_ImageAndTextExecute(TObject *Sender);
 	void __fastcall Act_HelpExecute(TObject *Sender);
 	void __fastcall Act_TipsExecute(TObject *Sender);
+	void __fastcall ImageBackgroundWindowDragOver(TObject *Sender, TObject *Source,
+          int X, int Y, TDragState State, bool &Accept);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;
