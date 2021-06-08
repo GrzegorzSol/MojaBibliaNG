@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QStyleFactory>
 #include "globalvar.h"
+//#include "informationswindow.h"
 
 int main(int argc, char *argv[])
 /**
@@ -29,11 +30,6 @@ int main(int argc, char *argv[])
  GlobalVar::GFunInitGlobal();
 
  a.setStyleSheet(GlobalVar::Global_SheetStr);
-
- #if defined(_DEBUGINFO_)
-   qDebug() << QStyleFactory::keys();
- #endif
-
 
  MainWindow w;
  w.show();

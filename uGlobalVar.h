@@ -39,8 +39,11 @@ struct GlobalVar
 														 Global_custrGetDataDir,          //Ścieżka dostępu do katalogu z danymi aplikacji
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
+														 //Graficne loga z rozszerzeniem .gli
 														 Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
-                             Global_custrPathSearchLogo,//Logo w oknie wyszukiwania
+														 Global_custrPathSearchLogo,//Logo w oknie wyszukiwania
+														 Global_custrPathSetupsLogo,//Logo w oknie ustawień
+                             //---
 														 Global_custrExtendCommentsFiles, //Rozszerzenie plików z komentarzami
 														 Global_custrPathFileInterlinear,			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
 														 Global_custrPathMultimediaFilesData,//Ścieżka dostępu do danych multimedialnych
@@ -61,10 +64,10 @@ struct GlobalVar
 														 Global_ustrDirHelp,	//Ścieżka dostępu do katalogu z plikami pomocy
 														 Global_ustrExtPathHelp,	//Rozszerzenie plików pomocy
 														 Global_ustrCoreNameHelp, //Główny rdzeń nazwy, do której będzie przyczepiony indeks pomocy
-                              //---
+														 //----- Ustawienia pomocy
 														 Global_ustrExPathTipsImageHelp,//Rozszerzenie grafiki to tipsów
 														 Global_ustrCorePathNameImageTips, //Główny rdzeń nazwy pliku graficznego, do której będzie przyczepiony indeks pomocy tipsów
-															//---
+														 //----- Ustawienia pomocy 2
 														 Global_ustrCoreNameFileTips, //Rdzeń nazwy pliku wskazówek
 														 Global_ustrExPathFileTips,//Rozszerzenie plików wskazówek
 /*****************************************************************************
@@ -97,6 +100,21 @@ struct GlobalVar
 																GlobalIni_ColorOryginalTranslates,  //Kolor czcionki, dla oryginalnych tłumaczeń
 																GlobalIni_ColorNameOryginalTranslate, //Kolor nazwy oryginalnego tłumaczenia
 																GlobalIni_ColorAdressOryginalTranslate, //Kolor adresu oryginalnego tłumaczenia
+														 //----- Sekcja ColorsSetups pliku ini
+														 GlobalIni_ColorsSetupsSection_Main, //Główna sekcja ColorsSetups
+																GlobalIni_ColorsSetupsBackGroundAllListSearch, //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
+																GlobalIni_ColorsSetupBackGroundSelectBookSearch,//Kolor podkładu dla wyświetlenia znalezionych wersetów w wybranej księdze
+																GlobalIni_ColorsSetupBackGroundSelectVers,      //Kolor podkładu dla wyświetlenie pojedyńczego wybranego wersetu
+														 //----- Sekcja ParametersSetupsSearch
+														 GlobalIni_ParametersSetupsSearch_Main, //Główna sekcja ParametersSetupsSearch
+																GlobalIni_IsMemorySetupsSearch, //Czy zapamiętywać parametry wyszukiwania
+																GlobalIni_Translate, //Tłumaczenie
+																GlobalIni_SetupRangeBooks,//Zakres ksiąg
+																GlobalIni_StartUserRange, //Początek zakresu wyszukiwań
+																GlobalIni_StopUserRange,  //Koniec zakresu wyszukiwań
+																GlobalIni_TextSearch, //Tekst wyszukiwany
+																GlobalIni_IsSizeTextSearch, //Podczas wyszukiwania jest brana wielkość liter
+                                GlobalIni_IsRegSearch, //Podczas wyszukiwania są używane wyrażenia regularne
 														 //----- Sekcja Others
 														 GlobalIni_OthersSection,           //Główna sekcja OTHERS
 																GlobalIni_OtherSizeFontMain,    //Wielkość głównej czcionki tekstu wersetu

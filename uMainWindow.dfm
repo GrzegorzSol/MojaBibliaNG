@@ -78,14 +78,14 @@ object MainBibleWindow: TMainBibleWindow
         Control = ActionToolBarMain
         ImageIndex = -1
         MinHeight = 42
-        Width = 1120
+        Width = 1128
       end
       item
         Break = False
         Control = ActionToolBarTools
         ImageIndex = -1
         MinHeight = 42
-        Width = 58
+        Width = 50
       end>
     ParentShowHint = False
     ShowHint = True
@@ -93,7 +93,7 @@ object MainBibleWindow: TMainBibleWindow
     object ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
-      Width = 1107
+      Width = 1115
       Height = 42
       CustomHint = BalloonHintMain
       ActionManager = ActionManagerMain
@@ -111,9 +111,9 @@ object MainBibleWindow: TMainBibleWindow
       Spacing = 0
     end
     object ActionToolBarTools: TActionToolBar
-      Left = 1135
+      Left = 1143
       Top = 0
-      Width = 49
+      Width = 41
       Height = 42
       CustomHint = BalloonHintMain
       ActionManager = ActionManagerMain
@@ -164,6 +164,10 @@ object MainBibleWindow: TMainBibleWindow
       object TabSheetAllCommentsVers: TTabSheet
         Caption = 'Lista werset'#243'w ulubionych, i tych do kt'#243'rych istniej'#261' komentarze'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object STextHeaderListCommentVers: TStaticText
           Left = 0
           Top = 0

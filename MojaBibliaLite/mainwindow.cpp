@@ -2,12 +2,14 @@
 #include "ui_mainwindow.h"
 #include "searchwindow.h"
 #include "setupswindow.h"
+#include "informationswindow.h"
 #include "QGsReadBibleTextClass/qgsreadbibletextclass.h"
 #include "globalvar.h"
 #include <QScreen>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QTextStream>
 //#include <QDate>
 /*
 #if defined(_DEBUGINFO_)
@@ -27,7 +29,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
  */
 {
  this->ui->setupUi(this);
-
+ //Plik konfiguracyjny
+ GlobalVar::Global_ConfigFile = new QSettings(GlobalVar::Global_GetConfigFile, QSettings::IniFormat);
+ //Wyświetlanie winiety jeśli jest tak ustawione
+ this->_StartShowInformations();
+ //Przenoszenie objektów myszką
  this->setAcceptDrops(true);
  //Podkład graficzny
  this->_pQGsLabelClass = new QLabel(this);
@@ -48,20 +54,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     }
  }
  //---
- //QDate MyDate = QDate::currentDate(); //Aktualna data
- //QString qstrDate = MyDate.toString("dd.MM.yyyy");
  this->setWindowTitle(QString("%1 v%2  (c) Grzegorz Sołtysik - data kompilacji: %3").arg(APP_NAME_STRING).arg(APP_VERSION_STRING).arg(__DATE__));
  //this->setWindowTitle(QString(APP_NAME_STRING) + " v" + APP_VERSION_STRING + " (c) Grzegorz Sołtysik");
  this->_InitAllSignalsToolTips(); //Inicjalizacja wszystkich sygnałów i podpowiedzi, oraz tagów
-
+ //Objekt klasy QGsMainTabWidgetClass, jest tworzona nie w this->ui by nie trzeba było wczytywać do pliku ui_mainwindow.h
+ //deklaracji i definicji klasy QGsMainTabWidgetClass (który jest w nagłówku QGsReadBibleTextClass/qgsreadbibletextclass.h)
  QGsMainTabWidgetClass *pQGsMainTabWidgetClass = new QGsMainTabWidgetClass(this->ui->splitter);
  this->ui->splitter->addWidget(pQGsMainTabWidgetClass);
 
- //Plik konfiguracyjny
- GlobalVar::Global_ConfigFile = new QSettings(GlobalVar::Global_GetConfigFile, QSettings::IniFormat);
- #if defined(_DEBUGINFO_)
-  qDebug() << "GlobalVar::Global_GetConfigFile: " << GlobalVar::Global_GetConfigFile;
- #endif
 
  //Odczytywanie konfiguracji
  int iWidth, iHeight;
@@ -73,14 +73,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
  this->resize(iWidth, iHeight); //Zmiana wielkości okna głównego, odczytanej z pliku konfiguracyjnego
 
  QScreen *pScreen = this->screen(); //Wskaźnik na ekran
- //QGuiApplication::screenAt()
 
  const QRect qScreenRect = pScreen->availableGeometry(); //Wymiary ekranu
  this->move(qScreenRect.width() / 2 - (iWidth / 2), qScreenRect.height() / 2 - (iHeight / 2));
- #if defined(_DEBUGINFO_)
-  qDebug() << "pScreen->availableGeometry().width()" << qScreenRect.width();
-  qDebug() << "pScreen->availableGeometry().height()" << qScreenRect.height();
- #endif
 
  QGsReadBibleTextData::QInitMyBible(pQGsMainTabWidgetClass);
  QGsReadBibleTextData::QCreateTreeBooks(this->ui->TabSheetBooks, this->ui->verticalLayout_3);
@@ -110,6 +105,31 @@ MainWindow::~MainWindow()
  delete ui;
 }
 //---------------------------------------------------------------------------
+void MainWindow::_StartShowInformations()
+/**
+    OPIS METOD(FUNKCJI): Wyświetlenie informacji (winiety) podczas uruchamiania aplikacji
+    OPIS ARGUMENTÓW:
+    OPIS ZMIENNYCH:
+    OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_Flags_Main);
+    bool IsShowInfoStart = GlobalVar::Global_ConfigFile->value(GlobalVar::GloalIni_IsDisplaySplash, true).toBool();
+  GlobalVar::Global_ConfigFile->endGroup();
+  if(IsShowInfoStart)
+  {
+   InformationsWindow *pInformationsWindow = new InformationsWindow(this, false);
+   if(pInformationsWindow)
+   {
+     pInformationsWindow->setModal(false);
+     Qt::WindowFlags flags = pInformationsWindow->windowFlags();
+     pInformationsWindow->setWindowFlags(flags | Qt::WindowStaysOnTopHint);
+
+     pInformationsWindow->show();
+   }
+  }
+}
+//---------------------------------------------------------------------------
 void MainWindow::_InitAllSignalsToolTips()
 /**
     OPIS METOD(FUNKCJI): Inicjalizacja wszystkich sygnałów i podpowiedzi, oraz tagów
@@ -119,21 +139,18 @@ void MainWindow::_InitAllSignalsToolTips()
 */
 {
  this->ui->ActSearch->setData(enAction_Search);
- this->ui->ActSearch->setStatusTip("Otwarcie okna do wyszukiwania");
  this->ui->ActSetups->setData(enAction_Setup);
- this->ui->ActSetups->setStatusTip("Otwarcie okna do ustawiania parametrów aplikacji");
  this->ui->ActCloseActiveSheet->setData(enAction_CloseSheet);
- this->ui->ActCloseActiveSheet->setStatusTip("Zamykanie aktywnej zakładki z tekstem rozdziału wybranej księgi");
  this->ui->ActSaveToFile->setData(enAction_SaveActiveSheet);
- this->ui->ActSaveToFile->setStatusTip("Zapisanie do pliku typu html, aktywnej zakładki z tekstem rozdziału wybranej księgi");
  this->ui->ActResizeText->setData(enAction_ResizeText);
- this->ui->ActResizeText->setStatusTip("Rozszerzenie lub zmniejszenie obszaru wyświetlanego tekstu biblijnego, przez zchowanie zakladek narzędzi");
+ this->ui->ActInformations->setData(enAction_Informations);
 
  connect(this->ui->ActSearch, SIGNAL(triggered()), this, SLOT(_Act_SearchBibleText())); //Uruchamianie wyszukiwania
  connect(this->ui->ActSetups, SIGNAL(triggered()), this, SLOT(_Act_SetupsWindow())); //Uruchamianie ustawienia
  connect(this->ui->ActCloseActiveSheet, SIGNAL(triggered()), this, SLOT(_Act_CloseSheetActiv())); //Zamknięcie aktywnej zakładki
  connect(this->ui->ActSaveToFile, SIGNAL(triggered()), this, SLOT(_Act_SavetoFile())); //Zapisanie aktywnej zakładki
  connect(this->ui->ActResizeText, SIGNAL(triggered()), this, SLOT(_Act_ResizeToolsTabs())); //Zmiana wielkości obszaru tekstu
+ connect(this->ui->ActInformations, SIGNAL(triggered()), this, SLOT(_Act_Informations())); //Informacja o aplikacji
 }
 //---------------------------------------------------------------------------
 void MainWindow::_Act_SearchBibleText()
@@ -172,6 +189,11 @@ void MainWindow::_Act_SetupsWindow()
   {
     pSetupsWindow->setModal(true);
     pSetupsWindow->exec();
+    if(pSetupsWindow->result() == QDialog::Accepted)
+    //jaki kod zwrócił dialog konfiguracji alikacji
+    {
+      QGsReadBibleTextData::QSetupVariables(); //Zmiana kolorów
+    }
     delete pSetupsWindow; pSetupsWindow = nullptr;
   }
 }
@@ -264,6 +286,27 @@ void MainWindow::_Act_ResizeToolsTabs()
   this->ui->splitter->setSizes(currentSizes);
 }
 //---------------------------------------------------------------------------
+void MainWindow::_Act_Informations()
+/**
+    OPIS METOD(FUNKCJI): Informacja o aplikacji
+    OPIS ARGUMENTÓW:
+    OPIS ZMIENNYCH:
+    OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QAction *pAction = qobject_cast<QAction *>(QObject::sender());
+  if(!pAction) return;
+  //---
+  InformationsWindow *pInformationsWindow = new InformationsWindow(this);
+  if(pInformationsWindow)
+  {
+    pInformationsWindow->setModal(true);
+    pInformationsWindow->exec();
+
+    delete pInformationsWindow; pInformationsWindow = nullptr;
+  }
+}
+//---------------------------------------------------------------------------
 void MainWindow::closeEvent(QCloseEvent *event)
 /**
     OPIS METOD(FUNKCJI):
@@ -306,10 +349,6 @@ bool MainWindow::event(QEvent *e)
       return QMainWindow::event(e);
     }
     this->_pQGsLabelClass->setGeometry(0, 0, this->width(), this->height());
-    #if defined(_DEBUGINFO_)
-      //qDebug() << "Width: " << this->width() << " height: " << this->height();
-      //qDebug() << "this->_pQGsLabelClass - width: " << this->_pQGsLabelClass->width() << " height: " << this->_pQGsLabelClass->height();
-    #endif
     QPixmap _qPixmapImage(GlobalVar::Global_GetPathBackgroundWindow);
     QPixmap qPixmapImage = _qPixmapImage.scaled(this->_pQGsLabelClass->width(), this->_pQGsLabelClass->height(), Qt::IgnoreAspectRatio);
 

@@ -72,7 +72,7 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	this->BorderStyle = bsSingle;
 	this->Color = ColorObject[enColorNum_Active];
 	this->Ctl3D = false;
-	this->ParentObjectScheme = 0; //Wskaźnik na przodka, domyślnie to korzeń
+	this->ParentObjectScheme = nullptr; //Wskaźnik na przodka, domyślnie to korzeń
   this->ShowHint = true;
 	if(_PReadWriteDataObject) this->IDChild = _PReadWriteDataObject->RW_ID; else this->IDChild = Random(INT_MAX);
 	//this->ID64Child = (__int64)this->IDChild * (__int64)Random(INT_MAX);
@@ -98,15 +98,15 @@ __fastcall  GsChildBibleScheme::~GsChildBibleScheme()
 			iIndex = this->DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(pGsChildBibleScheme);
 			if(iIndex > -1) this->DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
 			//Wlaściwe kasowanie potomka
-			delete pGsChildBibleScheme; //pGsChildBibleScheme = 0;
+			delete pGsChildBibleScheme; pGsChildBibleScheme = nullptr;
 		}
   }
-	delete this->ListChildren; this->ListChildren = 0; //Kasowanie listy potomków, po ich usuniêciu
+	delete this->ListChildren; this->ListChildren = nullptr; //Kasowanie listy potomków, po ich usuniêciu
 	//Kasowanie objektu z listy g³ównej
 	iIndex = this->DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(this);
 	if(iIndex > -1) this->DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
 
-	if(this->SListVers) {delete this->SListVers; this->SListVers = 0;} //Lista wersetów ze wszystkich t³umaczeñ
+	if(this->SListVers) {delete this->SListVers; this->SListVers = nullptr;} //Lista wersetów ze wszystkich t³umaczeñ
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::CreateWnd()
@@ -287,9 +287,9 @@ __fastcall GsDrawPanelBibleScheme::~GsDrawPanelBibleScheme()
 	if(this->_pRootObject)
 	//Usuwany główny korzeń, a wraz z nim wszyscy jego potomkowie
 	{
-		delete this->_pRootObject; this->_pRootObject = 0;
+		delete this->_pRootObject; this->_pRootObject = nullptr;
 	}
-	if(this->_GsChildBibleSchemeList) {delete this->_GsChildBibleSchemeList; this->_GsChildBibleSchemeList = 0;}
+	if(this->_GsChildBibleSchemeList) {delete this->_GsChildBibleSchemeList; this->_GsChildBibleSchemeList = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::CreateWnd()
@@ -402,15 +402,15 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 					pParent->ListChildren->Delete(iIndexParent);
 				}
 			}
-			delete this->_pSelectObject; this->_pSelectObject = 0;
+			delete this->_pSelectObject; this->_pSelectObject = nullptr;
 			this->_pSelectObject = this->_pRootObject;
 		}
 		else
     //Skasowanie korzenia
 		{
 			//this->ActDeleteLink->Enabled = false;
-			delete this->_pRootObject; this->_pRootObject = 0;
-      this->_pSelectObject = 0;
+			delete this->_pRootObject; this->_pRootObject = nullptr;
+			this->_pSelectObject = nullptr;
 		}
 
 		//this->Caption = Format("%s. Ilość objektów: %u", ARRAYOFCONST((ustrCaptionWindow, this->_GsChildBibleSchemeList->Count)));
@@ -458,8 +458,8 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 			if(pOpenDialog->Execute()) //Element został wybrany
 			{
 				//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
-				delete this->_pRootObject; this->_pRootObject = 0; //Niszczenie rozpoczyna siê od korzenia
-				this->_pSelectObject = 0;
+				delete this->_pRootObject; this->_pRootObject = nullptr; //Niszczenie rozpoczyna siê od korzenia
+				this->_pSelectObject = nullptr;
 				pOpenFile = new TFileStream(pOpenDialog->FileName, fmOpenRead);
 				if(!pOpenFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));
 				int iSizeFile = pOpenFile->Size, //Wielkość pliku
@@ -512,8 +512,8 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 
 				//this->Caption = Format("%s. Ilość objektów: %u", ARRAYOFCONST((ustrCaptionWindow, this->_GsChildBibleSchemeList->Count)));
         this->Invalidate(); //Całe odświerzenie
-				if(pDataToOpen) {delete pDataToOpen; /*pDataToOpen = 0;*/}
-				if(pOpenFile) {delete pOpenFile; /*pOpenFile = 0;*/}
+				if(pDataToOpen) {delete pDataToOpen; pDataToOpen = nullptr;}
+				if(pOpenFile) {delete pOpenFile; pOpenFile = nullptr;}
 				bReturn = true;
 			}
 		}
@@ -524,7 +524,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	}
 	__finally
 	{
-		if(pOpenDialog) {delete pOpenDialog; pOpenDialog = 0;}
+		if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
     //this->ActDeleteLink->Enabled = true;
 	}
   return bReturn;
@@ -591,8 +591,8 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 							pSaveFile->WriteBuffer(pDataToSave, sizeof(ReadWriteDataObject)); //Główny zapis struktury pomocniczej objektu
 						}
 					}
-					if(pDataToSave) {delete pDataToSave; /*pDataToSave = 0;*/}
-					if(pSaveFile) {delete pSaveFile; /*pSaveFile = 0;*/}
+					if(pDataToSave) {delete pDataToSave; pDataToSave = nullptr;}
+					if(pSaveFile) {delete pSaveFile; pSaveFile = nullptr;}
 				}
 			}
 		}
@@ -603,7 +603,7 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 	}
 	__finally
 	{
-		if(pSaveDialog) {delete pSaveDialog; pSaveDialog = 0;}
+		if(pSaveDialog) {delete pSaveDialog; pSaveDialog = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -649,7 +649,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 	}
 	__finally
 	{
-    if(pStringStream) {delete pStringStream; /*pStringStream = 0;*/}
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------

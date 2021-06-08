@@ -282,7 +282,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 		SDirMultiMList.Length = 0;
 	}
 	//Lista komentarzy
-	SDCommentFile = TDirectory::GetFiles(GlobalVar::Global_custrPathdirComments);
+	SDCommentFile = TDirectory::GetFiles(GlobalVar::Global_custrPathDirComments);
 	for(int i=0; i<SDCommentFile.Length; i++)
 	{
 		NewItem = this->Items->Add();

@@ -18,6 +18,7 @@ RC_ICONS = MojaBibliaLite.ico
 SOURCES += \
     QGsReadBibleTextClass/qgsreadbibletextclass.cpp \
     globalvar.cpp \
+    informationswindow.cpp \
     main.cpp \
     mainwindow.cpp \
     mblitelibrary.cpp \
@@ -27,18 +28,17 @@ SOURCES += \
 HEADERS += \
     QGsReadBibleTextClass/qgsreadbibletextclass.h \
     globalvar.h \
+    informationswindow.h \
     mainwindow.h \
     mblitelibrary.h \
     searchwindow.h \
     setupswindow.h
 
 FORMS += \
+    informationswindow.ui \
     mainwindow.ui \
     searchwindow.ui \
     setupswindow.ui
-
-TRANSLATIONS += \
-    MojaBibliaLite_pl_PL.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -48,7 +48,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
  MojaBibliaLite.qrc
  
-VERSION = 0.7.794.4387
+VERSION = 0.8.188.7511
 NAME = MojaBibliaLite
 
 DEFINES += APP_VERSION_STRING=\\\"$${VERSION}\\\" \

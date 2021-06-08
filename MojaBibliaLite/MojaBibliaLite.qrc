@@ -5,6 +5,7 @@
         <file>gfx/ZapiszDoPliku.png</file>
         <file>gfx/ZamknięcieAktywnejZakładki.png</file>
         <file>gfx/ZmianaObszaru.png</file>
+        <file>gfx/Informacje.png</file>
     </qresource>
     <qresource prefix="/TreeBooks">
         <file>gfx/GrupaKsiąg.png</file>
@@ -34,11 +35,18 @@
         <file>gfx/Ustawienie flag małe.png</file>
         <file>gfx/KatalogZMediami16x16.png</file>
         <file>gfx/Anuluj.png</file>
+        <file>gfx/Przełącznik flag.png</file>
+        <file>gfx/ŚcierzkiDostępuDoMultimediów.png</file>
+        <file>gfx/Wygląd aplikacji.png</file>
+        <file>gfx/PomocOkna.png</file>
+        <file>gfx/WybórCzcionki.png</file>
     </qresource>
     <qresource prefix="/Other">
         <file>gfx/ZakładkaMultimediów.png</file>
     </qresource>
     <qresource prefix="/Logo">
         <file>gfx/SearchLogo.png</file>
+        <file>gfx/SetupsLogo.png</file>
+        <file>gfx/MojaBibliaLiteLogo.png</file>
     </qresource>
 </RCC>

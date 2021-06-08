@@ -19,8 +19,11 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										#endif
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
-										GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.bmp"),//Grafika z podkładem okna głównego
-										GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.png"),//Logo w oknie wyszukiwania
+										//Graficne loga z rozszerzeniem .gli
+										GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
+										GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania
+										GlobalVar::Global_custrPathSetupsLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),//Logo w oknie ustawień
+										//---
 										GlobalVar::Global_custrExtendCommentsFiles = ".bfc", //Rozszerzenie plików z komentarzami
 										//GlobalVar::Global_custrExtendCommentsPlain = "tfc", //Rozszerzenie plików z komentarzem, bez formatowania, jako czysty tekst
 										GlobalVar::Global_custrPathFileInterlinear = TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
@@ -42,10 +45,10 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_ustrDirHelp = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HelpData"),	//Ścieżka dostępu do katalogu z plikami pomocy
 										GlobalVar::Global_ustrExtPathHelp = "hlpmb",				//Rozszerzenie plików pomocy
 										GlobalVar::Global_ustrCoreNameHelp = "FileHlp", //Główny rdzeń nazwy, do której będzie przyczepiony indeks pomocy
-                      //---
+										//----- Ustawienia pomocy
 										GlobalVar::Global_ustrExPathTipsImageHelp = "timg",//Rozszerzenie grafiki to tipsów
 										GlobalVar::Global_ustrCorePathNameImageTips = "ImageTips", //Główny rdzeń nazwy pliku graficznego, do której będzie przyczepiony indeks pomocy tipsów
-											//---
+										//----- Ustawienia pomocu 2
 										GlobalVar::Global_ustrCoreNameFileTips = "FileTips", //Rdzeń nazwy pliku wskazówek
 										GlobalVar::Global_ustrExPathFileTips = "tfhlp",//Rozszerzenie plików wskazówek
 /*****************************************************************************
@@ -76,7 +79,22 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_ColorBackgroundMarkerComment="ColorBackgroundMarkerComment", //Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
 												GlobalVar::GlobalIni_ColorOryginalTranslates="ColorOryginalTranslates",  //Kolor czcionki, dla oryginalnych tłumaczeń
 												GlobalVar::GlobalIni_ColorNameOryginalTranslate="ColorNameOryginalTranslate", //Kolor nazwy oryginalnego tłumaczenia
-                        GlobalVar::GlobalIni_ColorAdressOryginalTranslate="ColorAdressOryginalTranslate", //Kolor adresu oryginalnego tłumaczenia
+												GlobalVar::GlobalIni_ColorAdressOryginalTranslate="ColorAdressOryginalTranslate", //Kolor adresu oryginalnego tłumaczenia
+                    //----- Sekcja ColorsSetups pliku ini
+										GlobalVar::GlobalIni_ColorsSetupsSection_Main="COLORSSETUPS", //Główna sekcja ColorsSetups
+												GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch="ColorsSetupsBackGroundAllListSearch", //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
+												GlobalVar::GlobalIni_ColorsSetupBackGroundSelectBookSearch="ColorsSetupBackGroundSelectBookSearch",//Kolor podkładu dla wyświetlenia znalezionych wersetów w wybranej księdze
+												GlobalVar::GlobalIni_ColorsSetupBackGroundSelectVers="ColorsSetupBackGroundSelectVers",      //Kolor podkładu dla wyświetlenie pojedyńczego wybranego wersetu
+										//----- Sekcja ParametersSetupsSearch
+										GlobalVar::GlobalIni_ParametersSetupsSearch_Main="PARAMETERSSETUPSSEARCH", //Główna sekcja ParametersSetupsSearch
+												GlobalVar::GlobalIni_IsMemorySetupsSearch="IsMemorySetupsSearch", //Czy zapamiętywać parametry wyszukiwania
+												GlobalVar::GlobalIni_Translate="SetupSearchTranslate", //Tłumaczenie
+												GlobalVar::GlobalIni_SetupRangeBooks="SetupSearchRangeBooks",//Zakres ksiąg
+												GlobalVar::GlobalIni_StartUserRange="SetupSearchStartUserRangeBook", //Początek zakresu wyszukiwań
+												GlobalVar::GlobalIni_StopUserRange="SetupSearchStopUserRangeBook",  //Koniec zakresu wyszukiwań
+												GlobalVar::GlobalIni_TextSearch="SetupsSearchText", //Tekst wyszukiwany
+												GlobalVar::GlobalIni_IsSizeTextSearch="IsSizeTextSearch", //Podczas wyszukiwania jest brana wielkość liter
+												GlobalVar::GlobalIni_IsRegSearch="IsRegSearch", //Podczas wyszukiwania są używane wyrażenia regularne
 										//----- Sekcja Others
 										GlobalVar::GlobalIni_OthersSection="OTHERS",           //Główna sekcja OTHERS
 												GlobalVar::GlobalIni_OtherSizeFontMain="OtherSizeFontMain",    //Wielkość głównej czcionki tekstu wersetu

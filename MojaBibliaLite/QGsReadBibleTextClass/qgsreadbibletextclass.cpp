@@ -11,6 +11,16 @@
 
 static QStringList ErrorSList;
 
+/*
+#if defined(_DEBUGINFO_)
+ qDebug() << "";
+#endif
+
+#if defined(_DEBUGINFO_)
+  qDebug("%d", 12);
+#endif
+*/
+
 /****************************************************************************
  *                        Klasalasa QGsReadBibleTextClass                   *
  ****************************************************************************/
@@ -184,7 +194,8 @@ void QGsReadBibleTextClass::QDisplayAllTextInHTML(QTextEdit *_pWebBrowser, const
                 {continue;}
 
       //Wyłuskanie wskaźnika na objekt typu QGsReadBibleTextItem, konkretnego tłumaczenia
-      QGsReadBibleTextItem *pQGsReadBibleTextItem = this->QGetTranslateClass(i); //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+      //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+      QGsReadBibleTextItem *pQGsReadBibleTextItem = this->QGetTranslateClass(i);
       //Wyłuskanie QStringListy konkretnego tłumaczenia
       QStringList pTempSList = this->_QListAllTrChap.at(i); //QStringList wybranego rozdziału wybranej księgi
       //Gdy string lista pusta (hebrajski tekst w nowym testamencie, grecki tekst w starym testamencie), to nie wpływa na opuszczenie pętli do, while.
@@ -193,7 +204,7 @@ void QGsReadBibleTextClass::QDisplayAllTextInHTML(QTextEdit *_pWebBrowser, const
       {
         uiTranslatesIndex--;
         if(iSelectTranslate>-1)
-        {pStrBuilder.append("<span class=\"styleNoTranslate\">To tłumaczenie nie zawiera tekstu, wybranej księgi!</span>");}
+        {pStrBuilder.append("<span class=styleNoTranslate>To tłumaczenie nie zawiera tekstu, wybranej księgi!</span>");}
 
         continue; //Idę do następnego tłumaczenia, czyli do następnej QStringListy, listy this->_QListAllTrChap
       }
@@ -207,14 +218,22 @@ void QGsReadBibleTextClass::QDisplayAllTextInHTML(QTextEdit *_pWebBrowser, const
           iChapt = pTempSList.at(iIndex).midRef(3, 3).toInt();
           iVers = pTempSList.at(iIndex).midRef(6, 3).toInt();
           qstrNameBook =  QGsReadBibleTextData::QGsInfoAllBooks[iBook-1].ShortNameBook;
-          pStrBuilder.append(QString("<span class=\"styleColorAdressTranslates\">%1 %2:%3 </span").arg(qstrNameBook).arg(iChapt).arg(iVers));
-          //pStrBuilder.append("<span title=\"" + pTempSList.at(iIndex) +"\"" + "class=\"styleText\">" + pTempSList.at(iIndex) + "</span>");
-          pStrBuilder.append(QString("<span title=\"%1\" class=\"styleText\"> %2 </span>").
-                             arg(pTempSList.at(iIndex).midRef(10)).arg(pTempSList.at(iIndex).midRef(10)));
-          pStrBuilder.append(QString("<span class=\"styleTranslates\"> [%1] </span>").arg(pQGsReadBibleTextItem->NameTranslate));
-          //Jeśli to nie ostanie tłmaczenie dodaj nowy wiersz
-          //if(i < (this->_QListAllTrChap.count()-1)) pStrBuilder.append("<br>");
-          //if(uiTranslatesIndex > 1) pStrBuilder.append("<br>");
+
+          //wyświetlanie wersetu zależnie od typu tłumaczenia. Całościowe, lub częściowe, oryginalne
+          if(pQGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full)
+          {
+            pStrBuilder.append(QString("<span class=styleFullColorAdressTranslates>%1 %2:%3 </span>").arg(qstrNameBook).arg(iChapt).arg(iVers));
+            pStrBuilder.append(QString("<span class=styleFullText> %1 </span>").
+                               arg(pTempSList.at(iIndex).midRef(10)));
+            pStrBuilder.append(QString("<span class=styleFullTranslates> [%1] </span>").arg(pQGsReadBibleTextItem->NameTranslate));
+          }
+          else if((pQGsReadBibleTextItem->enTypeTranslate == enTypeTr_Greek) || (pQGsReadBibleTextItem->enTypeTranslate == enTypeTr_Hebrew))
+          {
+            pStrBuilder.append(QString("<span class=styleAdressVersOryg>%1 %2:%3 </span>").arg(qstrNameBook).arg(iChapt).arg(iVers));
+            pStrBuilder.append(QString("<span class=styleOrygin> %1 </span>").
+                               arg(pTempSList.at(iIndex).midRef(10)));
+            pStrBuilder.append(QString("<span class=styleNameVersOryg> [%1] </span>").arg(pQGsReadBibleTextItem->NameTranslate));
+          }
           pStrBuilder.append("<br>");
         }
       }
@@ -234,9 +253,9 @@ void QGsReadBibleTextClass::QDisplayAllTextInHTML(QTextEdit *_pWebBrowser, const
     }
   }while(uiTranslatesIndex > 0);
   pStrBuilder.append("</body></html>");
-  //pStrBuilder = pStrBuilder.remove("\n");
-  //_pWebBrowser->setText(pStrBuilder);
+
   _pWebBrowser->setHtml(pStrBuilder);
+  //_pWebBrowser->setPlainText(pStrBuilder);
 }
 //---------------------------------------------------------------------------
 QGsReadBibleTextItem *QGsReadBibleTextClass::QGetTranslateClass(const int iNumberTrans)
@@ -602,8 +621,8 @@ void QGsReadBibleTextData::QInitMyBible(QGsMainTabWidgetClass *pPageControlBible
    OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  QGsReadBibleTextData::QSetupVariables();
   QGsReadBibleTextData::pQGsPageControl = pPageControlBibleText; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki
+  QGsReadBibleTextData::QSetupVariables(); //Musi być po przypisaniu wskaźnika QGSTabWidget do statycznego pola klasy QGsReadBibleTextData
   QGsReadBibleTextData::pQGsReadBibleTextClass = new QGsReadBibleTextClass(GlobalVar::Global_GetDirData); //Wskaźnik na główną klasę
 
   //pPageControlBibleText->setStyleSheet("QTabBar::tab:selected {background-color: #DDAA00;}");
@@ -617,22 +636,71 @@ void QGsReadBibleTextData::QSetupVariables()
   OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //--- Kolory
-  //int iColorFavVers;
+  QRgb iRGBTemp;
+  QColor colorTemp;
+  QString BackgroundColorFullTranslate, ColorNameFullTranslates,
+          ColorAdressFullTranslates, ColorTextOryginalTranslates,
+          ColorAdressOryginalVers, ColorNameOryginaltranslates;
+  //Odczyt głównych kolorów tekstu biblijunego
+  GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ColorsSection_Main);
+    //Kolor podkładu pod wyswietlany tekst
+    iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorBackGroundMainText, (QRgb)4284153797).toInt();
+    colorTemp.setRgb(iRGBTemp);
+    BackgroundColorFullTranslate = colorTemp.name();
+    //Kolor nazwy dla pełnego tłumaczenia
+    iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorFontNameFullTranslate, (QRgb)4294901760).toInt();
+    colorTemp.setRgb(iRGBTemp);
+    ColorNameFullTranslates = colorTemp.name();
+    //Kolor czcionki adresu pełnych tłumaczeń
+    iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorAdressFulltranslate, (QRgb)4294901760).toInt();
+    colorTemp.setRgb(iRGBTemp);
+    ColorAdressFullTranslates = colorTemp.name();
+    //Kolor tekstu dla częściowych, oryginalnych tłumaczeń
+    iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorTextOryginalTr, (QRgb)4294901760).toInt();
+    colorTemp.setRgb(iRGBTemp);
+    ColorTextOryginalTranslates = colorTemp.name();
+    //Kolor nazwy częściowych, oryginalnych tłumaczeń
+    iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorNameOryginalTr, (QRgb)4294901760).toInt();
+    colorTemp.setRgb(iRGBTemp);
+    ColorNameOryginaltranslates = colorTemp.name();
+    //Kolor adresu oryginalnego wersetu
+    iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorAdressOryginalTr, (QRgb)4294901760).toInt();
+    colorTemp.setRgb(iRGBTemp);
+    ColorAdressOryginalVers = colorTemp.name();
+  GlobalVar::Global_ConfigFile->endGroup();
 
   QGsReadBibleTextData::QGsHTMLHeaderText = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
       "<html><head>\n" +
       "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
       "<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
       "<style type=\"text/css\">\n" +
-      ".styleColorAdressTranslates {color: #0000FF; font-size:14pt;font-family:Times New Roman;}\n" +
-      ".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
-      ".styleTranslates {color: #FF0000;font-size:12pt;font-family:Times New Roman;}\n" +
+      //Styl adresu pełnego tłumaczenia
+      ".styleFullColorAdressTranslates {color:" + ColorAdressFullTranslates + "; font-size:14pt;font-family:Times New Roman;}\n" +
+      //Styl tekstu dla pełnych tłumaczeń
+      ".styleFullText {color: #000000;font-size:16pt;font-family:Times New Roman;}\n" +
+      //Styl nazwy pełnego tłumaczenia
+      ".styleFullTranslates {color:" +  ColorNameFullTranslates + ";font-size:12pt;font-family:Times New Roman;}\n" +
+      //Styl braku tłumaczenia
       ".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}\n" +
-      #if !defined(Q_OS_MACOS)
-        "body {background-color: #FFEEEE;font-size:14pt;font-family:Times New Roman;}\n" +
-      #endif
+      //Styl dla tekstu dla oryginalnych tłumaczeń
+      ".styleOrygin {color:" + ColorTextOryginalTranslates + ";font-size:16pt;font-family:Times New Roman;}\n" +
+      //Styl dla adresu oryginalnego tłumaczenia
+      ".styleAdressVersOryg {color:" + ColorAdressOryginalVers + "; font-size:14pt;font-family:Times New Roman;}\n" +
+      //Styl nazwy oryginalnego tłumaczenia
+      ".styleNameVersOryg {color:" + ColorNameOryginaltranslates + ";font-size:12pt;font-family:Times New Roman;}\n"
+
+      "body {background-color:" + BackgroundColorFullTranslate + ";font-size:14pt;font-family:Times New Roman;}\n" +
       "</style></head><body>\n";
+
+  if(!QGsReadBibleTextData::pQGsPageControl) return; //Objekt klasy QGSTabWidget został zainicjowany
+  if(QGsReadBibleTextData::pQGsPageControl->count() > 0) //Istnieje zakładka z tekstem
+  {
+    QGsTabSheetBookClass *pQGsTabSheetBookClass = static_cast<QGsTabSheetBookClass *>(QGsReadBibleTextData::pQGsPageControl->currentWidget());
+    if(pQGsTabSheetBookClass)
+    {
+      QGsReadBibleTextData::pQGsReadBibleTextClass->QDisplayAllTextInHTML(pQGsTabSheetBookClass->_pQTextEdit);
+    }
+  }
 }
 //---------------------------------------------------------------------------
 void QGsReadBibleTextData::QCloseMyBible()
@@ -745,7 +813,7 @@ QString QGsReadBibleTextData::QConvertVerses(const QString &qstrVerse)
                 ucChapt = qstrVerse.midRef(3, 3).toInt(),
                 ucVers = qstrVerse.midRef(6, 3).toInt();
 
-  qstrRes = QString("%1 %2:%3 %4").arg(QGsReadBibleTextData::QGsInfoAllBooks[ucBook].ShortNameBook).arg(ucChapt).arg(ucVers).arg(qstrVerse.mid(10));
+  qstrRes = QString("%1 %2:%3 %4").arg(QGsReadBibleTextData::QGsInfoAllBooks[ucBook].ShortNameBook).arg(ucChapt).arg(ucVers).arg(qstrVerse.midRef(10));
   return qstrRes;
 }
 /****************************************************************************

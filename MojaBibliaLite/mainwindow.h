@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-//#include "QGsReadBibleTextClass/qgsreadbibletextclass.h"
 #include <QLabel>
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +24,7 @@ protected:
 private:
     Ui::MainWindow *ui;
     void _InitAllSignalsToolTips();
+    void _StartShowInformations();
     //---
     QLabel *_pQGsLabelClass;
 
@@ -35,5 +35,6 @@ private slots:
  void _Act_CloseSheetActiv();
  void _Act_SavetoFile();
  void _Act_ResizeToolsTabs();
+ void _Act_Informations();
 };
 #endif // MAINWINDOW_H

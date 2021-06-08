@@ -83,6 +83,9 @@ __published:	// IDE-managed Components
 	TCheckBox *SW_CBoxAutoFindUpdate;
 	TCheckBox *SW_CBoxReLoadBooks;
 	TCheckBox *SW_CBoxTips;
+	TPanel *SW_PanelSelectListButtons;
+	TPanel *SW_PanelImageLogo;
+	TImage *SW_SetupsImageLogo;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

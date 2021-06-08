@@ -168,18 +168,19 @@ class GsReadBibleTextData
 		//---
 		static TImageList *_GsImgListData; //Globalna lista grafik
 		static TImageList *_GsImgListDataDisable; //Globalna lista grafik nieaktywnych
-		static TPageControl *_GsPageControl; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki
+		static TPageControl *_GsPageControl; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki z narzędziami
 		static TTaskbar *_GsTaskBar;	//Wskaźnik na objekt, klasy TTaskBar
 		static TBalloonHint *_GsBalloonHint; //Globalna klasa podpowiedzi, zdefiniowana w konstruktorze klasy GsTreeBibleClass
 		//static TMemo *GsMemoDebug;	//Wskażnik na objekt typu TMemo, debuggera
 		//---  Wskaźniki na niektóre klasy
-		static GsReadBibleTextClass* pGsReadBibleTextClass;	//Wskaźnik na główną klasę
+		//static GsReadBibleTextClass* pGsReadBibleTextClass;	//Wskaźnik na główną klasę
 		static GsTreeBibleClass* pGsTreeBibleClass; //Wskaźnik na klasę drzewa ksiąg bibliinych
 		static GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass; //Wskaźnik na klasę listy ulubionych wersetów, w głównym oknie
 		static GsLViewCommentsAllClass *pGsLViewCommentsAllClass; //Wskażnik na klasę listy komentarzy do wersetów, w głównym oknie
 		//---
 		static enReturnError EnErrorCode;
 	public:
+		/**/static GsReadBibleTextClass* pGsReadBibleTextClass;	//Wskaźnik na główną klasę
 		static const UnicodeString GsExtendFileTranslateFull, //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
 															 GsExtendFileTranslateGrecOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
 															 GsExtendFileTranslateHbrOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
@@ -217,7 +218,7 @@ class GsReadBibleTextData
 		static void __fastcall WriteCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
     static void __fastcall GetTextHTMLCurrentSheet(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 		static GsReadBibleTextItem *__fastcall GetTranslate(const unsigned char cucNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
-		static void __fastcall DisplayListText(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
+		//static void __fastcall DisplayListText(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
 		static THashedStringList *__fastcall GetSelectBoksInTranslate(GsReadBibleTextItem *pGsReadBibleTextItem, const signed char scIndexBook); //Wyodrębnienie konkretnej księgi(sciIndex), z wybranej struktury tłumaczenia (GetTranslate)
 		static unsigned int __fastcall GetCountVer(const int iNumberTrans, const signed char scIndexBook, const unsigned char cucChapt);	//Metoda zwraca ilość wersetów, dla danego tłumaczenie, księgi i rozdziału
 		//Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
@@ -273,7 +274,8 @@ class GsReadBibleTextItem
 	GsReadBibleTextItem(const UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
 	virtual ~GsReadBibleTextItem();
 	//---
-	THashedStringList *_pHListAllListBooks[GsReadBibleTextData::GsNumberBooks];	//Lista wskaźników do wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
+	//Tablica wskaźników do klasy THashedStringList wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
+	THashedStringList *_pHListAllListBooks[GsReadBibleTextData::GsNumberBooks];
 	THashedStringList *__fastcall GetSelectBooks(const unsigned char uiSelectBook=0); //Metoda zwraca wskaźnik na konkrętną księge
 	bool IsActiveTranslate;	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 	unsigned char ucCountBooks, //Ilość ksiąg w tłumaczeniu (oryginalne tłumaczenia, katolickie)
@@ -305,7 +307,7 @@ class GsReadBibleTextClass
 		//---
 	inline static UnicodeString __fastcall GetVersionClass() {return Format("Biblioteka: \"GsReadBibleTextClass\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
 	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich przekładów
-	void __fastcall DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
+	//void __fastcall DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
 	void __fastcall DisplayAllTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate=-1); //Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
 	void __fastcall SaveCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
 	inline TList *__fastcall GetListAllTranslates() {return this->_ListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
@@ -319,14 +321,17 @@ class GsReadBibleTextClass
 			THashedStringList *_HStringInput, TMemoryStream *_pMemoStrResult=0, bool IsNameTranslates=true);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
 	bool __fastcall _LoadAllTranslates(const UnicodeString _PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.
 	void __fastcall _ClearListAllTrChap(const bool bIsRemoveList=false);	//Zwolnienie zawartości listy _ListAllTrChap.
-	void __fastcall _GlobalDragDrop(TObject *Sender, TObject *Source, int X, int Y);
-	void __fastcall _GlobalDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
+
+	void __fastcall _GlobalTextDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
 	void __fastcall _DeleteSelectTranslate(const int iNumberTrans); //Skasowanie wybranego tłumaczenia
 	//---
 	TList *_ListItemsTranslates,	//Lista tłumaczeń. Klas GsReadBibleTextItem
 				*_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 	THashedStringList *_SListInterLinear; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	unsigned int uiCountPol, uiCountOryg; //Ilość polskich i oryginalnych tłumaczeń
+
+	public:
+		void __fastcall GlobalTextDragDrop(TObject *Sender, TObject *Source, int X, int Y); //Publiczny ze względu na umożliwienie dostępu z głównego okna
 };
 /****************************************************************************
  *                        Klasalasa GsTreeNodeClass                         *

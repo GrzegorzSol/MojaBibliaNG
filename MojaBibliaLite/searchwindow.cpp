@@ -3,7 +3,7 @@
 #include "globalvar.h"
 #include "QGsReadBibleTextClass/qgsreadbibletextclass.h"
 #include <QMessageBox>
-#include <QPushButton>
+#include <QColorDialog>
 #include "mblitelibrary.h"
 
 /*
@@ -13,21 +13,27 @@
 */
 //enum {enAllButtonSearch_Search, enAllButtonSearch_Help, enAllButtonSearch_Cancel};
 
-enum {enCBox_SelectRange=100, enCBox_SelectStartBook, enCBox_SelectStopBook};
+//--- Właściwości użytkownika dla objektów
+const char PropLWidgetTag[] = "usp_PropLWidget",
+           PropCBoxTag[] = "usp_PropCBoxTag",
+           PropButtonSelectColorTag[] = "usp_PropButtonSelectColorTag";
 
-QVector<int> GlobalResultsSearch(QGsReadBibleTextData::QGsNumberBooks); //Tablica wyników przeszukiwania
-const QString GlobalHeaderListSearch = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-    "<html><head>\n" +
-    "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-    "<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
-    "<style type=\"text/css\">\n" +
-    ".styleColorAdressTranslates {color: #0000FF; font-size:14pt;font-family:Times New Roman;}\n" +
-    ".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
-    //#if !defined(Q_OS_MACOS)
-    "body {background-color: #FFEEEE;font-size:14pt;font-family:Times New Roman;}\n" +
-    //#endif
-    "</style></head><body>\n";
-;
+enum {//Dane dla pozycji QListWidgetItem, objektu this->ui->LViewStatistic, klasy QListWidget
+  CI_ITEMS_STATISTIC_LIST_BOOK_RESULTS_DATA = Qt::UserRole, //Ilość znalezionych pozycji w danej księdze
+  CI_ITEMS_STATISTIC_COUNTS_ALL_RESULTS_DATA, //Wszystkich znalezionych pozycji
+  //Dane dla pozycji QListWidgetItem, objektu this->ui->LViewResultSearch, klasy QListWidget
+  CI_ITEMS_RESULT_SEARCH_TEXT_DATA = Qt::UserRole+10, //Cały tekst wersetu z adresem
+  //Zakładki dla objektu klasy QTabWidget
+  enTabSheet_SetupSearch = 0,
+  enTabSheet_Statistic,
+  enTabSheet_Configs,
+  //Tagi dla QComboBox
+  enCBox_SelectRange=100, enCBox_SelectStartBook, enCBox_SelectStopBook,
+  //Własności dla objektów klasy QListWidget
+  enListWidgetResultSearch=200, enListWidgetStatistic,
+  //Tagi dla QPushButton zmainy kolorów
+  enColor_AllSearch=300, enColor_SelectVers, enColor_Statistic
+};
 
 SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::SearchWindow)
 /**
@@ -35,9 +41,10 @@ SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Search
    OPIS ARGUMENTÓW:
    OPIS ZMIENNYCH:
    OPIS WYNIKU METODY(FUNKCJI):
- */
+*/
 {
  this->ui->setupUi(this);
+
  this->ui->PageTabInputSearchText->setCurrentIndex(0);
  this->ui->PageTabSelectVievResult->setCurrentIndex(0);
  //---
@@ -52,9 +59,7 @@ SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Search
  for(int i=0; i<QGsReadBibleTextData::QGsNumberBooks; i++)
  {
    this->ui->CBoxStartSelectBook->addItem(iconItems, QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
-   this->ui->CBoxStartSelectBook->setItemData(i, enCBox_SelectStartBook);
    this->ui->CBoxStopSelectBook->addItem(iconItems, QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
-   this->ui->CBoxStopSelectBook->setItemData(i, enCBox_SelectStopBook);
  }
  //Domyślnie wszystkie księgi do przeszukania
  this->ui->CBoxStartSelectBook->setCurrentIndex(0);
@@ -64,11 +69,9 @@ SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Search
  for(int i=0; i<en_GrSearch_Count; i++)
  {
    this->ui->CBoxSelectRangeBooksSearch->addItem(iconRange, QGsReadBibleTextData::QGsNameAllRanges[i]);
-   this->ui->CBoxSelectRangeBooksSearch->setItemData(i, enCBox_SelectRange);
  }
  this->ui->CBoxSelectRangeBooksSearch->setCurrentIndex(0);
  //Definiowanie listy tłumaczeń do wybrania
- //qDebug() << "QGsReadBibleTextData::QCountTranslates(): " << QGsReadBibleTextData::QCountTranslates();
  QString qstrNameTranslate;
  QIcon iconTranslates(":/Search/gfx/Tłumaczenia.png");
  if(QGsReadBibleTextData::QCountTranslates() > 0)
@@ -85,8 +88,25 @@ SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Search
  //Odczyt histori wyszukiwań i załadowanie jej do objektu, klasy QComboBox
  QStringList _qsltemp;
  LoadFileToStrList(_qsltemp, GlobalVar::Global_GetPathHistorySearch);
+ //Inicjowanie tagów i podpinanie sygnałów
+ //this->_InitSignalsAndTags();
  for(int i=0; i<_qsltemp.count(); i++)
   {this->ui->CBoxHistorySearch->addItem(_qsltemp.at(i));}
+ //Stworzenie listy statystyki, której ilość elementów się nie zmienia i jest równa wszystkim dostępnym księgom
+ QIcon iconStatistic;
+ iconStatistic.addFile(":/Search/gfx/StatystykaWyszukiwania.png", QSize(), QIcon::Normal, QIcon::Off);
+ for(int i=0; i<QGsReadBibleTextData::QGsNumberBooks; i++)
+ {
+    QListWidgetItem *newItem = new QListWidgetItem();//(QIcon(":/Search/gfx/KsięgaStat.png"), QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);//(Qt::AlignHCenter | Qt::AlignTop);
+    newItem->setData(Qt::DisplayRole, QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
+    newItem->setData(Qt::DecorationRole, iconStatistic);
+    this->ui->LViewStatistic->addItem(newItem);
+ }
+ //Domyślnie zakładka statystyki jest niwidoczna
+ this->ui->PageTabInputSearchText->setTabVisible(enTabSheet_Statistic, false);
+ //Odczyt pliku konfiguracyjnego
+ this->_ReadAllConfig();
 }
 //---------------------------------------------------------------------------
 SearchWindow::~SearchWindow()
@@ -103,7 +123,86 @@ SearchWindow::~SearchWindow()
     {_qslisttemp << this->ui->CBoxHistorySearch->itemText(i);}
   SaveStrListToFile(_qslisttemp, GlobalVar::Global_GetPathHistorySearch);
 
+  //Zapisy do pliku konfiguracyjnego
+   //Wygląd
+  this->_WriteAllConfig();
+
   delete this->ui;
+}
+//---------------------------------------------------------------------------
+void SearchWindow::_ReadAllConfig()
+/**
+   OPIS METOD(FUNKCJI): Odczyt konfiguracji
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QRgb iRGBTemp;
+
+  GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ColorsSetupsSection_Main);
+   //Kolory dla QPushButton ustawiania kolorów podkładu
+   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch, 11899830).toInt();
+   SetupColorPButton(this->ui->ButtonColorAllSearch, iRGBTemp);
+   //---
+   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupBackGroundSelectVers, 11829830).toInt();
+   SetupColorPButton(this->ui->ButtonColorSelectSearch, iRGBTemp);
+   //---
+   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupBackGroundStatistictBookSearch, 11829830).toInt();
+   SetupColorPButton(this->ui->ButtonColorStatictic, iRGBTemp);
+   //---
+  GlobalVar::Global_ConfigFile->endGroup();
+     //Flagi
+  GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ParametersSetupsSearch_Main);
+    bool bIsmemoConfig = GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_IsMemorySetupsSearch, true).toBool();
+    this->ui->ChBoxMemorySetups->setChecked(bIsmemoConfig);
+    if(bIsmemoConfig)
+    //Odczyt ustawień tylko w przypadku aktywaci zapamiętywania ustawień wyszukiwania
+    {
+     //Flagi
+     this->ui->ChBoxIsRegEx->setChecked(GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_IsRegSearch, false).toBool());
+     this->ui->ChBoxSearchSizeText->setChecked(GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_IsSizeTextSearch, false).toBool());
+     //Parametry tekstu
+     this->ui->CBoxSelectTranslates->setCurrentIndex(GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_Translate, 0).toInt());
+     this->ui->CBoxSelectRangeBooksSearch->setCurrentIndex(GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_SetupRangeBooks, 0).toInt());
+     this->ui->CBoxStartSelectBook->setCurrentIndex(GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_StartUserRange, 0).toInt());
+     this->ui->CBoxStopSelectBook->setCurrentIndex(GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_StopUserRange, QGsReadBibleTextData::QGsNumberBooks-1).toInt());
+    }
+   GlobalVar::Global_ConfigFile->endGroup();
+}
+//---------------------------------------------------------------------------
+void SearchWindow::_WriteAllConfig()
+/**
+   OPIS METOD(FUNKCJI): Zapis konfiguracji
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QRgb iRGBTemp;
+
+  GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ColorsSetupsSection_Main);
+    //Kolory dla QPushButton ustawiania kolorów podkładu
+    iRGBTemp = ReadColorPButton(this->ui->ButtonColorAllSearch);
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch, iRGBTemp);
+    //---
+    iRGBTemp = ReadColorPButton(this->ui->ButtonColorSelectSearch);
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_ColorsSetupBackGroundSelectVers, iRGBTemp);
+    //---
+    iRGBTemp = ReadColorPButton(this->ui->ButtonColorStatictic);
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_ColorsSetupBackGroundStatistictBookSearch, iRGBTemp);
+  GlobalVar::Global_ConfigFile->endGroup();
+    //Flagi
+  GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ParametersSetupsSearch_Main);
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_IsRegSearch, this->ui->ChBoxIsRegEx->isChecked());
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_IsSizeTextSearch, this->ui->ChBoxSearchSizeText->isChecked());
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_IsMemorySetupsSearch, this->ui->ChBoxMemorySetups->isChecked());
+    //Parametry tekstu
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_Translate, this->ui->CBoxSelectTranslates->currentIndex());
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_SetupRangeBooks, this->ui->CBoxSelectRangeBooksSearch->currentIndex());
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_StartUserRange, this->ui->CBoxStartSelectBook->currentIndex());
+    GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_StopUserRange, this->ui->CBoxStopSelectBook->currentIndex());
+  GlobalVar::Global_ConfigFile->endGroup();
 }
 //---------------------------------------------------------------------------
 void SearchWindow::_OnClickButtonHelpReg()
@@ -144,17 +243,34 @@ void SearchWindow::_InitSignalsAndTags()
    OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  connect(this->ui->ButtonHelpRegExp, SIGNAL(pressed()), this, SLOT(_OnClickButtonHelpReg())); //Uruchamianie wyszukiwania
-  connect(this->ui->ButtonSearchStart, SIGNAL(pressed()), this, SLOT(_OnClickButtonStartSearch())); //Rozpoczęcie wyszukiwania
-  connect(this->ui->ButtonHelpSearch, SIGNAL(pressed()), this, SLOT(_OnClickButtonHelpSearch())); //Pomoc dla wyszukiwania
-  connect(this->ui->ButtonExitSearch, SIGNAL(pressed()), this, SLOT(_OnClickButtonExitSearch())); //Wyjście z wyszukiwania
+  //this->ui->LViewResultSearch->setUserData()
 
-  connect(this->ui->CBoxSelectRangeBooksSearch, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCuurentIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
-  connect(this->ui->CBoxStartSelectBook, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCuurentIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
-  connect(this->ui->CBoxStopSelectBook, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCuurentIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
+  connect(this->ui->ButtonHelpRegExp, SIGNAL(clicked()), this, SLOT(_OnClickButtonHelpReg())); //Uruchamianie wyszukiwania
+  connect(this->ui->ButtonSearchStart, SIGNAL(clicked()), this, SLOT(_OnClickButtonStartSearch())); //Rozpoczęcie wyszukiwania
+  connect(this->ui->ButtonHelpSearch, SIGNAL(clicked()), this, SLOT(_OnClickButtonHelpSearch())); //Pomoc dla wyszukiwania
+  connect(this->ui->ButtonExitSearch, SIGNAL(clicked()), this, SLOT(_OnClickButtonExitSearch())); //Wyjście z wyszukiwania
 
-  connect(this->ui->LViewResultSearch, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(_OnClickItem(QListWidgetItem *))); //Kliknięto na pozycje listy wyników wyszukiwania
-  connect(this->ui->CBoxHistorySearch, SIGNAL(currentTextChanged(const QString &)), this, SLOT(_OnTextChanged(const QString &)));
+  connect(this->ui->CBoxSelectRangeBooksSearch, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCurentCBoxIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
+  connect(this->ui->CBoxStartSelectBook, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCurentCBoxIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
+  connect(this->ui->CBoxStopSelectBook, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCurentCBoxIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
+
+  connect(this->ui->LViewResultSearch, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(_OnClickLViewWidgetItem(QListWidgetItem *))); //Kliknięto na pozycje listy wyników wyszukiwania
+  connect(this->ui->LViewStatistic, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(_OnClickLViewWidgetItem(QListWidgetItem *)));
+  connect(this->ui->CBoxHistorySearch, SIGNAL(currentTextChanged(const QString &)), this, SLOT(_OnTextChanged(const QString &))); //Wybrano pozycje z objektu, klasy QComboBox, z historią wyszukiwania
+  //Sygnay dla przycisków wyboru kolorów
+  connect(this->ui->ButtonColorAllSearch, SIGNAL(clicked()), this, SLOT(_OnClickSelectColors()));
+  connect(this->ui->ButtonColorSelectSearch, SIGNAL(clicked()), this, SLOT(_OnClickSelectColors()));
+  connect(this->ui->ButtonColorStatictic, SIGNAL(clicked()), this, SLOT(_OnClickSelectColors()));
+  this->ui->ButtonColorAllSearch->setProperty(PropButtonSelectColorTag, enColor_AllSearch);
+  this->ui->ButtonColorSelectSearch->setProperty(PropButtonSelectColorTag, enColor_SelectVers);
+  this->ui->ButtonColorStatictic->setProperty(PropButtonSelectColorTag, enColor_Statistic);
+  //Ustawienia właściwości użytkownika dla objektów klasy QListWidget
+  this->ui->LViewResultSearch->setProperty(PropLWidgetTag, enListWidgetResultSearch);
+  this->ui->LViewStatistic->setProperty(PropLWidgetTag, enListWidgetStatistic);
+  //Ustawienie właściwości użytkownika dla objektów klasy QComboBox
+  this->ui->CBoxStartSelectBook->setProperty(PropCBoxTag, enCBox_SelectStartBook);
+  this->ui->CBoxStopSelectBook->setProperty(PropCBoxTag, enCBox_SelectStopBook);
+  this->ui->CBoxSelectRangeBooksSearch->setProperty(PropCBoxTag, enCBox_SelectRange);
 }
 //---------------------------------------------------------------------------
 void SearchWindow::_OnClickButtonStartSearch()
@@ -170,31 +286,38 @@ void SearchWindow::_OnClickButtonStartSearch()
   //---
   if(this->ui->CBoxHistorySearch->currentText().isEmpty()) return; //Brak tekstu do wyszukania
   //---
+  //QVector<int> VListResultsSearch(QGsReadBibleTextData::QGsNumberBooks); //Tablica wyników przeszukiwania //Do przróbki!!!
+  //int VListResultsSearch[QGsReadBibleTextData::QGsNumberBooks]; //Tablica wyników przeszukiwania
   QStringList pBookListText;
-  QString qstrItem, qstrSameText, qstrConvText, qstrDisplayHtml=GlobalHeaderListSearch;
-  int iPositionSearch=-1,
+  QString qstrSameText, qstrConvText, qstrSameAdress, qstrTemp;
+  const QString qstrStyleSearch="<span class=styleFound>";
+  int iPositionSearch=-1, VListResultsSearch[QGsReadBibleTextData::QGsNumberBooks], //Tablica wyników przeszukiwania
       iBook, //Numer księgi odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
       iChapt, //Numer rozdziału odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
       iVers; //Numer wersetu odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
+  const int ciOffsetAdress=9;
+  bool ok=false; //Czy konwersja ze QString na int przebiegła pomyślnie(true)
+  QListWidgetItem *newItem=nullptr;
 
-  for(int &i : GlobalResultsSearch) i=0;
-  this->ui->LViewStatistic->clear();
+  for(int &i : VListResultsSearch) i=0;
 
   //Wyłuskanie konkretnego tłumaczenia, o numerze this->ui->CBoxSelectTranslates->currentIndex()
   QGsReadBibleTextItem *pQGsReadBibleTextItem = QGsReadBibleTextData::QGetTranslate(this->ui->CBoxSelectTranslates->currentIndex());
   if(pQGsReadBibleTextItem)
   {
-    this->ui->LViewResultSearch->clear();
+    this->ui->SelectBookSearchEdit->clear(); //QTextEdit
+    this->_QListSearchResult.clear(); //Lista wszystkich wyszukanych wersetów w stanie surowym
+    this->ui->LViewResultSearch->clear(); //Lista znalezionych wersetów
 
     for(int iIndexBook=this->ui->CBoxStartSelectBook->currentIndex(); iIndexBook <= this->ui->CBoxStopSelectBook->currentIndex(); iIndexBook++)
     {
-      //Wyłuskanie konkretnej księgi, z konkretnego tłumaczenia
+      //Wyłuskanie konkretnej księgi, z konkretnego tłumaczenia w stanie surowym
       pBookListText = QGsReadBibleTextData::QGetSelectBoksInTranslate(pQGsReadBibleTextItem, iIndexBook);
 
       for(int i=0; i<pBookListText.count(); i++)
       {
-        qstrSameText = pBookListText.at(i).mid(csuiOffsetSameTextVers);//, csuiMaxSizeVers);//Sam tekst
-        qstrConvText = QGsReadBibleTextData::QConvertVerses(pBookListText.at(i)); //Sam tekst
+        qstrSameText = pBookListText.at(i).mid(csuiOffsetSameTextVers); //Sam tekst
+        qstrConvText = QGsReadBibleTextData::QConvertVerses(pBookListText.at(i)); //Cały werset z adresem
         //Jeśli wyszukiwanie opiera się na wyrażeniach regularnych
         if(this->ui->ChBoxIsRegEx->checkState() == Qt::Checked)
         {
@@ -207,41 +330,46 @@ void SearchWindow::_OnClickButtonStartSearch()
 
         if(iPositionSearch > -1)
         {
-          QListWidgetItem *newitem = new QListWidgetItem(QIcon(":/Search/gfx/Szukaj.png"), qstrConvText);
-          newitem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);//(Qt::AlignHCenter | Qt::AlignTop);
-          this->ui->LViewResultSearch->addItem(newitem);
-          GlobalResultsSearch[iIndexBook]++; //Wypełnianie listy wynikami, dla poszczególnych ksiąg
-          //Dodawanie znalezionych wersetów by wyświetlić je w formie html
-          iBook =  pBookListText.at(i).midRef(0, 3).toInt();
-          iChapt =  pBookListText.at(i).midRef(3, 3).toInt();
-          iVers =  pBookListText.at(i).midRef(6, 3).toInt();
+          iBook =  pBookListText.at(i).midRef(0, 3).toInt(&ok);
+          iChapt =  pBookListText.at(i).midRef(3, 3).toInt(&ok);
+          iVers =  pBookListText.at(i).midRef(6, 3).toInt(&ok);
+          //---
+          if(ok)
+          {
+            //Tworzenie QListWidget wszystkich znalezionych wersetów
+            qstrSameAdress = QString("%1 %2:%3").arg(QGsReadBibleTextData::QGsInfoAllBooks[iBook-1].ShortNameBook).
+                arg(iChapt).arg(iVers);
+            QListWidgetItem *newitem = new QListWidgetItem(QIcon(":/Search/gfx/Szukaj.png"), qstrSameAdress); //Główną zawartością listy będą adresy, bez tekstu
+            newitem->setData(CI_ITEMS_RESULT_SEARCH_TEXT_DATA, qstrConvText); //Prywatnymi danymi będzie cały tekst wersetu, razem z adresem
+            newitem->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//(Qt::AlignHCenter | Qt::AlignTop);
+            this->ui->LViewResultSearch->addItem(newitem); //zawartością pozycji będzie sam adres
+            VListResultsSearch[iIndexBook]++; //Wypełnianie listy wynikami dla statystyki, dla poszczególnych ksiąg
 
-          qstrDisplayHtml.append(QString("<span class=\"styleColorAdressTranslates\"> %1 %2:%3 </span>").arg(QGsReadBibleTextData::QGsInfoAllBooks[iBook-1].ShortNameBook).
-              arg(iChapt).arg(iVers));
-          qstrDisplayHtml.append(QString("<span class=\"styleText\">%1 </span>").arg(qstrSameText));
-          qstrDisplayHtml.append("<br>");
-        }
-      }
-    }
-  }
+            //Zaznaczanie wyszukanego słowa w tekście wersetu //03-05-2021
+            qstrTemp = pBookListText.at(i);
+            qstrTemp = qstrTemp.insert(iPositionSearch + ciOffsetAdress, qstrStyleSearch);
+            qstrTemp = qstrTemp.insert(iPositionSearch + ciOffsetAdress + this->ui->CBoxHistorySearch->currentText().count() + qstrStyleSearch.count(), QString("</span>"));
+            //QStringLista wszystkich wyszukanych wersetów w stanie surowym
+            this->_QListSearchResult.append(qstrTemp);
+          } //if(ok)
+        } //if(iPositionSearch > -1)
+      } //for(int i=0; i<pBookListText.count(); i++)
+    } //for(int iIndexBook=this->ui->CBoxStartSelectBook->currentIndex(); iIndexBook <= this->ui->CBoxStopSelectBook->currentIndex(); iIndexBook++)
+  } //if(pQGsReadBibleTextItem)
   this->ui->StBarInfos->setText(QString("Znaleziono: %1 pozycji").arg(this->ui->LViewResultSearch->count()));
-  qstrDisplayHtml.append("</body></html>");
-  this->ui->TextEditSelectItemResult->setHtml(qstrDisplayHtml);
+  this->_DisplayListTextHTML(this->ui->TextEditSelectItemResult, this->_QListSearchResult, enTypeDisplay_ResultsearchAll);
 
   //Lista ksiąg biblijnych dla statystyki wyszukiwania
-  QIcon iconStatistic;
-  iconStatistic.addFile(":/Search/gfx/StatystykaWyszukiwania.png", QSize(), QIcon::Normal, QIcon::Off);
   for(int i=0; i<QGsReadBibleTextData::QGsNumberBooks; i++)
   {
-     QListWidgetItem *newItem = new QListWidgetItem();//(QIcon(":/Search/gfx/KsięgaStat.png"), QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
-     //newitem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);//(Qt::AlignHCenter | Qt::AlignTop);
-     newItem->setData(Qt::DisplayRole, QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
-     newItem->setData(Qt::DecorationRole, iconStatistic);
-     newItem->setData(Qt::UserRole, GlobalResultsSearch.at(i));
-     newItem->setData(Qt::UserRole+1, this->ui->LViewResultSearch->count());
-
-     this->ui->LViewStatistic->addItem(newItem);
+     newItem = this->ui->LViewStatistic->item(i); //Wyłuskanie pozycji listy statystyki
+     if(!newItem) continue;
+     //newItem->setData(CI_ITEMSSTATISTICLLlRESULTS_DATA, VListResultsSearch.at(i)); //Wszystkich znalezionych pozycji
+     newItem->setData(CI_ITEMS_STATISTIC_LIST_BOOK_RESULTS_DATA, VListResultsSearch[i]); //Ilość znalezionych pozycji w danej księdze
+     newItem->setData(CI_ITEMS_STATISTIC_COUNTS_ALL_RESULTS_DATA, this->ui->LViewResultSearch->count()); //Wszystkich znalezionych pozycji
   }
+  //Zakładka statystyki widoczna
+  this->ui->PageTabInputSearchText->setTabVisible(enTabSheet_Statistic, true);
 }
 //---------------------------------------------------------------------------
 void SearchWindow::_OnClickButtonHelpSearch()
@@ -270,9 +398,52 @@ void SearchWindow::_OnClickButtonExitSearch()
   //---
 }
 //---------------------------------------------------------------------------
-void SearchWindow::_OnSetCuurentIndexChange(int iIndex)
+void SearchWindow::_OnClickSelectColors()
 /**
-   OPIS METOD(FUNKCJI): WZmieniono akrywny element w QComboBox
+   OPIS METOD(FUNKCJI): Wybór kolorów
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QPushButton *pButton = qobject_cast<QPushButton *>(QObject::sender());
+  if(!pButton) return;
+  //---
+  QPalette palette = pButton->palette();
+
+  QColorDialog pCDialog = QColorDialog(palette.color(QPalette::Button), this);
+  //pCDialog.setOptions(QColorDialog::DontUseNativeDialog);
+  int iResult = pCDialog.exec();
+  if(iResult == QDialog::Rejected)
+  {
+    return;
+  }
+  QColor color = pCDialog.selectedColor();
+
+  palette.setColor(QPalette::Button, color);
+  pButton->setPalette(palette);
+  pButton->update();
+  //Wypisanie w objekcie klasy QPushButton koloru
+  pButton->setText(color.name());
+  //Aktualizacje wyświetlania, po zmianie kolorów
+  if(this->_QListSearchResult.count() > 0)
+  {
+    //Aktualizacja selekcji pojedyńczego wersetu
+    this->ui->LViewResultSearch->setCurrentRow(0);
+    emit this->ui->LViewResultSearch->itemClicked(this->ui->LViewResultSearch->currentItem());
+    //Aktualizacja listy wybranego rozdziały, w statystyce wyszukiwania
+      //Odczyt pierwszej pozycji z list wszystkich wyszukanych wersetów, by odczytać numer księgi, która jest jednocześnie pozycją w liście
+    int iSelectbook = this->_QListSearchResult.at(0).midRef(0, 3).toInt() - 1;
+    this->ui->LViewStatistic->setCurrentRow(iSelectbook);
+    emit this->ui->LViewStatistic->itemClicked(this->ui->LViewStatistic->currentItem());
+    //Aktualizacja wyświetlania wszystkich znalezionych wersetów
+    this->_DisplayListTextHTML(this->ui->TextEditSelectItemResult, this->_QListSearchResult, enTypeDisplay_ResultsearchAll);
+  }
+}
+//---------------------------------------------------------------------------
+void SearchWindow::_OnSetCurentCBoxIndexChange(int iIndex)
+/**
+   OPIS METOD(FUNKCJI): Zmieniono aktywny element w QComboBox
    OPIS ARGUMENTÓW:
    OPIS ZMIENNYCH:
    OPIS WYNIKU METODY(FUNKCJI):
@@ -281,7 +452,8 @@ void SearchWindow::_OnSetCuurentIndexChange(int iIndex)
   QComboBox *pCBox = qobject_cast<QComboBox *>(QObject::sender());
   if(!pCBox) return;
   //---
-  int iItemData = pCBox->itemData(iIndex).toInt();
+  //int iItemData = pCBox->itemData(iIndex).toInt();
+  int iItemData = pCBox->property(PropCBoxTag).toInt();
 
   //#if defined(_DEBUGINFO_)
   //  qDebug() << "itemData: " << iItemData;
@@ -375,9 +547,9 @@ void SearchWindow::_OnSetCuurentIndexChange(int iIndex)
   }
 }
 //---------------------------------------------------------------------------
-void SearchWindow::_OnClickItem(QListWidgetItem *item)
+void SearchWindow::_OnClickLViewWidgetItem(QListWidgetItem *item)
 /**
-   OPIS METOD(FUNKCJI): Kliknięto na pozycje listy wyników wyszukiwania
+   OPIS METOD(FUNKCJI): Kliknięto na pozycje listy wyników wyszukiwania, lub statystyki
    OPIS ARGUMENTÓW:
    OPIS ZMIENNYCH:
    OPIS WYNIKU METODY(FUNKCJI):
@@ -386,7 +558,45 @@ void SearchWindow::_OnClickItem(QListWidgetItem *item)
   QListWidget *pQListWidget = qobject_cast<QListWidget *>(QObject::sender());
   if(!pQListWidget) return;
   //---
-  this->ui->TextSelectItemResult->setText(item->text());
+  int iResultSelect = pQListWidget->property(PropLWidgetTag).toInt();
+
+  switch(iResultSelect)
+  {
+    case enListWidgetResultSearch: //Objekt klasy QListWidget dla wyszukanych wersetów
+    {
+      //Wyświetl aktualnie zaznaczoną pozycji z całej listy wyników wyszukiwania (currentRow)
+      this->_DisplayListTextHTML(this->ui->TextSelectItemResultEdit, this->_QListSearchResult, enTypeDisplay_ResultSelectVers, pQListWidget->currentRow());
+    }
+    break;
+    //---
+    case enListWidgetStatistic: //Objekt klasy QListWidget dla statystyki
+    {
+      this->ui->SelectBookSearchEdit->clear();
+      QStringList _tempQSLst;
+      if(item->data(CI_ITEMS_STATISTIC_COUNTS_ALL_RESULTS_DATA).toInt() > 0) //Ilość znalezionych pozycji w danej księdze
+      {
+        int iSelectBook=pQListWidget->currentRow(),
+            iSearchBook=0; //Numer księgi odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
+        bool ok=false;
+
+        for(int i=0; i<this->_QListSearchResult.count(); i++)
+        {
+          iSearchBook = this->_QListSearchResult.at(i).midRef(0, 3).toInt(&ok)-1;
+          if(ok && (iSearchBook == iSelectBook))
+          {
+            if(iSelectBook == iSearchBook)
+            {
+              _tempQSLst.append(this->_QListSearchResult.at(i));
+            }
+
+          } //if(ok && (iSearchBook == iSelectBook))
+        } //for(int i=0; i<this->_QListSearchResult.count(); i++)
+      }
+      this->_DisplayListTextHTML(this->ui->SelectBookSearchEdit,_tempQSLst, enTypeDisplay_ResultSearchSelectBook);
+      this->ui->SelectBookSearchEdit->moveCursor(QTextCursor::Start);
+    }
+    break;
+  }
 }
 //---------------------------------------------------------------------------
 void SearchWindow::_OnTextChanged(const QString &text)
@@ -403,9 +613,92 @@ void SearchWindow::_OnTextChanged(const QString &text)
   this->ui->ButtonSearchStart->setEnabled(!text.isEmpty());
 }
 //---------------------------------------------------------------------------
-/*
- *  Metody klasy MyDelegate
+void SearchWindow::_DisplayListTextHTML(QTextEdit *_QTextView, const QStringList &_QListAnyVers, const EnTypeDisplayHTML _TypeDisplayHTML, const int iSelectDisplayVerset)
+/**
+   OPIS METOD(FUNKCJI):
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
 */
+{
+  //Kolory dla QPushButton ustawiania kolorów podkładu
+  QColor temp_colorAllSearch = this->ui->ButtonColorAllSearch->palette().color(QPalette::Button),
+         temp_colorSelectSearch = this->ui->ButtonColorSelectSearch->palette().color(QPalette::Button),
+         temp_colorStatisticSearch = this->ui->ButtonColorStatictic->palette().color(QPalette::Button);
+
+  const QString qstrDisplayHeaderHTMLSearchAll = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
+      "<html><head>" +
+      "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+      "<title>Wyniki wyszukiwania</title>" +
+      "<style type=\"text/css\">" +
+      ".styleColorAdressTranslates {color: #FF0000; font-size:14pt;font-family:Times New Roman;}" +
+      ".styleText {color: #000000;font-size:18pt;font-family:Times New Roman;}\n" +
+      ".styleFound {background-color: #FFFF00;}" +
+      "body {background-color:" + temp_colorAllSearch.name() +
+        ";font-size:18pt;font-family:Times New Roman;}" +
+      "</style></head><body>",
+  qstrDisplayHeaderHTMLSearchBook = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
+      "<html><head>" +
+      "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+      "<title>Wyniki wyszukiwania</title>" +
+      "<style type=\"text/css\">" +
+      ".styleColorAdressTranslates {color: #FF0000; font-size:14pt;font-family:Times New Roman;}" +
+      ".styleText {color: #000000;font-size:16pt;font-family:Times New Roman;}\n" +
+      ".styleFound {background-color: #FFFF00;}" +
+      "body {background-color:" + temp_colorStatisticSearch.name() +
+        ";font-size:16pt;font-family:Times New Roman;}" +
+      "</style></head><body>",
+  qstrDisplayHeaderHTMLSelectSearchVers = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
+      "<html><head>" +
+      "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+      "<title>Wyniki wyszukiwania</title>" +
+      "<style type=\"text/css\">" +
+      ".styleColorAdressTranslates {color: #FF0000; font-size:24pt;font-family:Times New Roman;}" +
+      ".styleText {color: #000000;font-size:24pt;font-family:Times New Roman;}\n" +
+      ".styleFound {background-color: #FFFF00;}" +
+      "body {background-color:" + temp_colorSelectSearch.name() +
+        ";font-size:16pt;font-family:Times New Roman;}" +
+      "</style></head><body>";
+  QString qstrDefineDisplayHTML, qstrSameText, qstrSameAdress;
+  int iBook, //Numer księgi odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
+      iChapt, //Numer rozdziału odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
+      iVers; //Numer wersetu odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
+  bool ok=false; //Czy konwersja ze QString na int przebiegła pomyślnie(true)
+  //---
+  switch(_TypeDisplayHTML)
+  {
+    case enTypeDisplay_ResultsearchAll:        //Wyświetlanie wszystkich znalezionych wersetów
+      qstrDefineDisplayHTML = qstrDisplayHeaderHTMLSearchAll;
+    break;
+    //---
+    case enTypeDisplay_ResultSearchSelectBook: //Wyświetlanie znelozionych wersetów dla konkretnej księgi
+      qstrDefineDisplayHTML = qstrDisplayHeaderHTMLSearchBook;
+    break;
+    //---
+    case enTypeDisplay_ResultSelectVers:       //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
+      qstrDefineDisplayHTML = qstrDisplayHeaderHTMLSelectSearchVers;
+    break;
+  }
+
+  for(int i=0; i<_QListAnyVers.count(); i++)
+  {
+    if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
+    qstrSameText = _QListAnyVers.at(i).mid(csuiOffsetSameTextVers); //Sam tekst
+    iBook =  _QListAnyVers.at(i).midRef(0, 3).toInt(&ok);
+    iChapt =  _QListAnyVers.at(i).midRef(3, 3).toInt(&ok);
+    iVers =  _QListAnyVers.at(i).midRef(6, 3).toInt(&ok);
+    qstrSameAdress = QString("%1 %2:%3").arg(QGsReadBibleTextData::QGsInfoAllBooks[iBook-1].ShortNameBook).
+        arg(iChapt).arg(iVers); //Sam adres
+
+    //Dodawanie kolejnego wersetu
+    qstrDefineDisplayHTML.append(QString("<span class=\"styleColorAdressTranslates\"> %1 </span>").arg(qstrSameAdress));
+    qstrDefineDisplayHTML.append(QString("<span class=\"styleText\">%1 </span>").arg(qstrSameText));
+    qstrDefineDisplayHTML.append("<br>");
+  }
+  qstrDefineDisplayHTML.append("</body></html>");
+  _QTextView->setHtml(qstrDefineDisplayHTML);
+}
+//---------------------------------------------------------------------------
 void MyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 /**
    OPIS METOD(FUNKCJI):
@@ -414,7 +707,11 @@ void MyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, co
    OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  if(option.state & QStyle::State_Selected)
+
+  int iValue = qvariant_cast<int>(index.data(CI_ITEMS_STATISTIC_LIST_BOOK_RESULTS_DATA));
+  int iMax = qvariant_cast<int>(index.data(CI_ITEMS_STATISTIC_COUNTS_ALL_RESULTS_DATA));
+
+  if((option.state & QStyle::State_Selected) && (iValue > 0)) //02-05-2021
   {
     painter->fillRect(option.rect, QColor(255, 0, 0));
   }
@@ -425,35 +722,34 @@ void MyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, co
   QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
   QPixmap pix = icon.pixmap(r.size());
 
-  int iValue = qvariant_cast<int>(index.data(Qt::UserRole));
-  int iMax = qvariant_cast<int>(index.data(Qt::UserRole+1));
-
-  const QPoint p = QPoint(2, (r.height() - pix.height())/2);
+  const QPoint p = QPoint(2, (r.height() - pix.height())/2); //Rysowanie ikony
   painter->drawPixmap(r.topLeft() + p, pix);
-
-  QStyleOptionProgressBar progressBarOption;
-
-  progressBarOption.state = QStyle::State_Enabled;
-  progressBarOption.direction = QApplication::layoutDirection();
-  progressBarOption.fontMetrics = QApplication::fontMetrics();
-  progressBarOption.minimum = 0;
-  progressBarOption.maximum = iMax;
-
-  QRect newRect = option.rect.adjusted(pix.width() + (pix.width() / 2), 1, 0, -1);
-  progressBarOption.rect = newRect;
-  if(iValue>0)
+  if(iValue > 0) //25-04-2021
   {
+    QStyleOptionProgressBar progressBarOption;
+
+    progressBarOption.state = QStyle::State_Enabled;
+    progressBarOption.direction = QApplication::layoutDirection();
+    progressBarOption.fontMetrics = QApplication::fontMetrics();
+    progressBarOption.minimum = 0;
+    progressBarOption.maximum = iMax;
+
+    QRect newRect = option.rect.adjusted(pix.width() + (pix.width() / 2), 1, 0, -1);
+    progressBarOption.rect = newRect;
     progressBarOption.text = QString("%1 - Znaleziono %2 pozycji").arg(title).arg(iValue);
+    progressBarOption.textVisible = true;
+    progressBarOption.textAlignment = Qt::AlignCenter;
+    progressBarOption.progress = iValue;
+
+    QApplication::style()->drawControl(QStyle::CE_ProgressBar, &progressBarOption, painter);
   }
   else
   {
-    progressBarOption.text = QString("%1 - Brak wystąpień").arg(title);
+    //Pozycje ksiąg biblijnych, w których nie znaleziono wyszukiwanego słowa 25-04-2021
+    QRect textRect = r.adjusted(22, 0, 0, 0);
+    painter->setPen(QColor(160, 160, 160));
+    painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, title);
   }
-  progressBarOption.textVisible = true;
-  progressBarOption.textAlignment = Qt::AlignCenter;
-  progressBarOption.progress = iValue;
-
-  QApplication::style()->drawControl(QStyle::CE_ProgressBar, &progressBarOption, painter);
 }
 //---------------------------------------------------------------------------
 QSize MyDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -467,3 +763,4 @@ QSize MyDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex
   QSize result = QStyledItemDelegate::sizeHint(option, index);
   return result;
 }
+//---------------------------------------------------------------------------

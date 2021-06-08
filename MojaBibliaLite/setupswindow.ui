@@ -6,220 +6,855 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1073</width>
-    <height>659</height>
+    <width>1193</width>
+    <height>800</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1193</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1193</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Ustawienia aplikacji</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QListWidget" name="SW_ButGroupSections">
-       <property name="maximumSize">
-        <size>
-         <width>280</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QListWidget" name="LViewAllSheets">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="SetupsLogo">
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="MojaBibliaLite.qrc">:/Logo/gfx/SetupsLogo.png</pixmap>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QTabWidget" name="SW_PControlSelected">
-       <property name="tabShape">
-        <enum>QTabWidget::Rounded</enum>
-       </property>
+      <widget class="QTabWidget" name="PControlSelected">
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <property name="tabBarAutoHide">
-        <bool>false</bool>
-       </property>
-       <widget class="QWidget" name="SW_SheetLajout">
+       <widget class="QWidget" name="SheetLajout">
         <attribute name="icon">
          <iconset resource="MojaBibliaLite.qrc">
           <normaloff>:/Setups/gfx/Kolory małe.png</normaloff>:/Setups/gfx/Kolory małe.png</iconset>
         </attribute>
         <attribute name="title">
-         <string>Ustawienie wyglądu aplikacji</string>
+         <string>Tab 1</string>
         </attribute>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0" colspan="2">
+          <widget class="QGroupBox" name="GrBoxFullTranslates">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(170, 0, 0);</string>
+           </property>
+           <property name="title">
+            <string>Kolory pełnych tłumaczeń</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="PButtonColorBackGroundMainText">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="LColorBackGroundMainText">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Kolor podkładu dla tekstu wersetów, w głównym oknie</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="PButtonColorFontFullTranslate">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="LColorFontFullTranslate">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Kolor czcionki nazwy pełnych tłumaczeń</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="PButtonColorAdressFulltranslate">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);
+</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="LColorAdressFulltranslate">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Kolor czcionki adresu, pełnych tłumaczeń</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QGroupBox" name="GrBoxOryginalTranslates">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 0, 0);</string>
+           </property>
+           <property name="title">
+            <string>Kolory częściowych, lub oryginalnych tłumaczeń</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout_3">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="PButtonColorTextOryginalTr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="LColorTextOryginalTr">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Kolor tekstu dla oryginalnych tłumaczeń</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="PButtonColorNameOryginalTr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="LColorNameOryginalTr">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Kolor nazwy oryginalnych tłumaczeń</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="PButtonColorAdressOryginalTr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="LColorAdressOryginalTr">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Kolor adresu oryginalnych tłumaczeń</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QGroupBox" name="GrBoxSetupsFonts">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(85, 0, 127);</string>
+           </property>
+           <property name="title">
+            <string>Ustawienie czcionek dla tekstu biblijnego całych przekładów i częściowych</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="LFontMainText">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Ustawienie czcionki dla głównego tekstu bilijnego.</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="SpBoxFontAdressText">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>68</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="SpBoxFontTranslateText">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>68</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="LFontNameTranslate">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Ustawienie czcionki nazw tłumaczeń w głównym tekście</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="SpBoxFontMainText">
+              <property name="minimumSize">
+               <size>
+                <width>68</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>68</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="LFontAdressText">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Ustawienie czcionki adresów wersetów w głównym tekście.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>100</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="3">
+             <widget class="QPushButton" name="PButtonFontNameTranslatestText">
+              <property name="minimumSize">
+               <size>
+                <width>220</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>220</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="MojaBibliaLite.qrc">
+                <normaloff>:/Setups/gfx/WybórCzcionki.png</normaloff>:/Setups/gfx/WybórCzcionki.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="PButtonFontAdressMainText">
+              <property name="minimumSize">
+               <size>
+                <width>220</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>220</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="MojaBibliaLite.qrc">
+                <normaloff>:/Setups/gfx/WybórCzcionki.png</normaloff>:/Setups/gfx/WybórCzcionki.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QPushButton" name="PButtonFontMainText">
+              <property name="minimumSize">
+               <size>
+                <width>220</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>220</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="MojaBibliaLite.qrc">
+                <normaloff>:/Setups/gfx/WybórCzcionki.png</normaloff>:/Setups/gfx/WybórCzcionki.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>58</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QGroupBox" name="GrBoxDisplayTest">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 0, 255);</string>
+           </property>
+           <property name="title">
+            <string>Podgląd wyświetlania tekstu</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>2</number>
+            </property>
+            <item>
+             <widget class="QTextEdit" name="TEditDisplayTest"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
-       <widget class="QWidget" name="SW_SheetFlags">
+       <widget class="QWidget" name="SheetFlags">
         <attribute name="icon">
          <iconset resource="MojaBibliaLite.qrc">
           <normaloff>:/Setups/gfx/Ustawienie flag małe.png</normaloff>:/Setups/gfx/Ustawienie flag małe.png</iconset>
         </attribute>
         <attribute name="title">
-         <string>Flagi przełączniki aplikacji</string>
+         <string>Tab 2</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="leftMargin">
-            <number>9</number>
+          <widget class="QCheckBox" name="CBoxIsDisplaySplash">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
-           <property name="topMargin">
-            <number>9</number>
+           <property name="text">
+            <string>Czy wyświetlać winiete aplikacji, przy jej starcie?</string>
            </property>
-           <property name="rightMargin">
-            <number>9</number>
-           </property>
-           <property name="bottomMargin">
-            <number>9</number>
-           </property>
-           <item>
-            <widget class="QCheckBox" name="SW_IsDisplaySplash">
-             <property name="text">
-              <string>Czy wyświetlać winiete aplikacji, przy jej starcie?</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="SW_SheetPaths">
+       <widget class="QWidget" name="SheetPaths">
         <attribute name="icon">
          <iconset resource="MojaBibliaLite.qrc">
           <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
         </attribute>
         <attribute name="title">
-         <string>Wybór katalogu z multimediami</string>
+         <string>Strona</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <property name="leftMargin">
-            <number>9</number>
+        <layout class="QFormLayout" name="formLayout_4">
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="LEditPathMedias_1">
+           <property name="minimumSize">
+            <size>
+             <width>780</width>
+             <height>0</height>
+            </size>
            </property>
-           <property name="topMargin">
-            <number>9</number>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
-           <property name="rightMargin">
-            <number>9</number>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="PButtonSelectPathmedia_1">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
            </property>
-           <property name="bottomMargin">
-            <number>9</number>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
-           <item>
-            <layout class="QGridLayout" name="gridLayout">
-             <property name="leftMargin">
-              <number>9</number>
-             </property>
-             <property name="topMargin">
-              <number>9</number>
-             </property>
-             <property name="rightMargin">
-              <number>9</number>
-             </property>
-             <property name="bottomMargin">
-              <number>9</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QLineEdit" name="SW_LEditPathMedias_1">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLineEdit" name="SW_LEditPathMedias_2">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLineEdit" name="SW_LEditPathMedias_3">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_2">
-               <property name="text">
-                <string>Wybierz katalog...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="MojaBibliaLite.qrc">
-                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_3">
-               <property name="text">
-                <string>Wybierz katalog...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="MojaBibliaLite.qrc">
-                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLineEdit" name="SW_LEditPathMedias_4">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_4">
-               <property name="text">
-                <string>Wybierz katalog...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="MojaBibliaLite.qrc">
-                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="SW_ButtonSelectPathmedia_1">
-               <property name="text">
-                <string>Wybierz katalog...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="MojaBibliaLite.qrc">
-                 <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+           <property name="text">
+            <string>Wybierz katalog...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="MojaBibliaLite.qrc">
+             <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLineEdit" name="LEditPathMedias_2">
+           <property name="minimumSize">
+            <size>
+             <width>780</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="LEditPathMedias_3">
+           <property name="minimumSize">
+            <size>
+             <width>780</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLineEdit" name="LEditPathMedias_4">
+           <property name="minimumSize">
+            <size>
+             <width>780</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="PButtonSelectPathmedia_2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Wybierz katalog...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="MojaBibliaLite.qrc">
+             <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="PButtonSelectPathmedia_3">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Wybierz katalog...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="MojaBibliaLite.qrc">
+             <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QPushButton" name="PButtonSelectPathmedia_4">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Wybierz katalog...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="MojaBibliaLite.qrc">
+             <normaloff>:/Setups/gfx/KatalogZMediami16x16.png</normaloff>:/Setups/gfx/KatalogZMediami16x16.png</iconset>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -227,106 +862,129 @@
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="SW_ButtSetupSave">
-       <property name="text">
-        <string>Zapisz konfiguracje</string>
-       </property>
-       <property name="icon">
-        <iconset resource="MojaBibliaLite.qrc">
-         <normaloff>:/Setups/gfx/Zapisz.png</normaloff>:/Setups/gfx/Zapisz.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="SW_ButtSetupHelp">
-       <property name="text">
-        <string>Pomoc...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="MojaBibliaLite.qrc">
-         <normaloff>:/Search/gfx/HelpReg.png</normaloff>:/Search/gfx/HelpReg.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="SW_ButtSetupCancel">
-       <property name="text">
-        <string>Anuluj</string>
-       </property>
-       <property name="icon">
-        <iconset resource="MojaBibliaLite.qrc">
-         <normaloff>:/Setups/gfx/Anuluj.png</normaloff>:/Setups/gfx/Anuluj.png</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="QFrame" name="horizontalFrame_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="PButtonSetupSave">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Zapisz konfiguracje</string>
+        </property>
+        <property name="icon">
+         <iconset resource="MojaBibliaLite.qrc">
+          <normaloff>:/Setups/gfx/Zapisz.png</normaloff>:/Setups/gfx/Zapisz.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PButtonSetupHelp">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Pomoc...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="MojaBibliaLite.qrc">
+          <normaloff>:/Setups/gfx/PomocOkna.png</normaloff>:/Setups/gfx/PomocOkna.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PButtonSetupCancel">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Anuluj</string>
+        </property>
+        <property name="icon">
+         <iconset resource="MojaBibliaLite.qrc">
+          <normaloff>:/Setups/gfx/Anuluj.png</normaloff>:/Setups/gfx/Anuluj.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>SW_ButtonSelectPathmedia_1</tabstop>
-  <tabstop>SW_ButtonSelectPathmedia_2</tabstop>
-  <tabstop>SW_ButtonSelectPathmedia_3</tabstop>
-  <tabstop>SW_ButtonSelectPathmedia_4</tabstop>
-  <tabstop>SW_LEditPathMedias_1</tabstop>
-  <tabstop>SW_LEditPathMedias_2</tabstop>
-  <tabstop>SW_LEditPathMedias_3</tabstop>
-  <tabstop>SW_LEditPathMedias_4</tabstop>
-  <tabstop>SW_ButGroupSections</tabstop>
-  <tabstop>SW_PControlSelected</tabstop>
-  <tabstop>SW_ButtSetupSave</tabstop>
-  <tabstop>SW_IsDisplaySplash</tabstop>
-  <tabstop>SW_ButtSetupHelp</tabstop>
-  <tabstop>SW_ButtSetupCancel</tabstop>
- </tabstops>
  <resources>
   <include location="MojaBibliaLite.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>SW_ButtSetupCancel</sender>
-   <signal>clicked()</signal>
-   <receiver>SetupsWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1032</x>
-     <y>634</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>721</x>
-     <y>621</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

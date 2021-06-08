@@ -9,7 +9,6 @@
 #include "uSetupsWindow.h"
 #include <System.IOUtils.hpp>
 #include "GsReadBibleTextClass\GsReadBibleTextClass.h"
-#include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -88,6 +87,16 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_STextInfo->Caption = UnicodeString("\tUwagi dotyczące zadziałanie ustawień\n") +
 		" 1. - Ustawienie będzie obowiązywało po ponownym uruchomieniu aplikacji." +
 		"\n 2. - Po zmianie tych parametrów, dopiero w nowo otwartej księdze, zaczną, one obowiązywać.";
+
+	//Logo ustawień
+	if(TFile::Exists(GlobalVar::Global_custrPathSetupsLogo))
+	{
+		TWICImage *pWICImage = new TWICImage();
+		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+		pWICImage->LoadFromFile(GlobalVar::Global_custrPathSetupsLogo);
+		this->SW_SetupsImageLogo->Picture->Assign(pWICImage);
+		delete pWICImage; pWICImage = nullptr;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -249,7 +258,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		NewItem->SubItemImages[enColumn_DescryptionTranslate] = enImage_DescryptionTranslate;
 
 	}
-	if(pSListExcludeTrans) {delete pSListExcludeTrans;}
+	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey) //30-03-2021

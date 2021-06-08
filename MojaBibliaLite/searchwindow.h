@@ -9,6 +9,14 @@
 #include <QProgressBar>
 #include <QColor>
 #include <QApplication>
+#include <QTextEdit>
+
+//---Typy wyświetlania informacji w trybie html,
+enum EnTypeDisplayHTML {
+                        enTypeDisplay_ResultsearchAll=1000,    //Wyświetlanie wszystkich znalezionych wersetów
+                        enTypeDisplay_ResultSearchSelectBook,  //Wyświetlanie znelozionych wersetów dla konkretnej księgi
+                        enTypeDisplay_ResultSelectVers         //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
+                       };
 
 /*
  *  Klasa MyDelegate
@@ -33,20 +41,26 @@ class SearchWindow : public QDialog
 public:
  explicit SearchWindow(QWidget *parent = nullptr);
  ~SearchWindow();
+    
 private slots:
   void _OnClickButtonHelpReg(); //Przycisk pomocy dla składni wyszukiwań za pomocą wyrażeń regularnych
   void _OnClickButtonStartSearch(); //Przycisk rozpoczęcia wyszukiwania
   void _OnClickButtonHelpSearch(); //Pomoc dla wyszukiwania
   void _OnClickButtonExitSearch(); //Wyjście z wyszukiwania
+  void _OnClickSelectColors(); //Wybór kolorów
 
-  void _OnSetCuurentIndexChange(int iIndex); //Zmieniłeś wybór elementu w QComboBox
+  void _OnSetCurentCBoxIndexChange(int iIndex); //Zmieniłeś wybór elementu w QComboBox
 
-  void _OnClickItem(QListWidgetItem *item); //Kliknąłeś na pozycje listy
+  void _OnClickLViewWidgetItem(QListWidgetItem *item); //Kliknąłeś na pozycje listy
   void _OnTextChanged(const QString &text); //Zmieniłeś zawartość pola do wpisywania tekstu wyszukiwanego
 
 private:
  Ui::SearchWindow *ui;
  void _InitSignalsAndTags();
+ QStringList _QListSearchResult; //Lista wszystkich wyszukanych wersetów w stanie surowym
+ void _DisplayListTextHTML(QTextEdit *_pWebBrowser, const QStringList &_QListAnyVers, const EnTypeDisplayHTML _TypeDisplayHTML, const int iSelectDisplayVerset=-1);
+ void _ReadAllConfig();
+ void _WriteAllConfig();
 };
 
 #endif // SEARCHWINDOW_H

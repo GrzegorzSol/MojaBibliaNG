@@ -136,6 +136,7 @@
    <addaction name="ActSetups"/>
    <addaction name="separator"/>
    <addaction name="ActResizeText"/>
+   <addaction name="ActInformations"/>
   </widget>
   <widget class="QStatusBar" name="MainStatusBar">
    <property name="autoFillBackground">
@@ -212,6 +213,18 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/ZmianaObszaru.png&quot;/&gt;  Zmiana obszaru wyswietlania tekstu&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ActInformations">
+   <property name="icon">
+    <iconset resource="MojaBibliaLite.qrc">
+     <normaloff>:/MainToolBar/gfx/Informacje.png</normaloff>:/MainToolBar/gfx/Informacje.png</iconset>
+   </property>
+   <property name="text">
+    <string>Informacje o aplikacji</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/MainToolBar/gfx/Informacje.png&quot;/&gt;Informacje o aplikacji&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
  </widget>

@@ -5,16 +5,18 @@
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
 USEFORM("uMainWindow.cpp", MainBibleWindow);
-USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
-USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
-USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
-USEFORM("uSetupsWindow.cpp", SetupsWindow);
-USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
-USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
-USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
-USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
+USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
+USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
+USEFORM("uSetupsWindow.cpp", SetupsWindow);
+USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
+USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
+USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
+USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
+USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
+USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
+USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
+USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
 //---------------------------------------------------------------------------
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------

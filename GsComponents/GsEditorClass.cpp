@@ -522,7 +522,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 			}
 			__finally
 			{
-				if(pSaveDialog) {delete pSaveDialog; pSaveDialog = 0;}
+				if(pSaveDialog) {delete pSaveDialog; pSaveDialog = nullptr;}
       }
 		}
 		break;
@@ -558,7 +558,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 			}
       __finally
 			{
-				if(pOpenDialog) {delete pOpenDialog; pOpenDialog = 0;}
+				if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
 			}
 
 		}
@@ -1113,8 +1113,8 @@ void __fastcall GsEditorClass::_InitImageList()
 	__finally
 	{
 		//--- Zwolnienie objektu, klasy TIcon i TMemoryStream
-		if(pIcon) {delete pIcon; /*pIcon = 0;*/}
-		if(pMemoryStr) {delete pMemoryStr; /*pMemoryStr = 0;*/}
+		if(pIcon) {delete pIcon; pIcon = nullptr;}
+		if(pMemoryStr) {delete pMemoryStr; pMemoryStr = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------

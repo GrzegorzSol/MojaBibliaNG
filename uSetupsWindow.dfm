@@ -20,69 +20,26 @@ object SetupsWindow: TSetupsWindow
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object SW_ButGroupSections: TButtonGroup
-    Left = 0
-    Top = 0
-    Width = 193
-    Height = 556
-    CustomHint = SW_BalloonHint
-    Align = alLeft
-    BevelInner = bvNone
-    BevelOuter = bvNone
-    BevelKind = bkFlat
-    ButtonHeight = 46
-    ButtonWidth = 46
-    ButtonOptions = [gboFullSize, gboGroupStyle, gboShowCaptions]
-    Images = SW_ImgListMain
-    Items = <
-      item
-        Caption = 'Wygl'#261'd aplikacji'
-        ImageIndex = 0
-      end
-      item
-        Caption = 'Prze'#322#261'czniki i flagi aplikacji'
-        ImageIndex = 1
-      end
-      item
-        Caption = #346'cie'#380'ki dost'#281'pu do danych aplikacji'
-        ImageIndex = 2
-      end
-      item
-        Caption = 'Inne ustawienia aplikacji'
-        ImageIndex = 3
-      end
-      item
-        Caption = 'Wyb'#243'r u'#380'ywanych t'#322'umacze'#324
-        ImageIndex = 4
-      end>
-    ShowHint = True
-    TabOrder = 0
-    OnButtonClicked = SW_ButGroupSectionsButtonClicked
-  end
   object SW_PControlSelected: TPageControl
-    Left = 193
+    Left = 185
     Top = 0
-    Width = 697
+    Width = 705
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_OthersSetups
+    ActivePage = SW_SheetLajout
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 1
+    TabOrder = 0
     OnChange = SW_PControlSelectedChange
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GrBoxSetColors: TGroupBox
         Left = 0
         Top = 0
-        Width = 689
+        Width = 697
         Height = 354
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -282,7 +239,7 @@ object SetupsWindow: TSetupsWindow
       object SW_ScrBoxViewSetupColors: TScrollBox
         Left = 0
         Top = 354
-        Width = 689
+        Width = 697
         Height = 173
         CustomHint = SW_BalloonHint
         HorzScrollBar.Tracking = True
@@ -312,15 +269,11 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Flagi i prze'#322#261'czniki aplikacji'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_CBoxIsDisplaySplashScreen: TCheckBox
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 683
+        Width = 691
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -336,7 +289,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 26
-        Width = 683
+        Width = 691
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -350,7 +303,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 49
-        Width = 683
+        Width = 691
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -361,7 +314,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 72
-        Width = 683
+        Width = 691
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -372,7 +325,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 95
-        Width = 683
+        Width = 691
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -397,14 +350,10 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Scie'#380'ki dost'#281'pu'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_GrBoxSelectPathDirMulti: TGroupBox
         Left = 0
         Top = 0
-        Width = 689
+        Width = 697
         Height = 117
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -512,10 +461,6 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Inne ustawienia'
       ImageIndex = 3
-      ExplicitLeft = 6
-      ExplicitTop = 23
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object LabelSizeMainFont: TLabel
         Left = 19
         Top = 16
@@ -671,15 +616,11 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Wyb'#243'r t'#322'umacze'#324
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SW_ListViewAllTranslates: TListView
         AlignWithMargins = True
         Left = 12
         Top = 35
-        Width = 665
+        Width = 673
         Height = 480
         Margins.Left = 12
         Margins.Top = 12
@@ -700,7 +641,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 683
+        Width = 691
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -750,7 +691,7 @@ object SetupsWindow: TSetupsWindow
         Value = 100.000000000000000000
       end>
     ShowCaption = False
-    TabOrder = 2
+    TabOrder = 1
     DesignSize = (
       890
       29)
@@ -812,7 +753,79 @@ object SetupsWindow: TSetupsWindow
     BorderStyle = sbsSunken
     Color = clInfoBk
     ParentColor = False
+    TabOrder = 2
+  end
+  object SW_PanelSelectListButtons: TPanel
+    Left = 0
+    Top = 0
+    Width = 185
+    Height = 556
+    Align = alLeft
     TabOrder = 3
+    object SW_ButGroupSections: TButtonGroup
+      Left = 1
+      Top = 1
+      Width = 183
+      Height = 371
+      CustomHint = SW_BalloonHint
+      Align = alClient
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BevelKind = bkFlat
+      ButtonHeight = 46
+      ButtonWidth = 46
+      ButtonOptions = [gboFullSize, gboGroupStyle, gboShowCaptions]
+      Images = SW_ImgListMain
+      Items = <
+        item
+          Caption = 'Wygl'#261'd aplikacji'
+          ImageIndex = 0
+        end
+        item
+          Caption = 'Prze'#322#261'czniki i flagi aplikacji'
+          ImageIndex = 1
+        end
+        item
+          Caption = #346'cie'#380'ki dost'#281'pu do danych aplikacji'
+          ImageIndex = 2
+        end
+        item
+          Caption = 'Inne ustawienia aplikacji'
+          ImageIndex = 3
+        end
+        item
+          Caption = 'Wyb'#243'r u'#380'ywanych t'#322'umacze'#324
+          ImageIndex = 4
+        end>
+      ShowHint = True
+      TabOrder = 0
+      OnButtonClicked = SW_ButGroupSectionsButtonClicked
+    end
+    object SW_PanelImageLogo: TPanel
+      Left = 1
+      Top = 372
+      Width = 183
+      Height = 183
+      Align = alBottom
+      ShowCaption = False
+      TabOrder = 1
+      object SW_SetupsImageLogo: TImage
+        AlignWithMargins = True
+        Left = 27
+        Top = 27
+        Width = 129
+        Height = 129
+        Margins.Left = 26
+        Margins.Top = 26
+        Margins.Right = 26
+        Margins.Bottom = 26
+        Align = alClient
+        ExplicitLeft = 1
+        ExplicitTop = 6
+        ExplicitWidth = 181
+        ExplicitHeight = 181
+      end
+    end
   end
   object SW_ImgListMain: TImageList
     ColorDepth = cd32Bit

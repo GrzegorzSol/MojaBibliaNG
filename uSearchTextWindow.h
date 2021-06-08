@@ -15,16 +15,22 @@
 #include <Vcl.OleCtrls.hpp> //Główna klasa do pracy z tekstem biblijnym
 #include <System.IniFiles.hpp>
 //---------------------------------------------------------------------------
-typedef struct _StatisticFindView
+typedef struct _StatisticFindView //struktura informacyjna o statystyce wyszukiwania
 {
 	unsigned int uiCountFind;   //Ilość znalezień w księdze
 							 //uiWidthBar;    //Obliczona szerokość wskaźnika
 } StatisticFindView, *PStatisticFindView;
+//---Typy wyświetlania informacji w trybie html,
+enum EnTypeDisplayHTML {
+												enTypeDisplay_ResultsearchAll=1000,    //Wyświetlanie wszystkich znalezionych wersetów
+												enTypeDisplay_ResultSearchSelectBook,  //Wyświetlanie znelozionych wersetów dla konkretnej księgi
+												enTypeDisplay_ResultSelectVers         //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
+											 };
 //---------------------------------------------------------------------------
 class TSearchTextWindow : public TForm
 {
 __published:	// IDE-managed Components
-	TPageControl *STW_PControlSet;
+	TPageControl *STW_PControlSetupsSearch;
 	TTabSheet *STW_TabSheetInputText;
 	TCheckBox *STW_ChBoxIsRegEx;
 	TTabSheet *STW_TabSheetStatistick;
@@ -56,6 +62,21 @@ __published:	// IDE-managed Components
 	TLabel *STW_LabelInfoRange;
 	TImage *STW_ImageLogoSearch;
 	TStaticText *STW_STextLogoSearch;
+	TWebBrowser *STW_WebBrowserSelectBookStatistic;
+	TPanel *STW_PanelDisplaySearchBook;
+	TStaticText *STW_STextInfoSelectBookSearch;
+	TTabSheet *STW_TabSheetSettings;
+	TColorBox *STW_ColorBoxBackGroundSearchList;
+	TLabel *STW_LabelBackGroundSearchList;
+	TLabel *STW_LabelBackGroundStatisticList;
+	TColorBox *STW_ColorBoxBackGroundStatisticList;
+	TLabel *STW_LabelBackGroundSelectVers;
+	TColorBox *STW_ColorBoxBackGroundSelectVers;
+	TGroupBox *STW_GrBoxSetupsStatistic;
+	TGroupBox *STW_GrBoxSetupsAllSearchResult;
+	TGroupBox *STW_GrBoxSetupsSelectVer;
+	TCheckBox *STW_ChBoxSizeTextSearch;
+	TCheckBox *STW_ChBoxMemoSetupsSearch;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);
 	void __fastcall CBoxCloseUp(TObject *Sender);
@@ -68,7 +89,7 @@ __published:	// IDE-managed Components
 	void __fastcall STW_LViewResultSearchDataHint(TObject *Sender, int StartIndex,
           int EndIndex);
 	void __fastcall STW_LViewResultSearchGetImageIndex(TObject *Sender, TListItem *Item);
-	void __fastcall STW_LViewResultSearchSelectItem(TObject *Sender, TListItem *Item,
+	void __fastcall STW_LViewAllSelectItem(TObject *Sender, TListItem *Item,
           bool Selected);
 	void __fastcall STW_ButtonHelpRegExpClick(TObject *Sender);
 	void __fastcall STW_CBoxSearchDrawItem(TWinControl *Control, int Index,
@@ -80,12 +101,17 @@ __published:	// IDE-managed Components
 	void __fastcall FormActivate(TObject *Sender);
 	void __fastcall STW_CBoxHistorySearchTextChange(TObject *Sender);
 	void __fastcall STW_PControlViewsTextDrawTab(TCustomTabControl *Control, int TabIndex,
-          const TRect &Rect, bool Active);
+					const TRect &Rect, bool Active);
+	void __fastcall STW_ColorBoxGetColors(TCustomColorBox *Sender,
+          TStrings *Items);
+	void __fastcall STW_ColorBoxChange(TObject *Sender);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety
 	int _iStart_index;	//Początkowy index dla TListView
 	int _iEnd_index;    //Końcowy index dla TListView
+	void __fastcall _DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers,
+		EnTypeDisplayHTML _TypeDisplayHTML, int iSelectDisplayVerset=-1);
 public:		// User declarations
 	__fastcall TSearchTextWindow(TComponent* Owner);
 };

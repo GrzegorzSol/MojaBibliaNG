@@ -188,11 +188,14 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 */
 {
 	//OleInitialize(NULL);
-	if(TFile::Exists(GlobalVar::Global_custrPathBackgroundWindow))
+	if(TFile::Exists(GlobalVar::Global_custrPathBackgroundWindow)) //29-04-2021
 	{
 		//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
-    //this->ImageBackgroundWindow->Transparent = true;
-		this->ImageBackgroundWindow->Picture->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
+    TWICImage *pWICImage = new TWICImage();
+		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+		pWICImage->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
+		this->ImageBackgroundWindow->Picture->Assign(pWICImage);
+		delete pWICImage; pWICImage = nullptr;
 	}
 	//---
 	TThumbBarButton *pNewThumbBarButton;

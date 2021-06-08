@@ -8,7 +8,7 @@
 
 bool LoadFileToStrList(QStringList &_QSList, const QString _Path)
 /**
-    OPIS METOD(FUNKCJI):
+    OPIS METOD(FUNKCJI): Wczytanie pliku tekstowego i załadowanie nim objektu klasy QStringList
     OPIS ARGUMENTÓW:
     OPIS ZMIENNYCH:
     OPIS WYNIKU METODY(FUNKCJI):
@@ -32,7 +32,7 @@ bool LoadFileToStrList(QStringList &_QSList, const QString _Path)
 //---------------------------------------------------------------------------
 bool SaveStrListToFile(const QStringList &_QSList, const QString _Path)
 /**
-    OPIS METOD(FUNKCJI):
+    OPIS METOD(FUNKCJI): Zapis zawartości objektu klasy QStringList do pliku tekstowego
     OPIS ARGUMENTÓW:
     OPIS ZMIENNYCH:
     OPIS WYNIKU METODY(FUNKCJI):
@@ -51,5 +51,43 @@ bool SaveStrListToFile(const QStringList &_QSList, const QString _Path)
 
   File.close();
   return true;
+}
+//---------------------------------------------------------------------------
+void SetupColorPButton(QPushButton *pPButton, const QRgb iRGBInput)
+/**
+    OPIS METOD(FUNKCJI): Wczytanie i zmiana koloru objektu typu QPushButton
+    OPIS ARGUMENTÓW:
+    OPIS ZMIENNYCH:
+    OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QColor colorTemp;
+  QPalette paletteTemp; //Kolory dla QPushButton ustawiania kolorów podkładu
+
+  colorTemp.setRgb(iRGBInput);
+  paletteTemp.setColor(QPalette::Button, colorTemp);
+  pPButton->setPalette(paletteTemp);
+  pPButton->update();
+  //Wypisanie w objekcie klasy QPushButton koloru
+  pPButton->setText(colorTemp.name());
+}
+//---------------------------------------------------------------------------
+QRgb ReadColorPButton(QPushButton *pPButton)
+/**
+    OPIS METOD(FUNKCJI): Odczyt koloru objektu typu QPushButton
+    OPIS ARGUMENTÓW:
+    OPIS ZMIENNYCH:
+    OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QRgb iRGBTemp;
+  QColor colorTemp;
+  QPalette paletteTemp; //Kolory dla QPushButton ustawiania kolorów podkładu
+
+  paletteTemp = pPButton->palette();
+  colorTemp = paletteTemp.color(QPalette::Button);
+  iRGBTemp = colorTemp.rgb();
+
+  return iRGBTemp;
 }
 //---------------------------------------------------------------------------
