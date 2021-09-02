@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,6 +17,9 @@ RC_ICONS = MojaBibliaLite.ico
 #INCLUDEPATH += QGsReadBibleTextClass
 
 SOURCES += \
+    QGsComponents/qgseditorclass.cpp \
+    QGsComponents/qgseditordataimages.cpp \
+    QGsReadBibleTextClass/qgscoredataimages.cpp \
     QGsReadBibleTextClass/qgsreadbibletextclass.cpp \
     globalvar.cpp \
     informationswindow.cpp \
@@ -23,21 +27,27 @@ SOURCES += \
     mainwindow.cpp \
     mblitelibrary.cpp \
     searchwindow.cpp \
+    selectverswindow.cpp \
     setupswindow.cpp
 
 HEADERS += \
+    QGsComponents/qgseditorclass.h \
+    QGsComponents/qgseditordataimages.h \
+    QGsReadBibleTextClass/qgscoredataimages.h \
     QGsReadBibleTextClass/qgsreadbibletextclass.h \
     globalvar.h \
     informationswindow.h \
     mainwindow.h \
     mblitelibrary.h \
     searchwindow.h \
+    selectverswindow.h \
     setupswindow.h
 
 FORMS += \
     informationswindow.ui \
     mainwindow.ui \
     searchwindow.ui \
+    selectverswindow.ui \
     setupswindow.ui
 
 # Default rules for deployment.
@@ -48,7 +58,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
  MojaBibliaLite.qrc
  
-VERSION = 0.8.188.7511
+VERSION = 0.8.715.1856
 NAME = MojaBibliaLite
 
 DEFINES += APP_VERSION_STRING=\\\"$${VERSION}\\\" \

@@ -3,11 +3,14 @@
 
 #include <QTreeWidget>
 #include <QBoxLayout>
-#include <QTextEdit>
+//#include <QTextEdit>
 #include <QProgressBar>
 #include <QAction>
 #include <QComboBox>
 #include <QLabel>
+#include <QPushButton>
+#include <QCheckBox>
+#include "QGsComponents/qgseditorclass.h"
 
 const static unsigned int csuiMaxSizeVers=512,//Dodac do wersji windowsowej!!!
                           csuiOffsetSameTextVers = 9;//Od którego znaku zaczyna się tekst wersetu
@@ -73,7 +76,7 @@ typedef struct _QPairsGroupBooks
  ****************************************************************************/
 class QGsReadBibleTextData
 {
- public:
+  public:
   //Rozszerzenie plików
   const static QString QGsExtendFileTranslateFull, //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
   QGsExtendFileTranslateGrecOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
@@ -109,27 +112,12 @@ class QGsReadBibleTextData
   static void QOpenSelectBookAndChapter(const int _iBook, const int _iChapt=0); //Otwarcie zakładki i wczytanie konkretnej księgi i rozdziału
   static QGsReadBibleTextItem *QGetTranslate(const unsigned char cucNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
   static QStringList &QGetSelectBoksInTranslate(QGsReadBibleTextItem *pQGsReadBibleTextItem, const unsigned char uiIndexBook); //Wyodrębnienie konkretnej księgi(sciIndex), z wybranej struktury tłumaczenia (QGetTranslate)
+  static int QCountVersSelectBookChapt(const int iBook, const int iChapt); //Metoda zwraca ilość wersetów dla wybranej księgi rozdziału
+  //Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
+  static void QGetSelectVerAllTranslate(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVer, QStringList &qslistVers);
 
-  static QString QConvertVerses(const QString &qstrVerse); //Konwersja adresu wybranego wersetu, na normalna formę
+  static QString QConvertVerses(const QString &qstrVerse, bool bFuulVers=true); //Konwersja adresu wybranego wersetu, na normalna formę
 };
-/****************************************************************************
- *                    KLASA MyObjectVers                                    *
- ****************************************************************************/
-/*
-class QMyObjectVers
-{
- QMyObjectVers(const QString &HeadVers);
- virtual ~QMyObjectVers();
- QString BookChaptVers,	//Identfikacja(adres)wersetu
-         NameTranslate,	//Nazwa tłumaczenia
-         MyComment;      //Komentarz do wersetu
- //Pola wypełniane w konstruktorze, po zdekodowaniu 9 pierwszych znaków z bierzącego wiersza (const QString &HeadVers) pliku, tłumaczenia
- unsigned char ucIdTranslate,  //Numer tłumaczenia
-               ucBook, //Numer księgi
-               ucChapt,//Numer rozdziału
-               ucVers; //Numer wersetu
-};
-*/
 /****************************************************************************
  *                     Klasa QGsReadBibleTextItem                           *
  ****************************************************************************/
@@ -143,6 +131,7 @@ class QGsReadBibleTextItem
  friend class QGsReadBibleTextClass;
  friend class QGsTreeBibleClass;
  friend class QGsReadBibleTextData;
+
  QGsReadBibleTextItem(const QString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
  virtual ~QGsReadBibleTextItem();
  //---
@@ -165,6 +154,7 @@ class QGsReadBibleTextClass
  friend class QGsTreeBibleClass;
  friend class QGsReadBibleTextData;
  friend class QGsTabSheetBookClass;
+ friend class QGsWidgetBarSelectVers;
 
   QGsReadBibleTextClass(const QString _PathDir);
   virtual ~QGsReadBibleTextClass();
@@ -273,6 +263,61 @@ class QGsTabSheetBookClass : public QWidget
   //---
   void _UpdateDisplayButtonsAndText(); //Uaktualnienie stanu przycisków przewijania i tytułu zakładki
  protected:
+};
+/****************************************************************************
+ *                      Klasalasa QGsWidgetBarSelectVers                       *
+ ****************************************************************************/
+class QGsWidgetBarSelectVers : public QWidget
+{
+  friend class QGsWidgetSelectVers;
+  Q_OBJECT
+private:
+  explicit QGsWidgetBarSelectVers(QWidget *parent = nullptr);
+  virtual ~QGsWidgetBarSelectVers();
+
+private slots:
+  void _OnAllCBoxIndexChange(int iIndex); //Wybrałeś pozycje z objektu klasy QComboBox
+  void _OnAllNavigationsVers(); //nacisnąłeś przycisk klasy QPushButton
+
+private:
+  QComboBox *_pCBoxNameBooks,
+            *_pCBoxChapters,
+            *_pCBoxVers;
+  QPushButton *_pPButtonDisplayVers,
+              *_pPButtonNextVers,
+              *_pPButtonPrevVers,
+              *_pButtonCopyText,
+              *_pButtonFavVers;
+  QLabel *_pLabelDisplayAdress;
+
+  QStringList _QSListSelectVers; //QStringLista wszystkich tłumaczeń wybranego wersetu
+
+  void _InitSignalsAndTags();
+  //Odświerzenie wyświetlania po zmianie wybranego wersetu
+  void _DisplaySelectVers(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVer);
+};
+/****************************************************************************
+ *                      Klasalasa QGsWidgetSelectVers                       *
+ ****************************************************************************/
+class QGsWidgetSelectVers : public QWidget
+{
+  friend class QGsWidgetBarSelectVers;
+  Q_OBJECT
+public:
+  explicit QGsWidgetSelectVers(QWidget *parent = nullptr);
+  virtual ~QGsWidgetSelectVers();
+
+signals:
+
+private:
+    QGsWidgetBarSelectVers *_pQGsWidgetBarSelectVers;
+    QTextEdit *_pTEditVers;
+
+    QCheckBox *_pChBoxIsComment,
+              *_pChBoxIsSelectTranslates,
+              *_pChBoxIsDisplayButtons;
+
+    QGsEditorClass *_pQGsEditorClass;
 };
 
 #endif // QGSREADBIBLETEXTCLASS_H

@@ -251,6 +251,7 @@ void SetupsWindow::_OnClickButtonsAllLayoutConfig()
 
   //Kolory dla QPushButton ustawiania kolorów podkładu
   QPalette paletteButton = pQPushButton->palette();
+
   QColorDialog pButtonCDialog = QColorDialog(paletteButton.color(QPalette::Button), this);
   //pButtonCDialog.setOptions(QColorDialog::DontUseNativeDialog);
   //pButtonCDialog.setOptions(QColorDialog::ShowAlphaChannel);

@@ -51,6 +51,8 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										//----- Ustawienia pomocu 2
 										GlobalVar::Global_ustrCoreNameFileTips = "FileTips", //Rdzeń nazwy pliku wskazówek
 										GlobalVar::Global_ustrExPathFileTips = "tfhlp",//Rozszerzenie plików wskazówek
+                    //----- Syle
+										GlobalVar::Global_DefaultStyleName = "Windows", //Domyślny styl
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -103,6 +105,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_FontNameMain="FontnameMain",           //Nazwa głównej czcionki
 												GlobalVar::GlobalIni_FontNameAdress="FontNameAdress",         //Nazwa czcionki adresu wersetu
 												GlobalVar::GlobalIni_FontNameTranslators="FontNameTranslators",    //Nazwa czcionki nazwy tłymaczenia
+												GlobalVar::GlobalIni_SelectStyleName="SelectStyleName",        //Nazwa wybranego stylu
 										//----- Sekcje Translates
 										GlobalVar::GlobalIni_TranslatesSection_Main="TRANSLATES", 				        //Główna sekcja TRANSLATES pliku ini
 												GlobalVar::GlobalIni_ExcludeTranslates="ExcludeTranslates";    //Tłumaczenia nie wyświetlane

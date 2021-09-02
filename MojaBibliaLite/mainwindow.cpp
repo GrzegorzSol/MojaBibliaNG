@@ -3,6 +3,7 @@
 #include "searchwindow.h"
 #include "setupswindow.h"
 #include "informationswindow.h"
+#include "selectverswindow.h"
 #include "QGsReadBibleTextClass/qgsreadbibletextclass.h"
 #include "globalvar.h"
 #include <QScreen>
@@ -10,10 +11,13 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
-//#include <QDate>
 /*
 #if defined(_DEBUGINFO_)
  qDebug() << "";
+#endif
+
+#if defined(_DEBUGINFO_)
+  qDebug("%d", 12);
 #endif
 */
 
@@ -151,6 +155,7 @@ void MainWindow::_InitAllSignalsToolTips()
  connect(this->ui->ActSaveToFile, SIGNAL(triggered()), this, SLOT(_Act_SavetoFile())); //Zapisanie aktywnej zakładki
  connect(this->ui->ActResizeText, SIGNAL(triggered()), this, SLOT(_Act_ResizeToolsTabs())); //Zmiana wielkości obszaru tekstu
  connect(this->ui->ActInformations, SIGNAL(triggered()), this, SLOT(_Act_Informations())); //Informacja o aplikacji
+ connect(this->ui->ActSelectVers, SIGNAL(triggered()), this, SLOT(_Act_SelectVers())); //Wybór wersetu
 }
 //---------------------------------------------------------------------------
 void MainWindow::_Act_SearchBibleText()
@@ -304,6 +309,27 @@ void MainWindow::_Act_Informations()
     pInformationsWindow->exec();
 
     delete pInformationsWindow; pInformationsWindow = nullptr;
+  }
+}
+//---------------------------------------------------------------------------
+void MainWindow::_Act_SelectVers()
+/**
+    OPIS METOD(FUNKCJI):
+    OPIS ARGUMENTÓW:
+    OPIS ZMIENNYCH:
+    OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QAction *pAction = qobject_cast<QAction *>(QObject::sender());
+  if(!pAction) return;
+  //---
+  SelectVersWindow *pSelectVersWindow = new SelectVersWindow(this);
+  if(pSelectVersWindow)
+  {
+    pSelectVersWindow->setModal(true);
+    pSelectVersWindow->exec();
+
+    delete pSelectVersWindow; pSelectVersWindow = nullptr;
   }
 }
 //---------------------------------------------------------------------------

@@ -47,6 +47,8 @@ private slots:
   void _OnClickButtonStartSearch(); //Przycisk rozpoczęcia wyszukiwania
   void _OnClickButtonHelpSearch(); //Pomoc dla wyszukiwania
   void _OnClickButtonExitSearch(); //Wyjście z wyszukiwania
+  void _OnClickButtonSaveSearchConfig(); //Zapis konfiguracji wyszukiwania
+
   void _OnClickSelectColors(); //Wybór kolorów
 
   void _OnSetCurentCBoxIndexChange(int iIndex); //Zmieniłeś wybór elementu w QComboBox

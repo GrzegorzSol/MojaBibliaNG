@@ -1,14 +1,13 @@
 ﻿#ifndef uHelpMyBibleWindowH
 #define uHelpMyBibleWindowH
+
 //---------------------------------------------------------------------------
+#include <SHDocVw.hpp>
 #include <System.Classes.hpp>
 #include <Vcl.Controls.hpp>
-#include <Vcl.StdCtrls.hpp>
-#include <Vcl.Forms.hpp>
 #include <Vcl.ExtCtrls.hpp>
-#include <Vcl.ComCtrls.hpp>
-#include <SHDocVw.hpp>
 #include <Vcl.OleCtrls.hpp>
+#include <Vcl.StdCtrls.hpp>
 
 struct HelpWindowData
 {

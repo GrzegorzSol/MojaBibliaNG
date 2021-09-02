@@ -45,7 +45,6 @@ object MainBibleWindow: TMainBibleWindow
     ShowHint = False
     TabOrder = 1
     Visible = False
-    StyleElements = []
     OnChange = MBW_PageControlAllChange
     OnDrawTab = MBW_PageControlsAllDrawTab
     OnEnter = PageControlBibleTextEnter
@@ -78,14 +77,14 @@ object MainBibleWindow: TMainBibleWindow
         Control = ActionToolBarMain
         ImageIndex = -1
         MinHeight = 42
-        Width = 1128
+        Width = 1142
       end
       item
         Break = False
         Control = ActionToolBarTools
         ImageIndex = -1
         MinHeight = 42
-        Width = 50
+        Width = 36
       end>
     ParentShowHint = False
     ShowHint = True
@@ -93,7 +92,7 @@ object MainBibleWindow: TMainBibleWindow
     object ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
-      Width = 1115
+      Width = 1129
       Height = 42
       CustomHint = BalloonHintMain
       ActionManager = ActionManagerMain
@@ -111,9 +110,9 @@ object MainBibleWindow: TMainBibleWindow
       Spacing = 0
     end
     object ActionToolBarTools: TActionToolBar
-      Left = 1143
+      Left = 1157
       Top = 0
-      Width = 41
+      Width = 27
       Height = 42
       CustomHint = BalloonHintMain
       ActionManager = ActionManagerMain

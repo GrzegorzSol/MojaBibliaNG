@@ -1,10 +1,10 @@
-﻿///////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2008,2009,2010,2011,2012,2013, 2014, 2015, 2016, 2017, 2018, 2019       //
-//                                     Grzegorz Sołtysik                                 //
-//                                     All rights reserved.                              //
-//                                    grzegorzsol@gmail.com                              //
-//                                       www.nasz-salem.pl                               //
-///////////////////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2008,2009,2010,2011,2012,2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 //
+//                                     Grzegorz Sołtysik                                       //
+//                                     All rights reserved.                                    //
+//                                    grzegorzsol@gmail.com                                    //
+//                                 www.facebook.com/MojaBiblia                                 //
+/////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 			Zasady tworzenia nazw dla projektu Moja Biblia NG
 1. Nazwy prywatne klasy tworzy się przez dodanie "_" przed nazwą wskaźnika prywatnego.
@@ -208,9 +208,9 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	UnicodeString ustrVersion = Library::GetInfo();
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 	#if defined(_WIN64)
-		this->Caption = Format("Moja Biblia NG wersja beta x64 v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
+		this->Caption = Format("Moja Biblia NG wersja beta x64 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
 	#else
-		this->Caption = Format("Moja Biblia NG wersja beta x32 v%s © Grzegorz Sołtysik. [Oświęcim %s]", ARRAYOFCONST((ustrVersion, __DATE__)));
+		this->Caption = Format("Moja Biblia NG wersja beta x32 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
 	#endif
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);

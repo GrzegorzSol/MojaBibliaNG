@@ -70,6 +70,8 @@ struct GlobalVar
 														 //----- Ustawienia pomocy 2
 														 Global_ustrCoreNameFileTips, //Rdzeń nazwy pliku wskazówek
 														 Global_ustrExPathFileTips,//Rozszerzenie plików wskazówek
+														 //----- Syle
+														 Global_DefaultStyleName, //Domyślny styl
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -123,6 +125,7 @@ struct GlobalVar
 																GlobalIni_FontNameMain,           //Nazwa głównej czcionki
 																GlobalIni_FontNameAdress,         //Nazwa czcionki adresu wersetu
 																GlobalIni_FontNameTranslators,    //Nazwa czcionki nazwy tłymaczenia
+																GlobalIni_SelectStyleName,        //Nazwa wybranego stylu
 														 //----- Sekcje Translates
 														 GlobalIni_TranslatesSection_Main, 				//Główna sekcja TRANSLATES pliku ini
 																GlobalIni_ExcludeTranslates;    //Tłumaczenia nie wyświetlane

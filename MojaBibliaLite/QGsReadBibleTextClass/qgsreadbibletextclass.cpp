@@ -1,5 +1,5 @@
 #include "qgsreadbibletextclass.h"
-
+#include "qgscoredataimages.h"
 #include "globalvar.h"
 #include "mblitelibrary.h"
 #include <QApplication>
@@ -8,8 +8,9 @@
 #include <QMenu>
 #include <QHeaderView>
 #include <QObject>
+#include <QTextEdit>
 
-static QStringList ErrorSList;
+QStringList ErrorSList;
 
 /*
 #if defined(_DEBUGINFO_)
@@ -45,10 +46,13 @@ QGsReadBibleTextClass::~QGsReadBibleTextClass()
    OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  #if defined(_DEBUGINFO_)
+    qDebug("QGsReadBibleTextClass::~QGsReadBibleTextClass()");
+  #endif
   QGsReadBibleTextItem *pQGsReadBibleTextItem=nullptr;
   for(int i=0; i<this->_QListItemsTranslates.count(); i++)
   {
-    pQGsReadBibleTextItem = this->_QListItemsTranslates.at(i);
+    pQGsReadBibleTextItem = this->_QListItemsTranslates[i];
     if(pQGsReadBibleTextItem) {delete pQGsReadBibleTextItem; pQGsReadBibleTextItem = nullptr;}
   }
   this->_QListItemsTranslates.clear(); //Lista tłumaczeń. Klas QGsReadBibleTextItem
@@ -167,12 +171,8 @@ void QGsReadBibleTextClass::QDisplayAllTextInHTML(QTextEdit *_pWebBrowser, const
   if(this->_QListAllTrChap.count() == 0) return;
 
   unsigned char uiTranslatesIndex;
-  int iIndex=0, //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
-      iBook, //Numer księgi odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
-      iChapt, //Numer rozdziału odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
-      iVers; //Numer wersetu odczytany z pliku tekstu biblijnego konkretnego tłumaczenia
-  QString pStrBuilder = QGsReadBibleTextData::QGsHTMLHeaderText, //Tekst do wyświetlenia, utworzony z połączenia poszczególnych tłumaczeń
-          qstrNameBook; //Skrócona nazwa księgi
+  int iIndex=0; //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
+  QString pStrBuilder = QGsReadBibleTextData::QGsHTMLHeaderText; //Tekst do wyświetlenia, utworzony z połączenia poszczególnych tłumaczeń
 
   //Wyłuskanie aktywnej zakładki
   QGsTabSheetBookClass *pQGsTabSheetBookClass = static_cast<QGsTabSheetBookClass *>(QGsReadBibleTextData::pQGsPageControl->currentWidget());
@@ -214,22 +214,19 @@ void QGsReadBibleTextClass::QDisplayAllTextInHTML(QTextEdit *_pWebBrowser, const
         //Dodawanie kolejnego wersetu
         if(!pTempSList.at(iIndex).isEmpty())
         {
-          iBook = pTempSList.at(iIndex).midRef(0, 3).toInt();
-          iChapt = pTempSList.at(iIndex).midRef(3, 3).toInt();
-          iVers = pTempSList.at(iIndex).midRef(6, 3).toInt();
-          qstrNameBook =  QGsReadBibleTextData::QGsInfoAllBooks[iBook-1].ShortNameBook;
+          QString qstrAddress = QGsReadBibleTextData::QConvertVerses(pTempSList.at(iIndex).mid(0, 9), false);
 
           //wyświetlanie wersetu zależnie od typu tłumaczenia. Całościowe, lub częściowe, oryginalne
           if(pQGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full)
           {
-            pStrBuilder.append(QString("<span class=styleFullColorAdressTranslates>%1 %2:%3 </span>").arg(qstrNameBook).arg(iChapt).arg(iVers));
+            pStrBuilder.append(QString("<span class=styleFullColorAdressTranslates>%1 </span>").arg(qstrAddress));
             pStrBuilder.append(QString("<span class=styleFullText> %1 </span>").
                                arg(pTempSList.at(iIndex).midRef(10)));
             pStrBuilder.append(QString("<span class=styleFullTranslates> [%1] </span>").arg(pQGsReadBibleTextItem->NameTranslate));
           }
           else if((pQGsReadBibleTextItem->enTypeTranslate == enTypeTr_Greek) || (pQGsReadBibleTextItem->enTypeTranslate == enTypeTr_Hebrew))
           {
-            pStrBuilder.append(QString("<span class=styleAdressVersOryg>%1 %2:%3 </span>").arg(qstrNameBook).arg(iChapt).arg(iVers));
+            pStrBuilder.append(QString("<span class=styleAdressVersOryg>%1 </span>").arg(qstrAddress));
             pStrBuilder.append(QString("<span class=styleOrygin> %1 </span>").
                                arg(pTempSList.at(iIndex).midRef(10)));
             pStrBuilder.append(QString("<span class=styleNameVersOryg> [%1] </span>").arg(pQGsReadBibleTextItem->NameTranslate));
@@ -380,7 +377,7 @@ QGsTreeBibleClass::QGsTreeBibleClass(QWidget *parent) : QTreeWidget(parent)
   pNodeMainRoot->setText(enHeaderFullName, "Księgi Biblijne");
   pNodeMainRoot->setFont(enHeaderFullName, fontTree);
   pNodeMainRoot->setForeground(enHeaderFullName, brushRoot);
-  pNodeMainRoot->setIcon(enHeaderFullName, QIcon(":/TreeBooks/gfx/PismoŚwięte.png"));
+  pNodeMainRoot->setIcon(enHeaderFullName, QPixmap::fromImage(QImage::fromData(ID_ROOT_BOOKS, sizeof(ID_ROOT_BOOKS))));
 
   for(int iGroupBooks=0; iGroupBooks<QGsReadBibleTextData::QGsNumberGroups; iGroupBooks++)
     //Dodawanie grup ksiąg do korzenia
@@ -389,7 +386,7 @@ QGsTreeBibleClass::QGsTreeBibleClass(QWidget *parent) : QTreeWidget(parent)
     pGroupBook->setText(enHeaderFullName, QGsReadBibleTextData::QGsNamesTableNameGroupBook[iGroupBooks]);
     pGroupBook->setFont(enHeaderFullName, fontTree);
     pGroupBook->setForeground(enHeaderFullName, brushGroups);
-    pGroupBook->setIcon(enHeaderFullName, QIcon(":/TreeBooks/gfx/GrupaKsiąg.png"));
+    pGroupBook->setIcon(enHeaderFullName, QPixmap::fromImage(QImage::fromData(ID_PART_BOOKS, sizeof(ID_PART_BOOKS))));
 
     for(int iBooks=0; iBooks<QGsReadBibleTextData::QGsTableNameGroupBook[iGroupBooks]; iBooks++)
       //Dodawanie poszczególnych ksiąg do grup
@@ -399,7 +396,7 @@ QGsTreeBibleClass::QGsTreeBibleClass(QWidget *parent) : QTreeWidget(parent)
       pBooks->setFont(enHeaderFullName, fontBooks);
       pBooks->setText(enHeaderShortName, QGsReadBibleTextData::QGsInfoAllBooks[uiLicz].ShortNameBook); //Skrót nazwy księgi
       pBooks->setText(enHeaderCountChapt, QString("%1").arg(QGsReadBibleTextData::QGsInfoAllBooks[uiLicz].ucCountChapt)); //Liczba rozdziałów
-      pBooks->setIcon(enHeaderFullName, QIcon(":/TreeBooks/gfx/Księga.png"));
+      pBooks->setIcon(enHeaderFullName, QPixmap::fromImage(QImage::fromData(ID_BOOK, sizeof(ID_BOOK))));
       pBooks->ucIndexBook = uiLicz;
       pBooks->ucCountChapt = QGsReadBibleTextData::QGsInfoAllBooks[uiLicz].ucCountChapt; //Ilość rozdziałów
       uiLicz++;	//Licznik ksiąg
@@ -467,8 +464,7 @@ void QGsTreeBibleClass::_QGsTrViewCustomCMenuReq(const QPoint &pos)
   QPoint globalPos = this->mapToGlobal(pos);
   QMenu myMenu;
 
-  QIcon iconOpenChapter;
-  iconOpenChapter.addFile(":/TreeBooks/gfx/MenuRozdział.png", QSize(), QIcon::Normal, QIcon::Off);
+  QIcon iconOpenChapter(QPixmap::fromImage(QImage::fromData(ID_CHAPTER, sizeof(ID_CHAPTER))));
 
   for(int iLiczChapt=0; iLiczChapt<pQGsTreeWidgetItem->ucCountChapt; iLiczChapt++)
   {
@@ -491,9 +487,7 @@ void QGsTreeBibleClass::_QGsTrViewCustomCMenuReq(const QPoint &pos)
   //Wczytanie i wyświetlenie wybranej księgi i wybranego rozdziału
   QGsReadBibleTextData::pQGsReadBibleTextClass->_QGetAllTranslatesChapter(pQGsTreeWidgetItem->ucIndexBook, pQGsTabSheetBookClass->_ShucIndexChapt);
   QGsReadBibleTextData::pQGsReadBibleTextClass->QDisplayAllTextInHTML(pQGsTabSheetBookClass->_pQTextEdit);
-  #if defined(_DEBUGINFO_)
-    qDebug() << "pQGsTabSheetBookClass->_ShucIndexChapt: " << pQGsTabSheetBookClass->_ShucIndexChapt;
-  #endif
+
   pQGsTabSheetBookClass->_pQProgressBarChapt->setValue(pQGsTabSheetBookClass->_ShucIndexChapt); //Wskaźnik księgi
 }
 /****************************************************************************
@@ -741,8 +735,7 @@ void QGsReadBibleTextData::QOpenSelectBookAndChapter(const int _iBook, const int
 {
   QGsTreeWidgetItem *pQGsTreeWidgetItem = dynamic_cast<QGsTreeWidgetItem *>(QGsReadBibleTextData::pGsTreeBibleClass->currentItem());
   //Tworzenie ikony zakładki
-  QIcon iconOpenChapter;
-  iconOpenChapter.addFile(":/TreeBooks/gfx/MenuRozdział.png", QSize(), QIcon::Normal, QIcon::Off);
+  QIcon iconOpenChapter(QPixmap::fromImage(QImage::fromData(ID_CHAPTER, sizeof(ID_CHAPTER))));
   //---Dodanie nowej zakładki
   QGsTabSheetBookClass *pQGsTabSheetBookClass=nullptr;
   pQGsTabSheetBookClass = new QGsTabSheetBookClass(nullptr, pQGsTreeWidgetItem->ucIndexBook);
@@ -799,41 +792,130 @@ QStringList &QGsReadBibleTextData::QGetSelectBoksInTranslate(QGsReadBibleTextIte
   return pQGsReadBibleTextItem->_QListAllListBooks[uiIndexBook]; //Wyciągnięcie księgi z listy ksiąg, dla konkretnego tłumaczenia
 }
 //---------------------------------------------------------------------------
-QString QGsReadBibleTextData::QConvertVerses(const QString &qstrVerse)
+QString QGsReadBibleTextData::QConvertVerses(const QString &qstrVerse, bool bFuulVers)
 /**
     OPIS METOD(FUNKCJI): Konwersja adresu wybranego wersetu, na normalna formę
+    OPIS ARGUMENTÓW: const QString &qstrVerse - Tekst wersetu z adresem
+                     bool bFuulVers - Zwracany jest sam adres(false), czy adres z tekstem wersetu(true - domyślnie)
+    OPIS ZMIENNYCH:
+    OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QString qstrRes, chAdd;
+  bool bOk=false;
+
+  unsigned char ucBook = qstrVerse.midRef(0, 3).toInt() - 1,
+                ucChapt = qstrVerse.midRef(3, 3).toInt(),
+                ucVers = qstrVerse.midRef(6, 3).toInt(&bOk);
+
+  if(!bOk)
+  {
+    chAdd = qstrVerse.mid(8, 1);
+    ucVers = qstrVerse.midRef(6, 2).toInt(&bOk);
+    if(!bOk)
+    {
+      chAdd = qstrVerse.mid(7, 2);
+      ucVers = qstrVerse.midRef(6, 1).toInt();
+    }
+  }
+  //---
+  if(bFuulVers)
+    qstrRes = QString("%1 %2:%3%4%5").arg(QGsReadBibleTextData::QGsInfoAllBooks[ucBook].ShortNameBook).arg(ucChapt).
+        arg(ucVers).arg(chAdd).arg(qstrVerse.midRef(10));
+  else
+    qstrRes = QString("%1 %2:%3%4").arg(QGsReadBibleTextData::QGsInfoAllBooks[ucBook].ShortNameBook).arg(ucChapt).
+        arg(ucVers).arg(chAdd);
+
+  return qstrRes;
+}
+//---------------------------------------------------------------------------
+int QGsReadBibleTextData::QCountVersSelectBookChapt(const int iBook, const int iChapt)
+/**
+    OPIS METOD(FUNKCJI): Metoda zwraca ilość wersetów dla wybranej księgi rozdziału
     OPIS ARGUMENTÓW:
     OPIS ZMIENNYCH:
     OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  QString qstrRes;
+  int iRet=0;
 
-  unsigned char ucBook = qstrVerse.midRef(0, 3).toInt() - 1,
-                ucChapt = qstrVerse.midRef(3, 3).toInt(),
-                ucVers = qstrVerse.midRef(6, 3).toInt();
+  QStringList qslistSelect = QGsReadBibleTextData::pQGsReadBibleTextClass->QGetSelectBookTranslate(0, iBook);
 
-  qstrRes = QString("%1 %2:%3 %4").arg(QGsReadBibleTextData::QGsInfoAllBooks[ucBook].ShortNameBook).arg(ucChapt).arg(ucVers).arg(qstrVerse.midRef(10));
-  return qstrRes;
-}
-/****************************************************************************
- *                    KLASA MyObjectVers                                    *
- ****************************************************************************/
-/*
-QMyObjectVers::QMyObjectVers(const QString &HeadVers)
-{
-  this->ucBook = static_cast<unsigned char>(HeadVers.midRef(0, 3).toInt() - 1);
-  this->ucChapt = static_cast<unsigned char>(HeadVers.midRef(3, 3).toInt());
-  this->ucVers = static_cast<unsigned char>(HeadVers.midRef(6, 3).toInt());
+  for(int i=0; i<qslistSelect.count(); i++)
+  {
+    if(qslistSelect.at(i).midRef(3, 3).toInt() == iChapt)
+    {
+      iRet++;
+    }
+  }
 
-  this->BookChaptVers = QString("%1 %2:%3").arg(QGsReadBibleTextData::QGsInfoAllBooks[this->ucBook].ShortNameBook).arg(this->ucChapt).arg(this->ucVers);
+  return iRet;
 }
 //---------------------------------------------------------------------------
-QMyObjectVers::~QMyObjectVers()
-{
-
-}
+void QGsReadBibleTextData::QGetSelectVerAllTranslate(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVer, QStringList &qslistVers)
+/**
+  OPIS METOD(FUNKCJI): Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
+  OPIS ARGUMENTÓW: const unsigned char cucBook - księga
+                   const unsigned char cucChapt - rozdział
+                   const unsigned char cucVers - werset
+                   QStringList &qslistVers - wskaźnik na string listę, w której zostaną umieszczone wersety
+  OPIS ZMIENNYCH:
+  OPIS WYNIKU METODY(FUNKCJI):
 */
+{
+  if(!QGsReadBibleTextData::pQGsReadBibleTextClass) return;
+
+  unsigned char ucChapt, ucVers;
+  bool bOk=false;
+
+  qslistVers.clear();
+  unsigned char uiTranslates = QGsReadBibleTextData::QCountTranslates();
+
+  for(unsigned char ucIndexTranslate=0; ucIndexTranslate<uiTranslates; ucIndexTranslate++)
+  {
+    QGsReadBibleTextItem *pQGsReadBibleTextItem = QGsReadBibleTextData::QGetTranslate(ucIndexTranslate);
+    if(pQGsReadBibleTextItem)
+    {
+      //Wyodrębnienie konkretnej księgi(sciIndex), z wybranej struktury tłumaczenia (QGetTranslate)
+      QStringList qSListBook = QGsReadBibleTextData::QGetSelectBoksInTranslate(pQGsReadBibleTextItem, cucBook);
+      if(qSListBook.count() > 0)
+      {
+        for(int iIndex=0; iIndex<qSListBook.count(); iIndex++)
+        {
+          ucChapt = qSListBook.at(iIndex).midRef(3, 3).toInt();
+          ucVers = qSListBook.at(iIndex).midRef(6, 3).toInt(&bOk);
+
+          if(!bOk)
+          {
+            //Ze względu że ostatni znak może nie być cyfrą (Biblia Tysiąclecia i Warszawsko-Praska),
+            //numer wersetu odcztywany jest z drugiego miejsca informacji o wersecie, a nie z trzeciego
+            ucVers = qSListBook.at(iIndex).midRef(6, 2).toInt();
+          }
+
+          if((ucChapt == cucChapt) && (ucVers == cucVer))
+          {
+            //Ze wzgledu na to że ilość wersetów moze być więcej niż tłumaczeń i wtedy wystąpił by błąd przekroczenia indeksu dla tablicy
+            //"QGsReadBibleTextData::pQGsReadBibleTextClass->_QListItemsTranslates.at(i)->NameTranslate)", dlatego sformatowana informacja
+            //o nazwie tłumaczenia, w stylu html musi zostać przeprowadzona w motodzie tworzacej QstringListe "this->_QSListSelectVers".
+            //Czynność ta jest przeprowadzona w metodzie: "QGsReadBibleTextData::QGetSelectVerAllTranslate()".
+            //Do surowego i zakodowanego tekstu informacyjnego o numerze księgi, rozdziału i wersetu, oraz właściwego tekstu wersetu,
+            //zostaje dodana informacja w stylu html o nazwie tłumaczenia.
+            qslistVers.append(qSListBook.at(iIndex) +
+                              QString("<span class=styleFullTranslates> [%1] </span>").
+                              arg(QGsReadBibleTextData::pQGsReadBibleTextClass->_QListItemsTranslates.at(ucIndexTranslate)->NameTranslate));
+          }
+        }
+      } //if(qSListBook.count() > 0)
+      //W wypadku gdy wybrany werset nie istnieje gdyż brak go w aktualnym tłumaczeniu, zostaje wyswietlony odpowiedni komunikat w panelu wersetuów
+      else qslistVers.append(QString("%1%2%3 ------------------------------------------------------ %4").
+            arg(cucBook+1, 3, 10, QLatin1Char('0')).
+            arg(cucChapt, 3, 10, QLatin1Char('0')).
+            arg(cucVer, 3, 10, QLatin1Char('0')).
+            arg(QString("<span class=styleFullTranslates> [%1] </span>").
+                arg(QGsReadBibleTextData::pQGsReadBibleTextClass->_QListItemsTranslates.at(ucIndexTranslate)->NameTranslate)));
+    } //if(pQGsReadBibleTextItem)
+  }
+}
 /****************************************************************************
  *                     Klasa QGsReadBibleTextItem                           *
  ****************************************************************************/
@@ -882,7 +964,9 @@ QGsReadBibleTextItem::~QGsReadBibleTextItem()
    OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+  #if defined(_DEBUGINFO_)
+    //qDebug("QGsReadBibleTextItem::~QGsReadBibleTextItem()");
+  #endif
 }
 /****************************************************************************
  *                          Klasa GsMainTabWidgetClass                      *
@@ -978,8 +1062,7 @@ QGsTabSheetBookClass::QGsTabSheetBookClass(QWidget *parent, const unsigned char 
   this->_ShucIndexChapt = 0;
   QString qstrInfo;
   this->_ShucIndexChapt = 0; //Do czasu napisanie wyboru rozdziału z menu podręcznego drzewa ksiąg
-  QIcon iconTranslate;
-  iconTranslate.addFile(":/SheetText/gfx/PrzekładBiblii.png", QSize(), QIcon::Normal, QIcon::Off);
+  QIcon iconTranslate(QPixmap::fromImage(QImage::fromData(ID_TRANSLATES, sizeof(ID_TRANSLATES))));
   //Główny widok dla pionowego ułożenia widgetów
   QVBoxLayout *pMainVLayout = new QVBoxLayout(this);
 
@@ -1029,12 +1112,11 @@ QGsTabSheetBookClass::QGsTabSheetBookClass(QWidget *parent, const unsigned char 
   //pToolsQHBoxLayout->setContentsMargins(1,1,1,1);
   //pToolsQHBoxLayout->addWidget(_pQToolBar);
 
-  QIcon iconNextChapt, iconPrevChapt, iconNextBook, iconPrevBook, iconSelectChapter;
-  iconNextChapt.addFile(":/SheetText/gfx/NastępnyRozdział.png", QSize(), QIcon::Normal, QIcon::Off);
-  iconPrevChapt.addFile(":/SheetText/gfx/PoprzedniRozdział.png", QSize(), QIcon::Normal, QIcon::Off);
-  iconNextBook.addFile(":/SheetText/gfx/NastępnaKsięga.png", QSize(), QIcon::Normal, QIcon::Off);
-  iconPrevBook.addFile(":/SheetText/gfx/PoprzedniaKsięga.png", QSize(), QIcon::Normal, QIcon::Off);
-  iconSelectChapter.addFile(":/SheetText/gfx/WybierzRozdział.png", QSize(), QIcon::Normal, QIcon::Off);
+  QIcon iconNextChapt(QPixmap::fromImage(QImage::fromData(ID_NEXTCHAPTER, sizeof(ID_NEXTCHAPTER)))),
+        iconPrevChapt(QPixmap::fromImage(QImage::fromData(ID_PREVCHAPTER, sizeof(ID_PREVCHAPTER)))),
+        iconNextBook(QPixmap::fromImage(QImage::fromData(ID_TONEXT_BOOK, sizeof(ID_TONEXT_BOOK)))),
+        iconPrevBook(QPixmap::fromImage(QImage::fromData(ID_TOPREV_BOOK, sizeof(ID_TOPREV_BOOK)))),
+        iconSelectChapter(QPixmap::fromImage(QImage::fromData(ID_CHAPTER, sizeof(ID_CHAPTER))));
 
   this->pActionNextChapter = new QAction(this);
   this->pActionNextChapter->setIcon(iconNextChapt);
@@ -1264,24 +1346,335 @@ void QGsTabSheetBookClass::_UpdateDisplayButtonsAndText()
   this->pActionNextBook->setEnabled(this->_ShucIndexBook < QGsReadBibleTextData::QGsNumberBooks - 1);
   this->pActionPrevBook->setEnabled(this->_ShucIndexBook > 0);
 
-  #if defined(_DEBUGINFO_)
-    qDebug() << "this->_ShucIndexChapt: " << this->_ShucIndexChapt;
-  #endif
-
   this->_pQProgressBarChapt->setValue(this->_ShucIndexChapt); //Wskaźnik księgi
 }
 //---------------------------------------------------------------------------
 void QGsTabSheetBookClass::_SelectTranslate(int _iSelectTranslate)
-
+/**
+   OPIS METOD(FUNKCJI):
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
 {
   QTabWidget *pQTabWidget = qobject_cast<QTabWidget *>(QObject::sender());
   if(!pQTabWidget) return;
   //---
-  #if defined(_DEBUGINFO_)
-    qDebug() << "_SelectTranslate _iSelect: " << _iSelectTranslate-1;
-  #endif
 
   QGsReadBibleTextData::pQGsReadBibleTextClass->_QGetAllTranslatesChapter(this->_ShucIndexBook, this->_ShucIndexChapt);
   QGsReadBibleTextData::pQGsReadBibleTextClass->QDisplayAllTextInHTML(this->_pQTextEdit, _iSelectTranslate-1); //Jednak potrzebne 07-03-2021 !!!
+}
+//---------------------------------------------------------------------------
+/****************************************************************************
+ *                      Klasalasa QGsWidgetBarSelectVers                       *
+ ****************************************************************************/
+enum {enTagCBox_Book=1000, enTagCBox_Chapt, enTagCBox_Vers,
+      enTagPButt_NextVers=1100, enTagPButt_PrevVers};
+const char PropCBoxTag[] = "wbs_PropCBoxTag",
+           PropPButtTag[]= "wbs_PropPButtTag";
+
+QGsWidgetBarSelectVers::QGsWidgetBarSelectVers(QWidget *parent) : QWidget(parent)
+/**
+   OPIS METOD(FUNKCJI): Konstruktor klasy
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->setToolTip("Wybór pojedyńczego wersetu");
+
+  this->setMaximumHeight(54);
+  this->setMinimumHeight(54);
+  //Lista wszystkich ksiąg
+  this->_pCBoxNameBooks = new QComboBox(this);
+  QIcon iconBooks(QPixmap::fromImage(QImage::fromData(ID_BOOK, sizeof(ID_BOOK))));
+  for(int i=0; i<QGsReadBibleTextData::QGsNumberBooks; i++)
+  {
+    this->_pCBoxNameBooks->addItem(iconBooks, QGsReadBibleTextData::QGsInfoAllBooks[i].FullNameBook);
+  }
+  //lista rozdziałów dla pierwszej księgi
+  QIcon iconChapters(QPixmap::fromImage(QImage::fromData(ID_CHAPTER, sizeof(ID_CHAPTER))));
+  this->_pCBoxChapters = new QComboBox(this);
+  for(int i=0; i<QGsReadBibleTextData::QGsInfoAllBooks[0].ucCountChapt; i++)
+  {
+    this->_pCBoxChapters->addItem(iconChapters, QString("Rozdział: %1").arg(i+1));
+  }
+  //Lista wersetów
+  QIcon iconVerses(QPixmap::fromImage(QImage::fromData(ID_SELECTVERS, sizeof(ID_SELECTVERS))));
+
+  this->_pCBoxVers = new QComboBox(this);
+  int iVers = QGsReadBibleTextData::QCountVersSelectBookChapt(this->_pCBoxNameBooks->currentIndex(), this->_pCBoxChapters->currentIndex()+1);
+  for(int i=0; i<iVers; i++)
+  {
+    this->_pCBoxVers->addItem(iconVerses, QString("Werset: %1").arg(i+1));
+  }
+  //Tworzenie przycisków
+  //this->_pPButtonDisplayVers = new QPushButton(this);
+  this->_pLabelDisplayAdress = new QLabel(this);
+  QFont fontLabel(this->font().family(), 12, QFont::Bold);
+  this->_pLabelDisplayAdress->setStyleSheet("color: #FF0000");
+  this->_pLabelDisplayAdress->setFont(fontLabel);
+  this->_pLabelDisplayAdress->setAlignment(Qt::AlignCenter);
+  this->_pLabelDisplayAdress->setText(QString("%1 %2:%3").
+    arg(QGsReadBibleTextData::QGsInfoAllBooks[this->_pCBoxNameBooks->currentIndex()].ShortNameBook).
+    arg(this->_pCBoxChapters->currentIndex()+1).
+    arg(this->_pCBoxVers->currentIndex()+1));
+  this->_pPButtonNextVers = new QPushButton(QPixmap::fromImage(QImage::fromData(ID_NEXTVERS, sizeof(ID_NEXTVERS))), "Następny werset", this);
+  this->_pPButtonPrevVers = new QPushButton(QPixmap::fromImage(QImage::fromData(ID_PREVVERS, sizeof(ID_PREVVERS))), "Poprzedni werset", this);
+  this->_pPButtonPrevVers->setEnabled(this->_pCBoxVers->currentIndex() > 1);
+  //this->_pButtonCopyText = new QPushButton(this);
+  //this->_pButtonFavVers = new QPushButton(this);
+
+  QHBoxLayout *pQHBoxLayoutMain = new QHBoxLayout(this);
+  pQHBoxLayoutMain->setContentsMargins(0, 0, 0, 0);
+  pQHBoxLayoutMain->setSpacing(4);
+  pQHBoxLayoutMain->addWidget(this->_pCBoxNameBooks);
+  this->_pCBoxNameBooks->setToolTip("Wybór nazwy księgi");
+  pQHBoxLayoutMain->addWidget(this->_pCBoxChapters);
+  this->_pCBoxChapters->setToolTip("Wybór numeru rozdziału");
+  pQHBoxLayoutMain->addWidget(this->_pCBoxVers);
+  this->_pCBoxVers->setToolTip("Wybór numeru wersetu");
+  //pQHBoxLayoutMain->addWidget(this->_pPButtonDisplayVers);
+  pQHBoxLayoutMain->addWidget(this->_pLabelDisplayAdress);
+  this->_pLabelDisplayAdress->setToolTip("Wyświetlenie adresy aktualnego wersetu");
+  pQHBoxLayoutMain->addWidget(this->_pPButtonNextVers);
+  this->_pPButtonNextVers->setToolTip("Przewinięcie do następnego wersetu");
+  pQHBoxLayoutMain->addWidget(this->_pPButtonPrevVers);
+  this->_pPButtonPrevVers->setToolTip("Przewinięcie do poprzedniego wersetu");
+  //pQHBoxLayoutMain->addWidget(this->_pButtonCopyText);
+  //pQHBoxLayoutMain->addWidget(this->_pButtonFavVers);
+
+  this->_InitSignalsAndTags();
+  //Wyłuskanie domyślnego wersetu dla wszystkich tłumaczeń w momencie tworzenia klasy (1Moj 1:1)
+  QGsReadBibleTextData::QGetSelectVerAllTranslate(this->_pCBoxNameBooks->currentIndex(), this->_pCBoxChapters->currentIndex()+1,
+                                                  this->_pCBoxVers->currentIndex()+1, this->_QSListSelectVers);
+}
+//---------------------------------------------------------------------------
+void QGsWidgetBarSelectVers::_InitSignalsAndTags()
+/**
+   OPIS METOD(FUNKCJI):
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //Właściwości dla objektów klasy QComboBox
+  this->_pCBoxNameBooks->setProperty(PropCBoxTag, enTagCBox_Book);
+  this->_pCBoxChapters->setProperty(PropCBoxTag, enTagCBox_Chapt);
+  this->_pCBoxVers->setProperty(PropCBoxTag, enTagCBox_Vers);
+  //Właściwości dla objektów klasy QPushButton
+  this->_pPButtonNextVers->setProperty(PropPButtTag, enTagPButt_NextVers);
+  this->_pPButtonPrevVers->setProperty(PropPButtTag, enTagPButt_PrevVers);
+  //Sygnały
+  connect(this->_pCBoxNameBooks, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnAllCBoxIndexChange(int)));
+  connect(this->_pCBoxChapters, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnAllCBoxIndexChange(int)));
+  connect(this->_pCBoxVers, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnAllCBoxIndexChange(int)));
+
+  connect(this->_pPButtonNextVers, SIGNAL(pressed()), this, SLOT(_OnAllNavigationsVers()));
+  connect(this->_pPButtonPrevVers, SIGNAL(pressed()), this, SLOT(_OnAllNavigationsVers()));
+}
+//---------------------------------------------------------------------------
+void QGsWidgetBarSelectVers::_OnAllNavigationsVers()
+/**
+   OPIS METOD(FUNKCJI): Nacisnąłeś przycisk klasy QPushButton
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QPushButton *pPButt = qobject_cast<QPushButton *>(QObject::sender());
+  if(!pPButt) return;
+  //---
+  int iPButt = pPButt->property(PropPButtTag).toInt();
+  int iCIndex=this->_pCBoxVers->currentIndex();
+
+  switch(iPButt)
+  {
+    case enTagPButt_NextVers:
+    {
+      iCIndex++;
+      if(iCIndex > this->_pCBoxVers->count()-2)
+      {
+        this->_pPButtonNextVers->setEnabled(false);
+      }
+      this->_pPButtonPrevVers->setEnabled(true);
+    }
+    break;
+    //---
+    case enTagPButt_PrevVers:
+    {
+      iCIndex--;
+      if(iCIndex < 1)
+      {
+        this->_pPButtonPrevVers->setEnabled(false);
+      }
+      this->_pPButtonNextVers->setEnabled(true);
+    }
+    break;
+    //---
+  }
+  this->_pCBoxVers->setCurrentIndex(iCIndex);
+  //emit this->_pCBoxVers->currentIndexChanged(iCIndex); //Odkomentowano 19-07-2021
+}
+//---------------------------------------------------------------------------
+void QGsWidgetBarSelectVers::_OnAllCBoxIndexChange(int iIndex)
+/**
+   OPIS METOD(FUNKCJI): Wybrałeś pozycje z objektu klasy QComboBox
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QComboBox *pCBox = qobject_cast<QComboBox *>(QObject::sender());
+  if(!pCBox) return;
+  //---
+  int iItemData = pCBox->property(PropCBoxTag).toInt();
+
+  switch(iItemData)
+  {
+    case enTagCBox_Book: //Objekt klasy QComboBox wyboru księgi
+    {
+      QIcon iconChapters(QPixmap::fromImage(QImage::fromData(ID_CHAPTER, sizeof(ID_CHAPTER))));
+      this->_pCBoxChapters->clear();
+      //Zmiana ilości dostępnych rozdziałów
+      for(int i=0; i<QGsReadBibleTextData::QGsInfoAllBooks[iIndex].ucCountChapt; i++)
+      {
+        this->_pCBoxChapters->addItem(iconChapters, QString("Rozdział: %1").arg(i+1));
+      }
+      //Przy zmianie księgi zostanie wysłany sygnał by zmienić ilość dostępnych rozdziałów
+      //a tym samym policzyć i zmienić ilość dostępnych wersetów w pierwszym rozdziale
+      emit this->_pCBoxChapters->currentIndexChanged(0);
+    }
+    break;
+    //---
+    case enTagCBox_Chapt: //Objekt klasy QComboBox wyboru rozdziału
+    {
+      QIcon iconVerses(QPixmap::fromImage(QImage::fromData(ID_SELECTVERS, sizeof(ID_SELECTVERS))));
+      int iVers = QGsReadBibleTextData::QCountVersSelectBookChapt(this->_pCBoxNameBooks->currentIndex(), pCBox->currentIndex()+1);
+      this->_pCBoxVers->clear();
+      for(int i=0; i<iVers; i++)
+      {
+        this->_pCBoxVers->addItem(iconVerses, QString("Werset: %1").arg(i+1));
+      }
+      this->_pPButtonPrevVers->setEnabled(false);
+      this->_pPButtonNextVers->setEnabled(true);
+    }
+    break;
+    //---
+    case enTagCBox_Vers: //Objekt klasy QComboBox wyboru wersetu
+    {
+      this->_pLabelDisplayAdress->setText(QString("%1 %2:%3").
+          arg(QGsReadBibleTextData::QGsInfoAllBooks[this->_pCBoxNameBooks->currentIndex()].ShortNameBook).
+          arg(this->_pCBoxChapters->currentIndex()+1).
+          arg(this->_pCBoxVers->currentIndex()+1));
+      //Odświerzenie wyświetlania po zmianie wybranego wersetu
+      this->_DisplaySelectVers(this->_pCBoxNameBooks->currentIndex(), this->_pCBoxChapters->currentIndex()+1,
+                               this->_pCBoxVers->currentIndex()+1);
+    }
+    break;
+  }
+}
+//---------------------------------------------------------------------------
+void QGsWidgetBarSelectVers::_DisplaySelectVers(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVer)
+/**
+   OPIS METOD(FUNKCJI): Odświerzenie wyświetlania po zmianie wybranego wersetu
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QString qstrViewSelectVers = QGsReadBibleTextData::QGsHTMLHeaderText,
+          qstrAddresVers;
+  //Wyłuskanie objektu klasy QStringList wybranego wersetu, dla wszystkich tłumaczeń
+  QGsReadBibleTextData::QGetSelectVerAllTranslate(cucBook, cucChapt, cucVer, this->_QSListSelectVers);
+  //Aktualizacja wyświetlania wybranego wersetu, dla każdego z tłumaczeń, w objekcie klast QTextedit.
+  //Wyłuskanie wskaźnika na objekt klasy QTextEdit, z klasy przodka (this->parent())
+  QGsWidgetSelectVers *pQGsWidgetSelectVers = qobject_cast<QGsWidgetSelectVers *>(this->parent());
+  for(int i=0; i<this->_QSListSelectVers.count(); i++)
+  {
+      qstrAddresVers = QGsReadBibleTextData::QConvertVerses(this->_QSListSelectVers.at(i), false);
+
+      qstrViewSelectVers.append(QString("<span class=styleFullColorAdressTranslates>%1 </span>").arg(qstrAddresVers));
+
+      qstrViewSelectVers.append(QString("<span class=styleFullText> %1 </span>").
+                         arg(this->_QSListSelectVers.at(i).midRef(10)));
+
+      //Ze wzgledu na to że ilość wersetów moze być więcej niż tłumaczeń i wtedy wystąpił by błąd przekroczenia indeksu dla tablicy
+      //"QGsReadBibleTextData::pQGsReadBibleTextClass->_QListItemsTranslates.at(i)->NameTranslate)", dlatego sformatowana informacja
+      //o nazwie tłumaczenia, w stylu html musi zostać przeprowadzona w motodzie tworzacej QstringListe "this->_QSListSelectVers".
+      //Czynność ta jest przeprowadzona w metodzie: "QGsReadBibleTextData::QGetSelectVerAllTranslate()".
+      //Do surowego i zakodowanego tekstu informacyjnego o numerze księgi, rozdziału i wersetu, oraz właściwego tekstu wersetu,
+      //zostaje dodana informacja w stylu html o nazwie tłumaczenia.
+
+      qstrViewSelectVers.append("<br>");
+  }
+
+  qstrViewSelectVers.append("</body></html>");
+  //Wyświetlenie domyślnego wersetu, po utworzeniu objektu klasy QGsWidgetBarSelectVers, dla każdego z tłumaczeń, w objekcie klast QTextedit (1Moj 1:1).
+  pQGsWidgetSelectVers->_pTEditVers->setHtml(qstrViewSelectVers);
+}
+//---------------------------------------------------------------------------
+QGsWidgetBarSelectVers::~QGsWidgetBarSelectVers()
+/**
+   OPIS METOD(FUNKCJI): Destruktor klasy
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+
+}
+/****************************************************************************
+ *                      Klasalasa QGsWidgetSelectVers                       *
+ ****************************************************************************/
+QGsWidgetSelectVers::QGsWidgetSelectVers(QWidget *parent) : QWidget(parent)
+/**
+   OPIS METOD(FUNKCJI): Konstruktor klasy
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->_pQGsWidgetBarSelectVers = new QGsWidgetBarSelectVers(this);
+  //--- Objekty klasy QCheckBox flag
+  this->_pChBoxIsComment = new QCheckBox(this);
+  this->_pChBoxIsComment->setText("Czy wyświetlać edytor komentarzy?");
+  this->_pChBoxIsSelectTranslates = new QCheckBox(this);
+  this->_pChBoxIsSelectTranslates->setText("Czy ma być możliwość wybory tłumaczeń?");
+  this->_pChBoxIsDisplayButtons = new QCheckBox(this);
+  this->_pChBoxIsDisplayButtons->setText("Czy mają być wyświetlane dodatkowe przyciski?");
+
+  this->_pTEditVers = new QTextEdit(this);
+
+  this->_pQGsEditorClass = new QGsEditorClass(this); //Edytor notatek
+
+  QVBoxLayout *pQVBoxLayout = new QVBoxLayout(this);
+  pQVBoxLayout->setContentsMargins(4, 4, 4, 4);
+
+  QHBoxLayout *pQHBoxLayoutFlags = new QHBoxLayout();
+  pQHBoxLayoutFlags->setContentsMargins(0, 0, 0, 0);
+  pQHBoxLayoutFlags->setSpacing(4);
+  pQHBoxLayoutFlags->addWidget(this->_pChBoxIsComment);
+  pQHBoxLayoutFlags->addWidget(this->_pChBoxIsSelectTranslates);
+  pQHBoxLayoutFlags->addWidget(this->_pChBoxIsDisplayButtons);
+
+  pQVBoxLayout->addWidget(this->_pQGsWidgetBarSelectVers);
+  pQVBoxLayout->addLayout(pQHBoxLayoutFlags);
+  pQVBoxLayout->addWidget(this->_pTEditVers);
+
+  pQVBoxLayout->addWidget(this->_pQGsEditorClass);
+  //Wyświetlenie domyślnego wersetu po uruchomieniu (1Moj 1:1)
+  this->_pQGsWidgetBarSelectVers->_DisplaySelectVers(0, 1, 1);
+}
+//---------------------------------------------------------------------------
+QGsWidgetSelectVers::~QGsWidgetSelectVers()
+/**
+   OPIS METOD(FUNKCJI): Destruktor klasy
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+
 }
 //---------------------------------------------------------------------------

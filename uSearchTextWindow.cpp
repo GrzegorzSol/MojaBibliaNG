@@ -926,7 +926,7 @@ void __fastcall TSearchTextWindow::STW_PControlViewsTextDrawTab(TCustomTabContro
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers,
-	EnTypeDisplayHTML _TypeDisplayHTML, int iSelectDisplayVerset)
+	const EnTypeDisplayHTML _TypeDisplayHTML, const int iSelectDisplayVerset)
 /**
 	OPIS METOD(FUNKCJI): W liście wyszukanych wersetów kliknięto na pozycje, lub liście statystyki
 	OPIS ARGUMENTÓW:

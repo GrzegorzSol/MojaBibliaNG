@@ -1406,6 +1406,30 @@ color: rgb(0, 0, 0);</string>
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="ButtonSaveConfigSearch">
+       <property name="text">
+        <string>Zapis konfiguracji wyszukiwania</string>
+       </property>
+       <property name="icon">
+        <iconset resource="MojaBibliaLite.qrc">
+         <normaloff>:/Setups/gfx/Zapisz.png</normaloff>:/Setups/gfx/Zapisz.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QPushButton" name="ButtonExitSearch">
        <property name="font">
         <font>

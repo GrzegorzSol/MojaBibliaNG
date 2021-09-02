@@ -42,21 +42,33 @@ object SearchTextWindow: TSearchTextWindow
       Caption = 'Szukany tekst'
       ImageIndex = 8
       object STW_InfoSearchTextLabel: TLabel
-        Left = 3
-        Top = 35
-        Width = 498
+        AlignWithMargins = True
+        Left = 6
+        Top = 16
+        Width = 1168
         Height = 13
+        Margins.Left = 6
+        Margins.Top = 16
+        Margins.Right = 6
+        Align = alTop
         AutoSize = False
         Caption = 
           'Wprowad'#378' tekst, do wyszukania w ksi'#281'gach Biblijnych. Wielko'#347#263' li' +
           'ter nie jest brana pod uwag'#281'.'
+        ExplicitLeft = 3
+        ExplicitTop = 35
+        ExplicitWidth = 498
       end
       object STW_ChBoxIsRegEx: TCheckBox
-        Left = 3
-        Top = 102
-        Width = 414
+        AlignWithMargins = True
+        Left = 9
+        Top = 65
+        Width = 451
         Height = 17
+        Margins.Left = 9
+        Margins.Right = 720
         CustomHint = BalloonHintSearch
+        Align = alTop
         Caption = 
           'Zastosuj wyszukiwanie za pomoc'#261' wyra'#380'e'#324' regularnych (dla zaawans' +
           'owanych)'
@@ -66,12 +78,15 @@ object SearchTextWindow: TSearchTextWindow
         ShowHint = True
         TabOrder = 0
         OnClick = STW_ChBoxIsRegExClick
+        ExplicitLeft = 3
+        ExplicitTop = 67
+        ExplicitWidth = 1174
       end
       object STW_ButtonHelpRegExp: TButton
-        Left = 989
-        Top = 102
+        Left = 981
+        Top = 65
         Width = 190
-        Height = 38
+        Height = 40
         CustomHint = BalloonHintSearch
         Caption = 'Pomoc w wyszukiwaniu za pomoc'#261' wyra'#380'e'#324' regularnych.'
         Enabled = False
@@ -84,29 +99,51 @@ object SearchTextWindow: TSearchTextWindow
         OnClick = STW_ButtonHelpRegExpClick
       end
       object STW_CBoxHistorySearchText: TComboBox
-        Left = 3
-        Top = 54
-        Width = 1176
+        AlignWithMargins = True
+        Left = 9
+        Top = 38
+        Width = 1162
         Height = 21
+        Margins.Left = 9
+        Margins.Top = 6
+        Margins.Right = 9
+        Align = alTop
         TabOrder = 2
         TextHint = 'Wpisz szukany tekst'
         OnChange = STW_CBoxHistorySearchTextChange
+        ExplicitLeft = 3
+        ExplicitTop = 54
+        ExplicitWidth = 1171
       end
       object STW_ChBoxSizeTextSearch: TCheckBox
-        Left = 3
-        Top = 125
-        Width = 413
+        AlignWithMargins = True
+        Left = 9
+        Top = 88
+        Width = 451
         Height = 17
+        Margins.Left = 9
+        Margins.Right = 720
+        Align = alTop
         Caption = 'Czy podczas wyszukiwania uwzgl'#281'dnia'#263' wielko'#347#263' liter?'
         TabOrder = 3
+        ExplicitLeft = 3
+        ExplicitTop = 90
+        ExplicitWidth = 1174
       end
       object STW_ChBoxMemoSetupsSearch: TCheckBox
-        Left = 3
-        Top = 148
-        Width = 413
+        AlignWithMargins = True
+        Left = 9
+        Top = 111
+        Width = 451
         Height = 17
+        Margins.Left = 9
+        Margins.Right = 720
+        Align = alTop
         Caption = 'Czy zapami'#281'ta'#263' parametry wyszukiwania?'
         TabOrder = 4
+        ExplicitLeft = -7
+        ExplicitTop = 136
+        ExplicitWidth = 1174
       end
     end
     object STW_TabSheetStatistick: TTabSheet
@@ -114,10 +151,6 @@ object SearchTextWindow: TSearchTextWindow
       ImageIndex = 7
       ParentShowHint = False
       ShowHint = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 191
       object STW_LViewStatistic: TListView
         Left = 0
         Top = 0
@@ -138,7 +171,6 @@ object SearchTextWindow: TSearchTextWindow
         ViewStyle = vsReport
         OnDrawItem = STW_LViewStatisticDrawItem
         OnSelectItem = STW_LViewAllSelectItem
-        ExplicitHeight = 191
       end
       object STW_PanelDisplaySearchBook: TPanel
         Left = 579
@@ -149,7 +181,6 @@ object SearchTextWindow: TSearchTextWindow
         BorderStyle = bsSingle
         ShowCaption = False
         TabOrder = 1
-        ExplicitHeight = 191
         object STW_WebBrowserSelectBookStatistic: TWebBrowser
           Left = 1
           Top = 18
@@ -194,10 +225,6 @@ object SearchTextWindow: TSearchTextWindow
     object STW_TabSheetSettings: TTabSheet
       Caption = 'Dodatkowe ustawienia'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 191
       object STW_GrBoxSetupsStatistic: TGroupBox
         Left = 0
         Top = 0
@@ -273,7 +300,6 @@ object SearchTextWindow: TSearchTextWindow
           'Ustawienia dotycz'#261'ce zak'#322'adki wybory pojedy'#324'czego wersetu z list' +
           'y wyszukanych tekst'#243'w'
         TabOrder = 2
-        ExplicitTop = 148
         object STW_LabelBackGroundSelectVers: TLabel
           Left = 12
           Top = 17
@@ -478,10 +504,6 @@ object SearchTextWindow: TSearchTextWindow
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 272
         object STW_WBrowserResultSearch: TWebBrowser
           Left = 0
           Top = 0

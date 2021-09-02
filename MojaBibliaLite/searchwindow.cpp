@@ -10,9 +10,11 @@
 #if defined(_DEBUGINFO_)
  qDebug() << "";
 #endif
-*/
-//enum {enAllButtonSearch_Search, enAllButtonSearch_Help, enAllButtonSearch_Cancel};
 
+#if defined(_DEBUGINFO_)
+  qDebug("%d", 12);
+#endif
+*/
 //--- Właściwości użytkownika dla objektów
 const char PropLWidgetTag[] = "usp_PropLWidget",
            PropCBoxTag[] = "usp_PropCBoxTag",
@@ -48,8 +50,7 @@ SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Search
  this->ui->PageTabInputSearchText->setCurrentIndex(0);
  this->ui->PageTabSelectVievResult->setCurrentIndex(0);
  //---
- QIcon iconItems;
- iconItems.addFile(":/TreeBooks/gfx/Księga.png", QSize(), QIcon::Normal, QIcon::Off);
+ QIcon iconItems(":/Search/gfx/KsięgaStat.png");
 
  MyDelegate *pMyDelegate = new MyDelegate(this->ui->LViewStatistic);
  this->ui->LViewStatistic->setItemDelegate(pMyDelegate);
@@ -104,7 +105,7 @@ SearchWindow::SearchWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Search
     this->ui->LViewStatistic->addItem(newItem);
  }
  //Domyślnie zakładka statystyki jest niwidoczna
- this->ui->PageTabInputSearchText->setTabVisible(enTabSheet_Statistic, false);
+ //this->ui->PageTabInputSearchText->setTabVisible(enTabSheet_Statistic, false);
  //Odczyt pliku konfiguracyjnego
  this->_ReadAllConfig();
 }
@@ -125,7 +126,7 @@ SearchWindow::~SearchWindow()
 
   //Zapisy do pliku konfiguracyjnego
    //Wygląd
-  this->_WriteAllConfig();
+  //this->_WriteAllConfig();
 
   delete this->ui;
 }
@@ -142,13 +143,16 @@ void SearchWindow::_ReadAllConfig()
 
   GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ColorsSetupsSection_Main);
    //Kolory dla QPushButton ustawiania kolorów podkładu
-   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch, 11899830).toInt();
+   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch, (QRgb)11829830).toInt();
    SetupColorPButton(this->ui->ButtonColorAllSearch, iRGBTemp);
+  #if defined(_DEBUGINFO_)
+    qDebug("iRGBTemp :%u", iRGBTemp);
+  #endif
    //---
-   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupBackGroundSelectVers, 11829830).toInt();
+   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupBackGroundSelectVers, (QRgb)11829830).toInt();
    SetupColorPButton(this->ui->ButtonColorSelectSearch, iRGBTemp);
    //---
-   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupBackGroundStatistictBookSearch, 11829830).toInt();
+   iRGBTemp = (QRgb)GlobalVar::Global_ConfigFile->value(GlobalVar::GlobalIni_ColorsSetupBackGroundStatistictBookSearch, (QRgb)11829830).toInt();
    SetupColorPButton(this->ui->ButtonColorStatictic, iRGBTemp);
    //---
   GlobalVar::Global_ConfigFile->endGroup();
@@ -184,6 +188,9 @@ void SearchWindow::_WriteAllConfig()
   GlobalVar::Global_ConfigFile->beginGroup(GlobalVar::GlobalIni_ColorsSetupsSection_Main);
     //Kolory dla QPushButton ustawiania kolorów podkładu
     iRGBTemp = ReadColorPButton(this->ui->ButtonColorAllSearch);
+#if defined(_DEBUGINFO_)
+  qDebug("iRGBTemp :%u", iRGBTemp);
+#endif
     GlobalVar::Global_ConfigFile->setValue(GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch, iRGBTemp);
     //---
     iRGBTemp = ReadColorPButton(this->ui->ButtonColorSelectSearch);
@@ -249,6 +256,7 @@ void SearchWindow::_InitSignalsAndTags()
   connect(this->ui->ButtonSearchStart, SIGNAL(clicked()), this, SLOT(_OnClickButtonStartSearch())); //Rozpoczęcie wyszukiwania
   connect(this->ui->ButtonHelpSearch, SIGNAL(clicked()), this, SLOT(_OnClickButtonHelpSearch())); //Pomoc dla wyszukiwania
   connect(this->ui->ButtonExitSearch, SIGNAL(clicked()), this, SLOT(_OnClickButtonExitSearch())); //Wyjście z wyszukiwania
+  connect(this->ui->ButtonSaveConfigSearch, SIGNAL(clicked()), this, SLOT(_OnClickButtonSaveSearchConfig() ));
 
   connect(this->ui->CBoxSelectRangeBooksSearch, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCurentCBoxIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
   connect(this->ui->CBoxStartSelectBook, SIGNAL(currentIndexChanged(int)), this, SLOT(_OnSetCurentCBoxIndexChange(int))); //Zmieniłeś wybór elementu w QComboBox
@@ -439,6 +447,27 @@ void SearchWindow::_OnClickSelectColors()
     //Aktualizacja wyświetlania wszystkich znalezionych wersetów
     this->_DisplayListTextHTML(this->ui->TextEditSelectItemResult, this->_QListSearchResult, enTypeDisplay_ResultsearchAll);
   }
+}
+//---------------------------------------------------------------------------
+void SearchWindow::_OnClickButtonSaveSearchConfig()
+/**
+   OPIS METOD(FUNKCJI): Zapis konfiguracji wyszukiwania
+   OPIS ARGUMENTÓW:
+   OPIS ZMIENNYCH:
+   OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  QPushButton *pButton = qobject_cast<QPushButton *>(QObject::sender());
+  if(!pButton) return;
+  //---
+#if defined(_DEBUGINFO_)
+ qDebug() << "_OnClickButtonSaveSearchConfig()";
+#endif
+
+ //Zapisy do pliku konfiguracyjnego
+  //Wygląd
+ this->_WriteAllConfig();
+ this->close();
 }
 //---------------------------------------------------------------------------
 void SearchWindow::_OnSetCurentCBoxIndexChange(int iIndex)

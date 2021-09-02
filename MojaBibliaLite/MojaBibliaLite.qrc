@@ -6,20 +6,7 @@
         <file>gfx/ZamknięcieAktywnejZakładki.png</file>
         <file>gfx/ZmianaObszaru.png</file>
         <file>gfx/Informacje.png</file>
-    </qresource>
-    <qresource prefix="/TreeBooks">
-        <file>gfx/GrupaKsiąg.png</file>
-        <file>gfx/Księga.png</file>
-        <file>gfx/PismoŚwięte.png</file>
-        <file>gfx/MenuRozdział.png</file>
-    </qresource>
-    <qresource prefix="/SheetText">
-        <file>gfx/NastępnaKsięga.png</file>
-        <file>gfx/PoprzedniaKsięga.png</file>
-        <file>gfx/NastępnyRozdział.png</file>
-        <file>gfx/PoprzedniRozdział.png</file>
-        <file>gfx/PrzekładBiblii.png</file>
-        <file>gfx/WybierzRozdział.png</file>
+        <file>gfx/WybórWersetu.png</file>
     </qresource>
     <qresource prefix="/Search">
         <file>gfx/HelpReg.png</file>

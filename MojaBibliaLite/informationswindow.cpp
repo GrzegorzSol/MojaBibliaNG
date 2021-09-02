@@ -2,7 +2,15 @@
 #include "ui_informationswindow.h"
 #include <QMouseEvent>
 
-//#include <QDebug>
+/*
+#if defined(_DEBUGINFO_)
+ qDebug() << "";
+#endif
+
+#if defined(_DEBUGINFO_)
+  qDebug("%d", 12);
+#endif
+*/
 
 InformationsWindow::InformationsWindow(QWidget *parent, bool _bNormal) :
   QDialog(parent), ui(new Ui::InformationsWindow), bNormalStart(_bNormal)

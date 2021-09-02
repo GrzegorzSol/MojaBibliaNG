@@ -45,68 +45,6 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Ustawienia kolor'#243'w aplikacji'
         TabOrder = 0
-        object LabelColorFavorities: TLabel
-          Left = 163
-          Top = 117
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor zaznaczenie ulubionych werset'#243'w'
-          Layout = tlCenter
-        end
-        object LabelColorComment: TLabel
-          Left = 163
-          Top = 145
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 
-            'Kolor czcionki znacznika dla  werset'#243'w, do kt'#243'rego istnieje kome' +
-            'ntarz'
-          Layout = tlCenter
-        end
-        object LabelColorBacground: TLabel
-          Left = 163
-          Top = 33
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor podk'#322'adu dla tekstu werset'#243'w, w g'#322#243'wnym oknie'
-          Layout = tlCenter
-        end
-        object LabelColorNameTranslate: TLabel
-          Left = 163
-          Top = 61
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor czcionki, nazwy pe'#322'nego t'#322'umaczenia'
-          Layout = tlCenter
-        end
-        object LabelColorAdresFullTranslates: TLabel
-          Left = 163
-          Top = 89
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor czcionki, adresu wersetu, dla pe'#322'nego t'#322'umaczenia'
-          Layout = tlCenter
-        end
-        object LabelColorBackgroundMarkComments: TLabel
-          Left = 163
-          Top = 173
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor podk'#322'adu, znacznika istnienia komentarza do wersetu.'
-          Layout = tlCenter
-        end
         object LabelColorOrygTr: TLabel
           Left = 163
           Top = 201
@@ -117,28 +55,9 @@ object SetupsWindow: TSetupsWindow
           Caption = 'Kolor tekstu, dla oryginalnych t'#322'umacze'#324
           Layout = tlCenter
         end
-        object LabelColorNameOrygTrans: TLabel
-          Left = 163
-          Top = 229
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor nazwy oryginalnego t'#322'umaczenia'
-          Layout = tlCenter
-        end
-        object LabelColorAdressOryg: TLabel
-          Left = 163
-          Top = 257
-          Width = 337
-          Height = 13
-          CustomHint = SW_BalloonHint
-          AutoSize = False
-          Caption = 'Kolor adresu oryginalnego t'#322'umaczenia'
-        end
-        object SW_ColorBoxFavorities: TColorBox
+        object SW_ColorBoxColorOrygTr: TColorBox
           Left = 12
-          Top = 114
+          Top = 198
           Width = 145
           Height = 22
           CustomHint = SW_BalloonHint
@@ -147,93 +66,216 @@ object SetupsWindow: TSetupsWindow
           OnChange = SW_ColorAllChange
           OnGetColors = SW_ColorBoxGetColors
         end
-        object SW_ColorBoxComment: TColorBox
-          Left = 12
-          Top = 142
-          Width = 145
-          Height = 22
+        object GrBoxSetupsFullTr: TGroupBox
+          Left = 2
+          Top = 15
+          Width = 693
+          Height = 105
           CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+          Align = alTop
+          Caption = 'Kolory dla pe'#322'nych przek'#322'ad'#243'w Pisma '#346'wi'#281'tego'
           TabOrder = 1
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
+          ExplicitLeft = 200
+          ExplicitTop = 246
+          ExplicitWidth = 497
+          object LabelColorBacground: TLabel
+            Left = 170
+            Top = 22
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor podk'#322'adu dla tekstu werset'#243'w, w g'#322#243'wnym oknie'
+            Layout = tlCenter
+          end
+          object LabelColorNameTranslate: TLabel
+            Left = 170
+            Top = 50
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor czcionki, nazwy pe'#322'nego t'#322'umaczenia'
+            Layout = tlCenter
+          end
+          object LabelColorAdresFullTranslates: TLabel
+            Left = 170
+            Top = 78
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor czcionki, adresu wersetu, dla pe'#322'nego t'#322'umaczenia'
+            Layout = tlCenter
+          end
+          object SW_ColorBoxBackground: TColorBox
+            Left = 12
+            Top = 19
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 0
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
+          object SW_ColorBoxNameTranslate: TColorBox
+            Left = 12
+            Top = 47
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 1
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
+          object SW_ColorBoxColorAdressFulltranslates: TColorBox
+            Left = 12
+            Top = 75
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 2
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
         end
-        object SW_ColorBoxNameTranslate: TColorBox
-          Left = 12
-          Top = 58
-          Width = 145
-          Height = 22
+        object GrBoxSelectAndCommentsSetups: TGroupBox
+          Left = 2
+          Top = 120
+          Width = 693
+          Height = 105
           CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+          Align = alTop
+          Caption = 
+            'Koloru dla ulubionych werset'#243'w, ora takich, kt'#243're posiadaj'#261' kome' +
+            'ntarze'
           TabOrder = 2
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
+          ExplicitLeft = 320
+          ExplicitTop = 217
+          ExplicitWidth = 377
+          object LabelColorFavorities: TLabel
+            Left = 170
+            Top = 50
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor zaznaczenie ulubionych werset'#243'w'
+            Layout = tlCenter
+          end
+          object LabelColorComment: TLabel
+            Left = 170
+            Top = 22
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 
+              'Kolor czcionki znacznika dla  werset'#243'w, do kt'#243'rego istnieje kome' +
+              'ntarz'
+            Layout = tlCenter
+          end
+          object LabelColorBackgroundMarkComments: TLabel
+            Left = 170
+            Top = 81
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor podk'#322'adu, znacznika istnienia komentarza do wersetu.'
+            Layout = tlCenter
+          end
+          object SW_ColorBoxFavorities: TColorBox
+            Left = 12
+            Top = 47
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 0
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
+          object SW_ColorBoxComment: TColorBox
+            Left = 12
+            Top = 19
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 1
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
+          object SW_ColorBackgroundMarkerComment: TColorBox
+            Left = 12
+            Top = 75
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 2
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
         end
-        object SW_ColorBoxBackground: TColorBox
-          Left = 12
-          Top = 30
-          Width = 145
-          Height = 22
+        object GrBoxOryginalPartTranslates: TGroupBox
+          Left = 2
+          Top = 225
+          Width = 693
+          Height = 127
           CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+          Align = alClient
+          Caption = 'Kolory dla przek'#322'ad'#243'w niekompletnych, lub oryginalnych'
           TabOrder = 3
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
-        end
-        object SW_ColorBoxColorAdressFulltranslates: TColorBox
-          Left = 12
-          Top = 86
-          Width = 145
-          Height = 22
-          CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-          TabOrder = 4
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
-        end
-        object SW_ColorBackgroundMarkerComment: TColorBox
-          Left = 12
-          Top = 170
-          Width = 145
-          Height = 22
-          CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-          TabOrder = 5
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
-        end
-        object SW_ColorBoxColorOrygTr: TColorBox
-          Left = 12
-          Top = 198
-          Width = 145
-          Height = 22
-          CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-          TabOrder = 6
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
-        end
-        object SW_ColorBoxColorNameOrygTran: TColorBox
-          Left = 12
-          Top = 226
-          Width = 145
-          Height = 22
-          CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-          TabOrder = 7
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
-        end
-        object SW_ColorBoxAdressOryg: TColorBox
-          Left = 12
-          Top = 254
-          Width = 145
-          Height = 22
-          CustomHint = SW_BalloonHint
-          Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-          TabOrder = 8
-          OnChange = SW_ColorAllChange
-          OnGetColors = SW_ColorBoxGetColors
+          ExplicitLeft = 512
+          ExplicitTop = 249
+          ExplicitWidth = 185
+          ExplicitHeight = 105
+          object LabelColorAdressOryg: TLabel
+            Left = 170
+            Top = 50
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor adresu oryginalnego t'#322'umaczenia'
+          end
+          object LabelColorNameOrygTrans: TLabel
+            Left = 170
+            Top = 22
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor nazwy oryginalnego t'#322'umaczenia'
+            Layout = tlCenter
+          end
+          object SW_ColorBoxAdressOryg: TColorBox
+            Left = 12
+            Top = 47
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 0
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
+          object SW_ColorBoxColorNameOrygTran: TColorBox
+            Left = 12
+            Top = 19
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 1
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
         end
       end
       object SW_ScrBoxViewSetupColors: TScrollBox

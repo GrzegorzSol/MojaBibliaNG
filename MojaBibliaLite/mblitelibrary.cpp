@@ -2,9 +2,16 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-//#include <QApplication>
-//#include <QWidget>
 
+/*
+#if defined(_DEBUGINFO_)
+ qDebug() << "";
+#endif
+
+#if defined(_DEBUGINFO_)
+  qDebug("%d", 12);
+#endif
+*/
 
 bool LoadFileToStrList(QStringList &_QSList, const QString _Path)
 /**

@@ -85,11 +85,6 @@ void GlobalVar::GFunInitGlobal()
   //Ścieżka dostępu do pliku konfiguracyjnego
   GlobalVar::Global_GetConfigFile = QDir::toNativeSeparators(dirTempMainDir.filePath(qcstrNameConfig));
 
-  #if defined(_DEBUGINFO_)
-    qDebug() << "GlobalVar::Global_GetPathBackgroundWindow: " << GlobalVar::Global_GetPathBackgroundWindow;
-    qDebug() << "GlobalVar::Global_GetPathHistorySearch: " << GlobalVar::Global_GetPathHistorySearch;
-  #endif
-
   //Style
   GlobalVar::Global_SheetStr =
      QString("") +

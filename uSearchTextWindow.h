@@ -111,7 +111,7 @@ private:	// User declarations
 	int _iStart_index;	//Początkowy index dla TListView
 	int _iEnd_index;    //Końcowy index dla TListView
 	void __fastcall _DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers,
-		EnTypeDisplayHTML _TypeDisplayHTML, int iSelectDisplayVerset=-1);
+		const EnTypeDisplayHTML _TypeDisplayHTML, const int iSelectDisplayVerset=-1);
 public:		// User declarations
 	__fastcall TSearchTextWindow(TComponent* Owner);
 };

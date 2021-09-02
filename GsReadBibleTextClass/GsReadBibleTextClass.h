@@ -22,6 +22,8 @@
 #ifndef GsReadBibleTextClassH
 #define GsReadBibleTextClassH
 //---------------------------------------------------------------------------
+//#define _TEST_CONTROLLIST_
+
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.Tabs.hpp>	//TTabSet
@@ -30,9 +32,12 @@
 #include <Vcl.OleCtrls.hpp> //TWebBrowser
 #include <Vcl.Grids.hpp> //TStringGrid
 #include <Vcl.Taskbar.hpp>//TTaskBar
+#if defined(_TEST_CONTROLLIST_)
+	#include <Vcl.ControlList.hpp> //TControlList
+#endif
 #include "GsComponents\GsEditorClass.h"
 
-static UnicodeString sustrVersionGsReadBibleTextClass = "0.9.8990.9682";
+static UnicodeString sustrVersionGsReadBibleTextClass = "0.9.94256.9954";
 enum enReturnError {enR_NoError,           //Brak błędu
 										enR_GSelectBoook=1000  //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
@@ -238,6 +243,7 @@ class GsReadBibleTextData
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
  ****************************************************************************/
+const int CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER = 3;
 class MyObjectVers : public TObject
 {
 	friend class GsReadBibleTextClass; //Klasa GsReadBibleTextClass ma pełny dostęp
@@ -250,6 +256,8 @@ class MyObjectVers : public TObject
 		UnicodeString BookChaptVers,	//Identfikacja(adres)wersetu w wersji klasycznej (1Moj 1:1)
 									AdressString,		//Adres wersetu w wersji zakodowanej (001001001)
 									NameTranslate;	//Nazwa tłumaczenia
+		wchar_t ReplaceAdressIsNotValidNumber[CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER]; //Dodatek do adresu wersetu(numeru wersetu), gdy w tłumaczeniu znajduje się
+                                           //dodatek w formie litery
 		unsigned char ucIdTranslate,  //Numer tłumaczenia
 									ucBook,   //Numer księgi
 									ucChapt,  //Numer rozdziału
@@ -283,7 +291,8 @@ class GsReadBibleTextItem
 								ucIndexTranslate;//Numer tłumaczenia
 	public:
 		EnTypeTranslate enTypeTranslate; //Typ tłumaczenia, typu EnTypeTranslate (całe pismo, grecki nt. itd.)
-		UnicodeString NameTranslate;	//Nazwa tłumaczenia
+		UnicodeString NameTranslate,	//Nazwa tłumaczenia
+									PathInfoTranslate; //Ścieżka do pliku informacji o tłumaczeniu
 		int uiAllVersCount;  //Ilość wszystkich wersetów
 };
 /****************************************************************************
@@ -436,21 +445,40 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSaveComments(System::TObject* Sender);
 	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 	void __fastcall _DisplayInfosTranslates(const int iTab=-1); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
+
+	void __fastcall _InitToolBarAllButtons(TPanel *pPanelParent); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
+	void __fastcall _InitToolBarViewText(TPanel *pPanelParent); //Inicjalizacja objektu klasy TToolbar do zmieniania widoków wyświetlanych wersetów
+	void __fastcall _InitCBoxChaptersSelect(TPanel *pPanelParent); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
+	void __fastcall _InitPanelInfoTranslation(); //Panel z objektami informacyjnymi o wybranym tłumaczeniu
+	void __fastcall _InitPanelTextBible(TPanel *pPanelParent); //Kontrolki dotyczące tekstu biblijnego: TProgressBar,
+																														  //TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
+	#if defined(_TEST_CONTROLLIST_)
+		void __fastcall _InitControlListDisplayVerses(TPanel *pPanelParent); //Inicjalizacja objektu klasy TControlList z objektami pomocniczymi
+    void __fastcall _pControlListDisplayVerBeforeDrawItem(int AIndex, TCanvas *ACanvas, const TRect &ARect,
+					TOwnerDrawState AState); //Wydarzenie związane z objektem _pControlListDisplayVer klasy TControlList
+	#endif
+	void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń
 	TWebBrowser *pWebBrowser,
-							*pWebBrowserinfoTranslations;
+							*pWebBrowserInfoTranslations;
 	TComboBox *pComboBox; //Lista do wyboru konkretnego rodziału, już bybranej księgi
 	TProgressBar *pProgressBar; //Pionowy wskaźnik, umiejscowienia pozycji w rozdziale
 	TStringBuilder *pStrBuilderHtml;	//Tekst html aktualnie wczytanego rozdziału z wybranej księgi
+	THashedStringList *pHSListActualText; //Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+																				//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 	GsListBoxSelectedVersClass *pLBoxSelectText;	//Lista ulubionych wersetów
 	GsEditorClass *pGsEditorClass;               //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd;
   TPanel *pPanelInfoTraslates;
 	//--- Niektóre przyciski na TToolbarach
 	TToolButton *pToolButtonEdit,	//Przycisk do edycji
-              *pToolButtonInfoTranslates;//Przycisk do informacji o przekładach
+							*pToolButtonInfoTranslates;//Przycisk do informacji o przekładach
+	#if defined(_TEST_CONTROLLIST_)
+		TControlList *_pControlListDisplayVer; //Wyświetlanie wersetów wybranego rozdziału za pomocą objektu klasy TControlList
+		TLabel *_pLabelAdress, *_pLabelTextVers, *_pLabelNameTranslate;
+  #endif
 	public:
 		unsigned char _ShucIndexBook,       //Numer księgi
 									_ShucIndexChapt;      //Numer rozdziału
@@ -633,12 +661,12 @@ class DataGrecWordDictClass
 {
 	friend class GsLViewDictionaryClass;
 
-	__fastcall DataGrecWordDictClass()
+	DataGrecWordDictClass()
 	{
 		this->pHSListVers = new THashedStringList();
 		if(!this->pHSListVers) throw(Exception("Błąd funkcji THashedStringList"));
 	};
-	__fastcall virtual ~DataGrecWordDictClass()
+	virtual ~DataGrecWordDictClass()
 	{
 		delete this->pHSListVers; this->pHSListVers = 0;
 	};

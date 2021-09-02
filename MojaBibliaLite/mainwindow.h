@@ -36,5 +36,6 @@ private slots:
  void _Act_SavetoFile();
  void _Act_ResizeToolsTabs();
  void _Act_Informations();
+ void _Act_SelectVers();
 };
 #endif // MAINWINDOW_H
