@@ -33,7 +33,7 @@ __fastcall GsCoreBibleScheme::GsCoreBibleScheme(TComponent* Owner) : TCustomPane
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsCoreBibleScheme::~GsCoreBibleScheme()
@@ -61,6 +61,7 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	this->ListChildren = new TList();
 	if(!this->ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->SListVers = new THashedStringList(); //Lista wersetów ze wszystkich tłumaczeñ
 	if(!this->SListVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	//---
@@ -267,6 +268,7 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->DoubleBuffered = true;
 	this->AutoSize = true;
   this->BevelOuter = bvNone;
@@ -665,6 +667,7 @@ __fastcall GsScrollBibleScheme::GsScrollBibleScheme(TComponent* Owner) : TScroll
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  this->Font->Quality = TFontQuality::fqClearType;
 	this->DoubleBuffered = true;
 	this->HorzScrollBar->Tracking = true;
 	this->VertScrollBar->Tracking = true;
@@ -722,6 +725,7 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
   Randomize();  //Uruchomienie generatora liczb losowych.
 	//---
 	this->DoubleBuffered = true;
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsMasterBibleScheme::~GsMasterBibleScheme()

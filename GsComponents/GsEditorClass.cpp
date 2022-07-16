@@ -76,6 +76,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 {
 	this->pTImageListActive = new TImageList(this);
 	if(!this->pTImageListActive) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->pTImageListActive->ColorDepth = cd32Bit;     //Głębia kolorów przyszłych obrazków
 	this->pTImageListActive->DrawingStyle = dsTransparent;
 		//
@@ -90,17 +91,18 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pSBar->Parent = this;
 	this->pSBar->ShowHint = true;
 	this->pSBar->Hint = "Informacje";
+	this->pSBar->Font->Quality = TFontQuality::fqClearType;
 	//---
 	this->pTRichEdit = new TRichEdit(this);
 	if(!this->pTRichEdit) throw(Exception("Nie dokonano inicjalizacji objektu TRichEdit"));
 	this->pTRichEdit->Parent = this;
 	this->pTRichEdit->Align = alClient;
+	this->pTRichEdit->Font->Quality = TFontQuality::fqClearType;
 	//Zależność suwaka przewijania, od atrybutu WordWrap
 	if (this->pTRichEdit->WordWrap) this->pTRichEdit->ScrollBars = ssVertical; //Suwak tylko pionowy
 	else this->pTRichEdit->ScrollBars = ssBoth; //Suwak pionowy i poziomy
 	//---
 	//this->pTRichEdit->ScrollBars = ssBoth;
-	this->pTRichEdit->Font->Quality = TFontQuality::fqAntialiased;
 	this->pTRichEdit->OnSelectionChange = this->_OnSelectionChangeEdit;
 	this->pTRichEdit->OnChange = this->_OnChangeEdit;
   //Wartości domyślne prywatnych danych

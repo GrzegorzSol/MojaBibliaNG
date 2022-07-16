@@ -28,6 +28,7 @@ __fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) :
 	this->_pImages = new TImageList(this);
 	if(!this->_pImages) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
 	//---
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->_pImages->ColorDepth = cd32Bit;     //Głębia kolorów przyszłych obrazków
 	this->_pImages->DrawingStyle = dsTransparent;
 	this->_InitAllImage();

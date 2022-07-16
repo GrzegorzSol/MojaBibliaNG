@@ -13,6 +13,7 @@ object InformationsAppWindow: TInformationsAppWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
@@ -5042,6 +5043,7 @@ object InformationsAppWindow: TInformationsAppWindow
       Font.Height = -16
       Font.Name = 'Arial'
       Font.Style = [fsBold]
+      Font.Quality = fqClearType
       ParentFont = False
       TabOrder = 0
     end
@@ -5071,7 +5073,6 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 2
-      ExplicitTop = 397
     end
     object STextInfoSystem: TStaticText
       AlignWithMargins = True
@@ -5086,8 +5087,6 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 3
-      ExplicitLeft = 15
-      ExplicitTop = 475
     end
   end
   object TimerInfoSystem: TTimer

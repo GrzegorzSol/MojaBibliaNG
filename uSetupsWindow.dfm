@@ -13,6 +13,7 @@ object SetupsWindow: TSetupsWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
@@ -26,7 +27,7 @@ object SetupsWindow: TSetupsWindow
     Width = 705
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetLajout
+    ActivePage = SW_SheetTranslates
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -75,9 +76,6 @@ object SetupsWindow: TSetupsWindow
           Align = alTop
           Caption = 'Kolory dla pe'#322'nych przek'#322'ad'#243'w Pisma '#346'wi'#281'tego'
           TabOrder = 1
-          ExplicitLeft = 200
-          ExplicitTop = 246
-          ExplicitWidth = 497
           object LabelColorBacground: TLabel
             Left = 170
             Top = 22
@@ -153,9 +151,6 @@ object SetupsWindow: TSetupsWindow
             'Koloru dla ulubionych werset'#243'w, ora takich, kt'#243're posiadaj'#261' kome' +
             'ntarze'
           TabOrder = 2
-          ExplicitLeft = 320
-          ExplicitTop = 217
-          ExplicitWidth = 377
           object LabelColorFavorities: TLabel
             Left = 170
             Top = 50
@@ -231,10 +226,6 @@ object SetupsWindow: TSetupsWindow
           Align = alClient
           Caption = 'Kolory dla przek'#322'ad'#243'w niekompletnych, lub oryginalnych'
           TabOrder = 3
-          ExplicitLeft = 512
-          ExplicitTop = 249
-          ExplicitWidth = 185
-          ExplicitHeight = 105
           object LabelColorAdressOryg: TLabel
             Left = 170
             Top = 50
@@ -768,7 +759,7 @@ object SetupsWindow: TSetupsWindow
       OnClick = SW_ButtSetups_Click
     end
     object SW_ButtSetupReturn: TButton
-      Left = 368
+      Left = 369
       Top = 2
       Width = 157
       Height = 25

@@ -429,7 +429,9 @@ void __fastcall TMainBibleWindow::_AppException(TObject *Sender, Exception *pExc
 */
 {
 	Application->ShowException(pException);
-	Application->Terminate(); //Zamknięcie aplikacji
+  this->OnCloseQuery = nullptr;
+	this->Close();
+	//Application->Terminate(); //Zamknięcie aplikacji
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_InitAllTagAndHint()

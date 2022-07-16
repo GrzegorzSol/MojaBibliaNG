@@ -11,6 +11,7 @@ object DictGrecPolWindow: TDictGrecPolWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose

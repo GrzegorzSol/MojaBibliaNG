@@ -693,10 +693,6 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	{
 		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
-	#if defined(_TEST_CONTROLLIST_)
-		//Wyświetlanie wersetów wybranego rozdziału za pomocą objektu klasy TControlList
-		pGsTabSheetClass->_pControlListDisplayVer->ItemCount = pGsTabSheetClass->pHSListActualText->Count;
-	#endif
 }
 //---------------------------------------------------------------------------
 GsReadBibleTextItem *__fastcall GsReadBibleTextClass::GetTranslateClass(const int iNumberTrans)
@@ -831,6 +827,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	this->DragMode = dmAutomatic;
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements() << seBorder; //Tylko Border
+	this->Font->Quality = TFontQuality::fqClearType;
 	//---
 	this->FPMenuBook = new TPopupMenu(this);
 	if(!this->FPMenuBook) throw(Exception("Błąd inicjalizacji klasy TPopupMenu"));
@@ -1259,7 +1256,8 @@ __fastcall GsListBoxSelectedVersClass::GsListBoxSelectedVersClass(TComponent* Ow
 	this->StyleElements = TStyleElements();
 	this->MultiSelect = true; this->ExtendedSelect = false;
 	this->Color = clCream;
-  this->iRIndex = -1;  //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
+	this->iRIndex = -1;  //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
+  this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxSelectedVersClass::~GsListBoxSelectedVersClass()
@@ -1417,6 +1415,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	//---
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->pStrBuilderHtml = new TStringBuilder();
 	if(!this->pStrBuilderHtml) throw(Exception("Błąd inicjalizacji klasy TStringBuilder"));
 	//---
@@ -1439,6 +1438,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	pPanelBox->BorderStyle = bsNone;
   pPanelBox->BevelOuter = bvNone;
 	pPanelBox->ShowCaption = false;
+	pPanelBox->Font->Quality = TFontQuality::fqClearType;
 
 	this->_InitCBoxChaptersSelect(pPanelBox); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
 	this->_InitToolBarAllButtons(pPanelBox); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
@@ -1456,12 +1456,9 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	pPanelText->ShowCaption = false;
 	pPanelText->OnDragDrop = this->OnDragDrop;
 	pPanelText->OnDragOver = this->OnDragOver;
+	pPanelText->Font->Quality = TFontQuality::fqClearType;
 	this->_InitPanelTextBible(pPanelText); //Kontrolki dotyczące tekstu biblijnego: TProgressBar, TWebBrowser,
 																				 //GsListBoxSelectedVersClass, GsEditorClass
-	#if defined(_TEST_CONTROLLIST_)
-		//Wyświetlanie wersetów wybranego rozdziału za pomocą objektu klasy TControlList
-		this->_InitControlListDisplayVerses(pPanelText); //Inicjalizacja objektu klasy TControlList z objektami pomocniczymi
-	#endif
 	//Splitter
 	this->pSplitterEd = new TSplitter(pPanelText);
 	if(!this->pSplitterEd) throw(Exception("Błąd inicjalizacji klasy TSplitter"));
@@ -1490,6 +1487,7 @@ void __fastcall GsTabSheetClass::_InitPanelInfoTranslation()
 	this->pPanelInfoTraslates->Height = 128;
 	this->pPanelInfoTraslates->ShowCaption = false;
 	this->pPanelInfoTraslates->BorderStyle = bsSingle;
+	this->pPanelInfoTraslates->Font->Quality = TFontQuality::fqClearType;
 	//---
 	this->pWebBrowserInfoTranslations = new TWebBrowser(this->pPanelInfoTraslates);
 	if(!this->pWebBrowserInfoTranslations) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
@@ -1538,6 +1536,7 @@ void __fastcall GsTabSheetClass::_InitPanelTextBible(TPanel *pPanelParent)
 	this->pLBoxSelectText->Align = alLeft;
 	this->pLBoxSelectText->Width = 98;
 	this->pLBoxSelectText->Visible = false;
+	this->pLBoxSelectText->Font->Quality = TFontQuality::fqClearType;
 	//Edycja komentarza do wybranego wersetu, lub rozdziału
 	this->pGsEditorClass = new GsEditorClass(pPanelParent);
 	if(!this->pGsEditorClass) throw(Exception("Błąd inicjalizacji klasy GsEditorClass"));
@@ -1677,6 +1676,7 @@ void __fastcall GsTabSheetClass::_InitCBoxChaptersSelect(TPanel *pPanelParent)
 	if(!pGsTreeNodeClass) throw(Exception("Błąd procedury wyłuskania, objektu klasy GsTreeNodeClass"));
 	this->pComboBox = new TComboBox(pPanelParent);
 	this->pComboBox->Parent = pPanelParent;
+	this->pComboBox->Font->Quality = TFontQuality::fqClearType;
 	this->pComboBox->Align = alLeft;
 	this->pComboBox->AlignWithMargins = true;
 	this->pComboBox->Margins->Left = 4; this->pComboBox->Margins->Right = 4;
@@ -1707,6 +1707,7 @@ void __fastcall GsTabSheetClass::_InitTabSetDisplayTranslates()
 	this->pGsTabSetClass = new GsTabSetClass(this);
 	if(!this->pGsTabSetClass) throw(Exception("Błąd inicjalizacji klasy TTabSet"));
 	this->pGsTabSetClass->Parent = this;
+
 	this->pGsTabSetClass->Align = alBottom;
 	this->pGsTabSetClass->SelectedColor = clRed;
 	this->pGsTabSetClass->Tabs->Add(custrAllTranslatesTab);
@@ -1725,79 +1726,6 @@ void __fastcall GsTabSheetClass::_InitTabSetDisplayTranslates()
 	this->pGsTabSetClass->TabIndex = 0; //Domyślna zakładka rodzaju tłumaczenia (wszyskie tłumaczenia)
 }
 //---------------------------------------------------------------------------
-#if defined(_TEST_CONTROLLIST_)
-void __fastcall GsTabSheetClass::_InitControlListDisplayVerses(TPanel *pPanelParent)
-/**
-	OPIS METOD(FUNKCJI): Inicjalizacja objektu klasy TControlList z objektami pomocniczymi
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	this->_pLabelTextVers = new TLabel(this);
-	if(!this->_pLabelTextVers) throw(Exception("Błąd inicjalizacji klasy TLabel"));
-	//this->_pLabelTextVers->Parent = this;
-	//this->_pLabelTextVers->Caption = "Testin this->_ControlListDisplayVer";
-	this->_pLabelTextVers->WordWrap = true;
-	this->_pLabelTextVers->Align = alClient;
-	this->_pLabelTextVers->EllipsisPosition = epEndEllipsis;
-
-	this->_pLabelAdress = new TLabel(this);
-	if(!this->_pLabelAdress) throw(Exception("Błąd inicjalizacji klasy TLabel"));
-	this->_pLabelAdress->StyleElements = TStyleElements() << seFont << seClient << seBorder;
-	//this->_pLabelAdress->Parent = this;
-	//this->_pLabelAdress->Caption = "Adres";
-	this->_pLabelAdress->Align = alLeft;
-	//this->_LabelAdress->AutoSize = false;
-	//this->_LabelAdress->Width = 30;
-	this->_pLabelAdress->AlignWithMargins = true;
-	this->_pLabelAdress->Margins->SetBounds(3, 3, 6, 3);
-	this->_pLabelAdress->Font->Style = TFontStyles()<< fsBold;
-	this->_pLabelAdress->Font->Color = clRed;
-
-	this->_pLabelNameTranslate = new TLabel(this);
-	if(!this->_pLabelNameTranslate) throw(Exception("Błąd inicjalizacji klasy TLabel"));
-	this->_pLabelNameTranslate->StyleElements = TStyleElements() << seFont << seClient << seBorder;
-	this->_pLabelNameTranslate->Align = alRight;
-	this->_pLabelNameTranslate->AlignWithMargins = true;
-	this->_pLabelNameTranslate->Margins->SetBounds(3, 3, 3, 6);
-	this->_pLabelNameTranslate->Font->Style = TFontStyles()<< fsBold;
-	this->_pLabelNameTranslate->Font->Color = clRed;
-
-	this->_pControlListDisplayVer = new TControlList(pPanelParent);
-	if(!this->_pControlListDisplayVer) throw(Exception("Błąd inicjalizacji klasy TControlList"));
-	this->_pControlListDisplayVer->Parent = pPanelParent;
-  this->_pControlListDisplayVer->ItemHeight = 32;
-	this->_pControlListDisplayVer->Align = alBottom;
-	this->_pControlListDisplayVer->AddControlToItem(this->_pLabelAdress);
-	this->_pControlListDisplayVer->AddControlToItem(this->_pLabelTextVers);
-	this->_pControlListDisplayVer->AddControlToItem(this->_pLabelNameTranslate);
-	this->_pControlListDisplayVer->OnBeforeDrawItem = this->_pControlListDisplayVerBeforeDrawItem;
-}
-
-//---------------------------------------------------------------------------
-void __fastcall GsTabSheetClass::_pControlListDisplayVerBeforeDrawItem(int AIndex, TCanvas *ACanvas, const TRect &ARect,
-					TOwnerDrawState AState)
-/**
-	OPIS METOD(FUNKCJI): Wydarzenie związane z objektem _pControlListDisplayVer klasy TControlList
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	MyObjectVers *pMyOjectVers = static_cast<MyObjectVers *>(this->pHSListActualText->Objects[AIndex]);
-	if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
-
-	UnicodeString ustrNameTranslate;
-
-	GsReadBibleTextData::pGsReadBibleTextClass->_GetInfoNameTranslate(pMyOjectVers->ucIdTranslate, ustrNameTranslate); //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
-
-	this->_pLabelTextVers->Caption = this->pHSListActualText->Strings[AIndex];
-	this->_pLabelAdress->Caption = pMyOjectVers->BookChaptVers;
-	this->_pLabelNameTranslate->Caption = ustrNameTranslate;
-}
-#endif
-//---------------------------------------------------------------------------
 __fastcall GsTabSheetClass::~GsTabSheetClass()
 /**
 	OPIS METOD(FUNKCJI): Główny Destruktor, klasy GsTabSheetClass
@@ -1806,13 +1734,14 @@ __fastcall GsTabSheetClass::~GsTabSheetClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
 	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 	delete this->pHSListActualText; this->pHSListActualText = nullptr;
 	delete this->pStrBuilderHtml; this->pStrBuilderHtml = nullptr;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsTabSheetClass::_OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
+void __fastcall GsTabSheetClass::_OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control,
+	int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
 /**
 	OPIS METOD(FUNKCJI): Własnoręczne rysowanie objektu, klasy TComboBox, wyboru rozdziałów
 	OPIS ARGUMENTÓW:
@@ -2138,6 +2067,7 @@ __fastcall GsTabSetClass::GsTabSetClass(TComponent* Owner) : TTabSet(Owner)
 	this->DoubleBuffered = true;
 	this->OnChange = this->_OnChange;
 	this->bIsCreate = true; //Objekt został stworzony
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSetClass::~GsTabSetClass()
@@ -3333,6 +3263,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pSTextSelect = new TStaticText(this);
 	if(!this->_pSTextSelect) throw(Exception("Błąd funkcji TStaticText"));
 	this->_pSTextSelect->Parent = this;
+	this->_pSTextSelect->Font->Quality = TFontQuality::fqClearType;
 	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 	this->_pSTextSelect->Font->Size = this->Height - 10;
 	this->_pSTextSelect->Font->Style = TFontStyles() << fsBold;
@@ -3930,6 +3861,7 @@ __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigne
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->FIsPanelText = true; //Domyślnie wyświetlany panel z tekstem i jednocześnie panel z interlinearnym widokiem grecko-polskim
 	//Ustawienie domyślne flag typu __property
 	this->FIsVisibleSetTranslate = false; //Domyślnie wybieranie tłumaczenia aktywne
@@ -4246,6 +4178,7 @@ __fastcall GsTabSheetSelectVersClass::GsTabSheetSelectVersClass(TComponent* Owne
 	//---
   this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->Caption = "Lista wybranych wersetów";
 	this->ImageIndex = enImageIndex_CopyToSheet;
 	GsReadBibleTextData::GsSheetListVers = this;
@@ -4306,6 +4239,7 @@ __fastcall GsListBoxVersClass::GsListBoxVersClass(TComponent* Owner) : TCustomLi
 	this->Style = lbOwnerDrawVariable;
 	this->StyleElements = TStyleElements(); //Musi być
 	this->Color = clWebWheat;
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxVersClass::~GsListBoxVersClass()
@@ -4440,6 +4374,7 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	this->ViewStyle = vsReport;
 	this->_CreateAllColumns();
 	this->SmallImages = GsReadBibleTextData::_GsImgListData; //Ikony kolumn
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
@@ -4764,6 +4699,7 @@ __fastcall GsLViewCommentsAllClass::GsLViewCommentsAllClass(TComponent* Owner) :
 	this->_ListComments = new TList();
 	if(!this->_ListComments) throw(Exception("Błąd inicjalizacji objektu, klasy TList"));
 
+	this->Font->Quality = TFontQuality::fqClearType;
   this->OwnerData = true;
 	this->OwnerDraw = true;
 	this->ReadOnly = true;
@@ -5041,6 +4977,7 @@ __fastcall GsListBoxFavoritiesClass::GsListBoxFavoritiesClass(TComponent* Owner)
 {
 	this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
+  this->Font->Quality = TFontQuality::fqClearType;
   GsReadBibleTextData::pGsListBoxFavoritiesClass = this;
 }
 //---------------------------------------------------------------------------

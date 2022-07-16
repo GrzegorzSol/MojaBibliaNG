@@ -32,9 +32,6 @@
 #include <Vcl.OleCtrls.hpp> //TWebBrowser
 #include <Vcl.Grids.hpp> //TStringGrid
 #include <Vcl.Taskbar.hpp>//TTaskBar
-#if defined(_TEST_CONTROLLIST_)
-	#include <Vcl.ControlList.hpp> //TControlList
-#endif
 #include "GsComponents\GsEditorClass.h"
 
 static UnicodeString sustrVersionGsReadBibleTextClass = "0.9.94256.9954";
@@ -452,12 +449,7 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _InitPanelInfoTranslation(); //Panel z objektami informacyjnymi o wybranym tłumaczeniu
 	void __fastcall _InitPanelTextBible(TPanel *pPanelParent); //Kontrolki dotyczące tekstu biblijnego: TProgressBar,
 																														  //TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
-	#if defined(_TEST_CONTROLLIST_)
-		void __fastcall _InitControlListDisplayVerses(TPanel *pPanelParent); //Inicjalizacja objektu klasy TControlList z objektami pomocniczymi
-    void __fastcall _pControlListDisplayVerBeforeDrawItem(int AIndex, TCanvas *ACanvas, const TRect &ARect,
-					TOwnerDrawState AState); //Wydarzenie związane z objektem _pControlListDisplayVer klasy TControlList
-	#endif
-	void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
+		void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń
@@ -475,10 +467,6 @@ class GsTabSheetClass : public TTabSheet
 	//--- Niektóre przyciski na TToolbarach
 	TToolButton *pToolButtonEdit,	//Przycisk do edycji
 							*pToolButtonInfoTranslates;//Przycisk do informacji o przekładach
-	#if defined(_TEST_CONTROLLIST_)
-		TControlList *_pControlListDisplayVer; //Wyświetlanie wersetów wybranego rozdziału za pomocą objektu klasy TControlList
-		TLabel *_pLabelAdress, *_pLabelTextVers, *_pLabelNameTranslate;
-  #endif
 	public:
 		unsigned char _ShucIndexBook,       //Numer księgi
 									_ShucIndexChapt;      //Numer rozdziału

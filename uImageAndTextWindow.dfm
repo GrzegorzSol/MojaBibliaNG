@@ -12,6 +12,7 @@ object ImageAndTextWindow: TImageAndTextWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
@@ -85,18 +86,10 @@ object ImageAndTextWindow: TImageAndTextWindow
       object TabSheetSelectImages: TTabSheet
         Caption = 'Lista grafik'
         ImageIndex = -1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
       object TabSheetTools: TTabSheet
         Caption = 'Narz'#281'dzia'
         ImageIndex = -1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object GrBoxImageAndText1: TGroupBox
           AlignWithMargins = True
           Left = 3
@@ -313,6 +306,7 @@ object ImageAndTextWindow: TImageAndTextWindow
             Font.Height = -13
             Font.Name = 'Tahoma'
             Font.Style = []
+            Font.Quality = fqClearType
             ItemHeight = 32
             ParentFont = False
             TabOrder = 0

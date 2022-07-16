@@ -11,6 +11,7 @@ object ChapterEditWindow: TChapterEditWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate

@@ -11,6 +11,7 @@ object MainBibleWindow: TMainBibleWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
@@ -40,7 +41,14 @@ object MainBibleWindow: TMainBibleWindow
     Width = 888
     Height = 820
     Align = alClient
+    Font.Charset = EASTEUROPE_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Font.Quality = fqClearType
     OwnerDraw = True
+    ParentFont = False
     ParentShowHint = False
     ShowHint = False
     TabOrder = 1
@@ -104,6 +112,7 @@ object MainBibleWindow: TMainBibleWindow
       Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = []
+      Font.Quality = fqClearType
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
@@ -141,11 +150,18 @@ object MainBibleWindow: TMainBibleWindow
       Top = 1
       Width = 298
       Height = 818
-      ActivePage = TabSheetAllCommentsVers
+      ActivePage = TabSheetBooks
       Align = alClient
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Font.Quality = fqClearType
       Images = ImageListSmall
       MultiLine = True
       OwnerDraw = True
+      ParentFont = False
       ParentShowHint = False
       ShowHint = False
       TabOrder = 0
@@ -155,18 +171,10 @@ object MainBibleWindow: TMainBibleWindow
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
       object TabSheetAllCommentsVers: TTabSheet
         Caption = 'Lista werset'#243'w ulubionych, i tych do kt'#243'rych istniej'#261' komentarze'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object STextHeaderListCommentVers: TStaticText
           Left = 0
           Top = 0

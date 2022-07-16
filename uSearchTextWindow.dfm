@@ -14,6 +14,7 @@ object SearchTextWindow: TSearchTextWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Font.Quality = fqClearType
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
@@ -31,7 +32,7 @@ object SearchTextWindow: TSearchTextWindow
     Top = 3
     Width = 1188
     Height = 255
-    ActivePage = STW_TabSheetInputText
+    ActivePage = STW_TabSheetStatistick
     Align = alTop
     Images = ImgListSmallSearch
     OwnerDraw = True
@@ -78,9 +79,6 @@ object SearchTextWindow: TSearchTextWindow
         ShowHint = True
         TabOrder = 0
         OnClick = STW_ChBoxIsRegExClick
-        ExplicitLeft = 3
-        ExplicitTop = 67
-        ExplicitWidth = 1174
       end
       object STW_ButtonHelpRegExp: TButton
         Left = 981
@@ -111,9 +109,6 @@ object SearchTextWindow: TSearchTextWindow
         TabOrder = 2
         TextHint = 'Wpisz szukany tekst'
         OnChange = STW_CBoxHistorySearchTextChange
-        ExplicitLeft = 3
-        ExplicitTop = 54
-        ExplicitWidth = 1171
       end
       object STW_ChBoxSizeTextSearch: TCheckBox
         AlignWithMargins = True
@@ -126,9 +121,6 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Czy podczas wyszukiwania uwzgl'#281'dnia'#263' wielko'#347#263' liter?'
         TabOrder = 3
-        ExplicitLeft = 3
-        ExplicitTop = 90
-        ExplicitWidth = 1174
       end
       object STW_ChBoxMemoSetupsSearch: TCheckBox
         AlignWithMargins = True
@@ -141,9 +133,6 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Czy zapami'#281'ta'#263' parametry wyszukiwania?'
         TabOrder = 4
-        ExplicitLeft = -7
-        ExplicitTop = 136
-        ExplicitWidth = 1174
       end
     end
     object STW_TabSheetStatistick: TTabSheet
@@ -215,6 +204,7 @@ object SearchTextWindow: TSearchTextWindow
           Font.Height = -13
           Font.Name = 'Tahoma'
           Font.Style = [fsBold]
+          Font.Quality = fqClearType
           ParentColor = False
           ParentFont = False
           TabOrder = 1
@@ -245,6 +235,7 @@ object SearchTextWindow: TSearchTextWindow
           Font.Height = -11
           Font.Name = 'Tahoma'
           Font.Style = []
+          Font.Quality = fqClearType
           ParentFont = False
         end
         object STW_ColorBoxBackGroundSearchList: TColorBox
@@ -258,6 +249,7 @@ object SearchTextWindow: TSearchTextWindow
           Font.Height = -11
           Font.Name = 'Tahoma'
           Font.Style = []
+          Font.Quality = fqClearType
           ParentFont = False
           TabOrder = 0
           OnChange = STW_ColorBoxChange
@@ -368,6 +360,7 @@ object SearchTextWindow: TSearchTextWindow
         Font.Height = -13
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
+        Font.Quality = fqClearType
         ParentFont = False
         TabOrder = 0
         Transparent = False
