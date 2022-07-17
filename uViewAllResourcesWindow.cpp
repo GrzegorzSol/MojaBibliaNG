@@ -75,6 +75,10 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 	UnicodeString  ustrSelectItem;
 	int iBook, iChap, iVers;
 
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("Item: %s", ARRAYOFCONST((Item->Caption ))));
+	#endif
+
 	if(Item->GroupID == enGroup_Translate)
 	{
 			ustrSelectItem = TPath::ChangeExtension(Item->Caption, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
