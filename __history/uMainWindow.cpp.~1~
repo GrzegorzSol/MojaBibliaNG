@@ -193,18 +193,9 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 		//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
     TWICImage *pWICImage = new TWICImage();
 		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
-		try
-		{
-			pWICImage->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
-			this->ImageBackgroundWindow->Picture->Assign(pWICImage);
-		}
-		__finally
-		{
-			delete pWICImage; pWICImage = nullptr;
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("__finally LoadFromFile WICImage");
-			#endif
-		}
+		pWICImage->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
+		this->ImageBackgroundWindow->Picture->Assign(pWICImage);
+		delete pWICImage; pWICImage = nullptr;
 	}
 	//---
 	TThumbBarButton *pNewThumbBarButton;
