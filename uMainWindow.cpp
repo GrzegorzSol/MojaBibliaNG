@@ -34,6 +34,9 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
     //Your code.
 	#endif
 */
+/*
+	Dodać wyszukiwanie na stronie z tekstem 05-02-2023
+*/
 #include <vcl.h>
 #pragma hdrstop
 
