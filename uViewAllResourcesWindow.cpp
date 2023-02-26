@@ -75,33 +75,36 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 	UnicodeString  ustrSelectItem;
 	int iBook, iChap, iVers;
 
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("Item: %s", ARRAYOFCONST((Item->Caption ))));
-	#endif
-
-	if(Item->GroupID == enGroup_Translate)
+	try
 	{
+		if(Item->GroupID == enGroup_Translate)
+		{
 			ustrSelectItem = TPath::ChangeExtension(Item->Caption, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
 			if(TFile::Exists(ustrSelectItem))
 			{
 				this->REditInfoSelectItem->Lines->LoadFromFile(ustrSelectItem);
 			}
-	}
-	else if(Item->GroupID == enGroup_Graphics)
-	{
-		ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: %s", ARRAYOFCONST((Item->Caption))) + "\nPodgl¹d pliku graficznego jest dostêpny w g³ównym oknie, w zak³adce po lewej stronie, zatytu³owanej :\"Grafika i Multimedia\"." +
-										 "Po wybraniu tej zak³adki, bêdzie dostêpna lista wszystkich plików graficznych, których œcie¿ki zosta³y zarejestrowane w g³ównych ustawieniach aplikacji." +
-										 "Pojedyñcze klikniêcie na wybrany plik z listy, powoduje jego wyœwietlenie w ma³ym podgl¹dzie na dole listy, gdy klikniemy podwójnie, plik zostanie " +
-										 "wyœwietlony w swoich oryginalnych rozmiarach w noej zak³adce w g³ównym oknie, z mo¿liwoœci¹ przewijania jego zawartoœci.";
-		this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
-	}
-	else if(Item->GroupID == enGroup_CoomentFiles || Item->GroupID == enGroup_FavVers)
-	{
+		}
+		else if(Item->GroupID == enGroup_Graphics)
+		{
+			ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: %s", ARRAYOFCONST((Item->Caption))) + "\nPodgl¹d pliku graficznego jest dostêpny w g³ównym oknie, w zak³adce po lewej stronie, zatytu³owanej :\"Grafika i Multimedia\"." +
+											 "Po wybraniu tej zak³adki, bêdzie dostêpna lista wszystkich plików graficznych, których œcie¿ki zosta³y zarejestrowane w g³ównych ustawieniach aplikacji." +
+											 "Pojedyñcze klikniêcie na wybrany plik z listy, powoduje jego wyœwietlenie w ma³ym podgl¹dzie na dole listy, gdy klikniemy podwójnie, plik zostanie " +
+											 "wyœwietlony w swoich oryginalnych rozmiarach w noej zak³adce w g³ównym oknie, z mo¿liwoœci¹ przewijania jego zawartoœci.";
+			this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
+		}
+		else if(Item->GroupID == enGroup_CoomentFiles || Item->GroupID == enGroup_FavVers)
+		{
 			ustrSelectItem = Item->Caption;
 			iBook = ustrSelectItem.SubString(1, 3).ToInt()-1;
 			iChap = ustrSelectItem.SubString(4, 3).ToInt();
 			iVers = ustrSelectItem.SubString(7, 3).ToInt();
 			this->REditInfoSelectItem->Lines->Text = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
+		}
+	}
+	catch(...)
+	{
+    MessageBox(NULL, TEXT("B³¹d podczas wczytywania zasobów"), TEXT("B³¹d aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
   }
 }
 //---------------------------------------------------------------------------

@@ -67,6 +67,7 @@ __published:	// IDE-managed Components
 	TTabSheet *TabSheetAllCommentsVers;
 	TStaticText *STextHeaderListCommentVers;
 	TStaticText *STextHeaderFavorteListVers;
+	TAction *Act_ReadingPlan;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -100,6 +101,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_TipsExecute(TObject *Sender);
 	void __fastcall ImageBackgroundWindowDragOver(TObject *Sender, TObject *Source,
           int X, int Y, TDragState State, bool &Accept);
+	void __fastcall Act_ReadingPlanExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

@@ -312,7 +312,10 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 	}
 	//this->_DeleteSelectTranslate(1); //Działa!!!
 	//Wczytanie danych do objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
-	this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);
+	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
+		{this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);}
+	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+  //---
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
 	if(pSortedListFileTrans) {delete pSortedListFileTrans; pSortedListFileTrans = nullptr;}
 	//---
@@ -404,17 +407,16 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(in
 	return 0;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, const UnicodeString _astrColor,
-			THashedStringList *_HStringInput, TMemoryStream *_pMemoStrResult, bool IsNameTranslates)
+void __fastcall GsReadBibleTextClass::_ViewSListBibleToHTML(TWebBrowser *_cWebBrowser,
+			THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay)
 /**
 	OPIS METOD(FUNKCJI): Przekształcenie DOWOLNEJ String listy wersetów, w wizualny tekst html (np. przy wyszukiwaniu)
-	OPIS ARGUMENTÓW: UnicodeString _astrColor - kolor tła.
-									 bool IsNameTranslates - czy ma być wyświetlana nazwa tłumaczenia na końcu wersetu(domyślnie true)
+	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI): Tekst w formacie html
 */
 {
-	if((_astrColor.IsEmpty()) || (_astrColor.Length() != 7)) {return;}	//Opuść metodę jeśli zmienna _astrColor nie jest określeniem koloru w formacie html, czyli np. #CCAAFF
+	if((DataDisplay.strBackgroundColor.IsEmpty()) || (DataDisplay.strBackgroundColor.Length() != 7)) {return;}	//Opuść metodę jeśli zmienna _astrColor nie jest określeniem koloru w formacie html, czyli np. #CCAAFF
 	THashedStringList *_HStringList;//=0;
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
@@ -431,11 +433,10 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
 																		"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>" +
 																		"<style type=\"text/css\">" +
-																		".styleColorAdressTranslates {color: #FF0000; font-size:9pt;font-family:Times New Roman;}" +
-																		//".styleFind {background-color: #FFFF00; color: #0000FF; font-weight:bold; font-size:9pt;font-family:Times New Roman;}" +
-																		//".styleTranslates {color: #F702D6; font-size:8pt;font-family:Times New Roman;}" +
-																		".styleText {color: #000000; font-size:12pt;font-family:Times New Roman;}" +
-																		Format("body {background-color:%s; font-size:10pt;font-family:Times New Roman;}", ARRAYOFCONST((_astrColor))) +
+																		Format(".styleColorAdressTranslates {color: #FF0000; font-size:%dpt;font-family:%s;}",
+																			ARRAYOFCONST((DataDisplay.iSizeFont-3, DataDisplay.strNameFont))) +
+																		Format(".styleText {color: #000000; font-size:%dpt;font-family:%s;}", ARRAYOFCONST((DataDisplay.iSizeFont, DataDisplay.strNameFont))) +
+																		Format("body {background-color:%s;}", ARRAYOFCONST((DataDisplay.strBackgroundColor))) +
 																		"</style></head><body>";
 		pStringStream->WriteString(Format("%s", ARRAYOFCONST((ustrStyle))));
 		//-----
@@ -446,16 +447,16 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 				pStringStream->WriteString(Format("<span class=\"styleColorAdressTranslates\">%s  </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((pMyObjectVers->BookChaptVers, _HStringList->Strings[i]))));
 			//-----
 			pStringStream->WriteString("<br>");
-			pStringStream->WriteString("<hr>");//Pozioma kreska;
+			if(DataDisplay.bIsHorizontLine) pStringStream->WriteString("<hr>");//Pozioma kreska;
 		}
 		pStringStream->WriteString("</body></html>");
 		pStringStream->Position = 0;
-		if(_pMemoStrResult)
+		if(DataDisplay.pMemoryStream)
 		{
 			//Zapis wyniku wyszukiwania jako danych html, do objektu, klasy TMemoryStream (_pMemoryStrResult)
-			_pMemoStrResult->Clear();
-			_pMemoStrResult->Position = 0;
-			pStringStream->SaveToStream(_pMemoStrResult);
+			DataDisplay.pMemoryStream->Clear();
+			DataDisplay.pMemoryStream->Position = 0;
+			pStringStream->SaveToStream(DataDisplay.pMemoryStream);
 			pStringStream->Position = 0;
 		}
 		//Wczytanie do objektu, klasy TWebBrowser (_cWebBrowser) zawartości objeltu, klasy TMemoryStream (stm)
@@ -468,7 +469,7 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 	}
 	__finally
 	{
-    if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -781,7 +782,7 @@ void __fastcall GsReadBibleTextClass::_DeleteSelectTranslate(const int iNumberTr
   }
 }
 /****************************************************************************
- *                        Klasalasa GsTreeNodeClass                         *
+ *                          Klasa GsTreeNodeClass                           *
  ****************************************************************************/
 __fastcall GsTreeNodeClass::GsTreeNodeClass(TTreeNodes* Owner) : TTreeNode(Owner)
 /**
@@ -2457,11 +2458,11 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 4.Ikona następnej księgi
-			pMemoryStr->WriteBuffer(ID_TONEXT_BOOK_DIS, ARRAYSIZE(ID_TONEXT_BOOK_DIS)); 						//Zapis do strumienia danych
-			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
-			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
-			GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
-			pMemoryStr->Clear();
+		pMemoryStr->WriteBuffer(ID_TONEXT_BOOK_DIS, ARRAYSIZE(ID_TONEXT_BOOK_DIS)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//--- 5.Ikona następnego rozdziału
 		pMemoryStr->WriteBuffer(ID_NEXTCHAPTER_DIS, ARRAYSIZE(ID_NEXTCHAPTER_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
@@ -2474,12 +2475,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 7.Ikona poprzedniej księgi
-			pMemoryStr->WriteBuffer(ID_TOPREV_BOOK_DIS, ARRAYSIZE(ID_TOPREV_BOOK_DIS)); 						//Zapis do strumienia danych
-			pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
-			pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
-			GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
-			pMemoryStr->Clear();
+		//--- 7.Ikona poprzedniej księgi
+		pMemoryStr->WriteBuffer(ID_TOPREV_BOOK_DIS, ARRAYSIZE(ID_TOPREV_BOOK_DIS)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//--- 8.Ikona wyświetlenia wybranego werseu
 		pMemoryStr->WriteBuffer(ID_DISPLAYVERS_DIS, ARRAYSIZE(ID_DISPLAYVERS_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
@@ -2570,7 +2571,7 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 23.Ikona do wyświetlania informacji o przekładach
+		//--- 23.Ikona do wyświetlania informacji o przekładach
 		pMemoryStr->WriteBuffer(ID_INFOSTRANSLATES_DIS, ARRAYSIZE(ID_INFOSTRANSLATES_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
@@ -2939,11 +2940,6 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 						else if(iReadVers == 0)
 						{
 							_HSListVers->AddObject(pHSListBook->Strings[i].SubString(11, ciMaxlengthVers), pHSListBook->Objects[i]);
-							#if defined(_DEBUGINFO_)
-								MyObjectVers *pMyObjectVers = static_cast<MyObjectVers *>(pHSListBook->Objects[i]);
-								if(pMyObjectVers)
-									GsDebugClass::WriteDebug(Format("ucVers: %d", ARRAYOFCONST(( pMyObjectVers->ucVers ))));
-							#endif
             }
           } //if(pHSListBook->Strings[i].SubString(7, 3).ToInt() == cucVers)
 				} //for(int i=0; i<pHSListBook->Count; i++)
@@ -3047,31 +3043,7 @@ void __fastcall GsReadBibleTextData::GetAdressFromId(UnicodeString &_ustrResult,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	_ustrResult = "";
-	//--- Numer księgi
-	if(_iBook < 10)
-	{
-		_ustrResult = Format("00%u", ARRAYOFCONST((_iBook)));
-	}
-	else if(_iBook >= 10)
-	{
-		_ustrResult = Format("0%u", ARRAYOFCONST((_iBook)));
-	}
-	//--- Numer rozdziału
-	if(_iChapt < 10)
-	{
-		_ustrResult += Format("00%u", ARRAYOFCONST((_iChapt)));
-	}
-	else if((_iChapt >= 10) && (_iChapt < 100))
-	{
-		_ustrResult += Format("0%u", ARRAYOFCONST((_iChapt)));
-	}
-	else if(_iChapt >= 100)
-	{
-		_ustrResult += Format("%u", ARRAYOFCONST((_iChapt)));
-	}
-	//--- Werset
-  if(_iVers == 0) return;
+	_ustrResult = Format("%.3u%.3u%.3u", ARRAYOFCONST((_iBook, _iChapt, _iVers)));//"";
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _iChapt)
@@ -3112,6 +3084,79 @@ TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
 	return GsReadBibleTextData::pGsReadBibleTextClass->_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 }
 //---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
+			const UnicodeString ustrStartStop, const DataDisplayTextAnyBrowser &DataDisplay)
+/**
+	OPIS METOD(FUNKCJI): Metoda wyświetla zakres wersetów z wybranego tłmaczenia w dowolnym objekcie, klasy TWebBrowser
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	MyObjectVers *pMyObjectVers=nullptr;
+	int iLicz=0, iStart=0, iStop=0;
+	THashedStringList *pHSListText=nullptr;
+	const int ciExceptText=19;
+
+	try
+	{
+		try
+		{
+			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
+			if(!pGsReadBibleTextItem) {throw(Exception("Błąd metody sReadBibleTextData::GetTranslate()"));}
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("Length: %d", ARRAYOFCONST((ustrStartStop.Length()))));
+			#endif
+			if(ustrStartStop.Length() >= ciExceptText)
+			//Granice dotyczą pełnych adresów wersetów (9 9)
+			{
+				UnicodeString ustrStartVers=ustrStartStop.SubString(1, 9),
+  										ustrStopVers=ustrStartStop.SubString(11, 9);
+  			//Werset końcowy jest dalej niż początkowy, lub adresy początku i końca są niewłaściwego formatu
+  			if( (ustrStopVers.ToInt() < ustrStartVers.ToInt()) || (ustrStartVers.Length() != 9) || (ustrStopVers.Length()!= 9) )
+  				{throw(Exception("Niewłaściwy format danych wejściowych"));}
+  			pHSListText = new THashedStringList();
+  			if(!pHSListText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+
+				if(pGsReadBibleTextItem)
+				{
+  				THashedStringList *pSelectBook = pGsReadBibleTextItem->GetSelectBooks(ustrStartVers.SubString(1, 3).ToIntDef(1) - 1); //Metoda zwraca wskaźnik na konkretną księge
+
+  				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStartVers)
+  				{
+  					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
+              {throw(Exception("Końcowy adres tekstu zbyt duży"));}
+  					iLicz++;
+  				}
+  				iStart = iLicz;
+  				iLicz++;
+  				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
+  				{
+  					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
+  						{throw(Exception("Końcowy adres tekstu zbyt duży"));}
+  					iLicz++;
+  				}
+  				iStop = iLicz+1;
+					for(int i=iStart; i<iStop; i++)
+  				{
+  					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
+  					pHSListText->AddObject(pSelectBook->Strings[i].SubString(10, 500), pSelectBook->Objects[i]);
+  				}
+				} //if(pGsReadBibleTextItem)
+			} //if(ustrStartStop.Length() >= ciExceptText)
+			//---
+			GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(_pWebBrowser, pHSListText, DataDisplay);
+		}
+		catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
+	}
+	__finally
+	{
+		if(pHSListText) {delete pHSListText; pHSListText = nullptr;}
+	}
+}
 /****************************************************************************
  *                          KLASA GsBarSelectVers                           *
  ****************************************************************************/
@@ -3288,6 +3333,9 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButDisplay->ShowHint = true;
 	this->_pButDisplay->Visible = this->Parent->ClassNameIs(NAMEPANELSELECTVERS) && !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																														                                                  //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.;
+	//this->_pButDisplay->Style = tbsCheck;
+	//this->_pButDisplay->Down = true;
+	//this->_pButDisplay->AllowAllUp = true;
 	this->_pButDisplay->Hint = Format("Pokazuje wybrany werset|Pokazuje wybrany werset|%u", ARRAYOFCONST((this->_pButDisplay->ImageIndex)));
 	//Wybór tłumaczenia
 	this->_pButTranslates = new TToolButton(this);
@@ -3924,6 +3972,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pCBoxIsEditComment->ShowHint = true;
 	this->_pCBoxIsEditComment->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pCBoxIsEditComment->Hint = Format("Wyświetlać komentarz?|Czy ma być wyświetlany edytor komentarza, do wybranego wersetu?|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
+	this->_pCBoxIsEditComment->Checked = true;
 	//this->_pCBoxIsEditComment->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 	//																														//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 		//---Czy ma być wyświetlana możliwość wyboru tłumaczenia
@@ -3950,10 +3999,11 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pCBoxIsAccess->ShowHint = true;
 	this->_pCBoxIsAccess->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pCBoxIsAccess->Hint = Format("Wyświetlać dodatkowe przyciski?|Czy ma być wyświetlona dodatkowe przyciski?|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
-	//this->_pCBoxIsAccess->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+  //this->IsEditComments = true;
+	this->_pCBoxIsAccess->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 	//																												//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//---Przyciski główne
-		this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers, this->FbSelectComment);
+	this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers, this->FbSelectComment);
 	if(!this->_pGsBarSelectVers)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsBarSelectVers"));
 	this->_pGsBarSelectVers->Parent = this;
@@ -3992,7 +4042,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pEditComment->Align = alBottom;
 	this->_pEditComment->Height = 240;
 	//Wystarczy by jeden parametr miał wartość true
-	this->_pEditComment->Visible = this->FIsEditComments || this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+	//this->_pEditComment->Visible = this->FIsEditComments || this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																																								 //lub flaga wyświetlania edytora komontarzy ma wartość true, edytor komentarza jest widoczny.
 	//---Tagi
 	this->_pCBoxIsEditComment->Tag = enTagCBoxIsEdit;
@@ -4025,7 +4075,10 @@ void __fastcall GsPanelSelectVers::_OnClickCBoxes(System::TObject* Sender)
 	//---
 	switch(pCBox->Tag)
 	{
-		case enTagCBoxIsEdit:
+		case enTagCBoxIsEdit: //TUTAJ
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("enTagCBoxIsEdit");
+			#endif
 			this->IsEditComments = pCBox->Checked;
 			if(this->IsEditComments) //Wyświetlanie edytora komentarzy
 			{
@@ -4349,7 +4402,7 @@ void __fastcall GsListBoxVersClass::Resize()
 /****************************************************************************
 *                        Klasa GsLViewDictionaryClass                       *
 *****************************************************************************/
-static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, wedłóg numeracji Stronga
+static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
 //Tablica nazw kolumn w głównej liście
 static UnicodeString ustrColumsNames[] = {"Grecki wyraz", "Numeracja wg. Stronga", "Tłumaczenie na polski"};
 enum {enGreekWord, enNumberStrong, enTranslates, enSize};
@@ -4607,7 +4660,7 @@ void __fastcall GsLViewDictionaryClass::DrawItem(TListItem* Item, const System::
 //--------------------------------------------------------------------------
 void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selected)
 /**
-	OPIS METOD(FUNKCJI):
+	OPIS METOD(FUNKCJI): Wybranie pozycji z ListView listy
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -4645,7 +4698,15 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 				}
 			}
 		}
-		GsReadBibleTextData::pGsReadBibleTextClass->ViewSListBibleToHTML(this->_pWBrowseResult, "#00CC88", pHSListTemp, 0, false);
+		DataDisplayTextAnyBrowser SetDataDisplay;
+		SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
+		SetDataDisplay.strBackgroundColor = "#00CC88";
+		SetDataDisplay.strNameFont = "Times New Roman";
+		SetDataDisplay.iSizeFont = 12;
+		SetDataDisplay.pMemoryStream = nullptr;
+		SetDataDisplay.bIsHorizontLine = true;
+		//---
+		GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(this->_pWBrowseResult, pHSListTemp, SetDataDisplay);
 	}
   __finally
 	{

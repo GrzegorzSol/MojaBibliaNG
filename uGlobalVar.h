@@ -8,7 +8,7 @@
 	#include "GsDebugClass.h"
 #endif
 //Stałe dla tablicy tekstów pomocy. Numery indeksów odpowiadaja indeksom icon w objekcie kImageListMainActive, klay TImageList
-enum {enHelpTextIndex_CloseSheet=0,     //0.Zamknięcie aktywnej zakładki
+enum {enHelpTextIndex_CloseSheet=0,   //0.Zamknięcie aktywnej zakładki
 			enHelpTextIndex_Search,         //1.Wyszukiwanie
 			enHelpTextIndex_Setups,         //2.Ustawienia
 			enHelpTextIndex_SaveChapter,    //3.Zapis aktualnego rozdziału
@@ -37,6 +37,7 @@ struct GlobalVar
 														 Global_custrGetVersionUpdate,    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 														 Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
 														 Global_custrGetDataDir,          //Ścieżka dostępu do katalogu z danymi aplikacji
+														 Global_custrPathAllReadingPlan,  //Ścieżka dostępu do katalogu z planami czytania biblii
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 														 //Graficne loga z rozszerzeniem .gli
@@ -127,14 +128,24 @@ struct GlobalVar
 																GlobalIni_FontNameTranslators,    //Nazwa czcionki nazwy tłymaczenia
 																GlobalIni_SelectStyleName,        //Nazwa wybranego stylu
 														 //----- Sekcje Translates
-														 GlobalIni_TranslatesSection_Main, 				//Główna sekcja TRANSLATES pliku ini
-																GlobalIni_ExcludeTranslates;    //Tłumaczenia nie wyświetlane
+														 GlobalIni_TranslatesSection_Main, 	//Główna sekcja TRANSLATES pliku ini
+																GlobalIni_ExcludeTranslates,    //Tłumaczenia nie wyświetlane
+														 //----- Sekcja pany czytania biblii
+														 GlobalIni_ReadingPlan_Main,         //Główna sekcja ustawień planu czytania biblii
+																GlobalIni_TranslateRPlan,        //Tłumaczenie używane w planie
+                                GlobalIni_IDTranslateRPlan,      //Numer identyfikacyjny tłumaczenie wykorzystywanego w planie czytania
+																GlobalIni_SelectPlan,            //Wybrany planu
+																GlobalIni_StartDate,             //Data rozpoczęcia planu czytania biblii
+																GlobalIni_IsStartPlan,           //Czy rozpoczęto plan czytania Pisma Świetego
+																GlobalIni_FontPlan,              //Czcionka wyświetlana w planie czytania biblii
+																GlobalIni_SizeFontPlan,          //Wielkość czcionki w planie
+														 Global_ustrFileReadingPlanExtend;   //Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
 	static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
-												Global_ustrVerAplicMain, 						//Wersja głównej biblioteki
-												//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
-												Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
-												Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
+											 Global_ustrVerAplicMain, 						//Wersja głównej biblioteki
+											 //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+											 Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
+											 Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
 	const static unsigned char cuchABlendValue; //Współczynnik przezroczystości okna, gdy jest nieaktywne
 	bool static IsWindows10; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 //***************************************************************************

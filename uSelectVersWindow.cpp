@@ -33,7 +33,6 @@ __fastcall TSelectVersWindow::TSelectVersWindow(TComponent* Owner, const unsigne
 {
 	//Sprawdzenie i ewentualne stworzenie katalogu z plikami komentarzy
 	if(!TDirectory::Exists(GlobalVar::Global_custrPathDirComments)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathDirComments);
-
 }
 //---------------------------------------------------------------------------
 void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)

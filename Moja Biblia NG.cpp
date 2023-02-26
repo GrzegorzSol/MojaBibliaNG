@@ -4,9 +4,10 @@
 #include "uGlobalVar.h"
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
-USEFORM("uMainWindow.cpp", MainBibleWindow);
-USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
+USEFORM("uMainWindow.cpp", MainBibleWindow);
+USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
+USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
@@ -16,7 +17,7 @@ USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
-USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
+USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 //---------------------------------------------------------------------------
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------

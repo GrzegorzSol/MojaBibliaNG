@@ -1,15 +1,12 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp',0,1,1,1,1,0,0,,
+File_0=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsDirect2DClass.cpp',0,1,1,8,28,0,0,,
+File_1=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsDirect2DClass.cpp
-Module1=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
-Module2=default.htm
-Count=3
+Module0=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
+Module1=default.htm
+Count=2
 EditWindowCount=1
-
-[F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsDirect2DClass.cpp]
-ModuleType=TSourceModule
 
 [F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp]
 ModuleType=TSourceModule
@@ -18,11 +15,10 @@ ModuleType=TSourceModule
 ModuleType=TURLModule
 
 [EditWindow0]
-ViewCount=3
-CurrentEditView=F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsDirect2DClass.cpp
+ViewCount=2
+CurrentEditView=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
 View0=0
 View1=1
-View2=2
 PercentageSizes=1
 Create=1
 Visible=1
@@ -61,20 +57,9 @@ CursorX=1
 CursorY=70
 TopLine=47
 LeftCol=1
-Elisions={{70,8},{128,3},{'...'}}{{130,65},{164,0},{'...'}}{{166,49},{180,0},{'...'}}{{182,62},{281,0},{'...'}}{{283,64},{334,0},{'...'}}{{336,82},{366,0},{'...'}}{{368,83},{406,0},{'...'}}{{408,63},{417,0},{'...'}}{{419,62},{430,0},{'...'}}{{432,88},{444,0},{'...'}}{{446,55},{493,0},{'...'}}{{495,76},{507,0},{'...'}}{{509,62},{521,0},{'...'}}{{523,57},{545,0},{'...'}}{{547,78},{559,0},{'...'}}{{561,83},{579,0},{'...'}}{{581,86},{601,0},{'...'}}{{603,79},{648,0},{'...'}}{{650,78},{668,0},{'...'}}{{670,78},{690,0},{'...'}}{{692,120},{713,0},{'...'}}{{715,75},{735,0},{'...'}}{{737,73},{765,0},{'...'}}{{767,88},{787,0},{'...'}}{{789,80},{808,0},{'...'}}{{810,74},{835,0},{'...'}}{{837,79},{857,0},{'...'}}{{859,73},{875,0},{'...'}}{{877,85},{900,0},{'...'}}{{902,76},{940,0},{'...'}}{{942,135},{994,0},{'...'}}{{996,71},{1014,0},{'...'}}{{1016,69},{1040,0},{'...'}}{{1042,77},{1064,0},{'...'}}{{1066,74},{1095,0},{'...'}}{{1097,74},{1125,0},{'...'}}{{1127,72},{1150,0},{'...'}}{{1152,75},{1172,0},{'...'}}{{1174,67},{1189,0},{'...'}}{{1191,66},{1206,0},{'...'}}{{1208,67},{1228,0},{'...'}}{{1230,144},{1241,0},{'...'}}
+Elisions={{283,64},{334,0},{'...'}}{{336,82},{366,0},{'...'}}{{368,83},{406,0},{'...'}}{{408,63},{417,0},{'...'}}{{419,62},{430,0},{'...'}}{{432,88},{444,0},{'...'}}
 Bookmarks=
 EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
-
-[View2]
-CustomEditViewType=TEditView
-Module=F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsDirect2DClass.cpp
-CursorX=8
-CursorY=28
-TopLine=1
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsDirect2DClass.cpp
 
 [Watches]
 Count=0
@@ -233,7 +218,7 @@ Visible=0
 Docked=1
 State=0
 Left=-16
-Top=-169
+Top=-255
 Width=276
 Height=361
 MaxLeft=-1
@@ -437,8 +422,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=16
-Top=50
+Left=48
+Top=206
 Width=1849
 Height=3139
 MaxLeft=-1
@@ -625,7 +610,7 @@ Dockable=1
 StayOnTop=0
 TabPosition=2
 ActiveTabID=ProjectManager
-TabDockClients=StructureView,ProjectManager,frmDesignPreview,DataExplorerContainer,ClassBrowserTool
+TabDockClients=StructureView,ProjectManager,ClassBrowserTool,DataExplorerContainer,frmDesignPreview
 
 [DockSite3]
 HostDockSite=DockLeftPanel

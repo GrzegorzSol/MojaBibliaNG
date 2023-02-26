@@ -228,9 +228,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 			ustrMbinFile = TPath::ChangeExtension(SDirList[i], GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
 			if(TFile::Exists(ustrMbinFile))
 			{
-				#if defined(_DEBUGINFO_)
-					//GsDebugClass::WriteDebug(Format("Path: %s", ARRAYOFCONST((ustrMbinFile))));
-				#endif
+
 			}
 			//
 			if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) NewItem->SubItems->Add("Pełne tłumaczenie");

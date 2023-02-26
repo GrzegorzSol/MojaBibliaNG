@@ -84,9 +84,6 @@ void __fastcall TFastTipsWindow::FormDestroy(TObject *Sender)
 */
 {
 	delete this->_pWICImage; this->_pWICImage = nullptr;
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("this->_SDirListFilesTips.Length: %u", ARRAYOFCONST(( this->_SDirListFilesTips.Length ))));
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TFastTipsWindow::FormClose(TObject *Sender, TCloseAction &Action)

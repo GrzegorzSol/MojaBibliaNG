@@ -36,9 +36,6 @@ __fastcall THelpMyBibleWindow::THelpMyBibleWindow(TComponent* Owner, HelpWindowD
 		UnicodeString ustrFullPathHelpFile = TPath::Combine(GlobalVar::Global_ustrDirHelp,
 			Format("%u_%s", ARRAYOFCONST(( pHelpWindowData.pAction->ImageIndex, GlobalVar::Global_ustrCoreNameHelp))));
 		ustrFullPathHelpFile = TPath::ChangeExtension(ustrFullPathHelpFile, GlobalVar::Global_ustrExtPathHelp);
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(ustrFullPathHelpFile);
-		#endif
 
 		TBitmap *bmp = new TBitmap();
 		if(!bmp) throw(Exception("Błąd inicjalizacji objektu grafiki bmp"));
@@ -60,9 +57,6 @@ __fastcall THelpMyBibleWindow::THelpMyBibleWindow(TComponent* Owner, HelpWindowD
 		{
       this->LabelTitle->Caption = "Brak pliku pomocy!";
     }
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("THelpMyBibleWindow::THelpMyBibleWindow");
-		#endif
 	}
 }
 //---------------------------------------------------------------------------
@@ -74,9 +68,7 @@ __fastcall THelpMyBibleWindow::~THelpMyBibleWindow()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("THelpMyBibleWindow::~THelpMyBibleWindow");
-	#endif
+	///
 }
 //---------------------------------------------------------------------------
 void __fastcall THelpMyBibleWindow::FormCreate(TObject *Sender)

@@ -19,6 +19,7 @@
 */
 TSetupsWindow *SetupsWindow;
 enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_OtherSetups, enPageSetup_Translates,
+      enPageSetups_ReadingPlan,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
 			enSetup_Save=10, enSetup_Return, enSetup_Cancel,
 			enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
@@ -31,16 +32,23 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enTagControl_SpinEdSizeAdressFont,
 			enTagControl_SpinEdSizeTranslatesFont,
 			//Indeksy grafik ikon this->SW_ImgListSmallMain
-			enImage_SelectDir=0, enImage_SaveConfig, enImage_Cancel, enImage_UndoSetup,
-			//Indeksy grafik ikon this->SW_ImgListMainSmall
+			enImage_SmallSelectDir=0, enImage_SmallSaveConfig, enImage_SmallCancel, enImage_SmallUndoSetup, enImage_SmallColors, enImage_SmallSelectTranslate,
+			enImage_SmallReadingPlan,
+			//Indeksy grafik ikon this->SW_ImgListMain
 			enImage_ViewAplic=0, enImage_SetupFlags, enImage_Paths, enImage_OtherSetups, enImage_Translates, enImage_TypeTranslate, enImage_DescryptionTranslate,
+      enImage_ReadingPlan, //7
 			//Numery kolumn dodatkowych w ustawieniach tłumaczeń
 			enColumn_TypeTranslate=0, enColumn_DescryptionTranslate,
 			//Grupy tłumaczeń
-			enGroup_PolCompleteTrans=0, enGroup_OrygTrans, enGroup_Count
+			enGroup_PolCompleteTrans=0, enGroup_OrygTrans, enGroup_Count,
+			//Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
+			enTagButt_StartPlan=200
 		 };
 const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tłumaczenia", "Opis tłumaczenia"},
-										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne"};
+										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne"},
+										//Czcionki i ich wysokości dla Planu czytania biblii
+										ustrFontList[] = {"Arial", "Calibri", "Courier New", "DejaVu Sans", "Segoe UI", "Times New Roman", "Verdana"},
+										ustrSizeFontList[] = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26"};
 
 //---------------------------------------------------------------------------
 __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
@@ -54,9 +62,9 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 {
 	//Hinty
 	this->SW_ButGroupSections->Hint = "Grupy ustawień";
-	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SelectDir)));
-	this->SW_LEditPath2->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SelectDir)));
-	this->SW_LEditPath3->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SelectDir)));
+	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
+	this->SW_LEditPath2->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
+	this->SW_LEditPath3->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
 	this->SW_ButtSelectDirMulti_1->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_1->ImageIndex)));
 	this->SW_ButtSelectDirMulti_2->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_2->ImageIndex)));
 	this->SW_ButtSelectDirMulti_3->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_3->ImageIndex)));
@@ -68,6 +76,9 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_CBoxOnlyOne->Tag = enTag_IsOnlyOne;
 	this->SW_CBoxAutoFindUpdate->Tag = enTag_IsAutoFindUpdate;
 	this->SW_CBoxReLoadBooks->Tag = enTag_IsLoadBooksOnInit;
+
+  //Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
+	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
 	//Dodawanie grup do objektu, typu TListView
 	for(int i=0; i<enGroup_Count; i++)
 	{
@@ -144,7 +155,7 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	this->SpEditSizeMainFont->Tag = enTagControl_SpinEdSizeMainFont;
 	this->SpEditSizeAdressFont->Tag = enTagControl_SpinEdSizeAdressFont;
 	this->SpEditSizeTranslatesFont->Tag = enTagControl_SpinEdSizeTranslatesFont;
-	//Odczyt konfiguracji
+	//Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
 	this->_ReadAllConfig();
 }
 //---------------------------------------------------------------------------
@@ -162,7 +173,7 @@ void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_ReadAllConfig()
 /**
-	OPIS METOD(FUNKCJI): Odczyt wszystkich ustawień aplikacji i ustawienie komponentów
+	OPIS METOD(FUNKCJI): Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -256,9 +267,44 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTranslate);
 		NewItem->SubItems->Add(ustrNameTranslate);
 		NewItem->SubItemImages[enColumn_DescryptionTranslate] = enImage_DescryptionTranslate;
-
+		//--- Tworzenie listy dostępnych tłumaczeń dla planu czytania biblii. Dostępne sa tylko polskie, pełne tłumaczenia.
+		if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
+			{this->CBoxSelectTranslate->AddItem(Format("%s - %s", ARRAYOFCONST((NewItem->Caption, ustrNameTranslate))), 0);}
 	}
-	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+  if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+	//---Planu czytania biblii
+		//--- Odczyt planów
+	TStringDynArray SDirReadingPlanList = TDirectory::GetFiles(GlobalVar::Global_custrPathAllReadingPlan, "*" +GlobalVar::Global_ustrFileReadingPlanExtend, 0);
+	this->CBoxSelectPlan->Items->BeginUpdate();
+	for(int i=0; i<SDirReadingPlanList.Length; i++)
+	{
+		this->CBoxSelectPlan->AddItem(TPath::GetFileName(SDirReadingPlanList[i]), 0);
+	}
+	this->CBoxSelectPlan->Items->EndUpdate();
+		//--- Wybrany plan czytania
+	this->CBoxSelectPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, "");
+	this->CBoxSelectPlan->ItemIndex = this->CBoxSelectPlan->Items->IndexOf(this->CBoxSelectPlan->Text);
+		//--- Odczyt wybranego tłumaczenia dla Planu czytania biblii z konfiguracji
+	this->CBoxSelectTranslate->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
+	this->CBoxSelectTranslate->ItemIndex = this->CBoxSelectTranslate->Items->IndexOf(this->CBoxSelectTranslate->Text);
+		//--- Lista czcionek dla planu czytania biblii
+	this->CBoxSelectFontReadingPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
+	for(int i=0; i<ARRAYSIZE(ustrFontList); i++)
+	{
+		this->CBoxSelectFontReadingPlan->AddItem(ustrFontList[i], 0);
+	}
+	this->CBoxSelectFontReadingPlan->ItemIndex = this->CBoxSelectFontReadingPlan->Items->IndexOf(this->CBoxSelectFontReadingPlan->Text);
+		//--- Wielkość czcionek
+	this->CBoxSelectSizeFontPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, "16");
+	for(int i=0; i<ARRAYSIZE(ustrSizeFontList); i++)
+	{
+		this->CBoxSelectSizeFontPlan->AddItem(ustrSizeFontList[i], 0);
+	}
+	this->CBoxSelectSizeFontPlan->ItemIndex = this->CBoxSelectSizeFontPlan->Items->IndexOf(this->CBoxSelectSizeFontPlan->Text);
+		//--- Data rozpoczęcia planu
+	this->SpButtonStartPlan->Down = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, false);
+	this->DateTimePickerSelectStartDatePlan->Date = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
+	//this->DateTimePickerSelectStartDatePlan->MaxDate = TDateTime::CurrentDate();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey) //30-03-2021
@@ -354,6 +400,34 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	}
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, pSListExcludeTrans->CommaText);
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+	//--- Zapis konfiguracji dla Planu czytania biblii
+	UnicodeString ustrNameTransIDPlan;
+	int iIDTranslatePlan=-1, intPosSpace=0;
+		//--- Wyprowadzania numeru identyfikacyjnego tłumaczenia przeznaczonego do planu czytania biblii
+	if(!this->CBoxSelectTranslate->Text.IsEmpty())
+  //----- Jest wybrane tłumaczenie z listy dla planu
+	{
+		intPosSpace = this->CBoxSelectTranslate->Text.Pos(" ");
+		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
+		{
+			ustrNameTransIDPlan = TPath::GetFileName(GlobalVar::SDirTranslatesList[i]);
+			if(this->CBoxSelectTranslate->Text.SubString(1, intPosSpace-1) == ustrNameTransIDPlan)
+			//Jeśli nazwa kolejnego tłumaczenia równa się nazwie wybranemu z listy this->CBoxSelectTranslate
+			{
+				if(iIDTranslatePlan == -1) iIDTranslatePlan = i;
+			}
+		}
+		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, this->CBoxSelectTranslate->Text);
+		GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IDTranslateRPlan, iIDTranslatePlan);
+	}
+		//Czy plan aktywowany
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, this->SpButtonStartPlan->Down);
+		//Wybrany plan czytania
+	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, this->CBoxSelectPlan->Text);
+		//Nazwa czcionki dla planu
+	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, this->CBoxSelectFontReadingPlan->Text);
+		//--- Wielkość czcionki dla planu
+	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, this->CBoxSelectSizeFontPlan->Text);
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();
 }
@@ -371,6 +445,21 @@ void __fastcall TSetupsWindow::SW_ButGroupSectionsButtonClicked(TObject *Sender,
 	if(!pButtGr) return;
 	//---
   this->SW_PControlSelected->ActivePageIndex = Index;
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::SW_ButGroupSectionsKeyUp(TObject *Sender, WORD &Key,
+					TShiftState Shift)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButtonGroup *pButtGr = dynamic_cast<TButtonGroup *>(Sender);
+	if(!pButtGr) return;
+	//---
+	this->SW_PControlSelected->ActivePageIndex = pButtGr->ItemIndex;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SW_PControlSelectedChange(TObject *Sender)
@@ -656,18 +745,57 @@ void __fastcall TSetupsWindow::SpEditSizeFontChange(TObject *Sender)
 	switch(pSpinEdit->Tag)
 	{
 		case enTagControl_SpinEdSizeMainFont:
-		this->ButtFontNameMainText->Font->Size = pSpinEdit->Value;
-		break;
+			this->ButtFontNameMainText->Font->Size = pSpinEdit->Value;
+			break;
     //---
 		case enTagControl_SpinEdSizeAdressFont:
-		this->ButtFontNameAdress->Font->Size = pSpinEdit->Value;
-		break;
+			this->ButtFontNameAdress->Font->Size = pSpinEdit->Value;
+			break;
 		//---
 		case enTagControl_SpinEdSizeTranslatesFont:
-		this->ButtFontNameTranslates->Font->Size = pSpinEdit->Value;
-		break;
+			this->ButtFontNameTranslates->Font->Size = pSpinEdit->Value;
+			break;
 		//---
   }
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::SpButtonStartStopReadingPlanClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
+	if(!pSButton) return;
+	//---
+	if(pSButton->Down)
+	{
+		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, this->DateTimePickerSelectStartDatePlan->Date);
+	}
+	else
+	{
+		//GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate);
+	}
+	//GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, pSButton->Down);
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::DateTimePickerSelectStartDatePlanChange(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Zmaia daty
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TDateTimePicker *pDTPicker = dynamic_cast<TDateTimePicker *>(Sender);
+	if(!pDTPicker) return;
+	//---
+	if(GlobalVar::Global_ConfigFile->ValueExists(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate))
+	{
+		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, pDTPicker->Date);
+	}
 }
 //---------------------------------------------------------------------------
 

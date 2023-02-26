@@ -143,6 +143,18 @@ typedef struct //Struktura danych jako argument dla metody wyszukiwania
 			PairsGroupBooks pairToUserSearch;  //Wskaźnik na parę numerów ksiąg do wyszukania
 		} DataSearch, *PDataSearch;
 //---------------------------------------------------------------------------
+//enum enTypeRangeText {enTypeRange_Vers=100,       //Zakres ograniczony pełnymi adresami wersetów (po 9 znaków)
+//											enTypeRange_Chapter,        //Zakres ograniczony tylko adresamo rozdziałów (po 6 znaków)
+//											enTypeRange_OnlyOneChapter};//Zakres dotyczy pojedyńczego rozdziału (6 znaków)
+typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijnego w dowolnym objekcie, klasy TWebBrowser
+	{
+		UnicodeString strBackgroundColor,   //Kolor podkładu
+									strNameFont;          //nazwa czcionki
+		int iSizeFont;                      //Wielkość czcionki strNameFont
+		TMemoryStream *pMemoryStream;       //Zapis wyniku wyszukiwania jako danych html, do objektu, klasy TMemoryStream
+		bool bIsHorizontLine;               //Czy istnieje pozioma linia między wersetami
+	} DataDisplayTextAnyBrowser, *PDataDisplayTextAnyBrowser;
+//---------------------------------------------------------------------------
 const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 class GsListBoxFavoritiesClass;
 class GsLViewCommentsAllClass;
@@ -236,6 +248,9 @@ class GsReadBibleTextData
 		static void __fastcall GetAdressFromId(UnicodeString &_ustrResult, int _iBook, int _iChapt, int _iVers=0); //Konwersja z podanych informacji typu int, numeru księgi, rozdziału i wersetu, na ciąg identyfikacyjny (001001001)
 		//Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
 		static TList *__fastcall GetListAllTrChap();
+		//Metoda wyświetla zakres wersetów z wybranego tłumaczenia w dowolnym objekcie, klasy TWebBrowser
+		static void __fastcall DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
+			const UnicodeString ustrStartStop, const DataDisplayTextAnyBrowser &DataDisplay);
 };
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
@@ -323,8 +338,7 @@ class GsReadBibleTextClass
 	THashedStringList *__fastcall GetSelectBookTranslate(const int iGetTranslate, const int iGetBook); //Metoda zwraca wskażnik THashedStringList na pozycje określonej księgi i tłumaczenia
 	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook, const EnTypeTranslate _EnTypeTranslate=enTypeTr_Greek); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
 	inline THashedStringList *GetListInterlinearGrec() {return this->_SListInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
-	void __fastcall ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, const UnicodeString _astrColor,
-			THashedStringList *_HStringInput, TMemoryStream *_pMemoStrResult=0, bool IsNameTranslates=true);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
+	void __fastcall _ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
 	bool __fastcall _LoadAllTranslates(const UnicodeString _PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.
 	void __fastcall _ClearListAllTrChap(const bool bIsRemoveList=false);	//Zwolnienie zawartości listy _ListAllTrChap.
 
@@ -568,8 +582,8 @@ class GsPanelSelectVers  : public TCustomPanel
 		__fastcall virtual ~GsPanelSelectVers();
 		//---
 		//Widoczność (true), lub nie (false), możliwości wyboru tłumaczenie
-		__property bool IsVisibleSetTranslate = {read=FIsVisibleSetTranslate, write=_SetDisplayTranslate, default=false}; //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
-		__property bool IsEditComments = {read=FIsEditComments, write=_SetEditComments, default=false}; //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
+		__property bool IsVisibleSetTranslate = {read=FIsVisibleSetTranslate, write=_SetDisplayTranslate, default=true}; //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
+		__property bool IsEditComments = {read=FIsEditComments, write=_SetEditComments, default=true}; //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
 		__property bool IsVisibleAccessories = {read=FIsVisibleAccessories, write=_SetIsVisibleAccessories, default=false}; //Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
 		__property bool IsVisibleIONoteEditors = {read=FVisibleIONoteEditors, write=_SetVisibleIONoteEditors, default=false};//Czy mają być wyświetlane w edytorze notatek przyciski (IO) zapisu i odczytu.
 		//Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
@@ -585,16 +599,16 @@ class GsPanelSelectVers  : public TCustomPanel
 	private:
 		GsBarSelectVers *_pGsBarSelectVers;
 		GsEditorClass *_pEditComment; //Zlikwidować, lub zamienić nas wskaźnik, na klasę GsEditorClass
-		bool FIsVisibleSetTranslate, //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
-				 FIsPanelText,      //Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
-				 FIsEditComments,   //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
+		bool FIsVisibleSetTranslate=true, //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
+				 FIsPanelText=true,      //Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
+				 FIsEditComments=true,   //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (true)
 				 FIsVisibleAccessories,//Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
 				 FVisibleIONoteEditors,//Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
 				 FbSelectComment; //Wybrałeś komentarz w liście komentarzy w głównym oknie
 		TWebBrowser *_pWebBrowser;
 		TStringGrid *_pSGridInterlinearVers; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
 		TPanel *_pPanelCBoxes; //Panel przełączników
-		TCheckBox *_pCBoxIsEditComment,
+		TCheckBox *_pCBoxIsEditComment,  // TUTAJ
 							*_pCBoxIsDisplayTranslates,
 							*_pCBoxIsAccess;
 		//---

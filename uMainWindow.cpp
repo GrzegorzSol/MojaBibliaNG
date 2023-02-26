@@ -34,9 +34,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
     //Your code.
 	#endif
 */
-/*
-	Dodać wyszukiwanie na stronie z tekstem 05-02-2023
-*/
 #include <vcl.h>
 #pragma hdrstop
 
@@ -54,6 +51,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uImageAndTextWindow.h"
 #include "uHelpMyBibleWindow.h"
 #include "uFastTipsWindow.h"
+#include "uReadingPlanWindow.h"
 #include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -88,6 +86,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImage_ImageAndText,            //15.Tworzenie grafiki z tekstem
 			enImage_Help,                    //16.Pomocnik
 			enImage_Tips,                    //17.Nawigator podpowiedzi
+      enImage_ReadingPlan,             //18.Plan czytania bibli
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -121,6 +120,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enTagImageAndText,    //114.Tworzenie grafiki z tekstem
 			enTagImageHelp,       //115.Pomocnik
 			enTagImage_Tips,      //116.Nawigator podpowiedzi
+			enTagImage_ReadingPlan,//117.Plan czytania bibli
 			//
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,            //Zakładka z narzędziami
@@ -204,9 +204,6 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 		__finally
 		{
 			delete pWICImage; pWICImage = nullptr;
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("__finally LoadFromFile WICImage");
-			#endif
 		}
 	}
 	//---
@@ -488,6 +485,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_Help->Hint = Format("Okno pomocnika|Moduł pomocnika do wyświetlania informacji o funkcjach aplikacji.|%u", ARRAYOFCONST((this->Act_Help->ImageIndex)));
 	this->Act_Tips->Tag = enTagImage_Tips;
 	this->Act_Tips->Hint = Format("Okno nawigatora pomocy|Moduł nawigatora do wyświetlania najważniejszych wskazówek dla aplikacji.|%u", ARRAYOFCONST((this->Act_Tips->ImageIndex)));
+	this->Act_ReadingPlan->Tag = enTagImage_ReadingPlan;
+	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
@@ -968,7 +967,7 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 				pPControl->Canvas->Brush->Color = clBlue;
 			}
 			pPControl->Canvas->FillRect(Rect);
-			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2) + 2, pActSheet->ImageIndex);
+			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2), pActSheet->ImageIndex);
 			//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
 			MyRect.Left += (pPControl->Images->Width + 4);
 			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
@@ -1216,7 +1215,7 @@ void __fastcall TMainBibleWindow::Act_TipsExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
   if(this->Act_Help->Checked)
@@ -1228,6 +1227,28 @@ void __fastcall TMainBibleWindow::Act_TipsExecute(TObject *Sender)
 	TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
 	if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
 	pTFastTipsWindow->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Plan czytania bibli
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	if(!GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, false))
+	{
+		MessageBox(NULL, TEXT("Brak aktywnego Planu czytania Pisma Świętego. Wybierz w ustawieniach programy Plan czytania, następnie wybierz datę jego rozpoczęcia i aktywuj go."),
+			TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+		return;
+  }
+	TReadingPlanWindow *pTReadingPlanWindow = new TReadingPlanWindow(this);
+	if(!pTReadingPlanWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
+	pTReadingPlanWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
@@ -1243,4 +1264,5 @@ void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
 	Accept = Source->ClassNameIs("GsTreeBibleClass");
 }
 //---------------------------------------------------------------------------
+
 

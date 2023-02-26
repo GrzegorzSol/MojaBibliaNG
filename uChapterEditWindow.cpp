@@ -39,9 +39,6 @@ __fastcall TChapterEditWindow::TChapterEditWindow(TComponent* Owner, TTabSheet *
 		this->Caption = this->_pGsTabSheetClass->Caption;
 	}
 	this->_iGetTranslate = this->_pGsTabSheetClass->GetTabSet()->TabIndex; //Numer aktualnie wyświetlanego tłumaczenia w zakładce z tekstem
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%u", ARRAYOFCONST((this->_iGetTranslate))));
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TChapterEditWindow::FormClose(TObject *Sender, TCloseAction &Action)

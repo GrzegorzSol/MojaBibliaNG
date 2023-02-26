@@ -18,6 +18,7 @@
 #include "uGlobalVar.h"
 #include <Vcl.CheckLst.hpp>
 #include <Vcl.Samples.Spin.hpp>
+#include <Vcl.Buttons.hpp>
 //---------------------------------------------------------------------------
 class TSetupsWindow : public TForm
 {
@@ -89,6 +90,22 @@ __published:	// IDE-managed Components
 	TColorBox *SW_ColorBoxAdressOryg;
 	TLabel *LabelColorNameOrygTrans;
 	TColorBox *SW_ColorBoxColorNameOrygTran;
+	TTabSheet *SW_SheetReadingPlan;
+	TLabel *LabelSelectTranslateReadingPlan;
+	TPanel *PanelReadingPlanSetupLeft;
+	TLabel *LabelSelectPlan;
+	TLabel *LabelDateStartReadingPlan;
+	TLabel *LabeSelectFontReadingPlan;
+	TLabel *LabelSelectFontSize;
+	TPanel *PanelSelectTypePlan;
+	TPanel *PanelSelectFontPlan;
+	TPanel *PanelSetupsDatePlan;
+	TComboBox *CBoxSelectTranslate;
+	TComboBox *CBoxSelectPlan;
+	TComboBox *CBoxSelectFontReadingPlan;
+	TComboBox *CBoxSelectSizeFontPlan;
+	TDateTimePicker *DateTimePickerSelectStartDatePlan;
+	TSpeedButton *SpButtonStartPlan;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -101,6 +118,10 @@ __published:	// IDE-managed Components
 	void __fastcall SW_ColorAllChange(TObject *Sender);
 	void __fastcall ButtFontSelectClick(TObject *Sender);
 	void __fastcall SpEditSizeFontChange(TObject *Sender);
+	void __fastcall SW_ButGroupSectionsKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall SpButtonStartStopReadingPlanClick(TObject *Sender);
+	void __fastcall DateTimePickerSelectStartDatePlanChange(TObject *Sender);
+
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);
 	TStringList *_SListOldConfig;	//Przechowywanie ustawień, podczas uruchomienia okna konfiguracji

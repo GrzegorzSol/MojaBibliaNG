@@ -384,6 +384,7 @@ void __fastcall GsEditorClass::FSetupVisibleAllIOButtons(bool _IsVisibleIOButton
 {
 	if(this->pTButtSaveAs) //Bardzo ważne!!!
 	{
+    //Przyciski zapisu, zapisu jako, ładowania będą widoczne, lub nie, czyli trzech pierwszych przycisków po lewej stronie
 		this->pTButtSave->Visible = _IsVisibleIOButtons;
 		this->pTButtSaveAs->Visible = _IsVisibleIOButtons;
 		this->pTButtLoad->Visible = _IsVisibleIOButtons;
@@ -483,6 +484,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 	{
 		case EnImage_Save:     //Zapis pod tą samą nazwą
 		{
+			//if(this->FEditorFileName.IsEmpty()) return;
 			this->pTRichEdit->Lines->SaveToFile(this->FEditorFileName);
 			this->pTRichEdit->Modified = false;
       this->pTButtUndo->Enabled = this->pTRichEdit->Modified;

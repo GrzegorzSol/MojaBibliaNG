@@ -13,10 +13,13 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrNameIVerFile = "MBibleNG.iver",        //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
 										GlobalVar::Global_custrGetVersionUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 										#if defined(_DEBUGINFO_)
+											//Jeśli projekt jest kompilowany z oknem konsoli, dane dla aplikacji są pobierane nie standartowo z zewnętrznego katalogu
 											GlobalVar::Global_custrGetDataDir = "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\",
 										#else
+											//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
 											GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
 										#endif
+										GlobalVar::Global_custrPathAllReadingPlan = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),//Ścieżka dostępu do katalogu z planami czytania biblii
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 										//Graficne loga z rozszerzeniem .gli
@@ -108,7 +111,17 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_SelectStyleName="SelectStyleName",        //Nazwa wybranego stylu
 										//----- Sekcje Translates
 										GlobalVar::GlobalIni_TranslatesSection_Main="TRANSLATES", 				        //Główna sekcja TRANSLATES pliku ini
-												GlobalVar::GlobalIni_ExcludeTranslates="ExcludeTranslates";    //Tłumaczenia nie wyświetlane
+												GlobalVar::GlobalIni_ExcludeTranslates="ExcludeTranslates",    //Tłumaczenia nie wyświetlane
+										//----- Sekcja plany czytania biblii
+										GlobalVar::GlobalIni_ReadingPlan_Main="READINGPLAN",     //Główna sekcja ustawień planu czytania biblii
+											GlobalVar::GlobalIni_TranslateRPlan="TypeTranslateReadingPlan",//Tłumaczenie używane w planie
+											GlobalVar::GlobalIni_IDTranslateRPlan="IDTranslateReadingPlan",//Numer identyfikacyjny tłumaczenie wykorzystywanego w planie czytania
+											GlobalVar::GlobalIni_SelectPlan="SelectReadingPlan",           //Wybrany planu
+											GlobalVar::GlobalIni_StartDate="StarDateReadingPlan",         //Data rozpoczęcia planu czytania biblii
+											GlobalVar::GlobalIni_IsStartPlan="IsStartReadingPlan",        //Czy rozpoczęto plan czytania Pisma Świetego
+											GlobalVar::GlobalIni_FontPlan="FontDisplayNameReadingPlan",   //Czcionka wyświetlana w planie czytania biblii
+											GlobalVar::GlobalIni_SizeFontPlan="FontSizeDisplayReadingPlan",//Wielkość czcionki w planie
+										GlobalVar::Global_ustrFileReadingPlanExtend=".rpf";   //Rozszerzenie plików planów czytania = "*.rpf";
 //----- Wersje plików i bibliotek
 UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja biblioteki GsReadBibleTextClass
 							GlobalVar::Global_ustrVerAplicMain = "", //Wersja głównej biblioteki

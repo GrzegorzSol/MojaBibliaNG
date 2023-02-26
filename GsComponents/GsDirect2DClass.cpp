@@ -55,9 +55,6 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 */
 {
 	this->DoubleBuffered = true;
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%s: v%u.%d build: %d", ARRAYOFCONST((TOSVersion::Name, TOSVersion::Major, TOSVersion::Minor, TOSVersion::Build))));
-	#endif
 	//Trzeba wszystkie wskaźniki zainicjować wartością NULL!!!
 	//Direct2D
 	this->pID2D1Bitmap=NULL;

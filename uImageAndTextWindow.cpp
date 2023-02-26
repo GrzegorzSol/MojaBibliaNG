@@ -223,9 +223,6 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextEnter(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("TImageAndTextWindow::PControlImageAndTextEnter()");
-	#endif
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
 	//---
@@ -249,10 +246,7 @@ void __fastcall TImageAndTextWindow::PControlImageAndTextEnter(TObject *Sender)
 			{
 				pGsDirect2DClass->TextWrite = this->_ustrInputText;
 			}
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("IsLoadedImage: %d", ARRAYOFCONST(((int)pGsDirect2DClass->IsLoadedImage))));
-			#endif
-      //Uaktywnij panel efektów, tylko wtedy, gdy obrazek jest wczytany
+			//Uaktywnij panel efektów, tylko wtedy, gdy obrazek jest wczytany
 			this->LBoxSelectEffects->Enabled = pGsDirect2DClass->IsLoadedImage;
 			this->LBoxSelectEffects->ItemIndex = pGsDirect2DClass->SetApplyEffect - EfGfx_NoEffect; //Odczyt efektu na nowej zakładce
 			//Wyświetlanie tekstu
