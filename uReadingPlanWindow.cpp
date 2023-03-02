@@ -53,15 +53,16 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  UnicodeString ustrNameTranslate,
+	UnicodeString ustrNameTranslate,
 								ustrNameTraPlan = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
-	int iPosDescription = ustrNameTraPlan.Pos("- "),
+	const UnicodeString custrSeparator = "|";
+	int iPosDescription = ustrNameTraPlan.Pos("- "), //Opis tłumaczenia po nazwie pliku t€maczenia (nazwa pliku - Opis tłumaczenia)
 			iPosName = ustrNameTraPlan.Pos(" "),
-			iBook=0, iChapt=20, //Tymczasowo
-			iDayPlan,
+			iDayPlan, iLengthPair,
 			//Odczyt indeksu tłumaczenia używanego w planie czytania
 			iReadIDTr = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IDTranslateRPlan, -1);
-	const int ciMaxShets = 8;
+	const int ciMaxShets = 8, //Maksymalna ilość par i zakładek
+						ciMaxLengthPair = 6; //Minimalna długość pary (9+1+9)
 	enum enumErrors {enErrorEndPlan = 100};
 	THashedStringList *pHSLFilePlan=nullptr, *pHSList=nullptr;
 
@@ -138,17 +139,19 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 				{
 					throw(enErrorEndPlan);
 				}
-
-				TStringDynArray sda = SplitString(pHSLFilePlan->Strings[iDayPlan+1], "|");
-  			for(int i=0; i<sda.Length; i++)
+				//                      1           2           3
+				//sda tablica par (para1 para1|para2 para2|para3 para3)
+				TStringDynArray sda = SplitString(pHSLFilePlan->Strings[iDayPlan+1], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
+				for(int i=0; i<sda.Length; i++)
   			{
-  				if(sda[i].Length() > 8) {pHSList->AddObject(sda[i], 0);}
-  			}
+					iLengthPair = UnicodeString(sda[i]).Length(); //Długość pary
+					if(iLengthPair >= ciMaxLengthPair) {pHSList->AddObject(sda[i], 0);} //StringLista "pHSList" zawiera pary
+				}
 
     		for(int i=0; i<pHSList->Count; i++)
-  			//Odczyt par adresów tekstu i otwarcie zakładek
+				//Odczyt par adresów tekstu (pHSList) i otwarcie zakładek
     		{
-  				if(i > ciMaxShets-1) break;
+					if(i > ciMaxShets-1) break; //Przekroczono maksymalną ilość par
     			TWebBrowser *pWebBrowser = static_cast<TWebBrowser *>(this->_pListWebBrowsers->Items[i]);
   				if(pWebBrowser)
     			{
@@ -156,12 +159,7 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
   					GsReadBibleTextData::DisplayExceptTextInHTML(pWebBrowser, this->_iIDTranslateReadingPlan, pHSList->Strings[i], SetDataDisplay);
     				TTabSheet *pTabSheet = this->PageControlReadingPlanes->Pages[i];
   					if(pTabSheet) pTabSheet->TabVisible = true;
-  					//Wyświetlenie zakresu na zakładkach
-  					pTabSheet->Caption = Format("%s %d:%d - %s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[pHSList->Strings[i].SubString(1, 3).ToInt() - 1].ShortNameBook,
-  						pHSList->Strings[i].SubString(4, 3).ToInt(), pHSList->Strings[i].SubString(7, 3).ToInt(),
-							GsReadBibleTextData::GsInfoAllBooks[pHSList->Strings[i].SubString(11, 3).ToInt() - 1].ShortNameBook,
-  						pHSList->Strings[i].SubString(14, 3).ToInt(), pHSList->Strings[i].SubString(17, 3).ToInt())));
-  				}
+      		}
 				}
 			} //try catch
 			catch(enumErrors enEr)

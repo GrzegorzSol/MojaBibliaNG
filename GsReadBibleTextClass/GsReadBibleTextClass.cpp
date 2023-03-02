@@ -25,6 +25,7 @@
 
 #include "GsReadBibleTextClass.h"
 #include <System.IOUtils.hpp>
+#include <System.StrUtils.hpp>
 #include "uGlobalVar.h"
 #include "GsCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
 //---------------------------------------------------------------------------
@@ -3085,7 +3086,7 @@ TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
-			const UnicodeString ustrStartStop, const DataDisplayTextAnyBrowser &DataDisplay)
+			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay)
 /**
 	OPIS METOD(FUNKCJI): Metoda wyświetla zakres wersetów z wybranego tłmaczenia w dowolnym objekcie, klasy TWebBrowser
 	OPIS ARGUMENTÓW:
@@ -3094,9 +3095,11 @@ void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebB
 */
 {
 	MyObjectVers *pMyObjectVers=nullptr;
-	int iLicz=0, iStart=0, iStop=0;
+	int iLicz=0, iStart=0, iStop=0, iTemps=0, iLastOffsetVers=0;
 	THashedStringList *pHSListText=nullptr;
-	const int ciExceptText=19;
+	const int ciExceptText=18, ciExceptChapter=12, ciExceptOneChapter=6;
+	UnicodeString ustrStartStop = ReplaceText(ustrInputStartStop, " ", ""), //Usunięcie wszystkich spacji
+								ustrStartVers, ustrStopVers, ustrTemps;
 
 	try
 	{
@@ -3105,46 +3108,97 @@ void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebB
 			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 			if(!pGsReadBibleTextItem) {throw(Exception("Błąd metody sReadBibleTextData::GetTranslate()"));}
 			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("Length: %d", ARRAYOFCONST((ustrStartStop.Length()))));
+				GsDebugClass::WriteDebug(Format("ustrStartStop: \"%s\"", ARRAYOFCONST((ustrStartStop))));
 			#endif
-			if(ustrStartStop.Length() >= ciExceptText)
-			//Granice dotyczą pełnych adresów wersetów (9 9)
+
+			switch(ustrStartStop.Length())
+    	{
+    		case ciExceptText:
+    			//Granice dotyczą pełnych adresów wersetów (99)
+    			ustrStartVers=ustrStartStop.SubString(1, 9); //Uzyskanie adresu startowegp
+    			ustrStopVers=ustrStartStop.SubString(10, 9);
+    			iLastOffsetVers = 0;
+    			break;
+    		//---
+    		case ciExceptChapter:
+    			//Granice dotyczą adresów całych rozdziałów (66)
+    			ustrStartVers=ustrStartStop.SubString(1, 6); //Uzyskanie adresu startowegp
+    			ustrStartVers+="001";                        //Dodanie do adresu startowego informacji pierwszego wersetu
+    			ustrStopVers=ustrStartStop.SubString(7, 6);  //Uzyskanie adresu końcowego
+    				//---
+    			iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1
+    			//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
+    			ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
+    			iLastOffsetVers = -1;                        //Odjąć jedną pozycje końcowego wskażnika na tekst
+    			break;
+    		//---
+    		case ciExceptOneChapter:
+          //Tylko jeden cału rozdział (6)
+    			ustrStartVers=ustrStartStop.SubString(1, 6); //Uzyskanie adresu startowegp
+					ustrStartVers+="001";                        //Dodanie do adresu startowego informacji pierwszego wersetu
+					ustrStopVers = ustrStartVers;                //Skopiowanie startowego adresu do końcowego adresu
+    				//---
+    			iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1
+    			//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
+    			ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
+    			iLastOffsetVers = -1; //Odjąć jedną pozycje końcowego wskażnika na tekst
+    			break;
+    		//---
+    		default:
+    			throw(Exception("Niewłaściwy format wejściowy"));
+			}
+
+			//Werset końcowy jest dalej niż początkowy, lub adresy początku i końca są niewłaściwego formatu
+			if( (ustrStopVers.ToInt() < ustrStartVers.ToInt()) || (ustrStartVers.Length() != 9) || (ustrStopVers.Length()!= 9) )
+				{throw(Exception("Niewłaściwy format danych wejściowych"));}
+  		pHSListText = new THashedStringList();
+			if(!pHSListText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+
+			if(pGsReadBibleTextItem)
 			{
-				UnicodeString ustrStartVers=ustrStartStop.SubString(1, 9),
-  										ustrStopVers=ustrStartStop.SubString(11, 9);
-  			//Werset końcowy jest dalej niż początkowy, lub adresy początku i końca są niewłaściwego formatu
-  			if( (ustrStopVers.ToInt() < ustrStartVers.ToInt()) || (ustrStartVers.Length() != 9) || (ustrStopVers.Length()!= 9) )
-  				{throw(Exception("Niewłaściwy format danych wejściowych"));}
-  			pHSListText = new THashedStringList();
-  			if(!pHSListText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+  			THashedStringList *pSelectBook = pGsReadBibleTextItem->GetSelectBooks(ustrStartVers.SubString(1, 3).ToIntDef(1) - 1); //Metoda zwraca wskaźnik na konkretną księge
 
-				if(pGsReadBibleTextItem)
+  			while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStartVers)
 				{
-  				THashedStringList *pSelectBook = pGsReadBibleTextItem->GetSelectBooks(ustrStartVers.SubString(1, 3).ToIntDef(1) - 1); //Metoda zwraca wskaźnik na konkretną księge
-
-  				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStartVers)
-  				{
-  					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
-              {throw(Exception("Końcowy adres tekstu zbyt duży"));}
-  					iLicz++;
-  				}
-  				iStart = iLicz;
+  				if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
+						{throw(Exception("Końcowy adres tekstu zbyt duży"));}
   				iLicz++;
-  				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
-  				{
-  					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
-  						{throw(Exception("Końcowy adres tekstu zbyt duży"));}
-  					iLicz++;
-  				}
-  				iStop = iLicz+1;
-					for(int i=iStart; i<iStop; i++)
-  				{
-  					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
-  					pHSListText->AddObject(pSelectBook->Strings[i].SubString(10, 500), pSelectBook->Objects[i]);
-  				}
-				} //if(pGsReadBibleTextItem)
-			} //if(ustrStartStop.Length() >= ciExceptText)
+				}
+  			iStart = iLicz;
+				iLicz++;
+  			while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
+				{
+					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
+						{throw(Exception("Końcowy adres tekstu zbyt duży"));}
+					iLicz++;
+				}
+				iStop = iLicz + 1 + iLastOffsetVers; //Wskaźnik na ostatni werset regulowany zależnie od formatu zakresu wybranego tekst
+				for(int i=iStart; i<iStop; i++)
+				{
+					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
+					pHSListText->AddObject(pSelectBook->Strings[i].SubString(10, 500), pSelectBook->Objects[i]);
+				}
+			} //if(pGsReadBibleTextItem)
 			//---
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("ustrStartVers: \"%s\"; ustrStopVers: \"%s\"", ARRAYOFCONST((ustrStartVers, ustrStopVers))));
+			#endif
+			TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(_pWebBrowser->TOleControl::Parent);
+			if(pTabSheet)
+			//Jeśli przodkiem objektu, klasy TWebBrowser, jest objekt klasy TTabSheet, to wyswietl informacje o zakresie wersetuów na uchwycie zakładki
+			{
+				MyObjectVers *pMyObjectStart = static_cast<MyObjectVers *>(pHSListText->Objects[0]),
+										 *pMyObjectStop = static_cast<MyObjectVers *>(pHSListText->Objects[pHSListText->Count - 1]);
+
+				if(pMyObjectStart && pMyObjectStop)
+				{
+					//Wyświetlenie zakresu na zakładkach
+					pTabSheet->Caption = Format("%s %d:%d - %s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[ustrStartVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+						pMyObjectStart->ucChapt, pMyObjectStart->ucVers,
+						GsReadBibleTextData::GsInfoAllBooks[ustrStopVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+						pMyObjectStop->ucChapt, pMyObjectStop->ucVers)));
+				}
+      }
 			GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(_pWebBrowser, pHSListText, DataDisplay);
 		}
 		catch(Exception &e)
