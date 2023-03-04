@@ -3112,6 +3112,9 @@ void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebB
 			#endif
 
 			switch(ustrStartStop.Length())
+			//Formatowanie ciągu wyjściowego dla wyodrębnienia zakresu tekstu z całego tekstu księgi.
+			//wejściowym stringiem jest string pozbawiony spacji.
+			//Format wyjściowy zawsze będzie miał format dla pary: 9 znaków - 9 zanków
     	{
     		case ciExceptText:
     			//Granice dotyczą pełnych adresów wersetów (99)

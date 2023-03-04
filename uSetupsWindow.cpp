@@ -8,6 +8,8 @@
 
 #include "uSetupsWindow.h"
 #include <System.IOUtils.hpp>
+#include <System.StrUtils.hpp>
+#include <DateUtils.hpp>
 #include "GsReadBibleTextClass\GsReadBibleTextClass.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -31,24 +33,32 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enTagControl_SpinEdSizeMainFont,
 			enTagControl_SpinEdSizeAdressFont,
 			enTagControl_SpinEdSizeTranslatesFont,
+
+			//Indeksy grafik ikon this->SW_ImgListSmallMain
+			//Indeksy grafik ikon this->SW_ImgListMain
+			//Indeksy grafik ikon this->SW_ImgListMainSmall
+
 			//Indeksy grafik ikon this->SW_ImgListSmallMain
 			enImage_SmallSelectDir=0, enImage_SmallSaveConfig, enImage_SmallCancel, enImage_SmallUndoSetup, enImage_SmallColors, enImage_SmallSelectTranslate,
-			enImage_SmallReadingPlan,
-			//Indeksy grafik ikon this->SW_ImgListMain
+			//Indeksy grafik ikon this->SW_ImgListMainSmall
 			enImage_ViewAplic=0, enImage_SetupFlags, enImage_Paths, enImage_OtherSetups, enImage_Translates, enImage_TypeTranslate, enImage_DescryptionTranslate,
-      enImage_ReadingPlan, //7
+			enImage_ReadingPlan, enImage_NumberDayPlan, //8
 			//Numery kolumn dodatkowych w ustawieniach tłumaczeń
 			enColumn_TypeTranslate=0, enColumn_DescryptionTranslate,
 			//Grupy tłumaczeń
 			enGroup_PolCompleteTrans=0, enGroup_OrygTrans, enGroup_Count,
 			//Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
-			enTagButt_StartPlan=200
+			enTagButt_StartPlan=200,
+			//Nazwy kolumn przeglądu wybranego planu czytania biblii
+			enNameColumnDisplaySelectPlay_NumberDay=0, enNameColumnDisplaySelectPlay_Text, enNameColumnDisplaySelectPlay_CountColumn
 		 };
 const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tłumaczenia", "Opis tłumaczenia"},
 										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne"},
 										//Czcionki i ich wysokości dla Planu czytania biblii
 										ustrFontList[] = {"Arial", "Calibri", "Courier New", "DejaVu Sans", "Segoe UI", "Times New Roman", "Verdana"},
-										ustrSizeFontList[] = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26"};
+										ustrSizeFontList[] = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26"},
+										//Nazwy kolumn przeglądu wybranego planu czytania biblii
+										ustrNamesColumns[] = {"Dzień planu", "Tekst Pisma świetego do przeczytania"};
 
 //---------------------------------------------------------------------------
 __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
@@ -157,6 +167,10 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	this->SpEditSizeTranslatesFont->Tag = enTagControl_SpinEdSizeTranslatesFont;
 	//Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
 	this->_ReadAllConfig();
+	//Inicjalizacja parametrów dla listy przeglądu wybranego planu
+	this->SpButtonStartStopReadingPlanClick(this->SpButtonStartPlan); //Odczytanie informacji o aktualnym planie. Musi być przed metodą this->_InitLViewDisplaySelectPlan() !!!
+	this->_InitLViewDisplaySelectPlan();
+  this->_DisplaySelectPlan();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
@@ -169,6 +183,107 @@ void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
 {
 	if(this->_SListOldConfig) {delete this->_SListOldConfig; this->_SListOldConfig = nullptr;} //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
 	if(this->_HSListViewAllTr) {delete this->_HSListViewAllTr; this->_HSListViewAllTr = nullptr;} //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
+/**
+	OPIS METOD(FUNKCJI): Inicjalizacja parametrów dla listy przeglądu wybranego planu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TListColumn *NewColumn=nullptr;
+	//Dodawanie kolumn
+	for(unsigned int iColumns=0; iColumns<enNameColumnDisplaySelectPlay_CountColumn; iColumns++)
+	{
+		NewColumn = this->LViewDisplayselectPlan->Columns->Add();
+		NewColumn->Caption = ustrNamesColumns[iColumns];
+    if(iColumns > 0) NewColumn->AutoSize = true;
+		//NewColumn->ImageIndex = 0;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_DisplaySelectPlan()
+/**
+	OPIS METOD(FUNKCJI): Wyswietlenie wybranego planu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	UnicodeString ustrPathFileReadingPlan, ustrTemp, ustrItemText;
+  const UnicodeString custrSeparator = "|";
+	THashedStringList *pHSList=nullptr;
+	TListItem *pItem=nullptr;
+	int iLengthPair;
+	const int ciOneChapt=6, ciTwoChapt=12, ciFullAdres=18;
+
+	try
+	{
+		try
+		{
+  		pHSList = new THashedStringList();
+			if(!pHSList) throw(Exception("Błąd funkcji THashedStringList"));
+			this->LViewDisplayselectPlan->Items->BeginUpdate();
+      this->LViewDisplayselectPlan->Clear();
+			if(this->CBoxSelectPlan->ItemIndex > -1)
+  		{
+				ustrPathFileReadingPlan = TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, this->CBoxSelectPlan->Text);
+
+				if(!TFile::Exists(ustrPathFileReadingPlan)) throw(Exception("Brak pliku z wybranym planem czytania biblii"));
+				pHSList->LoadFromFile(ustrPathFileReadingPlan, TEncoding::UTF8);
+				for(int i=1; i<pHSList->Count; i++)
+				{
+					pItem = this->LViewDisplayselectPlan->Items->Add();
+					pItem->Caption = UnicodeString(i);
+
+					TStringDynArray sda = SplitString(pHSList->Strings[i], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
+					for(int si=0; si<sda.Length; si++)
+					{
+						ustrTemp = ReplaceText(UnicodeString(sda[si]), " ", ""); //Usunięcie wszystkich spacji
+						iLengthPair = ustrTemp.Length(); //Długość pary
+						if(si > 0) ustrItemText += "; "; //Gdy istnieje kolejna para dodaj przed nią "; "
+						//Formatowanie wyświetlania zakresów w liście wczytanego planu
+						switch(iLengthPair)
+						//Formatowanie wyświetlania zależnie od dłygości zcalonej pary (pozbawionej spacji zakresu)
+						{
+							case ciOneChapt:
+								ustrItemText += Format("%s %d", ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook,  ustrTemp.SubString(4, 3).ToInt() )));
+								break;
+
+							case ciTwoChapt:
+								ustrItemText += Format("%s %d - %s %d",
+									ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(4, 3).ToInt(),
+										GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(7, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(10, 3).ToInt())));
+								break;
+
+							case ciFullAdres:
+								ustrItemText += Format("%s %d:%d - %s %d:%d",
+									ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(4, 3).ToInt(), ustrTemp.SubString(7, 3).ToInt(),
+										GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(10, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(13, 3).ToInt(), ustrTemp.SubString(16, 3).ToInt() )));
+								break;
+
+							default:
+								throw(Exception("Niewłaściwy format pliku z wybranym planem"));
+						}
+
+					}
+					pItem->SubItems->Add(ustrItemText);
+					ustrItemText = ""; //Po dodaniu pozycji wyczyszczenie zawartości
+				}
+			}
+			this->LViewDisplayselectPlan->Items->EndUpdate();
+		}
+		catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
+	}
+	__finally
+	{
+		if(pHSList) {delete pHSList; pHSList = nullptr;}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_ReadAllConfig()
@@ -770,15 +885,22 @@ void __fastcall TSetupsWindow::SpButtonStartStopReadingPlanClick(TObject *Sender
 	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
 	if(!pSButton) return;
 	//---
+	//static bool sbIsDown;
 	if(pSButton->Down)
 	{
+		this->DateTimePickerSelectStartDatePlan->Enabled = false;
 		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, this->DateTimePickerSelectStartDatePlan->Date);
+		this->_iNumberDayPlan = DaysBetween(TDateTime::CurrentDate(), this->DateTimePickerSelectStartDatePlan->Date);
+		this->LabelInfoSelectAndactivatePlan->Caption = Format("Aktualny plan: \"%s\", Tłumaczenie: \"%s\". Aktualna data: %s. Data rozpoczęcia aktualnego planu: %s. Dzień %d czytania.",
+			ARRAYOFCONST((this->CBoxSelectPlan->Text, this->CBoxSelectTranslate->Text, TDateTime::CurrentDate().FormatString("dd-mm-yyyy"),
+				this->DateTimePickerSelectStartDatePlan->Date.FormatString("dd-mm-yyyy"), this->_iNumberDayPlan+1)));
 	}
 	else
 	{
-		//GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate);
+    this->DateTimePickerSelectStartDatePlan->Enabled = true;
+		this->LabelInfoSelectAndactivatePlan->Caption = "";
+    this->_iNumberDayPlan = -1;
 	}
-	//GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, pSButton->Down);
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::DateTimePickerSelectStartDatePlanChange(TObject *Sender)
@@ -796,6 +918,77 @@ void __fastcall TSetupsWindow::DateTimePickerSelectStartDatePlanChange(TObject *
 	{
 		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, pDTPicker->Date);
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::LViewDisplayselectPlanDrawItem(TCustomListView *Sender,
+          TListItem *Item, TRect &Rect, TOwnerDrawState State)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
+	if(!pLView) return;
+	//---
+	TRect RectBounds = Item->DisplayRect(drBounds);
+	TRect RectLabel = Item->DisplayRect(drLabel);
+	TRect RectIcon = Item->DisplayRect(drIcon);
+
+  if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
+
+	pLView->Canvas->FillRect(RectBounds);
+	pLView->Canvas->Font = pLView->Font;
+	pLView->Canvas->Font->Style = TFontStyles() << fsBold;
+
+	this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectIcon.Left, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)  / 2)) + RectIcon.Top, enImage_NumberDayPlan);
+	DrawText(pLView->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+
+  TRect RectSubItem  = RectLabel;
+	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
+	{
+		//Wymiary następnej kolumny
+		RectSubItem.Left += pLView->Column[iColumn]->Width;
+		RectSubItem.Right += pLView->Column[iColumn + 1]->Width;
+		this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectSubItem.Left - this->SW_ImgListMainSmall->Width, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)  / 2)) + RectIcon.Top, enImage_ReadingPlan);
+
+		pLView->Canvas->Font->Color = clBlue;
+		pLView->Canvas->Font->Style = TFontStyles();
+
+		TRect RectSubItem1 = RectSubItem;
+		DrawText(pLView->Canvas->Handle, Item->SubItems->Strings[iColumn].c_str(), -1, &RectSubItem1, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::LViewDisplayselectPlanChanging(TObject *Sender,
+					TListItem *Item, TItemChange Change, bool &AllowChange)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	if(!pLView) return;
+	//---
+	AllowChange = false;
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::CBoxSelectPlanChange(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
+	if(!pCBox) return;
+	//--- Aktualizacje
+  this->SpButtonStartStopReadingPlanClick(this->SpButtonStartPlan);
+	this->_DisplaySelectPlan();
 }
 //---------------------------------------------------------------------------
 

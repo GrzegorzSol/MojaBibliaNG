@@ -106,6 +106,10 @@ __published:	// IDE-managed Components
 	TComboBox *CBoxSelectSizeFontPlan;
 	TDateTimePicker *DateTimePickerSelectStartDatePlan;
 	TSpeedButton *SpButtonStartPlan;
+	TPanel *PanelViewSelectPlan;
+	TListView *LViewDisplayselectPlan;
+	TLabel *LabelInfoSelectAndactivatePlan;
+	TLabel *LabelTitleDisplayListPlan;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -121,14 +125,22 @@ __published:	// IDE-managed Components
 	void __fastcall SW_ButGroupSectionsKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall SpButtonStartStopReadingPlanClick(TObject *Sender);
 	void __fastcall DateTimePickerSelectStartDatePlanChange(TObject *Sender);
+	void __fastcall LViewDisplayselectPlanDrawItem(TCustomListView *Sender, TListItem *Item,
+          TRect &Rect, TOwnerDrawState State);
+	void __fastcall CBoxSelectPlanChange(TObject *Sender);
+	void __fastcall LViewDisplayselectPlanChanging(TObject *Sender, TListItem *Item,
+          TItemChange Change, bool &AllowChange);
 
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);
-	TStringList *_SListOldConfig;	//Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
-	THashedStringList	*_HSListViewAllTr; //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
+	TStringList *_SListOldConfig=nullptr;	//Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
+	THashedStringList	*_HSListViewAllTr=nullptr; //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
 	void __fastcall _ReadAllConfig(); //Odczyt wszystkich ustawień aplikacji i ustawienie komponentów
 	void __fastcall _WriteAllConfig();//Zapis wszystkich ustawień aplikacji
 	void __fastcall _VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey); //Niewłaściwa ścierzka dostępu do katalogu z mediami //30-03-2021
+	void __fastcall _InitLViewDisplaySelectPlan(); //Inicjalizacja parametrów dla listy przeglądu wybranego planu
+	void __fastcall _DisplaySelectPlan(); //Wyswietlenie wybranego planu
+	int _iNumberDayPlan=-1; //Numer kolejnej lekcji z aktywnego planu
 public:		// User declarations
 	__fastcall TSetupsWindow(TComponent* Owner);
 };
