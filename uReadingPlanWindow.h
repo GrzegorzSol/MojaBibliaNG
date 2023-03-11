@@ -11,6 +11,7 @@
 #include <Vcl.ComCtrls.hpp>
 #include <System.ImageList.hpp>
 #include <Vcl.ImgList.hpp>
+#include <Vcl.Buttons.hpp>
 //---------------------------------------------------------------------------
 class TReadingPlanWindow : public TForm
 {
@@ -35,14 +36,18 @@ __published:	// IDE-managed Components
 	TLabel *LabelInfosReadingPlan;
 	TPanel *PanelTextInfosReadingPlan;
 	TImageList *ImageListSmallReadingPlan;
+	TImageList *ImageListBigReadingPlan;
+	TSpeedButton *SButtonStartSpeak;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall PageControlReadingPlanesDrawTab(TCustomTabControl *Control,
           int TabIndex, const TRect &Rect, bool Active);
+	void __fastcall SButtonStartSpeakClick(TObject *Sender);
 private:	// User declarations
 	int _iIDTranslateReadingPlan=-1;
-  TList *_pListWebBrowsers=nullptr;
+	TList *_pListWebBrowsers=nullptr;
+  void __fastcall _SpeakText(const UnicodeString ustrTextSpeak); //Tekst do przeczytania na głos przez syntezator mowy
 public:		// User declarations
 	__fastcall TReadingPlanWindow(TComponent* Owner);
 };

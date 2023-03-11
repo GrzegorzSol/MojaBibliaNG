@@ -8,6 +8,8 @@
 #include <DateUtils.hpp>
 #include <System.StrUtils.hpp>
 #include <System.IOUtils.hpp>
+#include <sapi.h>
+#include <System.Threading.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -20,6 +22,10 @@ MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFO
 */
 TReadingPlanWindow *ReadingPlanWindow;
 enum {enImage_ReadingText};
+enum enumErrors {enErrorEndPlan = 100};
+const int ciMaxShets = 8, //Maksymalna ilość par i zakładek
+					ciMaxLengthPair = 6; //Minimalna długość pary (9+1+9)
+UnicodeString ustrTableText[ciMaxShets]; //Tablica tekstów z zakładek
 //---------------------------------------------------------------------------
 __fastcall TReadingPlanWindow::TReadingPlanWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -53,18 +59,15 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	UnicodeString ustrNameTranslate,
-								ustrNameTraPlan = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	const UnicodeString custrSeparator = "|";
+	THashedStringList *pHSLFilePlan=nullptr, *pHSList=nullptr;
+  UnicodeString ustrNameTranslate,
+								ustrNameTraPlan = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	int iPosDescription = ustrNameTraPlan.Pos("- "), //Opis tłumaczenia po nazwie pliku t€maczenia (nazwa pliku - Opis tłumaczenia)
 			iPosName = ustrNameTraPlan.Pos(" "),
 			iDayPlan, iLengthPair,
 			//Odczyt indeksu tłumaczenia używanego w planie czytania
 			iReadIDTr = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IDTranslateRPlan, -1);
-	const int ciMaxShets = 8, //Maksymalna ilość par i zakładek
-						ciMaxLengthPair = 6; //Minimalna długość pary (9+1+9)
-	enum enumErrors {enErrorEndPlan = 100};
-	THashedStringList *pHSLFilePlan=nullptr, *pHSList=nullptr;
 
   //Obliczanie kolejnego tekstu do czytania według daty
 	TDateTime dt = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
@@ -125,7 +128,7 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
   				GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, ""));
 
 				pHSLFilePlan = new THashedStringList(); //Lista odczytanych lini zakresów z pliku planu (max. 8)
-  			if(!pHSLFilePlan) throw(Exception("Błąd funkcji THashedStringList"));
+				if(!pHSLFilePlan) throw(Exception("Błąd funkcji THashedStringList"));
 				pHSList = new THashedStringList(); //Lista par granic tekstu, odczytanych z pliku planu
 				if(!pHSList) throw(Exception("Błąd funkcji THashedStringList"));
 
@@ -148,7 +151,7 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 					if(iLengthPair >= ciMaxLengthPair) {pHSList->AddObject(sda[i], 0);} //StringLista "pHSList" zawiera pary
 				}
 
-    		for(int i=0; i<pHSList->Count; i++)
+				for(int i=0; i<pHSList->Count; i++)
 				//Odczyt par adresów tekstu (pHSList) i otwarcie zakładek
     		{
 					if(i > ciMaxShets-1) break; //Przekroczono maksymalną ilość par
@@ -156,9 +159,9 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
   				if(pWebBrowser)
     			{
     				SetDataDisplay.strBackgroundColor = ColorToWebColorStr(TablePagesColors[i]);
-  					GsReadBibleTextData::DisplayExceptTextInHTML(pWebBrowser, this->_iIDTranslateReadingPlan, pHSList->Strings[i], SetDataDisplay);
-    				TTabSheet *pTabSheet = this->PageControlReadingPlanes->Pages[i];
-  					if(pTabSheet) pTabSheet->TabVisible = true;
+						ustrTableText[i] = GsReadBibleTextData::DisplayExceptTextInHTML(pWebBrowser, this->_iIDTranslateReadingPlan, pHSList->Strings[i], SetDataDisplay);
+						TTabSheet *pTabSheet = this->PageControlReadingPlanes->Pages[i];
+						if(pTabSheet) pTabSheet->TabVisible = true;
       		}
 				}
 			} //try catch
@@ -172,11 +175,11 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 						this->LabelInfosReadingPlan->Caption = "Wybrany Plan czytania Pisma Świętego został zakończony, rozpocznij inny plan, lub powtórz aktualny";
 						break;
         }
-      }
+			}
 			catch(Exception &e)
 			{
 				MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
-      }
+			}
 		} //try
 		__finally
 		{
@@ -226,6 +229,86 @@ void __fastcall TReadingPlanWindow::PageControlReadingPlanesDrawTab(TCustomTabCo
   pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2), pActSheet->ImageIndex);
   MyRect.Left += (pPControl->Images->Width + 4);
 	DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
+}
+//---------------------------------------------------------------------------
+void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak)
+/**
+	OPIS METOD(FUNKCJI): Tekst do przeczytania na głos przez syntezator mowy
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	ISpVoice* pVoice=nullptr;
+	HRESULT hr, hResult;
+	_di_ITask MyTask[1];
+	int value=0;
+
+	if(ustrTextSpeak.IsEmpty()) return;
+
+	int iRate = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, -2),
+			iVolume = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, 100);
+
+	MyTask[0] = TTask::Create([&, ustrTextSpeak, iRate, iVolume] () //Funkcja Lambda
+	{
+		try
+		{
+			try
+			{
+  			hResult = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+				if(FAILED(hResult)) throw(Exception("Błąd funkcji syntezy mowy"));
+
+  			hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&pVoice);
+  			if(SUCCEEDED(hr))
+				{
+					pVoice->SetRate(iRate);
+					pVoice->SetVolume(iVolume);
+
+					hr = pVoice->Speak(ustrTextSpeak.c_str(), 0, NULL);
+					this->SButtonStartSpeak->Down = false;
+					this->SButtonStartSpeak->Update();
+  				pVoice->Release();
+					pVoice = nullptr;
+					TInterlocked::Add(value, 500);
+				}
+			}
+			catch(Exception &e)
+			{
+				MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			}
+		}
+		__finally
+		{
+			CoUninitialize();
+		}
+	});
+	MyTask[0]->Start();
+}
+//---------------------------------------------------------------------------
+void __fastcall TReadingPlanWindow::SButtonStartSpeakClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
+	if(!pSButton) return;
+	//---
+	if(pSButton->Down)
+	{
+    MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest niaktywna gdyż jest w trakcie konstruowania"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+		pSButton->Down = !pSButton->Down;
+		return;
+		//---
+		if(!GlobalVar::IsWindows10)
+		{
+			MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest dostępna od systemy Windows 10"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+			return;
+		}
+		this->_SpeakText(ustrTableText[this->PageControlReadingPlanes->ActivePageIndex]);
+	}
 }
 //---------------------------------------------------------------------------
 

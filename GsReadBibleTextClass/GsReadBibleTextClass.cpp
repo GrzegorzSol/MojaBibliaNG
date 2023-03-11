@@ -3085,7 +3085,7 @@ TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
 	return GsReadBibleTextData::pGsReadBibleTextClass->_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
+UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
 			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay)
 /**
 	OPIS METOD(FUNKCJI): Metoda wyświetla zakres wersetów z wybranego tłmaczenia w dowolnym objekcie, klasy TWebBrowser
@@ -3099,7 +3099,7 @@ void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebB
 	THashedStringList *pHSListText=nullptr;
 	const int ciExceptText=18, ciExceptChapter=12, ciExceptOneChapter=6;
 	UnicodeString ustrStartStop = ReplaceText(ustrInputStartStop, " ", ""), //Usunięcie wszystkich spacji
-								ustrStartVers, ustrStopVers, ustrTemps;
+								ustrStartVers, ustrStopVers, ustrTemps, ustrRet;
 
 	try
 	{
@@ -3179,13 +3179,16 @@ void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebB
 				for(int i=iStart; i<iStop; i++)
 				{
 					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
-					pHSListText->AddObject(pSelectBook->Strings[i].SubString(10, 500), pSelectBook->Objects[i]);
+					pHSListText->AddObject(pSelectBook->Strings[i].SubString(11, 500), pSelectBook->Objects[i]);
 				}
 			} //if(pGsReadBibleTextItem)
 			//---
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("ustrStartVers: \"%s\"; ustrStopVers: \"%s\"", ARRAYOFCONST((ustrStartVers, ustrStopVers))));
-			#endif
+			//for(int i=0; i<pHSListText->Count; i++) //Tworzenie stringu wyjściowego, czystego tekstu
+			for(int i=0; i<1; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
+			{
+				ustrRet += pHSListText->Strings[i] + " ";
+			}
+
 			TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(_pWebBrowser->TOleControl::Parent);
 			if(pTabSheet)
 			//Jeśli przodkiem objektu, klasy TWebBrowser, jest objekt klasy TTabSheet, to wyswietl informacje o zakresie wersetuów na uchwycie zakładki
@@ -3213,6 +3216,7 @@ void __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebB
 	{
 		if(pHSListText) {delete pHSListText; pHSListText = nullptr;}
 	}
+	return ustrRet;
 }
 /****************************************************************************
  *                          KLASA GsBarSelectVers                           *

@@ -249,7 +249,7 @@ class GsReadBibleTextData
 		//Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
 		static TList *__fastcall GetListAllTrChap();
 		//Metoda wyświetla zakres wersetów z wybranego tłumaczenia w dowolnym objekcie, klasy TWebBrowser
-		static void __fastcall DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
+		static UnicodeString __fastcall DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
 			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay);
 };
 /****************************************************************************

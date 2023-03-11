@@ -139,6 +139,8 @@ struct GlobalVar
 																GlobalIni_IsStartPlan,           //Czy rozpoczęto plan czytania Pisma Świetego
 																GlobalIni_FontPlan,              //Czcionka wyświetlana w planie czytania biblii
 																GlobalIni_SizeFontPlan,          //Wielkość czcionki w planie
+																GlobalIni_SetRate,               //Szybkość czytania tekstu
+																GlobalIni_SetVolume,             //Głośność czytania
 														 Global_ustrFileReadingPlanExtend;   //Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
 	static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass

@@ -702,74 +702,21 @@ object SetupsWindow: TSetupsWindow
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 0
-        object LabelInfoSelectAndactivatePlan: TLabel
+        object GrBoxSelectTranslate: TGroupBox
           AlignWithMargins = True
           Left = 3
-          Top = 341
+          Top = 3
           Width = 383
-          Height = 183
-          CustomHint = SW_BalloonHint
-          Align = alClient
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          Font.Quality = fqClearType
-          ParentFont = False
-          Layout = tlCenter
-          WordWrap = True
-          ExplicitWidth = 4
-          ExplicitHeight = 16
-        end
-        object PanelSelectTypePlan: TPanel
-          AlignWithMargins = True
-          Left = 3
-          Top = 6
-          Width = 383
-          Height = 106
-          Margins.Top = 6
-          Margins.Bottom = 6
+          Height = 53
           CustomHint = SW_BalloonHint
           Align = alTop
-          BevelOuter = bvNone
-          ShowCaption = False
+          Caption = 'Wyb'#243'r przek'#322'adu Pisma '#346'wi'#281'tego dla planu czytania'
           TabOrder = 0
-          object LabelSelectTranslateReadingPlan: TLabel
-            AlignWithMargins = True
-            Left = 3
-            Top = 3
-            Width = 377
-            Height = 13
-            CustomHint = SW_BalloonHint
-            Align = alTop
-            AutoSize = False
-            Caption = 'Wyb'#243'r przek'#322'adu Pisma '#346'wietego dla planu czytania'
-            Layout = tlCenter
-            ExplicitLeft = 2
-            ExplicitTop = 51
-            ExplicitWidth = 381
-          end
-          object LabelSelectPlan: TLabel
-            AlignWithMargins = True
-            Left = 3
-            Top = 58
-            Width = 377
-            Height = 13
-            CustomHint = SW_BalloonHint
-            Align = alTop
-            AutoSize = False
-            Caption = 'Wyb'#243'r planu czytania Pisma '#346'wi'#281'tego'
-            Layout = tlCenter
-            ExplicitLeft = 48
-            ExplicitTop = 296
-            ExplicitWidth = 31
-          end
           object CBoxSelectTranslate: TComboBox
             AlignWithMargins = True
-            Left = 3
-            Top = 22
-            Width = 377
+            Left = 5
+            Top = 18
+            Width = 373
             Height = 21
             Hint = 'Wyb'#243'r t'#322'umaczenia u'#380'ywanego w planie czytania.'
             Margins.Bottom = 12
@@ -778,65 +725,66 @@ object SetupsWindow: TSetupsWindow
             TabOrder = 0
             TextHint = 'Wybierz t'#322'umaczenie'
           end
+        end
+        object GrBoxSelectReadingPlan: TGroupBox
+          AlignWithMargins = True
+          Left = 3
+          Top = 62
+          Width = 383
+          Height = 123
+          CustomHint = SW_BalloonHint
+          Align = alTop
+          Caption = 'Wyb'#243'r Planu czytania Pisma '#346'wi'#281'tego'
+          TabOrder = 1
+          object LabelInfoSelectAndactivatePlan: TLabel
+            AlignWithMargins = True
+            Left = 5
+            Top = 45
+            Width = 373
+            Height = 73
+            CustomHint = SW_BalloonHint
+            Align = alClient
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Font.Quality = fqClearType
+            ParentFont = False
+            Layout = tlCenter
+            WordWrap = True
+            ExplicitWidth = 4
+            ExplicitHeight = 16
+          end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
-            Left = 3
-            Top = 77
-            Width = 377
+            Left = 5
+            Top = 18
+            Width = 373
             Height = 21
             Hint = 'Wyb'#243'r planu czytania biblii z listy.'
             ParentCustomHint = False
             Align = alTop
-            TabOrder = 1
+            TabOrder = 0
             TextHint = 'Wybierz plan czytania'
             OnChange = CBoxSelectPlanChange
           end
         end
-        object PanelSelectFontPlan: TPanel
+        object GrBoxSelectFont: TGroupBox
           AlignWithMargins = True
           Left = 3
-          Top = 124
+          Top = 191
           Width = 383
-          Height = 111
-          Margins.Top = 6
-          Margins.Bottom = 6
+          Height = 56
           CustomHint = SW_BalloonHint
           Align = alTop
-          BevelOuter = bvNone
-          ShowCaption = False
-          TabOrder = 1
-          object LabeSelectFontReadingPlan: TLabel
-            AlignWithMargins = True
-            Left = 3
-            Top = 3
-            Width = 377
-            Height = 13
-            CustomHint = SW_BalloonHint
-            Align = alTop
-            AutoSize = False
-            Caption = 'Wybierz typ czcionki do czytania Pisma '#346'wi'#281'tego wed'#322'ug planu'
-            Layout = tlCenter
-            ExplicitLeft = 80
-            ExplicitTop = 280
-            ExplicitWidth = 31
-          end
-          object LabelSelectFontSize: TLabel
-            AlignWithMargins = True
-            Left = 3
-            Top = 58
-            Width = 284
-            Height = 13
-            Margins.Right = 80
-            CustomHint = SW_BalloonHint
-            Align = alTop
-            Caption = 'Wybierz wielko'#347#263' czcionk dla planu czytania Pisma '#346'wi'#281'tego'
-            Layout = tlCenter
-          end
+          Caption = 'Wybierz typ czcionki dla Planu czytania'
+          TabOrder = 2
           object CBoxSelectFontReadingPlan: TComboBox
             AlignWithMargins = True
-            Left = 3
-            Top = 22
-            Width = 377
+            Left = 5
+            Top = 18
+            Width = 373
             Height = 21
             Hint = 'Wyb'#243'r kroju pisma u'#380'ywanego w tek'#347'cie planu czytania.'
             Margins.Bottom = 12
@@ -846,54 +794,47 @@ object SetupsWindow: TSetupsWindow
             TabOrder = 0
             Text = 'Wybierz czcionke'
           end
+        end
+        object GrBoxSizeFont: TGroupBox
+          AlignWithMargins = True
+          Left = 3
+          Top = 253
+          Width = 383
+          Height = 52
+          CustomHint = SW_BalloonHint
+          Align = alTop
+          Caption = 'Wybierz wysoko'#347#263' czcionki dla Planu czytania'
+          TabOrder = 3
           object CBoxSelectSizeFontPlan: TComboBox
             AlignWithMargins = True
-            Left = 3
-            Top = 77
-            Width = 132
+            Left = 5
+            Top = 18
+            Width = 128
             Height = 21
             Hint = 'Wysoko'#347#263' czciomki u'#380'ywanej w planie czytania.'
             Margins.Right = 248
             ParentCustomHint = False
             Align = alTop
-            TabOrder = 1
+            TabOrder = 0
             Text = 'Wybierz wysoko'#347#263' czcionki'
           end
         end
-        object PanelSetupsDatePlan: TPanel
+        object GrBoxSelectDate: TGroupBox
           AlignWithMargins = True
           Left = 3
-          Top = 247
+          Top = 311
           Width = 383
-          Height = 85
-          Margins.Top = 6
-          Margins.Bottom = 6
+          Height = 82
           CustomHint = SW_BalloonHint
           Align = alTop
-          BevelOuter = bvNone
-          ShowCaption = False
-          TabOrder = 2
-          object LabelDateStartReadingPlan: TLabel
-            AlignWithMargins = True
-            Left = 3
-            Top = 3
-            Width = 377
-            Height = 13
-            CustomHint = SW_BalloonHint
-            Align = alTop
-            AutoSize = False
-            Caption = 
-              'Ustalenie daty rozpocz'#281'cia czytania Pisma '#346'wi'#281'tego wed'#322'ug wybran' +
-              'ego planu'
-            Layout = tlCenter
-            ExplicitLeft = 8
-            ExplicitTop = 344
-            ExplicitWidth = 31
-          end
+          Caption = 
+            'Ustalenie daty rozpocz'#281'cia czytania Pisma '#346'wi'#281'tego wed'#322'ug wybran' +
+            'ego planu'
+          TabOrder = 4
           object SpButtonStartPlan: TSpeedButton
-            Left = 0
-            Top = 55
-            Width = 383
+            Left = 2
+            Top = 51
+            Width = 379
             Height = 22
             Hint = 'Rozpoczecie wybranego planu.'
             ParentCustomHint = False
@@ -902,15 +843,14 @@ object SetupsWindow: TSetupsWindow
             GroupIndex = 1
             Caption = 'Rozpocznij wybrany plan czytania Pisma '#346'wi'#281'tego'
             OnClick = SpButtonStartStopReadingPlanClick
-            ExplicitLeft = 2
             ExplicitTop = 75
             ExplicitWidth = 311
           end
           object DateTimePickerSelectStartDatePlan: TDateTimePicker
             AlignWithMargins = True
-            Left = 3
-            Top = 22
-            Width = 377
+            Left = 5
+            Top = 18
+            Width = 373
             Height = 21
             Hint = 'Wyb'#243'r daty rozpocz'#281'cia wybranego planu.'
             Margins.Bottom = 12
@@ -923,6 +863,52 @@ object SetupsWindow: TSetupsWindow
             TabOrder = 0
             StyleElements = []
             OnChange = DateTimePickerSelectStartDatePlanChange
+          end
+        end
+        object GrBoxSetupsSpeak: TGroupBox
+          AlignWithMargins = True
+          Left = 3
+          Top = 399
+          Width = 383
+          Height = 125
+          CustomHint = SW_BalloonHint
+          Align = alClient
+          Caption = 'Ustawienia parametr'#243'w komputerowego  czytania tekstu'
+          TabOrder = 5
+          object TrackBarSetRate: TTrackBar
+            AlignWithMargins = True
+            Left = 5
+            Top = 18
+            Width = 373
+            Height = 30
+            Hint = 'Ustawienie szybko'#347'ci czytania tekstu'
+            ParentCustomHint = False
+            Align = alTop
+            Min = -10
+            PageSize = 1
+            PositionToolTip = ptTop
+            SelEnd = 10
+            SelStart = -10
+            ShowSelRange = False
+            TabOrder = 0
+          end
+          object TrackBarSetVolume: TTrackBar
+            AlignWithMargins = True
+            Left = 5
+            Top = 54
+            Width = 373
+            Height = 30
+            Hint = 'Ustawienia g'#322'o'#347'no'#347'ci czytania'
+            ParentCustomHint = False
+            Align = alTop
+            Max = 100
+            PageSize = 20
+            Frequency = 10
+            Position = 100
+            PositionToolTip = ptTop
+            SelEnd = 100
+            ShowSelRange = False
+            TabOrder = 1
           end
         end
       end
@@ -939,7 +925,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 232
+          Width = 404
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -956,6 +942,7 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
+          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           Left = 1
@@ -976,10 +963,6 @@ object SetupsWindow: TSetupsWindow
           ViewStyle = vsReport
           OnChanging = LViewDisplayselectPlanChanging
           OnDrawItem = LViewDisplayselectPlanDrawItem
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 412
-          ExplicitHeight = 527
         end
       end
     end

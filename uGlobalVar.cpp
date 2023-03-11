@@ -121,6 +121,8 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 											GlobalVar::GlobalIni_IsStartPlan="IsStartReadingPlan",        //Czy rozpoczęto plan czytania Pisma Świetego
 											GlobalVar::GlobalIni_FontPlan="FontDisplayNameReadingPlan",   //Czcionka wyświetlana w planie czytania biblii
 											GlobalVar::GlobalIni_SizeFontPlan="FontSizeDisplayReadingPlan",//Wielkość czcionki w planie
+											GlobalVar::GlobalIni_SetRate="SetRateSpeakText",               //Szybkość czytania tekstu
+											GlobalVar::GlobalIni_SetVolume="SetVolumeSpeakText",           //Głośność czytania
 										GlobalVar::Global_ustrFileReadingPlanExtend=".rpf";   //Rozszerzenie plików planów czytania = "*.rpf";
 //----- Wersje plików i bibliotek
 UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja biblioteki GsReadBibleTextClass

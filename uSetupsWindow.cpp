@@ -1,7 +1,6 @@
 ﻿/*
 	Klasa do obsługi okna wszystkich ustawień aplikacji
 */
-//---------------------------------------------------------------------------
 
 #include <vcl.h>
 #pragma hdrstop
@@ -419,7 +418,9 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		//--- Data rozpoczęcia planu
 	this->SpButtonStartPlan->Down = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, false);
 	this->DateTimePickerSelectStartDatePlan->Date = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
-	//this->DateTimePickerSelectStartDatePlan->MaxDate = TDateTime::CurrentDate();
+	//--- Parametry mowy
+	this->TrackBarSetRate->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, -2);
+	this->TrackBarSetVolume->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, 100);
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey) //30-03-2021
@@ -543,6 +544,9 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, this->CBoxSelectFontReadingPlan->Text);
 		//--- Wielkość czcionki dla planu
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, this->CBoxSelectSizeFontPlan->Text);
+  //--- Parametry mowy
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, this->TrackBarSetRate->Position);
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, this->TrackBarSetVolume->Position);
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();
 }
