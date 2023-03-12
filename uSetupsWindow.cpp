@@ -9,6 +9,7 @@
 #include <System.IOUtils.hpp>
 #include <System.StrUtils.hpp>
 #include <DateUtils.hpp>
+#include <sapi.h>
 #include "GsReadBibleTextClass\GsReadBibleTextClass.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -117,6 +118,11 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 		this->SW_SetupsImageLogo->Picture->Assign(pWICImage);
 		delete pWICImage; pWICImage = nullptr;
 	}
+	//Wstępne ustawienie na karcie ustawień czytania tekstu
+	this->TrackBarSetRate->Min = SPVLIMITS::SPMIN_RATE;
+	this->TrackBarSetRate->Max = SPVLIMITS::SPMAX_RATE;
+	this->TrackBarSetVolume->Min = SPVLIMITS::SPMIN_VOLUME;
+	this->TrackBarSetVolume->Max = SPVLIMITS::SPMAX_VOLUME;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -264,6 +270,9 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 								break;
 
 							default:
+                #if defined(_DEBUGINFO_)
+									GsDebugClass::WriteDebug(Format("Linia: %d", ARRAYOFCONST((i+1))));
+								#endif
 								throw(Exception("Niewłaściwy format pliku z wybranym planem"));
 						}
 

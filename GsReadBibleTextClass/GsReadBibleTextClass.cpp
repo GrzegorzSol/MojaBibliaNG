@@ -3107,9 +3107,6 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 		{
 			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 			if(!pGsReadBibleTextItem) {throw(Exception("Błąd metody sReadBibleTextData::GetTranslate()"));}
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("ustrStartStop: \"%s\"", ARRAYOFCONST((ustrStartStop))));
-			#endif
 
 			switch(ustrStartStop.Length())
 			//Formatowanie ciągu wyjściowego dla wyodrębnienia zakresu tekstu z całego tekstu księgi.
@@ -3141,10 +3138,10 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 					ustrStartVers+="001";                        //Dodanie do adresu startowego informacji pierwszego wersetu
 					ustrStopVers = ustrStartVers;                //Skopiowanie startowego adresu do końcowego adresu
     				//---
-    			iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1
+    			iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1  !!!
     			//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
     			ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
-    			iLastOffsetVers = -1; //Odjąć jedną pozycje końcowego wskażnika na tekst
+					iLastOffsetVers = -1; //Odjąć jedną pozycje końcowego wskażnika na tekst
     			break;
     		//---
     		default:
@@ -3163,28 +3160,40 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 
   			while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStartVers)
 				{
-  				if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
-						{throw(Exception("Końcowy adres tekstu zbyt duży"));}
-  				iLicz++;
+					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
+					{
+						throw(Exception("Końcowy adres tekstu zbyt duży"));
+					}
+					iLicz++;
+          if(iLicz > pSelectBook->Count-1) break;
 				}
   			iStart = iLicz;
 				iLicz++;
-  			while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
+
+				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
 				{
-					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
-						{throw(Exception("Końcowy adres tekstu zbyt duży"));}
+//					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
+//					{
+//						throw(Exception("Końcowy adres tekstu zbyt duży"));
+//					}
 					iLicz++;
+          if(iLicz > pSelectBook->Count-1) break;
 				}
 				iStop = iLicz + 1 + iLastOffsetVers; //Wskaźnik na ostatni werset regulowany zależnie od formatu zakresu wybranego tekst
+
 				for(int i=iStart; i<iStop; i++)
 				{
 					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
 					pHSListText->AddObject(pSelectBook->Strings[i].SubString(11, 500), pSelectBook->Objects[i]);
+          #if defined(_DEBUGINFO_)
+						GsDebugClass::WriteDebug(Format("Adres: %s", ARRAYOFCONST((pMyObjectVers->BookChaptVers))));
+					#endif
 				}
+
 			} //if(pGsReadBibleTextItem)
 			//---
 			//for(int i=0; i<pHSListText->Count; i++) //Tworzenie stringu wyjściowego, czystego tekstu
-			for(int i=0; i<1; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
+			for(int i=0; i<2; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
 			{
 				ustrRet += pHSListText->Strings[i] + " ";
 			}

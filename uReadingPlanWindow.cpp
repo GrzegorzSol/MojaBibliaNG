@@ -26,6 +26,8 @@ enum enumErrors {enErrorEndPlan = 100};
 const int ciMaxShets = 8, //Maksymalna ilość par i zakładek
 					ciMaxLengthPair = 6; //Minimalna długość pary (9+1+9)
 UnicodeString ustrTableText[ciMaxShets]; //Tablica tekstów z zakładek
+ISpVoice* pGlobalVoice=nullptr;
+SPVOICESTATUS voiceStatus;
 //---------------------------------------------------------------------------
 __fastcall TReadingPlanWindow::TReadingPlanWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -239,7 +241,6 @@ void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	ISpVoice* pVoice=nullptr;
 	HRESULT hr, hResult;
 	_di_ITask MyTask[1];
 	int value=0;
@@ -258,18 +259,18 @@ void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak
   			hResult = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
 				if(FAILED(hResult)) throw(Exception("Błąd funkcji syntezy mowy"));
 
-  			hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&pVoice);
+				hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&pGlobalVoice);
   			if(SUCCEEDED(hr))
 				{
-					pVoice->SetRate(iRate);
-					pVoice->SetVolume(iVolume);
+					pGlobalVoice->SetRate(iRate);
+					pGlobalVoice->SetVolume(iVolume);
 
-					hr = pVoice->Speak(ustrTextSpeak.c_str(), 0, NULL);
+					hr = pGlobalVoice->Speak(ustrTextSpeak.c_str(), 0, NULL);
 					this->SButtonStartSpeak->Down = false;
 					this->SButtonStartSpeak->Update();
-  				pVoice->Release();
-					pVoice = nullptr;
-					TInterlocked::Add(value, 500);
+					pGlobalVoice->Release();
+					pGlobalVoice = nullptr;
+					//TInterlocked::Add(value, 500);
 				}
 			}
 			catch(Exception &e)
@@ -283,6 +284,7 @@ void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak
 		}
 	});
 	MyTask[0]->Start();
+	//MyTask[0]->Release();
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadingPlanWindow::SButtonStartSpeakClick(TObject *Sender)
@@ -296,19 +298,34 @@ void __fastcall TReadingPlanWindow::SButtonStartSpeakClick(TObject *Sender)
 	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
 	if(!pSButton) return;
 	//---
+  if(!GlobalVar::IsWindows10)
+	{
+		MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest dostępna od systemy Windows 10"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+		return;
+	}
+	//---
+//  MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest niaktywna gdyż jest w trakcie konstruowania"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+//	return;
+	//---
 	if(pSButton->Down)
 	{
-    MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest niaktywna gdyż jest w trakcie konstruowania"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-		pSButton->Down = !pSButton->Down;
-		return;
-		//---
-		if(!GlobalVar::IsWindows10)
+		if(!pGlobalVoice)
 		{
-			MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest dostępna od systemy Windows 10"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-			return;
+			this->_SpeakText(ustrTableText[this->PageControlReadingPlanes->ActivePageIndex]);
 		}
-		this->_SpeakText(ustrTableText[this->PageControlReadingPlanes->ActivePageIndex]);
-	}
+		else
+		{
+			pGlobalVoice->GetStatus(&voiceStatus, NULL);
+			if(voiceStatus.dwRunningState == 0) pGlobalVoice->Resume();
+    }
+	} //if(pSButton->Down)
+	else
+	{
+		if(!pGlobalVoice) return;
+
+		pGlobalVoice->GetStatus(&voiceStatus, NULL);
+		if(voiceStatus.dwRunningState == SPRS_IS_SPEAKING) pGlobalVoice->Pause();
+	} //else(pSButton->Down)
 }
 //---------------------------------------------------------------------------
 
