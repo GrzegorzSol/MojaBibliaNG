@@ -140,6 +140,8 @@ private:	// User declarations
 	void __fastcall _VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey); //Niewłaściwa ścierzka dostępu do katalogu z mediami //30-03-2021
 	void __fastcall _InitLViewDisplaySelectPlan(); //Inicjalizacja parametrów dla listy przeglądu wybranego planu
 	void __fastcall _DisplaySelectPlan(); //Wyswietlenie wybranego planu
+	void __fastcall _WriteJournalPlan();  //Zapis aktualnego dziennika czytania bibli
+	void __fastcall _InfoStartStopPlan();
 	int _iNumberDayPlan=-1; //Numer kolejnej lekcji z aktywnego planu
 public:		// User declarations
 	__fastcall TSetupsWindow(TComponent* Owner);

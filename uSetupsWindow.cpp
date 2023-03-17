@@ -171,11 +171,8 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	this->SpEditSizeAdressFont->Tag = enTagControl_SpinEdSizeAdressFont;
 	this->SpEditSizeTranslatesFont->Tag = enTagControl_SpinEdSizeTranslatesFont;
 	//Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
-	this->_ReadAllConfig();
-	//Inicjalizacja parametrów dla listy przeglądu wybranego planu
-	this->SpButtonStartStopReadingPlanClick(this->SpButtonStartPlan); //Odczytanie informacji o aktualnym planie. Musi być przed metodą this->_InitLViewDisplaySelectPlan() !!!
 	this->_InitLViewDisplaySelectPlan();
-  this->_DisplaySelectPlan();
+	this->_ReadAllConfig();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
@@ -407,9 +404,11 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		//--- Wybrany plan czytania
 	this->CBoxSelectPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, "");
 	this->CBoxSelectPlan->ItemIndex = this->CBoxSelectPlan->Items->IndexOf(this->CBoxSelectPlan->Text);
+	if(this->CBoxSelectPlan->ItemIndex > -1) this->_InfoStartStopPlan();
 		//--- Odczyt wybranego tłumaczenia dla Planu czytania biblii z konfiguracji
 	this->CBoxSelectTranslate->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	this->CBoxSelectTranslate->ItemIndex = this->CBoxSelectTranslate->Items->IndexOf(this->CBoxSelectTranslate->Text);
+  this->_DisplaySelectPlan();
 		//--- Lista czcionek dla planu czytania biblii
 	this->CBoxSelectFontReadingPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
 	for(int i=0; i<ARRAYSIZE(ustrFontList); i++)
@@ -426,6 +425,9 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->CBoxSelectSizeFontPlan->ItemIndex = this->CBoxSelectSizeFontPlan->Items->IndexOf(this->CBoxSelectSizeFontPlan->Text);
 		//--- Data rozpoczęcia planu
 	this->SpButtonStartPlan->Down = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, false);
+	//if(this->SpButtonStartPlan->Down)
+			//Wybór daty mozliwy tylko wtedy gdy plan nieaktywny, czyli this->SpButtonStartPlan->Down = false
+	this->DateTimePickerSelectStartDatePlan->Enabled = !this->SpButtonStartPlan->Down;
 	this->DateTimePickerSelectStartDatePlan->Date = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
 	//--- Parametry mowy
 	this->TrackBarSetRate->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, -2);
@@ -547,8 +549,19 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	}
 		//Czy plan aktywowany
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, this->SpButtonStartPlan->Down);
+	if(!this->SpButtonStartPlan->Down)
+	{
+		GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan);
+		GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate);
+    if(TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan)) TFile::Delete(GlobalVar::GlobalPath_CurrentActivePlan);
+	}
+	else
+	{
 		//Wybrany plan czytania
-	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, this->CBoxSelectPlan->Text);
+		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, this->CBoxSelectPlan->Text);
+    //Data rozpoczęcia planu
+		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, this->DateTimePickerSelectStartDatePlan->Date);
+	}
 		//Nazwa czcionki dla planu
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, this->CBoxSelectFontReadingPlan->Text);
 		//--- Wielkość czcionki dla planu
@@ -898,22 +911,102 @@ void __fastcall TSetupsWindow::SpButtonStartStopReadingPlanClick(TObject *Sender
 	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
 	if(!pSButton) return;
 	//---
-	//static bool sbIsDown;
 	if(pSButton->Down)
 	{
+		if(this->CBoxSelectPlan->Text.IsEmpty())
+    //Brak wybranego planu
+		{
+			MessageBox(NULL, TEXT("Nie jest wybrany plan czytania, więc nie ma czego aktywować. Wybierz najpierw odpowiedni plan i aktywuj go."), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+			pSButton->Down = false;
+			return;
+		}
+    this->DateTimePickerSelectStartDatePlan->MinDate = 0;
 		this->DateTimePickerSelectStartDatePlan->Enabled = false;
-		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, this->DateTimePickerSelectStartDatePlan->Date);
-		this->_iNumberDayPlan = DaysBetween(TDateTime::CurrentDate(), this->DateTimePickerSelectStartDatePlan->Date);
-		this->LabelInfoSelectAndactivatePlan->Caption = Format("Aktualny plan: \"%s\", Tłumaczenie: \"%s\". Aktualna data: %s. Data rozpoczęcia aktualnego planu: %s. Dzień %d czytania.",
-			ARRAYOFCONST((this->CBoxSelectPlan->Text, this->CBoxSelectTranslate->Text, TDateTime::CurrentDate().FormatString("dd-mm-yyyy"),
-				this->DateTimePickerSelectStartDatePlan->Date.FormatString("dd-mm-yyyy"), this->_iNumberDayPlan+1)));
+		this->_InfoStartStopPlan();//Informacje o wybranym planie
+		this->_WriteJournalPlan(); //Stworzenie pliku dziennika
 	}
-	else
+	else //Nieaktywny plan czytania
 	{
-    this->DateTimePickerSelectStartDatePlan->Enabled = true;
+    #if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("pSButton->Down = false");
+		#endif
+		this->DateTimePickerSelectStartDatePlan->Enabled = true;
+		this->DateTimePickerSelectStartDatePlan->MinDate = TDateTime::CurrentDate();
 		this->LabelInfoSelectAndactivatePlan->Caption = "";
-    this->_iNumberDayPlan = -1;
+		this->_iNumberDayPlan = -1;
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_InfoStartStopPlan()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->_iNumberDayPlan = DaysBetween(TDateTime::CurrentDate(), this->DateTimePickerSelectStartDatePlan->Date);
+	this->LabelInfoSelectAndactivatePlan->Caption = Format("Aktualny plan: \"%s\", Tłumaczenie: \"%s\". Aktualna data: %s. Data rozpoczęcia aktualnego planu: %s. Dzień %d czytania.",
+		ARRAYOFCONST((this->CBoxSelectPlan->Text, this->CBoxSelectTranslate->Text, TDateTime::CurrentDate().FormatString("dd-mm-yyyy"),
+			this->DateTimePickerSelectStartDatePlan->Date.FormatString("dd-mm-yyyy"), this->_iNumberDayPlan+1)));
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_WriteJournalPlan()
+/**
+	OPIS METOD(FUNKCJI): Zapis aktualnego dziennika czytania bibli
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	const int ciNameCurrentPlan = 0; //Indeks gdzie znajduje się nazwa aktualnie czytanego planu
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("Path jcp: \"%s\"", ARRAYOFCONST((GlobalVar::GlobalPath_CurrentActivePlan))));
+		GsDebugClass::WriteDebug(Format("Size: %d", ARRAYOFCONST((this->LViewDisplayselectPlan->Items->Count))));
+	#endif
+	TListItem *pLItem = nullptr;
+	THashedStringList *pHSList = new THashedStringList();
+	if(!pHSList) throw(Exception("Błąd funkcji THashedStringList"));
+
+	try
+	{
+		try
+		{
+			if(!TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
+			//Plik dziennika nie istnieje
+			{
+				pHSList->Add(this->CBoxSelectPlan->Text);
+				for(int i=0; i<this->LViewDisplayselectPlan->Items->Count; i++)
+				{
+					pLItem = this->LViewDisplayselectPlan->Items->Item[i];
+					if(pLItem)
+					{
+						pHSList->AddPair(pLItem->SubItems->Strings[0], "0");
+					}
+				}
+				pHSList->SaveToFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+			} //if(!TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
+			else
+      //Plik dziennika istnieje. Trzeba sprawdzić czy nie odnosi sie do aktualnego planu
+			{
+				pHSList->LoadFromFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+				if(pHSList->Strings[ciNameCurrentPlan] == this->CBoxSelectPlan->Text)
+				{
+					#if defined(_DEBUGINFO_)
+						GsDebugClass::WriteDebug("Ten sam plan");
+					#endif
+        }
+      }
+		} //try catch
+		catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+    }
+	} //try __finally
+	__finally
+	{
+		if(pHSList) {delete pHSList; pHSList = nullptr;}
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::DateTimePickerSelectStartDatePlanChange(TObject *Sender)

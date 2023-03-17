@@ -740,8 +740,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 4
-            Height = 16
+            Width = 373
+            Height = 73
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -753,6 +753,8 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
+            ExplicitWidth = 4
+            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -854,10 +856,8 @@ object SetupsWindow: TSetupsWindow
             Margins.Bottom = 12
             ParentCustomHint = False
             Align = alTop
-            Date = 44977.000000000000000000
-            Time = 44977.000000000000000000
             Color = clBtnFace
-            MaxDate = 55153.999988425920000000
+            MaxDate = 54818.999988425920000000
             TabOrder = 0
             StyleElements = []
             OnChange = DateTimePickerSelectStartDatePlanChange
@@ -923,7 +923,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 232
+          Width = 404
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -940,6 +940,7 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
+          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           Left = 1

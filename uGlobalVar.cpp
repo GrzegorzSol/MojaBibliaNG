@@ -123,6 +123,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 											GlobalVar::GlobalIni_SizeFontPlan="FontSizeDisplayReadingPlan",//Wielkość czcionki w planie
 											GlobalVar::GlobalIni_SetRate="SetRateSpeakText",               //Szybkość czytania tekstu
 											GlobalVar::GlobalIni_SetVolume="SetVolumeSpeakText",           //Głośność czytania
+											GlobalVar::GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),    //Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 										GlobalVar::Global_ustrFileReadingPlanExtend=".rpf";   //Rozszerzenie plików planów czytania = "*.rpf";
 //----- Wersje plików i bibliotek
 UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja biblioteki GsReadBibleTextClass

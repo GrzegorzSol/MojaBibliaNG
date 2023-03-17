@@ -21,7 +21,7 @@
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 TReadingPlanWindow *ReadingPlanWindow;
-enum {enImage_ReadingText};
+enum {enImage_NoSpeakReadingText, enImage_SpeakReadingText, enImage_NoViewJournalingPlan, enImage_ViewJournalingPlan};
 enum enumErrors {enErrorEndPlan = 100};
 const int ciMaxShets = 8, //Maksymalna ilość par i zakładek
 					ciMaxLengthPair = 6; //Minimalna długość pary (9+1+9)
@@ -63,31 +63,65 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 {
 	const UnicodeString custrSeparator = "|";
 	THashedStringList *pHSLFilePlan=nullptr, *pHSList=nullptr;
-  UnicodeString ustrNameTranslate,
+	UnicodeString ustrNameTranslate,
 								ustrNameTraPlan = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	int iPosDescription = ustrNameTraPlan.Pos("- "), //Opis tłumaczenia po nazwie pliku t€maczenia (nazwa pliku - Opis tłumaczenia)
 			iPosName = ustrNameTraPlan.Pos(" "),
-			iDayPlan, iLengthPair,
+			iLengthPair,
 			//Odczyt indeksu tłumaczenia używanego w planie czytania
 			iReadIDTr = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IDTranslateRPlan, -1);
 
-  //Obliczanie kolejnego tekstu do czytania według daty
-	TDateTime dt = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
-	iDayPlan = DaysBetween(TDateTime::CurrentDate(), dt);
-
-	TColor TablePagesColors[ciMaxShets] = {clWebForestGreen, clWebLightSeaGreen, clWebCornFlowerBlue, clWebDeepskyBlue,
+      TColor TablePagesColors[ciMaxShets] = {clWebForestGreen, clWebLightSeaGreen, clWebCornFlowerBlue, clWebDeepskyBlue,
 																				 clWebPlum, clWebDarkTurquoise, clWebPaleGoldenrod, clWebLavender};
+
 	this->_pListWebBrowsers = new TList();
 	if(!this->_pListWebBrowsers) throw(Exception("Błąd tworzenia objektu, klasy TList"));
 
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan1);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan2);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan3);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan4);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan5);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan6);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan7);
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan8);
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan1); this->WebBrowserReadingPlan1->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan2); this->WebBrowserReadingPlan2->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan3); this->WebBrowserReadingPlan3->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan4); this->WebBrowserReadingPlan4->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan5); this->WebBrowserReadingPlan5->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan6); this->WebBrowserReadingPlan6->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan7); this->WebBrowserReadingPlan7->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan8); this->WebBrowserReadingPlan8->Navigate(WideString("about:blank").c_bstr());
+  //Właściwe wyświetlenie tłumaczenia, księgi i rozdziału
+	DataDisplayTextAnyBrowser SetDataDisplay;
+	SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
+	SetDataDisplay.strBackgroundColor = ColorToWebColorStr(TablePagesColors[0]);
+	SetDataDisplay.strNameFont = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
+	SetDataDisplay.iSizeFont = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, "16").ToIntDef(16);
+	SetDataDisplay.pMemoryStream = nullptr;
+	//Obliczanie kolejnego tekstu do czytania według daty
+	TDateTime dt = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
+	this->_iDayPlan = DaysBetween(TDateTime::CurrentDate(), dt);
+	//---//
+	this->_pHSListJournaling = new THashedStringList();
+	if(!this->_pHSListJournaling) throw(Exception("Błąd funkcji THashedStringList"));
+
+  if(TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
+	{
+		this->_pHSListJournaling->LoadFromFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+		this->ChListBoxJournaling->Items->BeginUpdate();
+		for(int i=0; i<this->_pHSListJournaling->Count; i++)
+		{
+			if(i==0)
+			{
+				this->ChListBoxJournaling->Items->Add(TPath::GetFileNameWithoutExtension(this->_pHSListJournaling->Strings[i]));
+				this->ChListBoxJournaling->ItemEnabled[0] = false;
+			}
+			else
+			{
+				this->ChListBoxJournaling->Items->Add(this->_pHSListJournaling->Names[i]);
+				this->ChListBoxJournaling->Checked[i] = (this->_pHSListJournaling->ValueFromIndex[i].ToIntDef(0) != 0);
+				if(i>(this->_iDayPlan + 1)) this->ChListBoxJournaling->ItemEnabled[i] = false;
+			}
+		}
+
+    this->ChListBoxJournaling->Items->EndUpdate();
+		this->ChListBoxJournaling->Header[0] = true;
+		this->ChListBoxJournaling->ItemIndex = this->_iDayPlan + 1;
+	}
 
 	if(iReadIDTr > -1) //Wydobycie indeksu dla używanego tłumaczenia w planie, jeśli nie zostało to zapisane w konfiguracji
 	{
@@ -103,22 +137,6 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 	}
 
 	this->PageControlReadingPlanes->ActivePageIndex = 0;
-  //Wypełnienie kontrolki pustą stroną.
-	for(int i=0; i<this->_pListWebBrowsers->Count; i++)
-	{
-		TWebBrowser *pWebBrowser = static_cast<TWebBrowser *>(this->_pListWebBrowsers->Items[i]);
-		if(pWebBrowser) {pWebBrowser->Navigate(WideString("about:blank").c_bstr());}
-	}
-
-	//Właściwe wyświetlenie tłumaczenia, księgi i rozdziału
-	DataDisplayTextAnyBrowser SetDataDisplay;
-	SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
-	SetDataDisplay.strBackgroundColor = ColorToWebColorStr(TablePagesColors[0]);
-	SetDataDisplay.strNameFont = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
-	SetDataDisplay.iSizeFont = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, "16").ToIntDef(16);
-	SetDataDisplay.pMemoryStream = nullptr;
-	SetDataDisplay.bIsHorizontLine = false;
-	//---
 	if(TDirectory::Exists(GlobalVar::Global_custrPathAllReadingPlan))
 	//Czy istnieje katalog z plikami planów
 	{
@@ -138,15 +156,15 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 				UnicodeString ustrInfosCurrentPlan = "Aktualny plan czytania: \"%s\". Tłumczenie: \"%s\". Aktualna data: %s. Data rozpoczęcia aktualnego planu: %s. Dzień %d czytania z %d dni.";
 				this->LabelInfosReadingPlan->Caption = Format(ustrInfosCurrentPlan,
 					ARRAYOFCONST((pHSLFilePlan->Strings[0], ustrNameTraPlan.SubString(iPosDescription+2, 100), TDateTime::CurrentDate().FormatString("dd-mm-yyyy"),
-					dt.FormatString("dd-mm-yyyy"), iDayPlan+1, pHSLFilePlan->Count-1)));
+					dt.FormatString("dd-mm-yyyy"), this->_iDayPlan+1, pHSLFilePlan->Count-1)));
 
-				if(iDayPlan >= pHSLFilePlan->Count-1)
+				if(this->_iDayPlan >= pHSLFilePlan->Count-1)
 				{
 					throw(enErrorEndPlan);
 				}
 				//                      1           2           3
 				//sda tablica par (para1 para1|para2 para2|para3 para3)
-				TStringDynArray sda = SplitString(pHSLFilePlan->Strings[iDayPlan+1], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
+				TStringDynArray sda = SplitString(pHSLFilePlan->Strings[this->_iDayPlan+1], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
 				for(int i=0; i<sda.Length; i++)
   			{
 					iLengthPair = UnicodeString(sda[i]).Length(); //Długość pary
@@ -199,7 +217,9 @@ void __fastcall TReadingPlanWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  if(this->_pListWebBrowsers) {delete this->_pListWebBrowsers; this->_pListWebBrowsers = nullptr;}
+	this->_pHSListJournaling->SaveToFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+	if(this->_pListWebBrowsers) {delete this->_pListWebBrowsers; this->_pListWebBrowsers = nullptr;}
+  if(this->_pHSListJournaling) {delete this->_pHSListJournaling; this->_pHSListJournaling = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadingPlanWindow::PageControlReadingPlanesDrawTab(TCustomTabControl *Control,
@@ -275,7 +295,7 @@ void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak
 			}
 			catch(Exception &e)
 			{
-				MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+				MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 			}
 		}
 		__finally
@@ -304,8 +324,9 @@ void __fastcall TReadingPlanWindow::SButtonStartSpeakClick(TObject *Sender)
 		return;
 	}
 	//---
-//  MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest niaktywna gdyż jest w trakcie konstruowania"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-//	return;
+  MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest niaktywna gdyż jest w trakcie konstruowania"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+  pSButton->Down = false;
+	return;
 	//---
 	if(pSButton->Down)
 	{
@@ -326,6 +347,92 @@ void __fastcall TReadingPlanWindow::SButtonStartSpeakClick(TObject *Sender)
 		pGlobalVoice->GetStatus(&voiceStatus, NULL);
 		if(voiceStatus.dwRunningState == SPRS_IS_SPEAKING) pGlobalVoice->Pause();
 	} //else(pSButton->Down)
+}
+//---------------------------------------------------------------------------
+void __fastcall TReadingPlanWindow::SButtonJournalingClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Ukrywanie lub pokazywanie dziennika
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
+	if(!pSButton) return;
+	//---
+	this->PanelJournaling->Visible = pSButton->Down;
+}
+//---------------------------------------------------------------------------
+void __fastcall TReadingPlanWindow::ChListBoxJournalingClickCheck(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCheckListBox *pChLBox = dynamic_cast<TCheckListBox *>(Sender);
+	if(!pChLBox) return;
+	//---
+	if(pChLBox->Checked[pChLBox->ItemIndex])
+	{
+		this->_pHSListJournaling->ValueFromIndex[pChLBox->ItemIndex] = "1";
+	}
+	else
+	{
+		this->_pHSListJournaling->ValueFromIndex[pChLBox->ItemIndex] = "0";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TReadingPlanWindow::ChListBoxJournalingDrawItem(TWinControl *Control,
+					int Index, TRect &Rect, TOwnerDrawState State)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCheckListBox *pChLBox = dynamic_cast<TCheckListBox *>(Control);
+	if(!pChLBox) return;
+	//---
+	TCanvas *pCanvas = pChLBox->Canvas;
+	pCanvas->Font = pChLBox->Font;
+	TRect myRect(Rect);
+	int iFlags=0;
+  //---
+	if(pChLBox->Header[Index])
+	{
+		pCanvas->Brush->Color = clWebIndigo;
+    pCanvas->Font->Style = TFontStyles() << fsBold;
+    pCanvas->Font->Color = clYellow;
+	}
+	else
+	{
+		if(Index > this->_iDayPlan + 1)
+		{
+			pCanvas->Brush->Color = clWebPeachPuff;
+		}
+		else
+		{
+			pCanvas->Brush->Color = clWebPaleTurquoise;
+    }
+    //---
+		if(State.Contains(odSelected))
+		{
+			pCanvas->Brush->Color = clRed;
+		}
+	}
+	//---
+  pCanvas->FillRect(Rect);
+	myRect.Inflate(-2, 0, 0, 0);
+
+  if(Index == 0) //Tytuł
+		{iFlags = DT_SINGLELINE | DT_VCENTER | DT_CENTER;}
+	else
+		{iFlags = DT_SINGLELINE | DT_VCENTER;}
+
+	DrawText(pCanvas->Handle, pChLBox->Items->Strings[Index].c_str(), -1, &myRect,  iFlags);
 }
 //---------------------------------------------------------------------------
 

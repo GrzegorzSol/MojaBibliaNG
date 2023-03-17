@@ -3160,7 +3160,8 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 
   			while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStartVers)
 				{
-					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
+					//if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
+					if(pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt())
 					{
 						throw(Exception("Końcowy adres tekstu zbyt duży"));
 					}
@@ -3172,10 +3173,11 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 
 				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
 				{
-//					if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
-//					{
-//						throw(Exception("Końcowy adres tekstu zbyt duży"));
-//					}
+          //if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
+					if(pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt())
+					{
+						throw(Exception("Końcowy adres tekstu zbyt duży"));
+					}
 					iLicz++;
           if(iLicz > pSelectBook->Count-1) break;
 				}
@@ -3185,15 +3187,15 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 				{
 					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
 					pHSListText->AddObject(pSelectBook->Strings[i].SubString(11, 500), pSelectBook->Objects[i]);
-          #if defined(_DEBUGINFO_)
-						GsDebugClass::WriteDebug(Format("Adres: %s", ARRAYOFCONST((pMyObjectVers->BookChaptVers))));
-					#endif
+//          #if defined(_DEBUGINFO_)
+//						GsDebugClass::WriteDebug(Format("Adres: %s", ARRAYOFCONST((pMyObjectVers->BookChaptVers))));
+//					#endif
 				}
 
 			} //if(pGsReadBibleTextItem)
 			//---
-			//for(int i=0; i<pHSListText->Count; i++) //Tworzenie stringu wyjściowego, czystego tekstu
-			for(int i=0; i<2; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
+			for(int i=0; i<pHSListText->Count; i++) //Tworzenie stringu wyjściowego, czystego tekstu
+			//for(int i=0; i<2; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
 			{
 				ustrRet += pHSListText->Strings[i] + " ";
 			}

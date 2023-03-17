@@ -12,6 +12,8 @@
 #include <System.ImageList.hpp>
 #include <Vcl.ImgList.hpp>
 #include <Vcl.Buttons.hpp>
+#include <Vcl.CheckLst.hpp>
+#include <System.IniFiles.hpp>
 //---------------------------------------------------------------------------
 class TReadingPlanWindow : public TForm
 {
@@ -38,15 +40,25 @@ __published:	// IDE-managed Components
 	TImageList *ImageListSmallReadingPlan;
 	TImageList *ImageListBigReadingPlan;
 	TSpeedButton *SButtonStartSpeak;
+	TSpeedButton *SButtonJournaling;
+	TPanel *PanelDayTextRead;
+	TPanel *PanelJournaling;
+	TCheckListBox *ChListBoxJournaling;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall PageControlReadingPlanesDrawTab(TCustomTabControl *Control,
           int TabIndex, const TRect &Rect, bool Active);
 	void __fastcall SButtonStartSpeakClick(TObject *Sender);
+	void __fastcall SButtonJournalingClick(TObject *Sender);
+	void __fastcall ChListBoxJournalingClickCheck(TObject *Sender);
+	void __fastcall ChListBoxJournalingDrawItem(TWinControl *Control, int Index,
+          TRect &Rect, TOwnerDrawState State);
 private:	// User declarations
-	int _iIDTranslateReadingPlan=-1;
+	int _iIDTranslateReadingPlan=-1,
+			_iDayPlan=0; //Numer dnia od rozpoczęcia czytania według planu
 	TList *_pListWebBrowsers=nullptr;
+  THashedStringList *_pHSListJournaling=nullptr;
   void __fastcall _SpeakText(const UnicodeString ustrTextSpeak); //Tekst do przeczytania na głos przez syntezator mowy
 public:		// User declarations
 	__fastcall TReadingPlanWindow(TComponent* Owner);
