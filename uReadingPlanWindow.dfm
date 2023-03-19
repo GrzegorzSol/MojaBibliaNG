@@ -16,9 +16,11 @@ object ReadingPlanWindow: TReadingPlanWindow
   Font.Quality = fqClearType
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PanelTextInfosReadingPlan: TPanel
@@ -107,11 +109,24 @@ object ReadingPlanWindow: TReadingPlanWindow
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 1
+    object SplitterSizeJournaling: TSplitter
+      AlignWithMargins = True
+      Left = 966
+      Top = 3
+      Width = 5
+      Height = 839
+      Align = alRight
+      Beveled = True
+      Color = clBlue
+      ParentColor = False
+      OnCanResize = SplitterSizeJournalingCanResize
+      ExplicitLeft = 1009
+    end
     object PageControlReadingPlanes: TPageControl
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 1018
+      Width = 957
       Height = 839
       ActivePage = TabSheetPlan8
       Align = alClient
@@ -133,12 +148,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -152,12 +168,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -171,12 +188,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -190,12 +208,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -209,12 +228,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -228,12 +248,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -247,12 +268,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 1004
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -266,13 +288,13 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1004
+          Width = 943
           Height = 823
           Align = alClient
           TabOrder = 0
           ExplicitWidth = 1204
           ControlData = {
-            4C000000C46700000F5500000000000000000000000000000000000000000000
+            4C000000766100000F5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -281,9 +303,9 @@ object ReadingPlanWindow: TReadingPlanWindow
       end
     end
     object PanelJournaling: TPanel
-      Left = 1024
+      Left = 974
       Top = 0
-      Width = 200
+      Width = 250
       Height = 845
       Align = alRight
       BevelOuter = bvNone
@@ -293,8 +315,9 @@ object ReadingPlanWindow: TReadingPlanWindow
         AlignWithMargins = True
         Left = 3
         Top = 6
-        Width = 194
+        Width = 244
         Height = 833
+        Cursor = crHandPoint
         Margins.Top = 6
         Margins.Bottom = 6
         OnClickCheck = ChListBoxJournalingClickCheck
@@ -312,6 +335,7 @@ object ReadingPlanWindow: TReadingPlanWindow
         ParentFont = False
         Style = lbOwnerDrawFixed
         TabOrder = 0
+        OnClick = ChListBoxJournalingClick
         OnDrawItem = ChListBoxJournalingDrawItem
       end
     end

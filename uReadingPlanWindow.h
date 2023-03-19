@@ -14,6 +14,7 @@
 #include <Vcl.Buttons.hpp>
 #include <Vcl.CheckLst.hpp>
 #include <System.IniFiles.hpp>
+//#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
 //---------------------------------------------------------------------------
 class TReadingPlanWindow : public TForm
 {
@@ -44,6 +45,7 @@ __published:	// IDE-managed Components
 	TPanel *PanelDayTextRead;
 	TPanel *PanelJournaling;
 	TCheckListBox *ChListBoxJournaling;
+	TSplitter *SplitterSizeJournaling;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -54,11 +56,19 @@ __published:	// IDE-managed Components
 	void __fastcall ChListBoxJournalingClickCheck(TObject *Sender);
 	void __fastcall ChListBoxJournalingDrawItem(TWinControl *Control, int Index,
           TRect &Rect, TOwnerDrawState State);
+	void __fastcall ChListBoxJournalingClick(TObject *Sender);
+	void __fastcall SplitterSizeJournalingCanResize(TObject *Sender, int &NewSize,
+          bool &Accept);
+	void __fastcall FormShow(TObject *Sender);
+	void __fastcall FormActivate(TObject *Sender);
 private:	// User declarations
-	int _iIDTranslateReadingPlan=-1,
+	int _iIDTranslateReadingPlan=-1, //Numer tłumaczenia dla planu
 			_iDayPlan=0; //Numer dnia od rozpoczęcia czytania według planu
+	bool _bIsSelectDay=false; //Czy istnieje możliwość wybory dnia do przeczytania?
 	TList *_pListWebBrowsers=nullptr;
-  THashedStringList *_pHSListJournaling=nullptr;
+	THashedStringList *_pHSListJournaling=nullptr;
+	void __fastcall _ReadSetupsJournal(); //Odczyt i ustawienia dziennika
+	void __fastcall _ReadSelectPlan(const int iSetDayPlan=-1);    //Odczyt i wyświetlenie pozycji aktualnego planu
   void __fastcall _SpeakText(const UnicodeString ustrTextSpeak); //Tekst do przeczytania na głos przez syntezator mowy
 public:		// User declarations
 	__fastcall TReadingPlanWindow(TComponent* Owner);

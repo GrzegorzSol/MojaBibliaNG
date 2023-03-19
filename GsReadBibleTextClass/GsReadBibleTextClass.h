@@ -151,8 +151,9 @@ typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijn
 		UnicodeString strBackgroundColor,   //Kolor podkładu
 									strNameFont;          //nazwa czcionki
 		int iSizeFont;                      //Wielkość czcionki strNameFont
-		TMemoryStream *pMemoryStream;       //Zapis wyniku wyszukiwania jako danych html, do objektu, klasy TMemoryStream
+		TMemoryStream *pMemoryStream=nullptr;       //Zapis wyniku wyszukiwania jako danych html, do objektu, klasy TMemoryStream
 		bool bIsHorizontLine;               //Czy istnieje pozioma linia między wersetami
+
 	} DataDisplayTextAnyBrowser, *PDataDisplayTextAnyBrowser;
 //---------------------------------------------------------------------------
 const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
