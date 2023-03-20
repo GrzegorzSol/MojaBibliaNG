@@ -46,6 +46,7 @@ __published:	// IDE-managed Components
 	TPanel *PanelJournaling;
 	TCheckListBox *ChListBoxJournaling;
 	TSplitter *SplitterSizeJournaling;
+	TSpeedButton *SButtonStopSpeak;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -61,6 +62,7 @@ __published:	// IDE-managed Components
           bool &Accept);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
+	void __fastcall SButtonStopSpeakClick(TObject *Sender);
 private:	// User declarations
 	int _iIDTranslateReadingPlan=-1, //Numer tłumaczenia dla planu
 			_iDayPlan=0; //Numer dnia od rozpoczęcia czytania według planu

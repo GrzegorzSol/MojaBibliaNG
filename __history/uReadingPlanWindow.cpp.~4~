@@ -357,11 +357,8 @@ void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak
 					hr = Gl_pVoice->Speak(ustrTextSpeak.c_str(), 0, NULL);
 					this->SButtonStartSpeak->Down = false;
 					this->SButtonStartSpeak->Update();
-					if(Gl_pVoice)
-					{
-						Gl_pVoice->Release();
-						Gl_pVoice = nullptr;
-					}
+					if(Gl_pVoice) Gl_pVoice->Release();
+					Gl_pVoice = nullptr;
 					//TInterlocked::Add(value, 500);
 				}
 			}
