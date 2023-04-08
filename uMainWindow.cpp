@@ -55,6 +55,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
+#pragma link "Vcl.HtmlHelpViewer" //!!!
 #pragma resource "*.dfm"
 TMainBibleWindow *MainBibleWindow;
 int Global_WidthTabTools = 0;
@@ -139,6 +140,7 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
 	#endif
@@ -153,9 +155,9 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	GlobalVar::Global_SListPathMultiM = new TStringList();  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 	if(!GlobalVar::Global_SListPathMultiM) throw(Exception("Błąd inicjalizacji objektu TStringList"));
 	//---
-	Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
 	Application->OnHint = this->_AppOnHint;
 	Application->OnMessage = this->_AppMessage;
+	Application->OnHelp = this->_AppHelp;
 	//Kontrola wymiarów okna, minimalne, dopuszczalne wymiary
 	this->Constraints->MinHeight = 600;
 	this->Constraints->MinWidth = 1024;
@@ -438,9 +440,38 @@ void __fastcall TMainBibleWindow::_AppException(TObject *Sender, Exception *pExc
 */
 {
 	Application->ShowException(pException);
-//  this->OnCloseQuery = nullptr;
-//	this->Close();
+  this->OnCloseQuery = nullptr;
 	Application->Terminate(); //Zamknięcie aplikacji
+}
+//---------------------------------------------------------------------------
+bool __fastcall TMainBibleWindow::_AppHelp(System::Word Command, NativeInt Data, bool &CallHelp)
+/**
+	OPIS METOD(FUNKCJI): Globalna pomoc
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST((GlobalVar::Global_custrPathGlobalHelp))));
+	#endif
+	Application->HelpFile = GlobalVar::Global_custrPathGlobalHelp;
+	CallHelp = true;
+	return true;
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::_AppOnHint(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TApplication *pApplication = dynamic_cast<TApplication *>(Sender);
+	if(!pApplication) return;
+	//---
+	this->StatusBarMain->Panels->Items[enPanelMain_InfoText]->Text = GetShortHint(Application->Hint);//this->XMBW_BalloonHintMain->Description;//
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_InitAllTagAndHint()
@@ -506,20 +537,6 @@ void __fastcall TMainBibleWindow::TrayIconMainBalloonClick(TObject *Sender)
 	if(!pTrayIcon) return;
 	//---
 	//MessageBox(NULL, L"TMainBibleWindow::MBW_TrayIconMainBalloonClick", TEXT("Informacja aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::_AppOnHint(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TApplication *pApplication = dynamic_cast<TApplication *>(Sender);
-	if(!pApplication) return;
-	//---
-	this->StatusBarMain->Panels->Items[enPanelMain_InfoText]->Text = GetShortHint(Application->Hint);//this->XMBW_BalloonHintMain->Description;//
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()

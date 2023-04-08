@@ -2,27 +2,32 @@
 File_0=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\GsReadBibleTextClass\GsReadBibleTextClass.cpp',0,1,3088,212,3088,0,0,{{46,69}
 
 [Modules]
-Module0=F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp
+Module0=F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp
 Module1=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
-Module2=default.htm
-Count=3
+Module2=F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp
+Module3=default.htm
+Count=4
 EditWindowCount=1
 
-[F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp]
+[F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp]
 ModuleType=TSourceModule
 
 [F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp]
+ModuleType=TSourceModule
+
+[F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp]
 ModuleType=TSourceModule
 
 [default.htm]
 ModuleType=TURLModule
 
 [EditWindow0]
-ViewCount=3
-CurrentEditView=F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp
+ViewCount=4
+CurrentEditView=F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp
 View0=0
 View1=1
 View2=2
+View3=3
 PercentageSizes=1
 Create=1
 Visible=1
@@ -75,6 +80,17 @@ LeftCol=1
 Elisions={{36,69},{47,0},{'...'}}{{49,85},{58,0},{'...'}}{{60,64},{93,0},{'...'}}{{95,62},{104,0},{'...'}}{{106,66},{127,0},{'...'}}{{129,57},{161,0},{'...'}}{{163,75},{279,0},{'...'}}{{281,65},{292,0},{'...'}}{{294,142},{323,0},{'...'}}{{325,82},{380,0},{'...'}}{{382,76},{422,0},{'...'}}{{424,76},{437,0},{'...'}}{{439,75},{455,0},{'...'}}{{457,83},{476,0},{'...'}}{{478,133},{527,0},{'...'}}{{529,78},{541,0},{'...'}}{{543,113},{557,0},{'...'}}
 Bookmarks=
 EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp
+
+[View3]
+CustomEditViewType=TEditView
+Module=F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.h
 
 [Watches]
 Count=0

@@ -106,6 +106,7 @@ private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;
 	void __fastcall _AppException(TObject *Sender, Exception *pException);	//Obsługa błędów całej aplikacji
+	bool __fastcall _AppHelp(System::Word Command, NativeInt Data, bool &CallHelp);
 	void __fastcall _AppOnHint(TObject *Sender);
 	void __fastcall _AppMessage(tagMSG &Msg, bool &Handled);
 	void __fastcall _CreatePopupTrayIcon();

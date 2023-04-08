@@ -22,6 +22,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrPathAllReadingPlan = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),//Ścieżka dostępu do katalogu z planami czytania biblii
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
+										GlobalVar::Global_custrPathGlobalHelp = TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"), //Ścieżka dostępu do pliku pomocy
 										//Graficne loga z rozszerzeniem .gli
 										GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
 										GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania

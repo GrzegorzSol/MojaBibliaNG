@@ -856,6 +856,8 @@ object SetupsWindow: TSetupsWindow
             Margins.Bottom = 12
             ParentCustomHint = False
             Align = alTop
+            Date = 45010.000000000000000000
+            Time = 45010.000000000000000000
             Color = clBtnFace
             MaxDate = 54818.999988425920000000
             TabOrder = 0
@@ -974,13 +976,16 @@ object SetupsWindow: TSetupsWindow
     Caption = 'SW_GrPanelButtons'
     ColumnCollection = <
       item
-        Value = 33.468126601646180000
+        Value = 25.000000000000000000
       end
       item
-        Value = 33.642191107269060000
+        Value = 25.000000000000000000
       end
       item
-        Value = 32.889682291084750000
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
       end>
     ControlCollection = <
       item
@@ -997,6 +1002,11 @@ object SetupsWindow: TSetupsWindow
         Column = 1
         Control = SW_ButtSetupReturn
         Row = 0
+      end
+      item
+        Column = 3
+        Control = SW_ButtSetupHelp
+        Row = 0
       end>
     RowCollection = <
       item
@@ -1008,7 +1018,7 @@ object SetupsWindow: TSetupsWindow
       994
       29)
     object SW_ButtSetupSave: TButton
-      Left = 108
+      Left = 66
       Top = 3
       Width = 118
       Height = 22
@@ -1021,9 +1031,10 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 0
       OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 108
     end
     object SW_ButtSetupCancel: TButton
-      Left = 792
+      Left = 583
       Top = 3
       Width = 75
       Height = 22
@@ -1036,9 +1047,10 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 1
       OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 792
     end
     object SW_ButtSetupReturn: TButton
-      Left = 421
+      Left = 294
       Top = 2
       Width = 157
       Height = 25
@@ -1051,6 +1063,18 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 2
       OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 421
+    end
+    object SW_ButtSetupHelp: TButton
+      Left = 831
+      Top = 3
+      Width = 75
+      Height = 22
+      Anchors = []
+      Caption = 'Pomoc...'
+      TabOrder = 3
+      OnClick = SW_ButtSetups_Click
+      ExplicitTop = 2
     end
   end
   object SW_STextInfo: TStaticText

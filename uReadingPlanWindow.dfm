@@ -36,11 +36,11 @@ object ReadingPlanWindow: TReadingPlanWindow
     TabOrder = 0
     object LabelInfosReadingPlan: TLabel
       AlignWithMargins = True
-      Left = -134
+      Left = 4
       Top = 4
-      Width = 1141
+      Width = 1003
       Height = 62
-      Align = alRight
+      Align = alLeft
       AutoSize = False
       Color = clMoneyGreen
       Font.Charset = DEFAULT_CHARSET
@@ -54,67 +54,84 @@ object ReadingPlanWindow: TReadingPlanWindow
       Transparent = False
       Layout = tlCenter
       WordWrap = True
-      ExplicitLeft = -103
-      ExplicitTop = 2
     end
-    object SButtonStartSpeak: TSpeedButton
-      AlignWithMargins = True
-      Left = 1086
-      Top = 8
-      Width = 55
-      Height = 54
-      Margins.Left = 7
-      Margins.Top = 7
-      Margins.Right = 7
-      Margins.Bottom = 7
-      Align = alRight
-      AllowAllUp = True
-      GroupIndex = 1
-      ImageIndex = 0
-      Images = ImageListBigReadingPlan
-      ParentShowHint = False
-      ShowHint = True
-      SelectedImageIndex = 1
-      OnClick = SButtonStartSpeakClick
-      ExplicitLeft = 1159
-      ExplicitTop = 12
-    end
-    object SButtonJournaling: TSpeedButton
-      AlignWithMargins = True
-      Left = 1155
-      Top = 8
-      Width = 55
-      Height = 54
-      Margins.Left = 7
-      Margins.Top = 7
-      Margins.Right = 7
-      Margins.Bottom = 7
-      Align = alRight
-      AllowAllUp = True
-      GroupIndex = 2
-      Down = True
-      ImageIndex = 2
-      Images = ImageListBigReadingPlan
-      SelectedImageIndex = 3
-      OnClick = SButtonJournalingClick
-      ExplicitTop = 12
-    end
-    object SButtonStopSpeak: TSpeedButton
-      AlignWithMargins = True
-      Left = 1017
-      Top = 8
-      Width = 55
-      Height = 54
-      Margins.Left = 7
-      Margins.Top = 7
-      Margins.Right = 7
-      Margins.Bottom = 7
-      Align = alRight
-      ImageIndex = 4
-      Images = ImageListBigReadingPlan
-      PressedImageIndex = 5
-      OnClick = SButtonStopSpeakClick
-      ExplicitTop = 9
+    object PanelButtons: TPanel
+      Left = 1010
+      Top = 1
+      Width = 207
+      Height = 68
+      Align = alClient
+      BevelOuter = bvLowered
+      ShowCaption = False
+      TabOrder = 0
+      ExplicitLeft = 1080
+      ExplicitTop = 32
+      ExplicitWidth = 185
+      ExplicitHeight = 41
+      object SButtonJournaling: TSpeedButton
+        AlignWithMargins = True
+        Left = 6
+        Top = 8
+        Width = 55
+        Height = 52
+        Margins.Left = 7
+        Margins.Top = 7
+        Margins.Right = 7
+        Margins.Bottom = 7
+        Align = alRight
+        AllowAllUp = True
+        GroupIndex = 2
+        Down = True
+        ImageIndex = 2
+        Images = ImageListBigReadingPlan
+        SelectedImageIndex = 3
+        OnClick = SButtonJournalingClick
+        ExplicitLeft = 1155
+        ExplicitTop = 12
+        ExplicitHeight = 54
+      end
+      object SButtonStartSpeak: TSpeedButton
+        AlignWithMargins = True
+        Left = 75
+        Top = 8
+        Width = 55
+        Height = 52
+        Margins.Left = 7
+        Margins.Top = 7
+        Margins.Right = 7
+        Margins.Bottom = 7
+        Align = alRight
+        AllowAllUp = True
+        GroupIndex = 1
+        ImageIndex = 0
+        Images = ImageListBigReadingPlan
+        ParentShowHint = False
+        ShowHint = True
+        SelectedImageIndex = 1
+        OnClick = SButtonStartSpeakClick
+        ExplicitLeft = 1159
+        ExplicitTop = 12
+        ExplicitHeight = 54
+      end
+      object SButtonStopSpeak: TSpeedButton
+        AlignWithMargins = True
+        Left = 144
+        Top = 8
+        Width = 55
+        Height = 52
+        Margins.Left = 7
+        Margins.Top = 7
+        Margins.Right = 7
+        Margins.Bottom = 7
+        Align = alRight
+        ImageIndex = 4
+        Images = ImageListBigReadingPlan
+        PressedImageIndex = 5
+        OnClick = SButtonStopSpeakClick
+        ExplicitLeft = 1017
+        ExplicitTop = 9
+        ExplicitHeight = 54
+      end
     end
   end
   object PanelDayTextRead: TPanel

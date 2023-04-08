@@ -23,7 +23,7 @@ TSetupsWindow *SetupsWindow;
 enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_OtherSetups, enPageSetup_Translates,
       enPageSetups_ReadingPlan,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
-			enSetup_Save=10, enSetup_Return, enSetup_Cancel,
+			enSetup_Save=10, enSetup_Return, enSetup_Cancel, enSetup_Help,
 			enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
 			//Tagi dla przycisków i innych kontrolek
 			enTagControl_ButtFontMain=100,
@@ -80,13 +80,29 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_ButtSelectDirMulti_3->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_3->ImageIndex)));
 	this->SW_ButtSetupSave->Hint = Format("Zapis zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupSave->ImageIndex)));
 	this->SW_ButtSetupCancel->Hint = Format("Anulowanie zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupCancel->ImageIndex)));
-
+  //Tagi
 	this->SW_CBoxIsDisplaySplashScreen->Tag = enTag_IsDisplaySplashScreen;
 	this->SW_CBoxIsRequestEnd->Tag = enTag_IsRequestEnd;
 	this->SW_CBoxOnlyOne->Tag = enTag_IsOnlyOne;
 	this->SW_CBoxAutoFindUpdate->Tag = enTag_IsAutoFindUpdate;
 	this->SW_CBoxReLoadBooks->Tag = enTag_IsLoadBooksOnInit;
-
+  //Pole tekstowe z wybranymi katalogami z multimediami
+	this->SW_LEditPath1->Tag = enSelectDirMulti_1; this->SW_ButtSelectDirMulti_1->Tag = enSelectDirMulti_1;
+	this->SW_LEditPath2->Tag = enSelectDirMulti_2; this->SW_ButtSelectDirMulti_2->Tag = enSelectDirMulti_2;
+	this->SW_LEditPath3->Tag = enSelectDirMulti_3; this->SW_ButtSelectDirMulti_3->Tag = enSelectDirMulti_3;
+	//Dolne przyciski
+	this->SW_ButtSetupSave->Tag = enSetup_Save;
+	this->SW_ButtSetupReturn->Tag = enSetup_Return;
+	this->SW_ButtSetupCancel->Tag = enSetup_Cancel;
+	this->SW_ButtSetupHelp->Tag = enSetup_Help;
+	//Przyciski wyboru czcionki
+	this->ButtFontNameMainText->Tag = enTagControl_ButtFontMain;
+	this->ButtFontNameAdress->Tag = enTagControl_ButtFontAdress;
+	this->ButtFontNameTranslates->Tag = enTagControl_ButtFontNameTranslates;
+	//Kontrolka do ustawiania wielkości czcionek
+	this->SpEditSizeMainFont->Tag = enTagControl_SpinEdSizeMainFont;
+	this->SpEditSizeAdressFont->Tag = enTagControl_SpinEdSizeAdressFont;
+	this->SpEditSizeTranslatesFont->Tag = enTagControl_SpinEdSizeTranslatesFont;
   //Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
 	//Dodawanie grup do objektu, typu TListView
@@ -154,22 +170,6 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	GlobalVar::Global_ConfigFile->GetStrings(this->_SListOldConfig);
 	//---
 	this->SW_PControlSelected->ActivePageIndex = enPageSetups_Layout;
-	//Pole tekstowe z wybranymi katalogami z multimediami
-	this->SW_LEditPath1->Tag = enSelectDirMulti_1; this->SW_ButtSelectDirMulti_1->Tag = enSelectDirMulti_1;
-	this->SW_LEditPath2->Tag = enSelectDirMulti_2; this->SW_ButtSelectDirMulti_2->Tag = enSelectDirMulti_2;
-	this->SW_LEditPath3->Tag = enSelectDirMulti_3; this->SW_ButtSelectDirMulti_3->Tag = enSelectDirMulti_3;
-	//Dolne przyciski
-	this->SW_ButtSetupSave->Tag = enSetup_Save;
-	this->SW_ButtSetupReturn->Tag = enSetup_Return;
-	this->SW_ButtSetupCancel->Tag = enSetup_Cancel;
-	//Przyciski wyboru czcionki
-	this->ButtFontNameMainText->Tag = enTagControl_ButtFontMain;
-	this->ButtFontNameAdress->Tag = enTagControl_ButtFontAdress;
-	this->ButtFontNameTranslates->Tag = enTagControl_ButtFontNameTranslates;
-	//Kontrolka do ustawiania wielkości czcionek
-	this->SpEditSizeMainFont->Tag = enTagControl_SpinEdSizeMainFont;
-	this->SpEditSizeAdressFont->Tag = enTagControl_SpinEdSizeAdressFont;
-	this->SpEditSizeTranslatesFont->Tag = enTagControl_SpinEdSizeTranslatesFont;
 	//Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
 	this->_InitLViewDisplaySelectPlan();
 	this->_ReadAllConfig();
@@ -662,6 +662,15 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
       this->Close();
 		}
 		break;
+		//---
+		case enSetup_Help:
+		{
+      #if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("HELP_Ustawieniaaplikacji: %d", ARRAYOFCONST((HELP_Ustawieniaaplikacji))));
+			#endif
+			Application->HelpContext(HELP_Ustawieniaaplikacji);
+		}
+    break;
 	}
 }
 //---------------------------------------------------------------------------

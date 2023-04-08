@@ -110,6 +110,7 @@ __published:	// IDE-managed Components
 	TGroupBox *GrBoxSetupsSpeak;
 	TTrackBar *TrackBarSetRate;
 	TTrackBar *TrackBarSetVolume;
+	TButton *SW_ButtSetupHelp;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

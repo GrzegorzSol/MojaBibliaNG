@@ -3,6 +3,8 @@
 //---------------------------------------------------------------------------
 #include <Forms.hpp>
 #include <System.IniFiles.hpp>
+#include <Vcl.HtmlHelpViewer.hpp>
+#include "HelpMojaBibliaNT.h"
 //#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
@@ -40,6 +42,7 @@ struct GlobalVar
 														 Global_custrPathAllReadingPlan,  //Ścieżka dostępu do katalogu z planami czytania biblii
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
+                             Global_custrPathGlobalHelp, 			//Ścieżka dostępu do pliku pomocy
 														 //Graficne loga z rozszerzeniem .gli
 														 Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
 														 Global_custrPathSearchLogo,//Logo w oknie wyszukiwania
