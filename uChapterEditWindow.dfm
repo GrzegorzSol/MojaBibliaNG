@@ -2,8 +2,8 @@ object ChapterEditWindow: TChapterEditWindow
   Left = 0
   Top = 0
   Caption = 'ChapterEditWindow'
-  ClientHeight = 671
-  ClientWidth = 1010
+  ClientHeight = 822
+  ClientWidth = 1248
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -12,12 +12,10 @@ object ChapterEditWindow: TChapterEditWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
 end

@@ -12,7 +12,6 @@ object MainBibleWindow: TMainBibleWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
@@ -20,7 +19,6 @@ object MainBibleWindow: TMainBibleWindow
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object ImageBackgroundWindow: TImage
     Left = 300

@@ -7,15 +7,15 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TChapterEditWindow *ChapterEditWindow;
-const UnicodeString GlobalSizeFontText = "\\fs20",
+const UnicodeString GlobalSizeFontText = "\\fs28",
 										GlobalHeaderRtf = UnicodeString("{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
-																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green255\\blue0;\\red0\\green0\\blue255;}" +
-																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\lang1045\\b\\f0\\fs24 Edycja wczytanego rozdziału (tylko polskie, pełne przekłady)\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf2\\b" + GlobalSizeFontText,
+																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;}" +
+																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf3\\lang1045\\b\\f0\\fs28 Edycja wczytanego rozdziału (tylko polskie, pełne przekłady)\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\b" + GlobalSizeFontText,
 										GlobalAdressVersRtf = "\\f1\\line\\cf2\\b",
 										GlobalVersRtf = "\\cf1\\b0\\f0",
 										GlobalNameTransRtf = "\\cf4\\f1",
 										GlobalEndVersRtf = "\\cf1\\f1",
-										GlobalSizeNameTransRtf = "\\fs16";
+										GlobalSizeNameTransRtf = "\\fs20";
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
@@ -39,6 +39,9 @@ __fastcall TChapterEditWindow::TChapterEditWindow(TComponent* Owner, TTabSheet *
 		this->Caption = this->_pGsTabSheetClass->Caption;
 	}
 	this->_iGetTranslate = this->_pGsTabSheetClass->GetTabSet()->TabIndex; //Numer aktualnie wyświetlanego tłumaczenia w zakładce z tekstem
+
+	this->Constraints->MinWidth = this->Width;
+  this->Constraints->MinHeight = this->Height;
 }
 //---------------------------------------------------------------------------
 void __fastcall TChapterEditWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -121,9 +124,20 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 					{
 						if(!pTempHSList->Strings[iIndexVers].IsEmpty())
 						{
-							pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s [%s]%s" ,ARRAYOFCONST((GlobalAdressVersRtf, GsReadBibleTextData::GsInfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
+							if(this->_iGetTranslate == 0)
+							//Wybrano wszystkie tłumaczenia
+							{
+								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s [%s]%s" ,ARRAYOFCONST((GlobalAdressVersRtf, GsReadBibleTextData::GsInfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
+									this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
+									GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, GlobalSizeFontText))));
+							}
+							else if (this->_iGetTranslate > 0)
+							//Wybrano konkretne tłumaczenie
+							{
+								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s %s" ,ARRAYOFCONST((GlobalAdressVersRtf, GsReadBibleTextData::GsInfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
 								this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
-								GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, GlobalSizeFontText))));
+								GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, GlobalSizeFontText))));
+              }
 						}
 					}
 					else uiTranslatesIndex--;
