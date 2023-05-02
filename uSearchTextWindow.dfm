@@ -16,7 +16,6 @@ object SearchTextWindow: TSearchTextWindow
   Font.Style = []
   Font.Quality = fqClearType
   KeyPreview = True
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
@@ -24,7 +23,6 @@ object SearchTextWindow: TSearchTextWindow
   OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
   OnKeyUp = FormKeyUp
-  PixelsPerInch = 96
   TextHeight = 13
   object STW_PControlSetupsSearch: TPageControl
     AlignWithMargins = True
@@ -39,6 +37,7 @@ object SearchTextWindow: TSearchTextWindow
     TabOrder = 0
     OnChanging = STW_PControlChanging
     OnDrawTab = STW_PControlViewsTextDrawTab
+    ExplicitWidth = 1184
     object STW_TabSheetInputText: TTabSheet
       Caption = 'Szukany tekst'
       ImageIndex = 8
@@ -152,6 +151,7 @@ object SearchTextWindow: TSearchTextWindow
         Ctl3D = False
         FlatScrollBars = True
         GridLines = True
+        StyleElements = [seFont, seBorder]
         OwnerDraw = True
         GroupView = True
         ReadOnly = True
@@ -170,6 +170,7 @@ object SearchTextWindow: TSearchTextWindow
         BorderStyle = bsSingle
         ShowCaption = False
         TabOrder = 1
+        ExplicitWidth = 597
         object STW_WebBrowserSelectBookStatistic: TWebBrowser
           Left = 1
           Top = 18
@@ -177,10 +178,6 @@ object SearchTextWindow: TSearchTextWindow
           Height = 203
           Align = alClient
           TabOrder = 0
-          ExplicitLeft = 6
-          ExplicitTop = 26
-          ExplicitWidth = 599
-          ExplicitHeight = 166
           ControlData = {
             4C0000007F3D0000FB1400000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -209,6 +206,7 @@ object SearchTextWindow: TSearchTextWindow
           ParentFont = False
           TabOrder = 1
           Transparent = False
+          ExplicitWidth = 591
         end
       end
     end
@@ -326,6 +324,7 @@ object SearchTextWindow: TSearchTextWindow
     ParentBackground = False
     ParentColor = False
     TabOrder = 1
+    ExplicitWidth = 1190
     object STW_PanelImage: TPanel
       Left = 840
       Top = 15
@@ -337,6 +336,7 @@ object SearchTextWindow: TSearchTextWindow
       ParentColor = True
       ShowCaption = False
       TabOrder = 0
+      ExplicitLeft = 836
       object STW_ImageLogoSearch: TImage
         Left = 0
         Top = 0
@@ -377,6 +377,7 @@ object SearchTextWindow: TSearchTextWindow
       ParentColor = True
       ShowCaption = False
       TabOrder = 1
+      ExplicitWidth = 834
       object STW_LabelInfoTo: TLabel
         Left = 257
         Top = 72
@@ -480,6 +481,8 @@ object SearchTextWindow: TSearchTextWindow
     ParentBackground = False
     ParentColor = False
     TabOrder = 2
+    ExplicitWidth = 1190
+    ExplicitHeight = 385
     object STW_PControlViewsText: TPageControl
       AlignWithMargins = True
       Left = 5
@@ -494,6 +497,8 @@ object SearchTextWindow: TSearchTextWindow
       StyleElements = []
       OnChanging = STW_PControlChanging
       OnDrawTab = STW_PControlViewsTextDrawTab
+      ExplicitWidth = 1180
+      ExplicitHeight = 362
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9
@@ -536,6 +541,7 @@ object SearchTextWindow: TSearchTextWindow
           OnDataHint = STW_LViewResultSearchDataHint
           OnGetImageIndex = STW_LViewResultSearchGetImageIndex
           OnSelectItem = STW_LViewAllSelectItem
+          ExplicitWidth = 1172
         end
         object STW_WBrowserSelectItemResult: TWebBrowser
           Left = 0
@@ -544,9 +550,6 @@ object SearchTextWindow: TSearchTextWindow
           Height = 217
           Align = alClient
           TabOrder = 1
-          ExplicitLeft = -2
-          ExplicitTop = 124
-          ExplicitHeight = 151
           ControlData = {
             4C0000008B7900006D1600000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -566,6 +569,8 @@ object SearchTextWindow: TSearchTextWindow
     Panels = <>
     SimplePanel = True
     SizeGrip = False
+    ExplicitTop = 807
+    ExplicitWidth = 1190
   end
   object STW_PanelButtons: TPanel
     Left = 0
@@ -575,6 +580,8 @@ object SearchTextWindow: TSearchTextWindow
     Align = alBottom
     ShowCaption = False
     TabOrder = 4
+    ExplicitTop = 778
+    ExplicitWidth = 1190
     object STW_ButtonSearchStart: TButton
       AlignWithMargins = True
       Left = 10

@@ -726,11 +726,11 @@ void __fastcall TImageAndTextWindow::LBoxSelectEffectsClick(TObject *Sender)
 	{
 		EnEffectsGfx _EnEffectsGfx = static_cast<EnEffectsGfx>(EfGfx_NoEffect + pLBox->ItemIndex);
 
-		if((!GlobalVar::IsWindows10) && (_EnEffectsGfx > EfGfx_Brightness)) //23-08-2020
-		{
-			MessageBox(NULL, TEXT("Aktualnie wybrany efekt wymaga minimum Windows 10!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
-			return;
-		}
+//		if((!GlobalVar::IsWindows10) && (_EnEffectsGfx > EfGfx_Brightness)) //23-08-2020
+//		{
+//			MessageBox(NULL, TEXT("Aktualnie wybrany efekt wymaga minimum Windows 10!"), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+//			return;
+//		}
 
 		pGsDirect2DClass->SetApplyEffect = _EnEffectsGfx;
 	}
@@ -752,10 +752,10 @@ void __fastcall TImageAndTextWindow::LBoxSelectEffectsDrawItem(TWinControl *Cont
 	int iHeight = MyRect.Bottom - MyRect.Top;
 	TCanvas *pCanvas = pLBox->Canvas;
 	//---
-	if(Index > (EfGfx_Brightness - EfGfx_NoEffect))
-		{pCanvas->Font->Color = clRed;}
-  else
-		{pCanvas->Font->Color = pLBox->Font->Color;}
+//	if(Index > (EfGfx_Brightness - EfGfx_NoEffect)) //Zlikwidować w wypadku obostrzenia na system min. Windows 10
+//		{pCanvas->Font->Color = clRed;}
+//	else
+	{pCanvas->Font->Color = pLBox->Font->Color;}
 
 	if(State.Contains(odSelected))
 	{

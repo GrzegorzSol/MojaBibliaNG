@@ -98,6 +98,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTRichEdit->Parent = this;
 	this->pTRichEdit->Align = alClient;
 	this->pTRichEdit->Font->Quality = TFontQuality::fqClearType;
+	this->pTRichEdit->StyleElements = TStyleElements();
 	//Zależność suwaka przewijania, od atrybutu WordWrap
 	if (this->pTRichEdit->WordWrap) this->pTRichEdit->ScrollBars = ssVertical; //Suwak tylko pionowy
 	else this->pTRichEdit->ScrollBars = ssBoth; //Suwak pionowy i poziomy
@@ -171,7 +172,7 @@ void __fastcall GsEditorClass::_InitInterface()
 	this->pToolBar->AutoSize = true;
 	//this->pToolBar->Height = 12;
 	this->pToolBar->Flat = true;
-	this->pToolBar->StyleElements = TStyleElements();
+	//this->pToolBar->StyleElements = TStyleElements();
 	this->pToolBar->DrawingStyle = (Vcl::Comctrls::TTBDrawingStyle)Vcl::Comctrls::gdoGradient;
 	this->pToolBar->Images = this->pTImageListActive;
 	this->pToolBar->DisabledImages = this->pTImageListInActive;
@@ -199,11 +200,12 @@ void __fastcall GsEditorClass::_InitInterface()
       if(!pLabel) throw(Exception("Błąd inicjalizacji klasy TLabel"));
 			pLabel->Parent = this->pToolBar;
 			pLabel->Caption = ustrHintButtons[EnTag_FontName];
+			//pLabel->StyleElements = TStyleElements();
 			pLabel->Layout = tlCenter;
 			pLabel->Alignment = taCenter;
 			pLabel->Width = this->pToolBar->Canvas->TextWidth(ustrHintButtons[EnTag_FontName]) + 12;
 			pLabel->Hint = ustrHintButtons[EnTag_FontName];
-			pLabel->Transparent = false;
+			//pLabel->Transparent = false;
 			cor--;
 			continue;
 		}
@@ -231,7 +233,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			pLabel->Alignment = taCenter;
 			pLabel->Width = this->pToolBar->Canvas->TextWidth(ustrHintButtons[EnTag_FontSize]) + 12;
 			pLabel->Hint = ustrHintButtons[EnTag_FontSize];
-      pLabel->Transparent = false;
+      //pLabel->Transparent = false;
 			cor--;
 			continue;
 		}
@@ -253,7 +255,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			pLabel->Alignment = taCenter;
 			pLabel->Width = this->pToolBar->Canvas->TextWidth(ustrHintButtons[EnImage_FontColour]) + 12;
 			pLabel->Hint = ustrHintButtons[EnImage_FontColour];
-			pLabel->Transparent = false;
+			//pLabel->Transparent = false;
 			cor--;
 			continue;
 		}
@@ -275,7 +277,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			pLabel->Alignment = taCenter;
 			pLabel->Width = this->pToolBar->Canvas->TextWidth(ustrHintButtons[EnImage_FontBackgroundColour]) + 12;
 			pLabel->Hint = ustrHintButtons[EnImage_FontBackgroundColour];
-      pLabel->Transparent = false;
+      //pLabel->Transparent = false;
 			cor--;
 			continue;
 		}

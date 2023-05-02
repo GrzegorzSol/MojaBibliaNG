@@ -19,7 +19,8 @@
 #include <Vcl.ToolWin.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ActnColorMaps.hpp>
-#include <Vcl.WinXCtrls.hpp> //!!!
+#include <Vcl.WinXCtrls.hpp>
+#include <Vcl.StdStyleActnCtrls.hpp> //!!!
 //#include <Vcl.AppEvnts.hpp>
 //---------------------------------------------------------------------------
 class TMainBibleWindow : public TForm
@@ -46,9 +47,7 @@ __published:	// IDE-managed Components
 	TImageList *ImageListSmall;
 	TAction *Act_ProjectSchemeVers;
 	TAction *Act_Infomations;
-	TStandardColorMap *StandardColorMapMain;
 	TAction *Act_ViewAllResources;
-	TStandardColorMap *StandardColorMapTools;
 	TAction *Act_ResizeWork;
 	TActionManager *ActionManagerOther;
 	TAction *Act_OtherInfoTaskbarButton;

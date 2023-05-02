@@ -40,6 +40,7 @@ __fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) :
 	this->RowSelect = true;
 	this->ViewStyle = vsReport;
 	this->SmallImages  = this->_pImages;
+  this->StyleElements = TStyleElements();
 	for(int iGroup=0; iGroup<enGroup_Count; iGroup++)
 	{
 		TListGroup *group = this->Groups->Add();

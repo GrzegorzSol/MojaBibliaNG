@@ -54,6 +54,8 @@ object MainBibleWindow: TMainBibleWindow
     OnChange = MBW_PageControlAllChange
     OnDrawTab = MBW_PageControlsAllDrawTab
     OnEnter = PageControlBibleTextEnter
+    ExplicitWidth = 884
+    ExplicitHeight = 815
   end
   object StatusBarMain: TStatusBar
     Left = 0
@@ -70,6 +72,8 @@ object MainBibleWindow: TMainBibleWindow
         Width = 50
       end>
     OnDrawPanel = StatusBarMainDrawPanel
+    ExplicitTop = 861
+    ExplicitWidth = 1184
   end
   object CoolBarMain: TCoolBar
     Left = 0
@@ -110,13 +114,10 @@ object MainBibleWindow: TMainBibleWindow
       ColorMap.UnusedColor = clWhite
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
-      Font.Height = -11
-      Font.Name = 'Tahoma'
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
       Font.Style = []
-      Font.Quality = fqClearType
       ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
       Spacing = 0
     end
     object ActionToolBarTools: TActionToolBar
@@ -149,6 +150,7 @@ object MainBibleWindow: TMainBibleWindow
     Align = alLeft
     Caption = 'PanelTools'
     TabOrder = 3
+    ExplicitHeight = 815
     object PageControlTools: TPageControl
       Left = 1
       Top = 1
@@ -348,8 +350,8 @@ object MainBibleWindow: TMainBibleWindow
       end>
     DisabledImages = ImageListMainInactive
     Images = ImageListMainActive
-    Left = 138
-    Top = 507
+    Left = 146
+    Top = 411
     StyleName = 'Platform Default'
     object Act_CloseSheetActive: TAction
       Caption = 'Zamkni'#281'cie aktywnej zak'#322'adki'
@@ -451,8 +453,8 @@ object MainBibleWindow: TMainBibleWindow
     DrawingStyle = dsTransparent
     Height = 32
     Width = 32
-    Left = 138
-    Top = 555
+    Left = 146
+    Top = 459
     Bitmap = {
       494C010113000001040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
@@ -3106,8 +3108,8 @@ object MainBibleWindow: TMainBibleWindow
     DrawingStyle = dsTransparent
     Height = 32
     Width = 32
-    Left = 138
-    Top = 603
+    Left = 146
+    Top = 507
     Bitmap = {
       494C010112000001040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
@@ -5759,8 +5761,8 @@ object MainBibleWindow: TMainBibleWindow
   object BalloonHintMain: TBalloonHint
     Images = ImageListMainActive
     HideAfter = 3200
-    Left = 138
-    Top = 653
+    Left = 146
+    Top = 557
   end
   object TrayIconMain: TTrayIcon
     Animate = True
@@ -5768,25 +5770,25 @@ object MainBibleWindow: TMainBibleWindow
     PopupMenu = PMenuTray
     Visible = True
     OnBalloonClick = TrayIconMainBalloonClick
-    Left = 138
-    Top = 701
+    Left = 146
+    Top = 605
   end
   object PMenuTray: TPopupMenu
-    Left = 138
-    Top = 749
+    Left = 146
+    Top = 653
   end
   object TaskbarMain: TTaskbar
     TaskBarButtons = <>
     ProgressState = Normal
     TabProperties = []
-    Left = 138
-    Top = 797
+    Left = 146
+    Top = 701
   end
   object ImageListSmall: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
-    Left = 138
-    Top = 449
+    Left = 146
+    Top = 353
     Bitmap = {
       494C010105000800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
@@ -6058,20 +6060,6 @@ object MainBibleWindow: TMainBibleWindow
       000000000003C001000000000003C0018001F8000007C0038001FC008007C003
       C003FC03C01FC007F00FFC1FF87FC00F00000000000000000000000000000000
       000000000000}
-  end
-  object StandardColorMapMain: TStandardColorMap
-    HighlightColor = clBtnHighlight
-    UnusedColor = clWhite
-    MenuColor = clMenu
-    Left = 141
-    Top = 385
-  end
-  object StandardColorMapTools: TStandardColorMap
-    HighlightColor = clBtnHighlight
-    UnusedColor = clWhite
-    MenuColor = clMenu
-    Left = 144
-    Top = 330
   end
   object ActionManagerOther: TActionManager
     Images = ImageListSmall

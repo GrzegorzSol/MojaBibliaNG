@@ -4,6 +4,8 @@
 #include "uGlobalVar.h"
 
 //---------------------------------------------------------------------------
+#include <Vcl.Styles.hpp>
+#include <Vcl.Themes.hpp>
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uMainWindow.cpp", MainBibleWindow);
 USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
@@ -83,6 +85,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		//--- Klasyczny kod rozruchowy aplikacji
 		Application->Initialize();
 		Application->MainFormOnTaskBar = true;
+		TStyleManager::TrySetStyle("Sapphire Kamri");
 		Application->CreateForm(__classid(TMainBibleWindow), &MainBibleWindow);
 		Application->Run();
 	}

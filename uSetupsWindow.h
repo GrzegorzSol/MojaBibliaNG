@@ -19,6 +19,7 @@
 #include <Vcl.CheckLst.hpp>
 #include <Vcl.Samples.Spin.hpp>
 #include <Vcl.Buttons.hpp>
+#include <Vcl.Mask.hpp>
 //---------------------------------------------------------------------------
 class TSetupsWindow : public TForm
 {
@@ -111,6 +112,12 @@ __published:	// IDE-managed Components
 	TTrackBar *TrackBarSetRate;
 	TTrackBar *TrackBarSetVolume;
 	TButton *SW_ButtSetupHelp;
+	TTabSheet *SW_SheetSelectThemes;
+	TListBox *SW_LBoxSelectTheme;
+	TImage *SW_ImagePreviewSelectStyle;
+	TPanel *PanelListThemes;
+	TPanel *PanelDisplaySelectTheme;
+	TButton *SW_ButtDisplaySelectTheme;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -131,6 +138,7 @@ __published:	// IDE-managed Components
 	void __fastcall CBoxSelectPlanChange(TObject *Sender);
 	void __fastcall LViewDisplayselectPlanChanging(TObject *Sender, TListItem *Item,
           TItemChange Change, bool &AllowChange);
+	void __fastcall SW_LBoxSelectThemeClick(TObject *Sender);
 
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);

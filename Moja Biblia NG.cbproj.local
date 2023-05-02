@@ -9,7 +9,7 @@
     <Transaction>1899.12.30 00:00:00.000.405,=F:\DevelopGS\MojaBibliaNG\uSendingMailWindow.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.342,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsReadBibleTextClass\GsReadBibleImageList.cpp=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.685,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uSelectVersWindow.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.799,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsReadBibleTextClass\GsCoreDataImages.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.297,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uGlobalVar.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.112,=F:\DevelopGS\MojaBibliaNG\uImageAndTextWindow.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.061,=G:\rodzina\Programowanie\BuilderCPP\Unit1.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.377,=G:\rodzina\Programowanie\BuilderCPP\Unit1.cpp</Transaction>
@@ -26,7 +26,7 @@
     <Transaction>1899.12.30 00:00:00.000.193,=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG\uChapterEditWindow.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.866,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\Unit1.cpp=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\uInformationsAppWindow.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.657,=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.297,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uGlobalVar.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.799,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsReadBibleTextClass\GsCoreDataImages.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.917,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uDictGrecPolWindow.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.445,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsComponents\GsEditorDataImages.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.018,=G:\rodzina\Programowanie\BuilderCPP\CLANG_VERSION\MojaBibliaNG_Testing_CLANG\uReadUpdateWindow.cpp</Transaction>
@@ -40,12 +40,12 @@
     <Transaction>1899.12.30 00:00:00.000.967,=G:\rodzina\Programowanie\BuilderCPP\Project1PCH1.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.017,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uMainWindow.dfm=G:\rodzina\Programowanie\BuilderCPP\Unit1.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.113,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uSearchTextWindow.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.947,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.928,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsReadBibleTextClass\GsReadBibleImageList.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.884,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.928,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsReadBibleTextClass\GsReadBibleImageList.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.217,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.112,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uViewAllResourcesWindow.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.656,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\GsComponents\GsViewAllResourcesClass.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.217,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.947,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Unit1.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.866,G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\Unit1.h=G:\rodzina\Programowanie\BuilderCPP\MojaBibliaNG_Testing\uInformationsAppWindow.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.569,G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\Moja Biblia NG Testing.cbproj=G:\rodzina\Programowanie\BuilderCPP\Project1.cbproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.729,=G:\rodzina\Programowanie\BuilderCPP\Moja Biblia NG_Testing\uLibrary.cpp</Transaction>

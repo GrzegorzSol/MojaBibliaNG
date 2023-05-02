@@ -39,6 +39,7 @@ struct GlobalVar
 														 Global_custrGetVersionUpdate,    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 														 Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
 														 Global_custrGetDataDir,          //Ścieżka dostępu do katalogu z danymi aplikacji
+														 Global_custrPathImagesStyles,    //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 														 Global_custrPathAllReadingPlan,  //Ścieżka dostępu do katalogu z planami czytania biblii
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
@@ -108,7 +109,7 @@ struct GlobalVar
 																GlobalIni_ColorAdressOryginalTranslate, //Kolor adresu oryginalnego tłumaczenia
 														 //----- Sekcja ColorsSetups pliku ini
 														 GlobalIni_ColorsSetupsSection_Main, //Główna sekcja ColorsSetups
-																GlobalIni_ColorsSetupsBackGroundAllListSearch, //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
+																GlobalIni_ColorsSetupsBackGroundAllListSearch,  //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
 																GlobalIni_ColorsSetupBackGroundSelectBookSearch,//Kolor podkładu dla wyświetlenia znalezionych wersetów w wybranej księdze
 																GlobalIni_ColorsSetupBackGroundSelectVers,      //Kolor podkładu dla wyświetlenie pojedyńczego wybranego wersetu
 														 //----- Sekcja ParametersSetupsSearch
@@ -129,7 +130,7 @@ struct GlobalVar
 																GlobalIni_FontNameMain,           //Nazwa głównej czcionki
 																GlobalIni_FontNameAdress,         //Nazwa czcionki adresu wersetu
 																GlobalIni_FontNameTranslators,    //Nazwa czcionki nazwy tłymaczenia
-																GlobalIni_SelectStyleName,        //Nazwa wybranego stylu
+																GlobalIni_SelectStyleName,        //Nazwa wybranego z listy tematu dla aplikacji
 														 //----- Sekcje Translates
 														 GlobalIni_TranslatesSection_Main, 	//Główna sekcja TRANSLATES pliku ini
 																GlobalIni_ExcludeTranslates,    //Tłumaczenia nie wyświetlane

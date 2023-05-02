@@ -21,7 +21,7 @@
 */
 TSetupsWindow *SetupsWindow;
 enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_OtherSetups, enPageSetup_Translates,
-      enPageSetups_ReadingPlan,
+      enPageSetups_ReadingPlan, enPageSetups_SelectThemes,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
 			enSetup_Save=10, enSetup_Return, enSetup_Cancel, enSetup_Help,
 			enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
@@ -29,6 +29,7 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enTagControl_ButtFontMain=100,
 			enTagControl_ButtFontAdress,
 			enTagControl_ButtFontNameTranslates,
+			enTagControl_ButtDisplayselectTheme,
         //TSpinEdit
 			enTagControl_SpinEdSizeMainFont,
 			enTagControl_SpinEdSizeAdressFont,
@@ -40,9 +41,10 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 
 			//Indeksy grafik ikon this->SW_ImgListSmallMain
 			enImage_SmallSelectDir=0, enImage_SmallSaveConfig, enImage_SmallCancel, enImage_SmallUndoSetup, enImage_SmallColors, enImage_SmallSelectTranslate,
+      emImage_DisplaySelectTheme, //6
 			//Indeksy grafik ikon this->SW_ImgListMainSmall
 			enImage_ViewAplic=0, enImage_SetupFlags, enImage_Paths, enImage_OtherSetups, enImage_Translates, enImage_TypeTranslate, enImage_DescryptionTranslate,
-			enImage_ReadingPlan, enImage_NumberDayPlan, //8
+			enImage_ReadingPlan, enImage_NumberDayPlan, enImage_SelectThemes,  //9
 			//Numery kolumn dodatkowych w ustawieniach tłumaczeń
 			enColumn_TypeTranslate=0, enColumn_DescryptionTranslate,
 			//Grupy tłumaczeń
@@ -103,6 +105,21 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SpEditSizeMainFont->Tag = enTagControl_SpinEdSizeMainFont;
 	this->SpEditSizeAdressFont->Tag = enTagControl_SpinEdSizeAdressFont;
 	this->SpEditSizeTranslatesFont->Tag = enTagControl_SpinEdSizeTranslatesFont;
+	//Inne przyciski
+	this->SW_ButtDisplaySelectTheme->Tag = enTagControl_ButtDisplayselectTheme;
+	//Ustawienia na karcie tematów
+	if(TStyleManager::Enabled)
+	{
+		this->SW_LBoxSelectTheme->Items->AddStrings(TStyleManager::StyleNames); //Wczytanie temetów załadowanych do aplikacji
+		TCustomStyleServices *pActiveStyle = TStyleManager::ActiveStyle;
+		if(pActiveStyle)
+		{
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("pActiveStyle->Name: %s", ARRAYOFCONST(( pActiveStyle->Name ))));
+			#endif
+			//---Wczytanie stylu
+		}
+	}
   //Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
 	//Dodawanie grup do objektu, typu TListView
@@ -139,6 +156,8 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->TrackBarSetRate->Max = SPVLIMITS::SPMAX_RATE;
 	this->TrackBarSetVolume->Min = SPVLIMITS::SPMIN_VOLUME;
 	this->TrackBarSetVolume->Max = SPVLIMITS::SPMAX_VOLUME;
+	//Wstępne ustawieni na karcie tematów graficznych
+	this->SW_ButtDisplaySelectTheme->Enabled =  this->SW_LBoxSelectTheme->ItemIndex > -1;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -432,6 +451,10 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	//--- Parametry mowy
 	this->TrackBarSetRate->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, -2);
 	this->TrackBarSetVolume->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, 100);
+  //--- Parametry styli aplikacji
+	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
+	this->SW_LBoxSelectTheme->ItemIndex = this->SW_LBoxSelectTheme->Items->IndexOf(ustrSelectStyle);
+	this->SW_ButtSetups_Click(this->SW_ButtDisplaySelectTheme);
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey) //30-03-2021
@@ -569,6 +592,13 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
   //--- Parametry mowy
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, this->TrackBarSetRate->Position);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, this->TrackBarSetVolume->Position);
+	//--- Parametry styli aplikacji
+	if(TStyleManager::Enabled)
+	{
+		TCustomStyleServices *pActiveStyle = TStyleManager::ActiveStyle;
+		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName,
+			this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]);
+	}
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();
 }
@@ -670,7 +700,26 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 			#endif
 			Application->HelpContext(HELP_Ustawieniaaplikacji);
 		}
-    break;
+		break;
+		//Wyświetlenie wybranego tematu
+		case enTagControl_ButtDisplayselectTheme:
+		{
+			UnicodeString ustrSelectPathThemeName = TPath::ChangeExtension(TPath::Combine(GlobalVar::Global_custrPathImagesStyles,
+																								this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]), ".jpg");
+
+			TWICImage *pWICImage = new TWICImage();
+			if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			try
+			{
+				pWICImage->LoadFromFile(ustrSelectPathThemeName);
+				this->SW_ImagePreviewSelectStyle->Picture->Assign(pWICImage);
+			}
+			__finally
+			{
+				delete pWICImage; pWICImage = nullptr;
+			}
+		}
+		break;
 	}
 }
 //---------------------------------------------------------------------------
@@ -857,7 +906,7 @@ void __fastcall TSetupsWindow::ButtFontSelectClick(TObject *Sender)
 	pFontDialog->Options.Clear();
 	pFontDialog->Options << fdLimitSize;
 	pFontDialog->MinFontSize = 8;
-	pFontDialog->MaxFontSize = 14;
+	pFontDialog->MaxFontSize = 24;
 
 	//---
 	if(pFontDialog->Execute())
@@ -1104,6 +1153,20 @@ void __fastcall TSetupsWindow::CBoxSelectPlanChange(TObject *Sender)
 	//--- Aktualizacje
   this->SpButtonStartStopReadingPlanClick(this->SpButtonStartPlan);
 	this->_DisplaySelectPlan();
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::SW_LBoxSelectThemeClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Wybrano nazwę stylu z listy
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TListBox *pLBox = dynamic_cast<TListBox *>(Sender);
+	if(!pLBox) return;
+	//---
+	this->SW_ButtDisplaySelectTheme->Enabled = pLBox->ItemIndex > -1;
 }
 //---------------------------------------------------------------------------
 

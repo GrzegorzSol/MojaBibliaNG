@@ -1,5 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2008,2009,2010,2011,2012,2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 //
+//               2022,2023                                                                     //
 //                                     Grzegorz Sołtysik                                       //
 //                                     All rights reserved.                                    //
 //                                    grzegorzsol@gmail.com                                    //
@@ -143,6 +144,7 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
   Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
+		GsDebugClass::WriteDebug(Format("Wersja systemu: %s - %d.%d", ARRAYOFCONST((TOSVersion::ToString(), TOSVersion::Major, TOSVersion::Minor ))));
 	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10);
@@ -166,6 +168,15 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	if(Screen->DesktopHeight > 800) this->Height = 795; else this->Height = 600;
 	//---BallonHint
 	this->_InitAllTagAndHint();
+	//---Wczytanie stylu
+	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
+  #if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
+		GsDebugClass::WriteDebug(Format("Temat aplikacji: %s", ARRAYOFCONST((ustrSelectStyle))));
+	#endif
+	if(!TStyleManager::TrySetStyle(ustrSelectStyle, false)) //[27-10-2019]
+	{
+		throw(Exception("Nie można zainicjować wybranego stylu"));
+	}
 }
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::~TMainBibleWindow()

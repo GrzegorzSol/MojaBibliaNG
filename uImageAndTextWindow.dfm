@@ -13,14 +13,12 @@ object ImageAndTextWindow: TImageAndTextWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnShow = FormShow
   DesignSize = (
     1467
     829)
-  PixelsPerInch = 96
   TextHeight = 13
   object PControlImageAndText: TPageControl
     Left = 0
@@ -33,6 +31,8 @@ object ImageAndTextWindow: TImageAndTextWindow
     OnChange = PControlImageAndTextChange
     OnDrawTab = PControlImageAndTextDrawTab
     OnEnter = PControlImageAndTextEnter
+    ExplicitWidth = 1463
+    ExplicitHeight = 786
   end
   object ActionToolBarImageAndText: TActionToolBar
     Left = 0
@@ -69,6 +69,8 @@ object ImageAndTextWindow: TImageAndTextWindow
     Placement = svpRight
     TabOrder = 2
     OnOpened = SplitViewImageAndTextOpened
+    ExplicitLeft = 1163
+    ExplicitHeight = 786
     object PControlTools: TPageControl
       Left = 0
       Top = 0
@@ -83,6 +85,7 @@ object ImageAndTextWindow: TImageAndTextWindow
       OnChange = PControlImageAndTextChange
       OnDrawTab = PControlImageAndTextDrawTab
       OnMouseDown = PControlToolsMouseDown
+      ExplicitHeight = 786
       object TabSheetSelectImages: TTabSheet
         Caption = 'Lista grafik'
         ImageIndex = -1
@@ -293,6 +296,7 @@ object ImageAndTextWindow: TImageAndTextWindow
           Align = alClient
           Caption = 'Efekty wybranej grafiki'
           TabOrder = 2
+          ExplicitHeight = 264
           object LBoxSelectEffects: TListBox
             Left = 2
             Top = 15

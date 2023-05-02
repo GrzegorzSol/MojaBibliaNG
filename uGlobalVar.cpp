@@ -19,6 +19,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 											//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
 											GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
 										#endif
+										GlobalVar::Global_custrPathImagesStyles = TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),    //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 										GlobalVar::Global_custrPathAllReadingPlan = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),//Ścieżka dostępu do katalogu z planami czytania biblii
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
@@ -109,7 +110,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_FontNameMain="FontnameMain",           //Nazwa głównej czcionki
 												GlobalVar::GlobalIni_FontNameAdress="FontNameAdress",         //Nazwa czcionki adresu wersetu
 												GlobalVar::GlobalIni_FontNameTranslators="FontNameTranslators",    //Nazwa czcionki nazwy tłymaczenia
-												GlobalVar::GlobalIni_SelectStyleName="SelectStyleName",        //Nazwa wybranego stylu
+												GlobalVar::GlobalIni_SelectStyleName="SelectStyleName",        //Nazwa wybranego z listy tematu dla aplikacji
 										//----- Sekcje Translates
 										GlobalVar::GlobalIni_TranslatesSection_Main="TRANSLATES", 				        //Główna sekcja TRANSLATES pliku ini
 												GlobalVar::GlobalIni_ExcludeTranslates="ExcludeTranslates",    //Tłumaczenia nie wyświetlane

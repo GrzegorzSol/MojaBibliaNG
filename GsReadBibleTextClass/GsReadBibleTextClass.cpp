@@ -5110,7 +5110,8 @@ __fastcall GsListBoxFavoritiesClass::GsListBoxFavoritiesClass(TComponent* Owner)
 {
 	this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
-  this->Font->Quality = TFontQuality::fqClearType;
+	this->Font->Quality = TFontQuality::fqClearType;
+  this->StyleElements = TStyleElements();
   GsReadBibleTextData::pGsListBoxFavoritiesClass = this;
 }
 //---------------------------------------------------------------------------
