@@ -111,14 +111,6 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	if(TStyleManager::Enabled)
 	{
 		this->SW_LBoxSelectTheme->Items->AddStrings(TStyleManager::StyleNames); //Wczytanie temetów załadowanych do aplikacji
-		TCustomStyleServices *pActiveStyle = TStyleManager::ActiveStyle;
-		if(pActiveStyle)
-		{
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("pActiveStyle->Name: %s", ARRAYOFCONST(( pActiveStyle->Name ))));
-			#endif
-			//---Wczytanie stylu
-		}
 	}
   //Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
@@ -454,6 +446,11 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
   //--- Parametry styli aplikacji
 	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
 	this->SW_LBoxSelectTheme->ItemIndex = this->SW_LBoxSelectTheme->Items->IndexOf(ustrSelectStyle);
+	if(this->SW_LBoxSelectTheme->ItemIndex == -1)
+	//Jeśli nie ma takiego stylu na liście, znajdowany jest styl domyślny
+	{
+		this->SW_LBoxSelectTheme->ItemIndex = this->SW_LBoxSelectTheme->Items->IndexOf(GlobalVar::Global_DefaultStyleName);
+  }
 	this->SW_ButtSetups_Click(this->SW_ButtDisplaySelectTheme);
 }
 //---------------------------------------------------------------------------
@@ -595,9 +592,10 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	//--- Parametry styli aplikacji
 	if(TStyleManager::Enabled)
 	{
-		TCustomStyleServices *pActiveStyle = TStyleManager::ActiveStyle;
+		//TCustomStyleServices *pActiveStyle = TStyleManager::ActiveStyle;
 		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName,
 			this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]);
+		TStyleManager::SetStyle(this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]);
 	}
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();

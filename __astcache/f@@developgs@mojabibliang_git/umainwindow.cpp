@@ -173,9 +173,10 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
   #if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::WriteDebug(Format("Temat aplikacji: %s", ARRAYOFCONST((ustrSelectStyle))));
 	#endif
-	if(!TStyleManager::TrySetStyle(ustrSelectStyle, false)) //[27-10-2019]
+	if(!TStyleManager::TrySetStyle(ustrSelectStyle, false)) //[02-05-2023]
+  //Jeśli nie ma takiego stylu, ustawiany jest styl domyślny
 	{
-		throw(Exception("Nie można zainicjować wybranego stylu"));
+		TStyleManager::TrySetStyle(GlobalVar::Global_DefaultStyleName, false);
 	}
 }
 //---------------------------------------------------------------------------

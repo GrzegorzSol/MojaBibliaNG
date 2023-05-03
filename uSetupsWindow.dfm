@@ -928,7 +928,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 232
+          Width = 548
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -945,6 +945,7 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
+          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           Left = 1
