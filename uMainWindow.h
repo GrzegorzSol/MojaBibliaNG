@@ -20,8 +20,7 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ActnColorMaps.hpp>
 #include <Vcl.WinXCtrls.hpp>
-#include <Vcl.StdStyleActnCtrls.hpp> //!!!
-//#include <Vcl.AppEvnts.hpp>
+#include <Vcl.StdStyleActnCtrls.hpp> //???
 //---------------------------------------------------------------------------
 class TMainBibleWindow : public TForm
 {
@@ -67,6 +66,7 @@ __published:	// IDE-managed Components
 	TStaticText *STextHeaderListCommentVers;
 	TStaticText *STextHeaderFavorteListVers;
 	TAction *Act_ReadingPlan;
+	TAction *Act_HistoryChapters;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -101,6 +101,7 @@ __published:	// IDE-managed Components
 	void __fastcall ImageBackgroundWindowDragOver(TObject *Sender, TObject *Source,
           int X, int Y, TDragState State, bool &Accept);
 	void __fastcall Act_ReadingPlanExecute(TObject *Sender);
+	void __fastcall Act_HistoryChaptersExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

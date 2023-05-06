@@ -14,14 +14,12 @@ object ReadingPlanWindow: TReadingPlanWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object PanelTextInfosReadingPlan: TPanel
     AlignWithMargins = True
@@ -354,7 +352,6 @@ object ReadingPlanWindow: TReadingPlanWindow
         Cursor = crHandPoint
         Margins.Top = 6
         Margins.Bottom = 6
-        OnClickCheck = ChListBoxJournalingClickCheck
         Align = alClient
         Color = clCream
         CheckBoxPadding = 4
@@ -370,6 +367,7 @@ object ReadingPlanWindow: TReadingPlanWindow
         Style = lbOwnerDrawFixed
         TabOrder = 0
         OnClick = ChListBoxJournalingClick
+        OnClickCheck = ChListBoxJournalingClickCheck
         OnDrawItem = ChListBoxJournalingDrawItem
       end
     end

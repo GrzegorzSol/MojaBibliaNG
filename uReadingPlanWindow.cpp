@@ -390,16 +390,6 @@ void __fastcall TReadingPlanWindow::SButtonStartSpeakClick(TObject *Sender)
 	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
 	if(!pSButton) return;
 	//---
-	if(!GlobalVar::IsWindows10)
-	{
-		MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest dostępna od systemy Windows 10"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-		return;
-	}
-	//---
-//	MessageBox(NULL, TEXT("Funkcja czytania tekstu biblijnego jest niaktywna gdyż jest w trakcie konstruowania"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-//	pSButton->Down = false;
-//	return;
-	//---
 	if(pSButton->Down)
 	{
 		if(!Gl_pVoice)

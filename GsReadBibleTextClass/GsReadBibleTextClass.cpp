@@ -508,6 +508,8 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie powiodło się wyłuskanie wskaźnika na aktualną zakładkę"));
 	pGsTabSheetClass->Caption = Format("%s: %u rozdział", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iGetBook].FullNameBook, iGetChap+1)));
+  //Metoda dodajaca informacje o otwartym rozdziale do listy historii
+	GsReadBibleTextData::AddItemHistoryList(pGsTabSheetClass->Caption);
 	//Informacja w strukturze zakładki o numerze księgi i rozdziału
 	pGsTabSheetClass->_ShucIndexBook = iGetBook;
 	pGsTabSheetClass->_ShucIndexChapt = iGetChap;
@@ -3228,6 +3230,22 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 		if(pHSListText) {delete pHSListText; pHSListText = nullptr;}
 	}
 	return ustrRet;
+}
+//---------------------------------------------------------------------------
+void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
+/**
+	OPIS METOD(FUNKCJI): Metoda dodajaca informacje o otwartym rozdziale do listy historii
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("pGsTabSheetClass->Caption: %s", ARRAYOFCONST((_ustrTextItem))));
+	#endif
+	UnicodeString ustrbDateNow = FormatDateTime("yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
+
+	GlobalVar::Global_HListHistoryChapterOpen->Add(Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
 }
 /****************************************************************************
  *                          KLASA GsBarSelectVers                           *

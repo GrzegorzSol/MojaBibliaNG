@@ -53,6 +53,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uHelpMyBibleWindow.h"
 #include "uFastTipsWindow.h"
 #include "uReadingPlanWindow.h"
+#include "uHistoryChaptersOpen.h"
 #include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -88,7 +89,8 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImage_ImageAndText,            //15.Tworzenie grafiki z tekstem
 			enImage_Help,                    //16.Pomocnik
 			enImage_Tips,                    //17.Nawigator podpowiedzi
-      enImage_ReadingPlan,             //18.Plan czytania bibli
+			enImage_ReadingPlan,             //18.Plan czytania bibli
+			enImage_HistoryTextOpen,         //19.Historia otwieranych rozdziałów
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -123,6 +125,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enTagImageHelp,       //115.Pomocnik
 			enTagImage_Tips,      //116.Nawigator podpowiedzi
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
+			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
 			//
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,            //Zakładka z narzędziami
@@ -141,10 +144,9 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
+	Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
-		GsDebugClass::WriteDebug(Format("Wersja systemu: %s - %d.%d", ARRAYOFCONST((TOSVersion::ToString(), TOSVersion::Major, TOSVersion::Minor ))));
 	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10);
@@ -153,9 +155,18 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	//----- Tworzenie globalnego wskaźnika, do pliku konfiguracyjnego
 	GlobalVar::Global_ConfigFile = new TMemIniFile(GlobalVar::Global_custrGetConfigFile, TEncoding::UTF8);
 	if(!GlobalVar::Global_ConfigFile) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
-	//---
-	GlobalVar::Global_SListPathMultiM = new TStringList();  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
+	//----- Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
+	GlobalVar::Global_SListPathMultiM = new TStringList();
 	if(!GlobalVar::Global_SListPathMultiM) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+	//----- String lista histori otwieranych rozdziałow księg biblijnych
+	GlobalVar::Global_HListHistoryChapterOpen = new THashedStringList();
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	//Odczyt pliku historii
+	this->Act_HistoryChapters->Enabled = TFile::Exists(GlobalVar::Global_custrPathHistory);
+	if(TFile::Exists(GlobalVar::Global_custrPathHistory))
+	{
+		GlobalVar::Global_HListHistoryChapterOpen->LoadFromFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
+	}
 	//---
 	Application->OnHint = this->_AppOnHint;
 	Application->OnMessage = this->_AppMessage;
@@ -188,7 +199,9 @@ __fastcall TMainBibleWindow::~TMainBibleWindow()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  if(GlobalVar::Global_HListHistoryChapterOpen) {delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;}
 	if(GlobalVar::Global_SListPathMultiM) {delete GlobalVar::Global_SListPathMultiM; GlobalVar::Global_SListPathMultiM = nullptr;}
+	if(GlobalVar::Global_ConfigFile) {delete GlobalVar::Global_ConfigFile; GlobalVar::Global_ConfigFile = nullptr;}
 	#if defined(_DEBUGINFO_) //Konsola debuggera
 		//GsDebugClass::WriteDebug("TMainBibleWindow::~TMainBibleWindow()");
 		MessageBox(NULL, TEXT("Wstrzymanie zamykania aplikacji, w celu przeglądu komunikatów konsoli!"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -414,9 +427,9 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	if(GlobalVar::Global_ConfigFile)
 	{
 		GlobalVar::Global_ConfigFile->UpdateFile();	//Zrzut pliku ini z pamięci, do pliku ini
-		delete GlobalVar::Global_ConfigFile;
-		GlobalVar::Global_ConfigFile = nullptr;
 	}
+	//Zapis zaktualizowanego pliku histori
+	GlobalVar::Global_HListHistoryChapterOpen->SaveToFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)
@@ -530,6 +543,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_Tips->Hint = Format("Okno nawigatora pomocy|Moduł nawigatora do wyświetlania najważniejszych wskazówek dla aplikacji.|%u", ARRAYOFCONST((this->Act_Tips->ImageIndex)));
 	this->Act_ReadingPlan->Tag = enTagImage_ReadingPlan;
 	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
+	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
+	this->Act_HistoryChapters->Hint = Format("Okno histori otwieranych rozdziałów|Otwiera okno z historia rozdziałów otwartych w aplikacji.|%u", ARRAYOFCONST((this->Act_HistoryChapters->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
@@ -1293,5 +1308,20 @@ void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
 	Accept = Source->ClassNameIs("GsTreeBibleClass");
 }
 //---------------------------------------------------------------------------
-
+void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Okno histori otwieranych rozdziałów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	THistoryOpenChaptersWindow *pHistoryOpenChaptersWindow = new THistoryOpenChaptersWindow(this);
+	if(!pHistoryOpenChaptersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
+	pHistoryOpenChaptersWindow->ShowModal();
+}
+//---------------------------------------------------------------------------
 

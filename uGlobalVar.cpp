@@ -24,6 +24,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 										GlobalVar::Global_custrPathGlobalHelp = TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"), //Ścieżka dostępu do pliku pomocy
+										GlobalVar::Global_custrPathHistory = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistoryChaptersOpen.hco"),//Ściezka dostępu do pliku historii
 										//Graficne loga z rozszerzeniem .gli
 										GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
 										GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania
@@ -139,7 +140,8 @@ bool GlobalVar::IsWindows10 = false; //Zmienna wskazuje czy klasa została uruch
 TStringList *GlobalVar::Global_SListPathMultiM=nullptr;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 TMemIniFile *GlobalVar::Global_ConfigFile=nullptr;			 //Globalny wskażnik na plik konfiguracyjny
 TStringDynArray GlobalVar::SDirTranslatesList;     //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
-THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=nullptr; //String lista do wszystkich ulubionych wesrsetów
+THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=nullptr, //String lista do wszystkich ulubionych wesrsetów
+									*GlobalVar::Global_HListHistoryChapterOpen=nullptr; //String lista histori otwieranych rozdziałow księg biblijnych
 int GlobalVar::iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
 																//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 																//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji

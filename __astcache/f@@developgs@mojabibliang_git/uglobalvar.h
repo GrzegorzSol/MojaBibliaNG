@@ -43,7 +43,8 @@ struct GlobalVar
 														 Global_custrPathAllReadingPlan,  //Ścieżka dostępu do katalogu z planami czytania biblii
 														 Global_custrGetConfigFile,				//Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile,//Ścieżka dostępu do pliku z ostatnio używanymi adresami
-                             Global_custrPathGlobalHelp, 			//Ścieżka dostępu do pliku pomocy
+														 Global_custrPathGlobalHelp, 			//Ścieżka dostępu do pliku pomocy
+														 Global_custrPathHistory,         //Ściezka dostępu do pliku historii
 														 //Graficne loga z rozszerzeniem .gli
 														 Global_custrPathBackgroundWindow,//Grafika z podkładem okna głównego
 														 Global_custrPathSearchLogo,//Logo w oknie wyszukiwania
@@ -159,7 +160,8 @@ struct GlobalVar
 	static TStringList *Global_SListPathMultiM;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 	static TMemIniFile *Global_ConfigFile;			 //Globalny wskażnik na plik konfiguracyjny
 	static TStringDynArray SDirTranslatesList;   //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
-	static THashedStringList *Global_HSListAllFavoritiesVers; //String lista do wszystkich ulubionych wesrsetów
+	static THashedStringList *Global_HSListAllFavoritiesVers, //String lista do wszystkich ulubionych wesrsetów
+                           *Global_HListHistoryChapterOpen; //String lista histori otwieranych rozdziałow księg biblijnych
 	static int iReturnUpdate; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
 														//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 														//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
