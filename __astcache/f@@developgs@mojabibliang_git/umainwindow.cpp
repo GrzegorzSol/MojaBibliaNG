@@ -174,16 +174,13 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	//Kontrola wymiarów okna, minimalne, dopuszczalne wymiary
 	this->Constraints->MinHeight = 600;
 	this->Constraints->MinWidth = 1024;
-	//Uzależnienie wymiarów okna, od wymierów ekranu
+	//Uzależnienie wymiarów okna, od wymiarów ekranu
 	if(Screen->DesktopWidth > 1280) this->Width = 1280;
 	if(Screen->DesktopHeight > 800) this->Height = 795; else this->Height = 600;
 	//---BallonHint
 	this->_InitAllTagAndHint();
 	//---Wczytanie stylu
 	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
-  #if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
-		GsDebugClass::WriteDebug(Format("Temat aplikacji: %s", ARRAYOFCONST((ustrSelectStyle))));
-	#endif
 	if(!TStyleManager::TrySetStyle(ustrSelectStyle, false)) //[02-05-2023]
   //Jeśli nie ma takiego stylu, ustawiany jest styl domyślny
 	{
@@ -337,6 +334,7 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 			iBook = pHSListOpenBooksInExit->Strings[i].SubString(1, 3).ToIntDef(1);
 			iChapt = pHSListOpenBooksInExit->Strings[i].SubString(4, 3).ToIntDef(1);
 			GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
+			GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
 		}
 
 		delete pHSListOpenBooksInExit; pHSListOpenBooksInExit = nullptr;
@@ -969,6 +967,7 @@ void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
 				this->TaskbarMain->ProgressValue = 0;
 				return;
 			}
+
 			//Wyłuskanie wskaźnika do TProgressBaru, aktualnej zakładki
 			TProgressBar *pProgressBar = GsReadBibleTextData::GetCurrentNamberChaptOnSheet();
 			if(!pProgressBar) return;
@@ -1095,6 +1094,8 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 {
 	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
 	if(!pPageControl) return;
+	//---
+	this->Act_HistoryChapters->Enabled = true;
   //Stan przycisku zmiany obszaru tekstu 12-04-2021
 	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
 	this->Act_ResizeWork->Checked = (pPageControl->PageCount > 0);
@@ -1321,7 +1322,9 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
 	//---
 	THistoryOpenChaptersWindow *pHistoryOpenChaptersWindow = new THistoryOpenChaptersWindow(this);
 	if(!pHistoryOpenChaptersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
-	pHistoryOpenChaptersWindow->ShowModal();
+	//pHistoryOpenChaptersWindow->ShowModal();
+	pHistoryOpenChaptersWindow->Show();
+  //pAction->Enabled = false;
 }
 //---------------------------------------------------------------------------
 

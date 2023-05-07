@@ -31,6 +31,7 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     OnData = LViewHistoryChData
     OnDataFind = LViewHistoryChDataFind
     OnDataHint = LViewHistoryChDataHint
+    OnDblClick = LViewHistoryChDblClick
     OnDrawItem = LViewHistoryChDrawItem
     ExplicitWidth = 978
     ExplicitHeight = 813

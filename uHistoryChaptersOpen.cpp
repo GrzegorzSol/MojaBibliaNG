@@ -2,6 +2,7 @@
 #pragma hdrstop
 
 #include "uHistoryChaptersOpen.h"
+#include "GsReadBibleTextClass\GsReadBibleTextClass.h" //Główna klasa do pracy z tekstem biblijnym
 #include "uGlobalVar.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -120,7 +121,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//--- Wyjście, gdy element, nie mieści się w zakresie listy
 	if((Item->Index<iLViewStartIndex) || (Item->Index>iLViewEndIndex)) return;
@@ -158,6 +159,51 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 			DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	}
 
+}
+//---------------------------------------------------------------------------
+void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	if(!pLView) return;
+	//---
+	PInfoAllBooks pInfobook=nullptr;
+	TListItem *Item = pLView->Items->Item[pLView->ItemIndex];
+	int iBook=-1, iChapt=-1, iPosSpace=0;
+	if(!Item) return;
+	UnicodeString ustrName = Item->Caption.SubString(1, Item->Caption.Pos(":") - 1),
+								ustrChapt;
+	UnicodeString ustrTest = Item->Caption.SubString(Item->Caption.Pos(": ") + 2, 25);
+	iPosSpace = ustrTest.Pos(" ");
+	ustrChapt = ustrTest.Delete(iPosSpace, 28);
+	iChapt = ustrChapt.ToIntDef(1);
+
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("Item->Caption: %s", ARRAYOFCONST((Item->Caption))));
+//		GsDebugClass::WriteDebug(Format("ustrName: %s", ARRAYOFCONST((ustrName))));
+//		GsDebugClass::WriteDebug(Format("ustrTest: %s", ARRAYOFCONST((ustrTest))));
+//		GsDebugClass::WriteDebug(Format("iPosSpace: %d", ARRAYOFCONST((iPosSpace))));
+//		GsDebugClass::WriteDebug(Format("ustrChapt: %s - %d", ARRAYOFCONST((ustrChapt, iChapt))));
+//	#endif
+	for(int i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	{
+		pInfobook = const_cast<PInfoAllBooks>(&GsReadBibleTextData::GsInfoAllBooks[i]);
+		if(!pInfobook) return;
+
+		if(pInfobook->FullNameBook == ustrName)
+		{
+			iBook = i + 1;
+			break;
+		}
+	}
+	GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
+	GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
+  this->Close();
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute(TObject *Sender)

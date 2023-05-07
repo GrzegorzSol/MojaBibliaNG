@@ -34,6 +34,7 @@ __published:	// IDE-managed Components
 	void __fastcall LViewHistoryChDrawItem(TCustomListView *Sender, TListItem *Item,
           TRect &Rect, TOwnerDrawState State);
 	void __fastcall Act_DeleteSelectItemHistoryChExecute(TObject *Sender);
+	void __fastcall LViewHistoryChDblClick(TObject *Sender);
 
 
 private:	// User declarations

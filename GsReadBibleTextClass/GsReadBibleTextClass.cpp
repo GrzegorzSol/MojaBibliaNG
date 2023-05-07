@@ -3240,9 +3240,6 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("pGsTabSheetClass->Caption: %s", ARRAYOFCONST((_ustrTextItem))));
-	#endif
 	UnicodeString ustrbDateNow = FormatDateTime("yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
 
 	GlobalVar::Global_HListHistoryChapterOpen->Add(Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
