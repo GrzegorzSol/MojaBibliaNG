@@ -25,6 +25,7 @@ __published:	// IDE-managed Components
 	TActionManager *ActionManagerHistoryCh;
 	TImageList *ImageListHistoryCh;
 	TAction *Act_DeleteSelectItemHistoryCh;
+	TImageList *ImageListSmallHistoryCh;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall LViewHistoryChData(TObject *Sender, TListItem *Item);
 	void __fastcall LViewHistoryChDataFind(TObject *Sender, TItemFind Find, const UnicodeString FindString,
@@ -35,6 +36,7 @@ __published:	// IDE-managed Components
           TRect &Rect, TOwnerDrawState State);
 	void __fastcall Act_DeleteSelectItemHistoryChExecute(TObject *Sender);
 	void __fastcall LViewHistoryChDblClick(TObject *Sender);
+
 
 
 private:	// User declarations

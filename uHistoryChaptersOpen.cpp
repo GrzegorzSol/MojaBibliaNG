@@ -7,11 +7,6 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-THistoryOpenChaptersWindow *HistoryOpenChaptersWindow;
-
-static int iLViewStartIndex=0; static int iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
-const UnicodeString custrNameColumns[] = {"Rozdział", "Data otwarcia"}; //Nazwy kolumn na liście historii
-enum {enColumn_Chapter, enColumn_DateTime, enColumn_Count};
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
@@ -22,6 +17,17 @@ enum {enColumn_Chapter, enColumn_DateTime, enColumn_Count};
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
+THistoryOpenChaptersWindow *HistoryOpenChaptersWindow;
+
+static int iLViewStartIndex=0; static int iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
+const UnicodeString custrNameColumns[] = {"Rozdział", "Data otwarcia"}; //Nazwy kolumn na liście historii
+enum {//Kolumny
+			enColumn_Chapter, enColumn_DateTime, enColumn_Count,
+			//Głowne obrazy 32 pikseli
+			enImage_DeleteSelectItem=0,
+      //Małe obrazy 16 pikseli dla listy i jej kolumn
+			enSmallImage_ChaptItem=0, enSmallImage_DateItem, enSmallImage__ColumnChapt, enSmallImage_ColumnDate};
+
 //---------------------------------------------------------------------------
 __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -40,7 +46,7 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 		NewColumn = this->LViewHistoryCh->Columns->Add();
 		NewColumn->Caption = custrNameColumns[iColumns];
     NewColumn->AutoSize = true;
-		//NewColumn->ImageIndex = 0;
+		NewColumn->ImageIndex = iColumns + enSmallImage__ColumnChapt;
 	}
 
 	this->LViewHistoryCh->Items->BeginUpdate();
@@ -59,6 +65,34 @@ void __fastcall THistoryOpenChaptersWindow::FormClose(TObject *Sender, TCloseAct
 */
 {
   Action = caFree;
+}
+//---------------------------------------------------------------------------
+void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	TListItem *pListItem = this->LViewHistoryCh->Selected;
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("%d - pListItem: %s", ARRAYOFCONST((pListItem->Index, pListItem->Caption))));
+	#endif
+
+	int iResult = MessageBox(NULL, TEXT("Czy jesteś pewny, że chcesz skasować wybraną pozycje historii? Nie będzie go można później odzyskać!"),
+													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
+	if(iResult == IDNO) return;
+
+
+	GlobalVar::Global_HListHistoryChapterOpen->Delete(pListItem->Index);
+  this->LViewHistoryCh->Items->BeginUpdate();
+	this->LViewHistoryCh->Items->Count = GlobalVar::Global_HListHistoryChapterOpen->Count;
+	this->LViewHistoryCh->Items->EndUpdate();
+	pAction->Enabled = this->LViewHistoryCh->Items->Count > 0;
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChData(TObject *Sender,
@@ -131,11 +165,10 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 	TRect RectIcon = Item->DisplayRect(drIcon);
 
   if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
-	//else pLView->Canvas->Brush->Color = pLView->Color;
 
 	if(State.Contains(odSelected))
 	{
-		pLView->Canvas->Brush->Color = clWebDarkOrange;//clYellow;
+		pLView->Canvas->Brush->Color = clWebDarkOrange;
 	}
 
 	pLView->Canvas->FillRect(RectBounds);
@@ -143,6 +176,8 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 	pLView->Canvas->Font->Style = TFontStyles() << fsBold;
 
 	DrawText(pLView->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+	pLView->SmallImages->Draw(pLView->Canvas, RectIcon.Left,
+		RectIcon.Top + ((Rect.Height() - pLView->SmallImages->Height) / 2), enSmallImage_ChaptItem);
 
 	TRect RectSubItem  = RectLabel;
 	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
@@ -157,8 +192,9 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 		TRect RectSubItem1 = RectSubItem;
 		DrawText(pLView->Canvas->Handle, Item->SubItems->Strings[iColumn].c_str(), -1, &RectSubItem1,
 			DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+		pLView->SmallImages->Draw(pLView->Canvas, RectSubItem.Left - pLView->SmallImages->Width - 2,
+			RectSubItem.Top + ((RectSubItem.Height() - pLView->SmallImages->Height) / 2), enSmallImage_DateItem);
 	}
-
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Sender)
@@ -169,7 +205,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//---
 	PInfoAllBooks pInfobook=nullptr;
@@ -204,34 +240,6 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 	GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
 	GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
   this->Close();
-}
-//---------------------------------------------------------------------------
-void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TAction *pAction = dynamic_cast<TAction *>(Sender);
-	if(!pAction) return;
-	//---
-	TListItem *pListItem = this->LViewHistoryCh->Selected;
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%d - pListItem: %s", ARRAYOFCONST((pListItem->Index, pListItem->Caption))));
-	#endif
-
-	int iResult = MessageBox(NULL, TEXT("Czy jesteś pewny, że chcesz skasować wybraną pozycje historii? Nie będzie go można później odzyskać!"),
-													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
-	if(iResult == IDNO) return;
-
-
-	GlobalVar::Global_HListHistoryChapterOpen->Delete(pListItem->Index);
-  this->LViewHistoryCh->Items->BeginUpdate();
-	this->LViewHistoryCh->Items->Count = GlobalVar::Global_HListHistoryChapterOpen->Count;
-	this->LViewHistoryCh->Items->EndUpdate();
-	pAction->Enabled = this->LViewHistoryCh->Items->Count > 0;
 }
 //---------------------------------------------------------------------------
 
