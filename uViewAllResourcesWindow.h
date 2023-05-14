@@ -25,7 +25,9 @@ __published:	// IDE-managed Components
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall PanelDisplayResize(TObject *Sender);
 private:	// User declarations
-  GsViewAllResourcesClass *pGsViewAllResourcesClass;
+	TWICImage *_pWICImage;
+  float fFactorProp;
+  GsViewAllResourcesClass *_pGsViewAllResourcesClass;
 	void __fastcall _OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected);
 	void __fastcall _DisplayImage(const UnicodeString _pathImages);
 public:		// User declarations

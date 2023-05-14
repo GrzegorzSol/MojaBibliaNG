@@ -49,12 +49,12 @@ void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->pGsViewAllResourcesClass = new GsViewAllResourcesClass(this);
-	if(!this->pGsViewAllResourcesClass) throw(Exception("B³¹d inicjalizacji objektu, klasy GsViewAllResourcesClass"));
-	this->pGsViewAllResourcesClass->Parent = this;
-	this->pGsViewAllResourcesClass->Align = alClient;
+	this->_pGsViewAllResourcesClass = new GsViewAllResourcesClass(this);
+	if(!this->_pGsViewAllResourcesClass) throw(Exception("B³¹d inicjalizacji objektu, klasy GsViewAllResourcesClass"));
+	this->_pGsViewAllResourcesClass->Parent = this;
+	this->_pGsViewAllResourcesClass->Align = alClient;
 	//---
-	this->pGsViewAllResourcesClass->OnSelectItem = this->_OnSelectItem;
+	this->_pGsViewAllResourcesClass->OnSelectItem = this->_OnSelectItem;
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::FormDestroy(TObject *Sender)
@@ -65,7 +65,7 @@ void __fastcall TViewAllResourcesWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //
+	///
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected)
@@ -91,11 +91,6 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 		}
 		else if(Item->GroupID == enGroup_Graphics)
 		{
-			ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: %s", ARRAYOFCONST((Item->Caption))) + "\nPodgl¹d pliku graficznego jest dostêpny w g³ównym oknie, w zak³adce po lewej stronie, zatytu³owanej :\"Grafika i Multimedia\"." +
-											 "Po wybraniu tej zak³adki, bêdzie dostêpna lista wszystkich plików graficznych, których œcie¿ki zosta³y zarejestrowane w g³ównych ustawieniach aplikacji." +
-											 "Pojedyñcze klikniêcie na wybrany plik z listy, powoduje jego wyœwietlenie w ma³ym podgl¹dzie na dole listy, gdy klikniemy podwójnie, plik zostanie " +
-											 "wyœwietlony w swoich oryginalnych rozmiarach w noej zak³adce w g³ównym oknie, z mo¿liwoœci¹ przewijania jego zawartoœci.";
-			this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
 			//Podgl¹d grafiki
 			this->_DisplayImage(Item->Caption);
 		}
@@ -125,10 +120,13 @@ void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
 	TPanel *pPanel = dynamic_cast<TPanel *>(Sender);
 	if(!pPanel) return;
 	//---
-	this->ImageDisplayResource->Height = this->PanelDisplay->Height - 4;
-	this->ImageDisplayResource->Width = this->ImageDisplayResource->Height;
-	this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
-	this->ImageDisplayResource->Top = this->PanelDisplay->Height / 2 - (this->ImageDisplayResource->Height / 2);;
+	if(this->_pWICImage)
+	{
+		this->ImageDisplayResource->Height = this->PanelDisplay->Height - 4;
+		this->ImageDisplayResource->Width = this->fFactorProp * this->ImageDisplayResource->Height;
+		this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
+		this->ImageDisplayResource->Top = this->PanelDisplay->Height / 2 - (this->ImageDisplayResource->Height / 2);
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _pathImages)
@@ -139,18 +137,24 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Podgl¹d grafiki
-	TWICImage *pWICImage = new TWICImage();
-	if(!pWICImage) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+	UnicodeString  ustrSelectItem;
 
 	try
 	{
-		pWICImage->LoadFromFile(_pathImages);
-		this->ImageDisplayResource->Picture->Assign(pWICImage);
+    this->_pWICImage = new TWICImage();
+		if(!this->_pWICImage) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+		//---
+		this->_pWICImage->LoadFromFile(_pathImages);
+		this->fFactorProp = (float)this->_pWICImage->Width / (float)this->_pWICImage->Height;
+		this->ImageDisplayResource->Picture->Assign(this->_pWICImage);
+		this->PanelDisplay->OnResize(this->PanelDisplay);
+
+		ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, this->_pWICImage->Width, this->_pWICImage->Height)));
+		this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
 	}
 	__finally
 	{
-		delete pWICImage; pWICImage = nullptr;
+		if(this->_pWICImage) {delete this->_pWICImage; this->_pWICImage = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
