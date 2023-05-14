@@ -26,7 +26,15 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 6.Metody prywane będą miały przedrostek _
   PRZYKŁAD: pInToSearchGsReadBibleTextClass - wskaźnik, będący argumentem metody
 */
-
+//---------------------------------------------------------------------------
+/*
+	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
+		//Your code.
+	#endif
+	#if defined(__BORLANDC__) && defined(__clang__)
+    //Your code.
+	#endif
+*/
 #include <vcl.h>
 #pragma hdrstop
 

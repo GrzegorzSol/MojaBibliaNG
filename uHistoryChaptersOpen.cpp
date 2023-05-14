@@ -29,11 +29,11 @@ enum {//Kolumny
 			enSmallImage_ChaptItem=0, enSmallImage_DateItem, enSmallImage__ColumnChapt, enSmallImage_ColumnDate};
 
 //---------------------------------------------------------------------------
-__fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Owner)
-	: TForm(Owner)
+__fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Owner, TAction *pAction)
+	: TForm(Owner), _pStartAction(pAction)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÓW: TAction *pAction - Akcja, króra wywołała okno
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -54,6 +54,7 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 	this->LViewHistoryCh->Items->EndUpdate();
 
 	this->Act_DeleteSelectItemHistoryCh->Enabled = this->LViewHistoryCh->Items->Count > 0;
+	this->_pStartAction->Enabled = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -64,7 +65,8 @@ void __fastcall THistoryOpenChaptersWindow::FormClose(TObject *Sender, TCloseAct
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	Action = caFree;
+	this->_pStartAction->Enabled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute(TObject *Sender)

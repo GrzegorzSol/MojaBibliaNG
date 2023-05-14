@@ -23,7 +23,11 @@ __fastcall TViewAllResourcesWindow::TViewAllResourcesWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  
+	this->ImageDisplayResource->Height = this->PanelDisplay->Height;
+	this->ImageDisplayResource->Width = this->ImageDisplayResource->Height;
+	this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
+  this->ImageDisplayResource->Top = 0;
+	//this->ImageDisplayResource->Margins->Left
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -92,6 +96,8 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 											 "Pojedyñcze klikniêcie na wybrany plik z listy, powoduje jego wyœwietlenie w ma³ym podgl¹dzie na dole listy, gdy klikniemy podwójnie, plik zostanie " +
 											 "wyœwietlony w swoich oryginalnych rozmiarach w noej zak³adce w g³ównym oknie, z mo¿liwoœci¹ przewijania jego zawartoœci.";
 			this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
+			//Podgl¹d grafiki
+			this->_DisplayImage(Item->Caption);
 		}
 		else if(Item->GroupID == enGroup_CoomentFiles || Item->GroupID == enGroup_FavVers)
 		{
@@ -108,3 +114,44 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
   }
 }
 //---------------------------------------------------------------------------
+void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPanel *pPanel = dynamic_cast<TPanel *>(Sender);
+	if(!pPanel) return;
+	//---
+	this->ImageDisplayResource->Height = this->PanelDisplay->Height - 4;
+	this->ImageDisplayResource->Width = this->ImageDisplayResource->Height;
+	this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
+	this->ImageDisplayResource->Top = this->PanelDisplay->Height / 2 - (this->ImageDisplayResource->Height / 2);;
+}
+//---------------------------------------------------------------------------
+void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _pathImages)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //Podgl¹d grafiki
+	TWICImage *pWICImage = new TWICImage();
+	if(!pWICImage) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+
+	try
+	{
+		pWICImage->LoadFromFile(_pathImages);
+		this->ImageDisplayResource->Picture->Assign(pWICImage);
+	}
+	__finally
+	{
+		delete pWICImage; pWICImage = nullptr;
+	}
+}
+//---------------------------------------------------------------------------
+
