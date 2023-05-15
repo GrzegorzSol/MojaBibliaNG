@@ -148,9 +148,9 @@
         <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Release>9716</VerInfo_Release>
-        <VerInfo_Build>1867</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.9716.1867;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+        <VerInfo_Release>9736</VerInfo_Release>
+        <VerInfo_Build>1888</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.9736.1888;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
         <DynamicRTL>false</DynamicRTL>
         <UsePackages>false</UsePackages>
         <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
@@ -168,10 +168,10 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Release>9716</VerInfo_Release>
-        <VerInfo_Build>1867</VerInfo_Build>
+        <VerInfo_Release>9736</VerInfo_Release>
+        <VerInfo_Build>1888</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.9716.1867;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=$(MSBuildProjectName);FileVersion=0.9.9736.1888;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
         <Icon_MainIcon>Moja Biblia NG_Icon2.ico</Icon_MainIcon>
         <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
         <BCC_EnableLSPIndexing>false</BCC_EnableLSPIndexing>

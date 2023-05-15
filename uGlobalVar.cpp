@@ -75,6 +75,7 @@ const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::Extract
 												GlobalVar::GlobalIni_IsAutoFindUpdate="IsAutoFindUpdate",       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
 												GlobalVar::GlobalIni_IsLoadBooksOnInit="IsLoadBooksOnInit", //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
 												GlobalVar::GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
+                        GlobalVar::Globalini_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
 										//----- Sekcje Colors pliku ini
 										GlobalVar::GlobalIni_ColorsSection_Main="COLORS",       //Główna sekcja COLORS pliku ini
 												GlobalVar::GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",       //Kolor zaznaczenie ulubionych wersetów

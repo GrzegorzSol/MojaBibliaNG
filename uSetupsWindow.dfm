@@ -25,7 +25,7 @@ object SetupsWindow: TSetupsWindow
     Width = 953
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetPaths
+    ActivePage = SW_SheetFlags
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -317,6 +317,7 @@ object SetupsWindow: TSetupsWindow
         ShowHint = True
         TabOrder = 0
         OnClick = SW_CBox_Click
+        ExplicitWidth = 938
       end
       object SW_CBoxIsRequestEnd: TCheckBox
         AlignWithMargins = True
@@ -368,15 +369,32 @@ object SetupsWindow: TSetupsWindow
         TabOrder = 4
       end
       object SW_CBoxTips: TCheckBox
+        AlignWithMargins = True
         Left = 3
         Top = 118
-        Width = 358
+        Width = 939
         Height = 17
         CustomHint = SW_BalloonHint
+        Align = alTop
         Caption = 
           'Czy okno szybkich podpowiedzi ma sie pojawia'#263' przy starcie aplik' +
-          'acji'
+          'acji ?'
         TabOrder = 5
+        ExplicitWidth = 358
+      end
+      object SW_CBoxDisplayTrayInfoStart: TCheckBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 141
+        Width = 939
+        Height = 17
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        Caption = 
+          'Czy wy'#347'wietla'#263' informacje o aplikacji w pasku powiadamiania, pod' +
+          'czas jej uruchamiania ?'
+        TabOrder = 6
+        ExplicitWidth = 446
       end
     end
     object SW_SheetPaths: TTabSheet
@@ -392,6 +410,7 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Wyb'#243'r katalog'#243'w z multimediami - uwaga nr. 1'
         TabOrder = 0
+        ExplicitWidth = 943
         object SW_LEditPath3: TLabeledEdit
           Left = 161
           Top = 80
@@ -743,8 +762,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 4
-            Height = 16
+            Width = 373
+            Height = 73
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -756,6 +775,8 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
+            ExplicitWidth = 4
+            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -926,7 +947,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 232
+          Width = 548
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -943,6 +964,7 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
+          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           Left = 1
@@ -983,7 +1005,6 @@ object SetupsWindow: TSetupsWindow
         ParentCtl3D = False
         ShowCaption = False
         TabOrder = 0
-        ExplicitHeight = 517
         object SW_LBoxSelectTheme: TListBox
           AlignWithMargins = True
           Left = 4
@@ -996,7 +1017,6 @@ object SetupsWindow: TSetupsWindow
           ItemHeight = 13
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
-          ExplicitHeight = 509
         end
       end
       object PanelDisplaySelectTheme: TPanel
@@ -1010,7 +1030,6 @@ object SetupsWindow: TSetupsWindow
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 1
-        ExplicitHeight = 517
         object SW_ImagePreviewSelectStyle: TImage
           AlignWithMargins = True
           Left = 4

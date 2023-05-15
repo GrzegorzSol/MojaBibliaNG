@@ -118,6 +118,7 @@ __published:	// IDE-managed Components
 	TPanel *PanelListThemes;
 	TPanel *PanelDisplaySelectTheme;
 	TButton *SW_ButtDisplaySelectTheme;
+	TCheckBox *SW_CBoxDisplayTrayInfoStart;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

@@ -94,6 +94,7 @@ struct GlobalVar
 																GlobalIni_IsAutoFindUpdate,       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
 																GlobalIni_IsLoadBooksOnInit, //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
 																GlobalIni_IsTipsWindowStart, //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
+                                Globalini_IsDisplayStartInfoTray, //czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
 																//GlobalIni_IsStartInfo,          //Podczas startu aplikacji czy jest wyświetlane powitanie
 														 //----- Sekcje Colors pliku ini
 														 GlobalIni_ColorsSection_Main,         //Główna sekcja COLORS pliku ini

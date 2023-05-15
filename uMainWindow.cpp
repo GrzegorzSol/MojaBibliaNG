@@ -26,7 +26,15 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 6.Metody prywane będą miały przedrostek _
   PRZYKŁAD: pInToSearchGsReadBibleTextClass - wskaźnik, będący argumentem metody
 */
-
+//---------------------------------------------------------------------------
+/*
+	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
+		//Your code.
+	#endif
+	#if defined(__BORLANDC__) && defined(__clang__)
+    //Your code.
+	#endif
+*/
 #include <vcl.h>
 #pragma hdrstop
 
@@ -257,7 +265,9 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->pGsListBoxFavoritiesClass->Align = alClient;
 	this->pGsListBoxFavoritiesClass->OnDblClick = this->_OnDblClick_ListFavorities;
 	//---
-	this->TrayIconMain->ShowBalloonHint();
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
+    //Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
+		{this->TrayIconMain->ShowBalloonHint();}
 	this->TrayIconMain->Hint = Format("Moja Biblia NG wersja beta v%s © Grzegorz Sołtysik.", ARRAYOFCONST((ustrVersion)));
 	this->TrayIconMain->BalloonTitle = this->TrayIconMain->Hint;
 	this->TrayIconMain->BalloonHint = "Oprogramowanie do studiowania Pisma Świętego";

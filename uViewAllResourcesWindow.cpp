@@ -55,6 +55,23 @@ void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
 	this->_pGsViewAllResourcesClass->Align = alClient;
 	//---
 	this->_pGsViewAllResourcesClass->OnSelectItem = this->_OnSelectItem;
+
+  this->_pDisplayWindow = new TForm(this);
+	if(!this->_pDisplayWindow) throw(Exception("B³¹d inicjalizacji objektu TForm"));
+
+  this->_pDisplayWindow->Width = Screen->Width;
+	this->_pDisplayWindow->Height = Screen->Height;
+	this->_pDisplayWindow->Left = 0; this->_pDisplayWindow->Top = 0;
+	this->_pDisplayWindow->BorderStyle = bsNone;
+	this->_pDisplayWindow->KeyPreview = true;
+	this->_pDisplayWindow->OnKeyPress = this->_OnKeyPress;
+	this->_pDisplayWindow->StyleElements = TStyleElements();
+	this->_pDisplayWindow->Color = clBlack;
+
+	this->_pImageScr = new TImage(this->_pDisplayWindow);
+	if(!this->_pImageScr) throw(Exception("B³¹d inicjalizacji objektu TImage"));
+	this->_pImageScr->Parent = this->_pDisplayWindow;
+	this->_pImageScr->Stretch = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::FormDestroy(TObject *Sender)
@@ -65,7 +82,7 @@ void __fastcall TViewAllResourcesWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	///
+	if(this->_pDisplayWindow) {delete this->_pDisplayWindow; this->_pDisplayWindow = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected)
@@ -102,6 +119,7 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 			iVers = ustrSelectItem.SubString(7, 3).ToInt();
 			this->REditInfoSelectItem->Lines->Text = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
 		}
+		this->PanelDisplay->Visible = Item->GroupID == enGroup_Graphics;
 	}
 	catch(...)
 	{
@@ -120,13 +138,10 @@ void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
 	TPanel *pPanel = dynamic_cast<TPanel *>(Sender);
 	if(!pPanel) return;
 	//---
-	if(this->_pWICImage)
-	{
-		this->ImageDisplayResource->Height = this->PanelDisplay->Height - 4;
-		this->ImageDisplayResource->Width = this->fFactorProp * this->ImageDisplayResource->Height;
-		this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
-		this->ImageDisplayResource->Top = this->PanelDisplay->Height / 2 - (this->ImageDisplayResource->Height / 2);
-	}
+	this->ImageDisplayResource->Height = this->PanelDisplay->Height - 4;
+	this->ImageDisplayResource->Width = this->fFactorProp * this->ImageDisplayResource->Height;
+	this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
+	this->ImageDisplayResource->Top = this->PanelDisplay->Height / 2 - (this->ImageDisplayResource->Height / 2);
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _pathImages)
@@ -138,23 +153,128 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 */
 {
 	UnicodeString  ustrSelectItem;
+	TWICImage *pWICImage=nullptr;
 
 	try
 	{
-    this->_pWICImage = new TWICImage();
-		if(!this->_pWICImage) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+		pWICImage = new TWICImage();
+		if(!pWICImage) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
 		//---
-		this->_pWICImage->LoadFromFile(_pathImages);
-		this->fFactorProp = (float)this->_pWICImage->Width / (float)this->_pWICImage->Height;
-		this->ImageDisplayResource->Picture->Assign(this->_pWICImage);
+		pWICImage->LoadFromFile(_pathImages);
+		this->fFactorProp = (float)pWICImage->Width / (float)pWICImage->Height;
+		this->ImageDisplayResource->Picture->Assign(pWICImage);
 		this->PanelDisplay->OnResize(this->PanelDisplay);
 
-		ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, this->_pWICImage->Width, this->_pWICImage->Height)));
+		ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
 		this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
 	}
 	__finally
 	{
-		if(this->_pWICImage) {delete this->_pWICImage; this->_pWICImage = nullptr;}
+		if(pWICImage) {delete pWICImage; pWICImage = nullptr;}
+	}
+}
+//---------------------------------------------------------------------------
+/////////////////////////////////////////////////////////////////////////////
+//                                                                         //
+// 						 	OTWARCIE PE£NOEKRANOWEGO PODGLADU WYBRANEJ                 //
+//										GRAFIKI I JEGO PRYWATNE METODY                       //
+//                                                                         //
+/////////////////////////////////////////////////////////////////////////////
+void __fastcall TViewAllResourcesWindow::ImageDisplayResourceDblClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Wyœwietlenie w formie pe³no ekranowej wybranej grafiki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TImage *pImg = dynamic_cast<TImage *>(Sender);
+	if(!pImg) return;
+	//---
+	TWICImage *pWICImg=nullptr;
+	TListItem* Item = this->_pGsViewAllResourcesClass->Items->Item[this->_pGsViewAllResourcesClass->ItemIndex];
+	UnicodeString _ustrCurrentPathImage = Item->Caption;
+	//---
+	try
+	{
+		pWICImg = new TWICImage();
+		if(!pWICImg) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+
+		pWICImg->LoadFromFile(_ustrCurrentPathImage);
+		float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokoœci do wysokoœci, wczytanej grafiki
+					fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokoœci do szerokoœci, wczytanej grafiki
+		//--- Sprawdzanie wysokoœci grafiki
+		if(pWICImg->Height > this->_pDisplayWindow->ClientHeight)
+			{this->_pImageScr->Height = this->_pDisplayWindow->ClientHeight;}
+		else
+			{this->_pImageScr->Height = pWICImg->Height;}
+		this->_pImageScr->Width = fSizeFactorWH * this->_pImageScr->Height;
+		//--- Sprawdzanie szerokoœci grafiki
+//		if(pWICImg->Width > this->_pDisplayWindow->ClientWidth)
+//			{this->_pImageScr->Width = this->_pDisplayWindow->ClientWidth;}
+//		else
+//			{this->_pImageScr->Width = pWICImg->Width;}
+//		this->_pImageScr->Height = fSizeFactorHW * this->_pImageScr->Width;
+		//---
+
+		this->_pImageScr->Left = this->_pDisplayWindow->ClientWidth / 2 - (this->_pImageScr->Width / 2);
+		this->_pImageScr->Top = this->_pDisplayWindow->ClientHeight / 2 - (this->_pImageScr->Height / 2);
+		this->_pImageScr->Picture->Assign(pWICImg); //Skopiwanie bitmapy wczytanej grafiki do bitmapy objektu, klasy TImage
+
+		this->_pDisplayWindow->Show();
+	}
+	__finally
+	{
+		if(pWICImg) {delete pWICImg; pWICImg = nullptr;}
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TViewAllResourcesWindow::_OnKeyPress(TObject *Sender, System::WideChar &Key)
+/**
+	OPIS METOD(FUNKCJI): Naciœniêto jaki kolwiek klawisz w oknie do podgl¹du wybranej grafiki, w formie pe³no ekranowej
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TForm *pForm = dynamic_cast<TForm *>(Sender);
+	if(!pForm) return;
+	//---
+	if(this->_pGsViewAllResourcesClass->ItemIndex == -1) return;
+	//---
+	switch(Key)
+	{
+		case vkEscape:
+			pForm->Hide(); //Schowanie okna
+		break;
+		//---
+		case vkSpace: //Nastêpna grafika
+			if(this->_pGsViewAllResourcesClass->ItemIndex < this->_pGsViewAllResourcesClass->Items->Count)
+			{
+				this->_pGsViewAllResourcesClass->ItemIndex++;
+				TListItem* Item = this->_pGsViewAllResourcesClass->Items->Item[this->_pGsViewAllResourcesClass->ItemIndex];
+				if(Item->GroupID != enGroup_Graphics)
+				{
+					this->_pGsViewAllResourcesClass->ItemIndex--;
+					break;
+				}
+				this->ImageDisplayResourceDblClick(this->ImageDisplayResource);
+			}
+		break;
+		//---
+		case vkBack: //Poprzednia grafika
+			if(this->_pGsViewAllResourcesClass->ItemIndex > 0)
+			{
+				this->_pGsViewAllResourcesClass->ItemIndex--;
+				TListItem* Item = this->_pGsViewAllResourcesClass->Items->Item[this->_pGsViewAllResourcesClass->ItemIndex];
+				if(Item->GroupID != enGroup_Graphics)
+				{
+					this->_pGsViewAllResourcesClass->ItemIndex++;
+					break;
+				}
+				this->ImageDisplayResourceDblClick(this->ImageDisplayResource);
+    	}
+		break;
 	}
 }
 //---------------------------------------------------------------------------

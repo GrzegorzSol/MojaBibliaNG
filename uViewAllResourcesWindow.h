@@ -24,9 +24,13 @@ __published:	// IDE-managed Components
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall PanelDisplayResize(TObject *Sender);
+	void __fastcall ImageDisplayResourceDblClick(TObject *Sender);
 private:	// User declarations
-	TWICImage *_pWICImage;
-  float fFactorProp;
+	float fFactorProp;
+	TForm *_pDisplayWindow=nullptr;
+  TImage *_pImageScr=nullptr;
+
+	void __fastcall _OnKeyPress(TObject *Sender, System::WideChar &Key);
   GsViewAllResourcesClass *_pGsViewAllResourcesClass;
 	void __fastcall _OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected);
 	void __fastcall _DisplayImage(const UnicodeString _pathImages);

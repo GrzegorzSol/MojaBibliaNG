@@ -82,7 +82,6 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
-      Visible = False
       StyleElements = [seFont, seBorder]
       OnResize = PanelDisplayResize
       ExplicitWidth = 1182
@@ -93,7 +92,6 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
         Height = 105
         Align = alCustom
         Stretch = True
-        OnDblClick = ImageDisplayResourceDblClick
       end
     end
   end
