@@ -150,36 +150,33 @@ void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataIt
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	const UnicodeString GlobalSizeFontText = "\\fs28",
-										GlobalHeaderRtf = UnicodeString("{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
-																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;}" +
-																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf4\\lang1045\\b\\f0\\fs28 Podgl¹d wersetu z listy ulubionych, lub wersetu, który posiada komentarz\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\b" + GlobalSizeFontText,
-										GlobalAdressVersRtf = "\\f1\\line\\cf2\\b",
-										GlobalVersRtf = "\\cf1\\b0\\f0",
-										GlobalNameTransRtf = "\\cf4\\f1",
-										GlobalEndVersRtf = "\\cf1\\f1",
-										GlobalSizeNameTransRtf = "\\fs20";
+	const UnicodeString GlobalSizeFontText = "\\fs32",
+											GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
+																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;\\red200\\green0\\blue200;}" +
+																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
+																		 "\\pard\\sa200\\sl276\\slmult1\\cf4\\fs45\\b Podgl¹d wersetu z listy ulubionych, lub wersetu, który posiada komentarz\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",// + GlobalSizeFontText,
+											GlobalAdressVersRtf = "\\f1\\cf2\\b",
+											GlobalVersRtf = "\\cf1\\b0\\f0",
+											GlobalNameTransRtf = "\\cf5\\f1",
+											GlobalSizeNameTransRtf = "\\fs26";
 
-	TStringStream *pStringStream = new TStringStream("", TEncoding::ANSI, true);
-	//TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
+	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("B³¹d inicjalizacji objektu TStringStream"));
 
 	pStringStream->WriteString(GlobalHeaderRtf);
 
-
 	for(int iLicz=0; iLicz<pDataItemResources->HSListGetAllTransVers->Count; iLicz++)
 	{
 		GsReadBibleTextItem *GsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iLicz);
-    //Zawartoœæ wersetów tylko dla polskich t³umaczeñ
-		if(GsReadBibleTextItem->enTypeTranslate != enTypeTr_Full) continue;
 		if(!pDataItemResources->HSListGetAllTransVers->Strings[iLicz].IsEmpty())
 		{
-			pStringStream->WriteString(Format("%s %s " ,ARRAYOFCONST((GlobalAdressVersRtf, pDataItemResources->ustrInfoResource))));
+			pStringStream->WriteString(Format("%s%s %s " ,ARRAYOFCONST((GlobalSizeFontText, GlobalAdressVersRtf, pDataItemResources->ustrInfoResource))));
 			pStringStream->WriteString(Format("%s %s" ,ARRAYOFCONST((GlobalVersRtf, pDataItemResources->HSListGetAllTransVers->Strings[iLicz]))));
-    }
+
+			pStringStream->WriteString(Format("%s%s  [%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, GsReadBibleTextItem->NameTranslate, "\\line"))));
+		}
 	}
 
-	pStringStream->WriteString(Format("%s" ,ARRAYOFCONST((GlobalSizeFontText))));
 	pStringStream->WriteString("}");
 	pStringStream->Position = 0;
 	this->REditInfoSelectItem->Lines->LoadFromStream(pStringStream);

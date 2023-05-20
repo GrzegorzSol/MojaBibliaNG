@@ -3,7 +3,7 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   Top = 0
   Caption = 'Przegl'#261'd wszystkich dost'#281'pnych zasob'#243'w aplikacji'
   ClientHeight = 880
-  ClientWidth = 1186
+  ClientWidth = 1386
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   object SplitterViews: TSplitter
     Left = 0
     Top = 485
-    Width = 1186
+    Width = 1386
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -34,15 +34,17 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   object PanelViews: TPanel
     Left = 0
     Top = 488
-    Width = 1186
+    Width = 1386
     Height = 392
     Align = alBottom
     ShowCaption = False
     TabOrder = 0
+    ExplicitTop = 484
+    ExplicitWidth = 1184
     object SplitterDisplay: TSplitter
       Left = 1
       Top = 221
-      Width = 1184
+      Width = 1384
       Height = 3
       Cursor = crVSplit
       Align = alBottom
@@ -55,9 +57,11 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
     object REditInfoSelectItem: TRichEdit
       Left = 1
       Top = 1
-      Width = 1184
+      Width = 1384
       Height = 220
       Align = alClient
+      BorderStyle = bsNone
+      EditMargins.Left = 4
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -68,11 +72,12 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
+      ExplicitWidth = 1182
     end
     object PanelDisplay: TPanel
       Left = 1
       Top = 224
-      Width = 1184
+      Width = 1384
       Height = 167
       Align = alBottom
       Color = clGray
@@ -81,7 +86,6 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       TabOrder = 1
       StyleElements = [seFont, seBorder]
       OnResize = PanelDisplayResize
-      ExplicitTop = 168
       ExplicitWidth = 1182
       object ImageDisplayResource: TImage
         Left = 484
