@@ -13,6 +13,7 @@ TViewAllResourcesWindow *ViewAllResourcesWindow;
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 #endif
 */
+
 //---------------------------------------------------------------------------
 __fastcall TViewAllResourcesWindow::TViewAllResourcesWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -94,11 +95,12 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 */
 {
 	UnicodeString  ustrSelectItem;
-	int iBook, iChap, iVers;
+	DataItemResources *pDataItemResources = static_cast<DataItemResources *>(Item->Data);
 
 	try
 	{
 		if(Item->GroupID == enGroup_Translate)
+		//T³umaczenia
 		{
 			ustrSelectItem = TPath::ChangeExtension(Item->Caption, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
 			if(TFile::Exists(ustrSelectItem))
@@ -107,19 +109,15 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 			}
 		}
 		else if(Item->GroupID == enGroup_Graphics)
+    //Podgl¹d grafiki
 		{
-			//Podgl¹d grafiki
 			this->_DisplayImage(Item->Caption);
 		}
 		else if(Item->GroupID == enGroup_CoomentFiles || Item->GroupID == enGroup_FavVers)
+    //Ulubione wersety i wersety z komentarzem
 		{
-			ustrSelectItem = Item->Caption;
-			iBook = ustrSelectItem.SubString(1, 3).ToInt()-1;
-			iChap = ustrSelectItem.SubString(4, 3).ToInt();
-			iVers = ustrSelectItem.SubString(7, 3).ToInt();
-			this->REditInfoSelectItem->Lines->Text = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
+			this->_DisplaySelectVersAllTrans(pDataItemResources);
 		}
-		this->PanelDisplay->Visible = Item->GroupID == enGroup_Graphics;
 	}
 	catch(...)
 	{
@@ -142,6 +140,51 @@ void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
 	this->ImageDisplayResource->Width = this->fFactorProp * this->ImageDisplayResource->Height;
 	this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
 	this->ImageDisplayResource->Top = this->PanelDisplay->Height / 2 - (this->ImageDisplayResource->Height / 2);
+}
+//---------------------------------------------------------------------------
+void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataItemResources *pDataItemResources)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	const UnicodeString GlobalSizeFontText = "\\fs28",
+										GlobalHeaderRtf = UnicodeString("{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
+																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;}" +
+																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf4\\lang1045\\b\\f0\\fs28 Podgl¹d wersetu z listy ulubionych, lub wersetu, który posiada komentarz\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\b" + GlobalSizeFontText,
+										GlobalAdressVersRtf = "\\f1\\line\\cf2\\b",
+										GlobalVersRtf = "\\cf1\\b0\\f0",
+										GlobalNameTransRtf = "\\cf4\\f1",
+										GlobalEndVersRtf = "\\cf1\\f1",
+										GlobalSizeNameTransRtf = "\\fs20";
+
+	TStringStream *pStringStream = new TStringStream("", TEncoding::ANSI, true);
+	//TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
+	if(!pStringStream) throw(Exception("B³¹d inicjalizacji objektu TStringStream"));
+
+	pStringStream->WriteString(GlobalHeaderRtf);
+
+
+	for(int iLicz=0; iLicz<pDataItemResources->HSListGetAllTransVers->Count; iLicz++)
+	{
+		GsReadBibleTextItem *GsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iLicz);
+    //Zawartoœæ wersetów tylko dla polskich t³umaczeñ
+		if(GsReadBibleTextItem->enTypeTranslate != enTypeTr_Full) continue;
+		if(!pDataItemResources->HSListGetAllTransVers->Strings[iLicz].IsEmpty())
+		{
+			pStringStream->WriteString(Format("%s %s " ,ARRAYOFCONST((GlobalAdressVersRtf, pDataItemResources->ustrInfoResource))));
+			pStringStream->WriteString(Format("%s %s" ,ARRAYOFCONST((GlobalVersRtf, pDataItemResources->HSListGetAllTransVers->Strings[iLicz]))));
+    }
+	}
+
+	pStringStream->WriteString(Format("%s" ,ARRAYOFCONST((GlobalSizeFontText))));
+	pStringStream->WriteString("}");
+	pStringStream->Position = 0;
+	this->REditInfoSelectItem->Lines->LoadFromStream(pStringStream);
+
+	if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _pathImages)

@@ -33,6 +33,7 @@ private:	// User declarations
 	void __fastcall _OnKeyPress(TObject *Sender, System::WideChar &Key);
   GsViewAllResourcesClass *_pGsViewAllResourcesClass;
 	void __fastcall _OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected);
+	void __fastcall _DisplaySelectVersAllTrans(const DataItemResources *pDataItemResources);
 	void __fastcall _DisplayImage(const UnicodeString _pathImages);
 public:		// User declarations
 	__fastcall TViewAllResourcesWindow(TComponent* Owner);

@@ -227,7 +227,7 @@ GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
 	//--- Inicjalizacja listy wszystkich tłumaczeń
 	this->_ListItemsTranslates = new TList();
 	if(!this->_ListItemsTranslates) throw(Exception("Błąd inicjalizacji objektu TList"));
-	//--- Inicjalizacja listy ThashedStringList, wybranego rozdziału, wszystkich tłumaczeń,
+	//--- Inicjalizacja listy THashedStringList, wybranego rozdziału, wszystkich tłumaczeń,
 	//--- więc ilość elementów listy równa się ilości elementów listy this->_ListItemsTranslates
 	this->_ListAllTrChap = new TList();
 	if(!this->_ListAllTrChap) throw(Exception("Błąd allokacji TList"));
@@ -2954,7 +2954,7 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers,
 	const unsigned char cucTrans, UnicodeString &ustrText)
 /**
-	OPIS METOD(FUNKCJI): Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
+	OPIS METOD(FUNKCJI): Metoda zwraca string wybranego wersetu(ustrText), dla wszystkich, dostępnych tłumaczeń
 	OPIS ARGUMENTÓW: const unsigned char cucBook - księga
 									 const unsigned char cucChapt - rozdział
 									 const unsigned char cucVers - werset
@@ -3488,6 +3488,18 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_CreatePMenuBooks();
 }
 //---------------------------------------------------------------------------
+void __fastcall GsBarSelectVers::DestroyWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	//Własny kod.
+	TToolBar::DestroyWnd();
+}
+//---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 /**
 	OPIS METOD(FUNKCJI): Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
@@ -3949,18 +3961,6 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	//
 	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 	//if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie
-}
-//---------------------------------------------------------------------------
-void __fastcall GsBarSelectVers::DestroyWnd()
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	//Własny kod.
-	TToolBar::DestroyWnd();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::Resize()

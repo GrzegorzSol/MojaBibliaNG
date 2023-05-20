@@ -11,6 +11,38 @@
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 #endif
 */
+
+DataItemResources::DataItemResources(const UnicodeString _ustrFavCodeVers)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	int iBook, iChapt, iVers;
+	this->HSListGetAllTransVers = new THashedStringList();
+	if(!this->HSListGetAllTransVers) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+
+	iBook = _ustrFavCodeVers.SubString(1, 3).ToInt()-1;
+	iChapt = _ustrFavCodeVers.SubString(4, 3).ToInt();
+	iVers = _ustrFavCodeVers.SubString(7, 3).ToInt();
+
+	this->ustrInfoResource = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
+	GsReadBibleTextData::GetSelectVerAllTranslates(iBook, iChapt, iVers, this->HSListGetAllTransVers);
+}
+//---------------------------------------------------------------------------
+DataItemResources::~DataItemResources()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(this->HSListGetAllTransVers) {delete this->HSListGetAllTransVers; this->HSListGetAllTransVers = nullptr;}
+}
+//---------------------------------------------------------------------------
 //Dane dla kolumn
 enum {enColumn_Name, enColumn_Comment, enColumn_TypeResource, enColumn_Size, enColumn_Path, enColumn_Count};
 const UnicodeString cstrColumnNames[] = {"Nazwa zasobu", "Komentarz do zasobu", "Typ zasobu", "Wielkość", "Miejsce"};
@@ -64,7 +96,25 @@ __fastcall GsViewAllResourcesClass::~GsViewAllResourcesClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+	///
+}
+//---------------------------------------------------------------------------
+void __fastcall GsViewAllResourcesClass::Delete(TListItem* Item)
+/**
+	OPIS METOD(FUNKCJI): Metoda wywoływana podczas zwalniania pozycji listy TCustomListView
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(Item->Data)
+	{
+		DataItemResources *pDataItemResources = static_cast<DataItemResources *>(Item->Data);
+		if(pDataItemResources)
+		{
+			delete pDataItemResources; pDataItemResources = nullptr;
+		}
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall GsViewAllResourcesClass::CreateWnd()
@@ -99,6 +149,7 @@ void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System:
 	TRect RectIcon = Item->DisplayRect(drIcon);
 	TRect RectSubItem = RectBounds;
 	UnicodeString ustrItem = Item->Caption;
+	DataItemResources *pDataItemResources = static_cast<DataItemResources *>(Item->Data);
 
 	switch(Item->GroupID)
 	{
@@ -126,12 +177,12 @@ void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System:
 		case enGroup_FavVers:
 		{
       this->Canvas->Brush->Color = clWebBlanchedAlmond;
-			iBook = ustrItem.SubString(1, 3).ToInt()-1;
-			iChap = ustrItem.SubString(4, 3).ToInt();
-			iVers = ustrItem.SubString(7, 3).ToInt();
 			this->Canvas->Font->Style = TFontStyles() << fsBold;
-      this->Canvas->Font->Color = clPurple;
-			ustrItem = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
+			this->Canvas->Font->Color = clPurple;
+			if(pDataItemResources)
+			{
+				ustrItem = pDataItemResources->ustrInfoResource;
+			}
     }
 		break;
 	}
@@ -151,7 +202,6 @@ void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System:
 
 		 if(iColumn == this->Columns->Count - 1) DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_PATH_ELLIPSIS);
 		 else DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-
 	}
 }
 //---------------------------------------------------------------------------
@@ -198,8 +248,10 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	TListItem *NewItem;
 	TStringDynArray SDirList, SDirMultiMList, SDCommentFile;
 	UnicodeString ustrExt, ustrTempLowerName, ustrMbinFile;
+
 	__int64 i64Size;
-	TFileStream *pFileStream;
+	TFileStream *pFileStream=nullptr;
+	DataItemResources *pDataItemResources=nullptr;
 	//Tworzenie listy katalogów z grafiką
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
 	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
@@ -290,7 +342,12 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 		{
 			NewItem->Caption = TPath::GetFileNameWithoutExtension(SDCommentFile[i]);
 			NewItem->GroupID = enGroup_CoomentFiles;
-      NewItem->ImageIndex = enImageRes_Comments;
+			NewItem->ImageIndex = enImageRes_Comments;
+
+			pDataItemResources = new DataItemResources(NewItem->Caption);
+			if(!pDataItemResources) throw(Exception("Błąd inicjalizacji objektu, klasy DataItemResources"));
+
+      NewItem->Data = pDataItemResources;
 
 			NewItem->SubItems->Add("Plik z komentarzami");
 			NewItem->SubItems->Add("Plik z komentarzem, do wybranych wersetów");
@@ -315,7 +372,12 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 			{
 				NewItem->Caption = SListTemp->Strings[i];
 				NewItem->GroupID = enGroup_FavVers;
-        NewItem->ImageIndex = enImageRes_FavVers;
+				NewItem->ImageIndex = enImageRes_FavVers;
+
+				pDataItemResources = new DataItemResources(NewItem->Caption);
+				if(!pDataItemResources) throw(Exception("Błąd inicjalizacji objektu, klasy DataItemResources"));
+
+				NewItem->Data = pDataItemResources;
 			}
 			NewItem->SubItems->Add("Ulubiony werset");
 			NewItem->SubItems->Add("Ulubione werset, wybrany przez użytkownika");
@@ -324,7 +386,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
     }
 	}
   //---
-	if(SListTemp) delete SListTemp;
+	if(SListTemp) {delete SListTemp; SListTemp = nullptr;}
 	this->Items->EndUpdate();
 }
 //---------------------------------------------------------------------------

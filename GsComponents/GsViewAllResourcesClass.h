@@ -4,9 +4,24 @@
 #include <Vcl.ComCtrls.hpp>
 #include "GsReadBibleTextClass\GsReadBibleTextClass.h"
 //---------------------------------------------------------------------------
+
 //Dane dla grup
 enum {enGroup_Translate, enGroup_Graphics, enGroup_CoomentFiles, enGroup_FavVers, enGroup_Count};
 
+//Klasa danych (struktura) dla pozycji, na liście wszystkich multimediów
+class DataItemResources
+// Klasa jest przypożądkowywana polu pozycji TCustomListView->Items->Item[]->Data
+// a następnie zwalniana w metodzie Delete(TListItem *Item)
+{
+	public:
+		DataItemResources(const UnicodeString _ustrFavCodeVers);
+		virtual ~DataItemResources();
+		//---
+		UnicodeString ustrInfoResource; //Ulubiony werset w formie normalnej (1Moj 1:1)
+    THashedStringList *HSListGetAllTransVers=nullptr;
+};
+//---------------------------------------------------------------------------
+// Klasa przeglądania wszystkich zasobów multimedialnych
 class GsViewAllResourcesClass : public TCustomListView
 {
   public:
@@ -19,6 +34,7 @@ class GsViewAllResourcesClass : public TCustomListView
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall DoSelectItem(TListItem* Item, bool Selected);
 		virtual void __fastcall DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
+    DYNAMIC void __fastcall Delete(TListItem* Item);
 	private:
 		void __fastcall _CreateAllColumns(); //Tworzenie kolumn
 		void __fastcall _LoadAllResources(); //Tworzenie kompletnej listy wszystkich zasobów

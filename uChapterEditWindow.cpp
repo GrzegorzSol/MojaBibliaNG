@@ -163,7 +163,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 	}
 	__finally
 	{
-		if(pStringStream) delete pStringStream;
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
   }
 	pTRichEdit->Lines->EndUpdate();
 	return;

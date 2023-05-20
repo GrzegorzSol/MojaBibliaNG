@@ -19,7 +19,7 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   TextHeight = 13
   object SplitterViews: TSplitter
     Left = 0
-    Top = 541
+    Top = 485
     Width = 1186
     Height = 3
     Cursor = crVSplit
@@ -33,17 +33,15 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   end
   object PanelViews: TPanel
     Left = 0
-    Top = 544
+    Top = 488
     Width = 1186
-    Height = 336
+    Height = 392
     Align = alBottom
     ShowCaption = False
     TabOrder = 0
-    ExplicitTop = 540
-    ExplicitWidth = 1184
     object SplitterDisplay: TSplitter
       Left = 1
-      Top = 165
+      Top = 221
       Width = 1184
       Height = 3
       Cursor = crVSplit
@@ -58,7 +56,7 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       Left = 1
       Top = 1
       Width = 1184
-      Height = 164
+      Height = 220
       Align = alClient
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clWindowText
@@ -70,11 +68,10 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitWidth = 1182
     end
     object PanelDisplay: TPanel
       Left = 1
-      Top = 168
+      Top = 224
       Width = 1184
       Height = 167
       Align = alBottom
@@ -82,9 +79,9 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
-      Visible = False
       StyleElements = [seFont, seBorder]
       OnResize = PanelDisplayResize
+      ExplicitTop = 168
       ExplicitWidth = 1182
       object ImageDisplayResource: TImage
         Left = 484

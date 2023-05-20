@@ -61,11 +61,11 @@ EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
 [View1]
 CustomEditViewType=TEditView
 Module=F:\DevelopGS\MojaBibliaNG_Git\uViewAllResourcesWindow.cpp
-CursorX=78
-CursorY=112
+CursorX=70
+CursorY=44
 TopLine=1
 LeftCol=1
-Elisions={{17,79},{31,0},{'...'}}{{33,90},{42,0},{'...'}}{{44,69},{58,0},{'...'}}{{60,70},{69,0},{'...'}}{{71,112},{110,0},{'...'}}{{112,77},{130,0},{'...'}}{{132,88},{160,0},{'...'}}
+Elisions={{17,79},{31,0},{'...'}}{{33,90},{42,0},{'...'}}{{44,69},{75,0},{'...'}}{{77,70},{86,0},{'...'}}{{88,112},{128,0},{'...'}}{{130,77},{145,0},{'...'}}{{147,88},{175,0},{'...'}}{{183,87},{230,0},{'...'}}{{232,93},{279,0},{'...'}}
 Bookmarks=
 EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uViewAllResourcesWindow.cpp
 
