@@ -18,9 +18,6 @@ enum {
 			enColorNum_Rot
 		 };
 TColor ColorObject[] = {clLime, clCream, clWebDarkOrange};
-const UnicodeString GlobalHeaderRtf = UnicodeString("{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
-																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;}" +
-																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\lang1045\\b\\f0\\fs24 Dokument projektu, schematu logicznego werset\\'f3w, wykonany w aplikacji Moja Biblia NG\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf2\\b\\fs18";
 /****************************************************************************
 *          Klasa całkowicie PRYWATNA GsCoreBibleScheme,                     *
 *                    pochodna TCustomPanel.                                 *
@@ -619,13 +616,18 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 {
  	if(this->_GsChildBibleSchemeList->Count==0) return;
 	//---
-	TStringStream *pStringStream = new TStringStream("", TEncoding::ANSI, true);
+	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 
 	UnicodeString _ustrVers;
-	const UnicodeString custrAdressVersRtf = "\\f1\\line\\cf2\\b",
+  const UnicodeString GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
+																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red255\\green0\\blue255;}" +
+																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
+																		 "\\pard\\sa200\\sl276\\slmult1\\cf3\\fs32\\b Dokument projektu, schematu logicznego wersetów, wykonany w aplikacji Moja Biblia NG\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",
+                      //---
+											custrAdressVersRtf = "\\f1\\line\\cf2\\b",
 											custrVersRtf = "\\cf1\\b0\\f0",
-											custrEndVersRtf = "\\cf2\\b\\f1";//\\par";
+											custrEndVersRtf = "\\cf2\\b\\f1";
 
   try
 	{

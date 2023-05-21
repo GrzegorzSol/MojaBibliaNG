@@ -8,7 +8,7 @@
 #pragma resource "*.dfm"
 TChapterEditWindow *ChapterEditWindow;
 const UnicodeString GlobalSizeFontText = "\\fs28",
-										GlobalHeaderRtf = UnicodeString("{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
+										GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
 																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;}" +
 																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf3\\lang1045\\b\\f0\\fs28 Edycja wczytanego rozdziału (tylko polskie, pełne przekłady)\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\b" + GlobalSizeFontText,
 										GlobalAdressVersRtf = "\\f1\\line\\cf2\\b",
@@ -91,7 +91,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 	TList *pListTr = GsReadBibleTextData::GetListAllTrChap(); //Lista wszystkich tekstów z wybranego rozdziału
 	if(!pListTr) return;
 	//---
-  TStringStream *pStringStream = new TStringStream("", TEncoding::ANSI, true);
+  TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 	//---
 	unsigned char uiTranslatesIndex, iIndexVers=0;
@@ -120,8 +120,8 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 				if((pTempHSList->Count == 0) || ((this->_iGetTranslate > 0) && ((this->_iGetTranslate - 1) != iTranslates))) {uiTranslatesIndex--; continue;}
 				if(iIndexVers < pTempHSList->Count)
 				{
-					if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //Tylko całe polskie tłumaczenia
-					{
+					//if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //Tylko całe polskie tłumaczenia
+					//{
 						if(!pTempHSList->Strings[iIndexVers].IsEmpty())
 						{
 							if(this->_iGetTranslate == 0)
@@ -139,8 +139,8 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 								GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, GlobalSizeFontText))));
               }
 						}
-					}
-					else uiTranslatesIndex--;
+					//}
+					//else uiTranslatesIndex--;
 				}
 				else
 				//Dotarłem do ostatniego wersetu danego tłumaczenia
