@@ -59,6 +59,7 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	if(!this->ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->StyleElements = TStyleElements();
 	this->SListVers = new THashedStringList(); //Lista wersetów ze wszystkich tłumaczeñ
 	if(!this->SListVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	//---
@@ -266,6 +267,7 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
 */
 {
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->StyleElements = TStyleElements();
 	this->DoubleBuffered = true;
 	this->AutoSize = true;
   this->BevelOuter = bvNone;
@@ -728,6 +730,7 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
 	//---
 	this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->StyleElements = TStyleElements();
 }
 //---------------------------------------------------------------------------
 __fastcall GsMasterBibleScheme::~GsMasterBibleScheme()
