@@ -27,14 +27,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
   PRZYKŁAD: pInToSearchGsReadBibleTextClass - wskaźnik, będący argumentem metody
 */
 //---------------------------------------------------------------------------
-/*
-	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
-		//Your code.
-	#endif
-	#if defined(__BORLANDC__) && defined(__clang__)
-    //Your code.
-	#endif
-*/
 #include <vcl.h>
 #pragma hdrstop
 
@@ -64,7 +56,6 @@ int Global_WidthTabTools = 0;
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
-	GsDebugClass::WriteDebug("");
 #endif
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug("");
@@ -388,7 +379,7 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
 		{
 			if(pTaskDialog->ModalResult == mrYes) CanClose = true; else CanClose = false;
 		}
-		if(pTaskDialog) {delete pTaskDialog;}
+		if(pTaskDialog) {delete pTaskDialog; pTaskDialog = nullptr;}
 	}
 	else CanClose = true;
 }

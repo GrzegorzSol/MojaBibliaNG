@@ -3,6 +3,7 @@
 #include "uMyBibleNGLibrary.h"
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
+#include <commoncontrols.h>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -36,6 +37,9 @@ __fastcall GsListViewMultiMClass::GsListViewMultiMClass(TComponent* Owner) : TCu
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	IImageList *lpImgList = nullptr;
+	NativeInt sniSysListImage=0;
+
 	this->DoubleBuffered = true;
 	this->OwnerDraw = true;
 	this->OwnerData = true;
@@ -50,18 +54,17 @@ __fastcall GsListViewMultiMClass::GsListViewMultiMClass(TComponent* Owner) : TCu
 	this->_pListFile = new TList(); //Lista plików
 	if(!this->_pListFile) throw(Exception("Błąd inicjalizacji objektu TList"));
 	//---
-	SHFILEINFO shfi;
-	DWORD iHnd;
 	this->_pImageList = new TImageList(this);
 	if(!this->_pImageList) throw(Exception("Błąd inicjalizacji objektu TImageList"));
 
 	this->_pImageList->DrawingStyle = dsTransparent;
 	this->_pImageList->ShareImages = true;
 	this->_pImageList->ColorDepth = cd32Bit;
-	iHnd = SHGetFileInfo(TEXT(""), 0, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_ICON |
-			SHGFI_SHELLICONSIZE | SHGFI_LARGEICON);// SHGFI_SMALLICON);
-	if(iHnd != 0) this->_pImageList->Handle = iHnd;
-	DestroyIcon(shfi.hIcon);	//Musi być
+
+	SHGetImageList(SHIL_LARGE, __uuidof(IImageList), reinterpret_cast<void**>(&lpImgList));
+	sniSysListImage = reinterpret_cast<NativeInt>(lpImgList);
+	if(sniSysListImage) this->_pImageList->Handle = sniSysListImage;
+
 	this->SmallImages = this->_pImageList;
 	this->LargeImages = this->_pImageList;
 
@@ -473,7 +476,7 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 	TListItem* pListItem = this->_pGsListViewMultiMClass->Selected;
 
-	if(pListItem!=NULL)
+	if(pListItem!=nullptr)
 	{
 		pGsTabSheetGraphics->Caption = Format("\"%s\"", ARRAYOFCONST((TPath::GetFileName(pListItem->Caption))));
 		pGsTabSheetGraphics->pGsDirect2DClass->GsD2D_LoadPicture(pListItem->Caption);

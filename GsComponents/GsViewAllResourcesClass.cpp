@@ -435,8 +435,8 @@ void __fastcall GsViewAllResourcesClass::_InitAllImage()
   __finally
 	{
 		//--- Zwolnienie objektu, klasy TIcon i TMemoryStream
-		if(pIcon) {delete pIcon;}
-		if(pMemoryStr) {delete pMemoryStr;}
+		if(pIcon) {delete pIcon; pIcon = nullptr;}
+		if(pMemoryStr) {delete pMemoryStr; pMemoryStr = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------

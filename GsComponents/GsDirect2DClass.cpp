@@ -39,10 +39,10 @@ bool GsDirect2DClass::IsInitListfonts = false; //Lista czcionek została wczytan
 template<class Interface>
 inline void SafeRelease(Interface **ppInterfaceToRelease)
 {
-	if(*ppInterfaceToRelease != NULL)
+	if(*ppInterfaceToRelease != nullptr)
 	{
 		(*ppInterfaceToRelease)->Release();
-		(*ppInterfaceToRelease) = NULL;
+		(*ppInterfaceToRelease) = nullptr;
 	}
 }
 //---------------------------------------------------------------------------
@@ -55,21 +55,21 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 */
 {
 	this->DoubleBuffered = true;
-	//Trzeba wszystkie wskaźniki zainicjować wartością NULL!!!
+	//Trzeba wszystkie wskaźniki zainicjować wartością nullptr!!!
 	//Direct2D
-	this->pID2D1Bitmap=NULL;
-	this->pIWICFormatConverter=NULL;
-	this->pIWICImagingFactory=NULL;
-	this->pID2D1Factory=NULL;
-	this->pID2D1HwndRenderTarget=NULL;
-	this->pID2D1DeviceContext=NULL;
-	this->pIWICBitmapScaler=NULL;
+	this->pID2D1Bitmap=nullptr;
+	this->pIWICFormatConverter=nullptr;
+	this->pIWICImagingFactory=nullptr;
+	this->pID2D1Factory=nullptr;
+	this->pID2D1HwndRenderTarget=nullptr;
+	this->pID2D1DeviceContext=nullptr;
+	this->pIWICBitmapScaler=nullptr;
 	//DirectWrite
-	this->pIDWriteFactory=NULL;
-	this->pIDWriteTextFormat=NULL;
-	this->pIDWriteTextLayout=NULL;
-	this->pID2D1SolidColorBrush1=NULL;
-  this->pID2D1SolidColorBrush2=NULL;
+	this->pIDWriteFactory=nullptr;
+	this->pIDWriteTextFormat=nullptr;
+	this->pIDWriteTextLayout=nullptr;
+	this->pID2D1SolidColorBrush1=nullptr;
+  this->pID2D1SolidColorBrush2=nullptr;
 	//Flagi i zmienne ustawień
 	this->FIsDisplayText=CFIsDisplayText;
 	this->FNameFont = CFNameFont;
@@ -133,8 +133,8 @@ void __fastcall GsDirect2DClass::GsD2D_LoadPicture(const UnicodeString custrPath
 	this->_ustrPathImage = custrPathImage;
 
 	//Tworzenie dekodera
-	IWICBitmapDecoder *pIWICBitmapDecoder=NULL;
-	IWICBitmapFrameDecode *pIWICBitmapFrameDecode=NULL;
+	IWICBitmapDecoder *pIWICBitmapDecoder=nullptr;
+	IWICBitmapFrameDecode *pIWICBitmapFrameDecode=nullptr;
 
 	try
 	{
@@ -209,7 +209,7 @@ void __fastcall GsDirect2DClass::GsD2D_SavePicture(const UnicodeString custrPath
 	if(!this->pIWICImagingFactory) return;// || !this->pIWICFormatConverter) return;
 	//---
 	HRESULT hr=S_OK;
-	IWICBitmap *tpIWICBitmap=NULL;
+	IWICBitmap *tpIWICBitmap=nullptr;
 	//HDC pHDWindowDC = GetDC(this->Handle);
 	//Uchwyt kontekstu urządzenia źródłowego.
 	HDC pHDWindowDC = GetWindowDC(this->Handle);
@@ -256,8 +256,8 @@ void __fastcall GsDirect2DClass::GsD2D_SavePictureOriginal(const UnicodeString c
 	//---
 	HRESULT hr=S_OK;
 	unsigned int uiWidth, uiHeight;
-	IWICBitmap *tpIWICBitmap=NULL;
-	//ID2D1RenderTarget *tpID2D1RenderTarget=NULL; //Tymczasowo wyłączone
+	IWICBitmap *tpIWICBitmap=nullptr;
+	//ID2D1RenderTarget *tpID2D1RenderTarget=nullptr; //Tymczasowo wyłączone
 
   //Odczytaj prawdziwą wymiary obrazu
 	this->pIWICFormatConverter->GetSize(&uiWidth, &uiHeight);
@@ -286,9 +286,9 @@ void __fastcall GsDirect2DClass::_SaveIWICBitmapSource(IWICBitmapSource *pIWICBi
 	HRESULT hr=S_OK;
 	GUID GUIDFormat = GUID_ContainerFormatJpeg;
 	WICPixelFormatGUID format = GUID_WICPixelFormat32bppRGB;//GUID_WICPixelFormat32bppBGR;//GUID_WICPixelFormatDontCare;//
-	IWICStream *pIWICStream=NULL;
-	IWICBitmapEncoder *pIWICBitmapEncoder=NULL;
-	IWICBitmapFrameEncode *pIWICBitmapFrameEncode=NULL;
+	IWICStream *pIWICStream=nullptr;
+	IWICBitmapEncoder *pIWICBitmapEncoder=nullptr;
+	IWICBitmapFrameEncode *pIWICBitmapFrameEncode=nullptr;
 
 	UnicodeString ustrPathToSave;
 
@@ -552,8 +552,8 @@ void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1
 	PAINTSTRUCT Ps;
 	int iWidth = rRect.right - rRect.left;
 	int iHeight = rRect.bottom - rRect.top;
-	ID2D1Image *pID2D1Image=NULL;
-	ID2D1Effect *pID2D1Effect=NULL;
+	ID2D1Image *pID2D1Image=nullptr;
+	ID2D1Effect *pID2D1Effect=nullptr;
 
 	//Skalowanie grafiki
 	this->_ScaleBitmapSource(iWidth, iHeight);
@@ -660,7 +660,7 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 */
 {
   HRESULT hr = S_OK;
-	ID2D1Effect *pEffect=NULL;
+	ID2D1Effect *pEffect=nullptr;
 	CLSID effectId;
 
 	switch(this->FSetApplyEffect)
@@ -696,7 +696,7 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
   pEffect->SetInput(0, this->pID2D1Bitmap);
   switch(this->FSetApplyEffect)
 	{
-		case EfGfx_NoEffect: SafeRelease(&pEffect); pEffect = NULL; return 0;
+		case EfGfx_NoEffect: SafeRelease(&pEffect); pEffect = nullptr; return 0;
 		case EfGfx_GaussianBlur: break;
 		case EfGfx_HueRotation: pEffect->SetValue(D2D1_HUEROTATION_PROP_ANGLE, 90.0f); break;
 		case EfGfx_DirectionalBlur: pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, 7.0f); break;
@@ -734,12 +734,12 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 		case EfGfx_LuminanceToAlpha:
 		{
 			//Wynik LuminanceToAlpha jest nakładany na białą powierzchnię, aby pokazać krycie.
-			ID2D1Effect *floodEffect=NULL;
+			ID2D1Effect *floodEffect=nullptr;
 			this->pID2D1DeviceContext->CreateEffect(CLSID_D2D1Flood, &floodEffect);
 			if(!SUCCEEDED(hr)) throw(Exception("Błąd metody CreateEffect()"));
 
 			floodEffect->SetValue(D2D1_FLOOD_PROP_COLOR, D2D1::Vector4F(1.0f, 1.0f, 1.0f, 1.0f));
-			ID2D1Effect *compositeEffect=NULL;
+			ID2D1Effect *compositeEffect=nullptr;
 			this->pID2D1DeviceContext->CreateEffect(CLSID_D2D1Composite, &compositeEffect);
 			if(!SUCCEEDED(hr)) throw(Exception("Błąd metody CreateEffect()"));
 
@@ -922,8 +922,8 @@ void __fastcall GsDirect2DClass::_CreateGradientBrushDrawText(const D2D1_RECT_F 
 	if(!this->pID2D1HwndRenderTarget) return;
 	//---
   HRESULT hr=S_OK;
-	ID2D1GradientStopCollection *pGID2D1GradientStopCollection=NULL;
-	ID2D1LinearGradientBrush *pID2D1LinearGradientBrush=NULL;
+	ID2D1GradientStopCollection *pGID2D1GradientStopCollection=nullptr;
+	ID2D1LinearGradientBrush *pID2D1LinearGradientBrush=nullptr;
 
 	//Utwórz tablicę stopni gradientu, aby wstawić stop gradientu
 	//kolekcja, która będzie używana w pędzlu gradientowym.
@@ -1178,12 +1178,12 @@ bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	IDWriteFactory *pWriteFactory=NULL;
+	IDWriteFactory *pWriteFactory=nullptr;
 	//---
   bool bResult=true;
 	HRESULT hr = S_OK;
 	unsigned int familyCount=0;
-	IDWriteFontCollection* pFontCollection=NULL;
+	IDWriteFontCollection* pFontCollection=nullptr;
 
 	//Stwórz wspólny silnik DirectWrite.
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&pWriteFactory));
@@ -1200,9 +1200,9 @@ bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 
 	for (unsigned int i=0; i<familyCount; i++)
 	{
-		IDWriteFontFamily* pFontFamily=NULL;
-		IDWriteLocalizedStrings* pFamilyNames=NULL;
-		wchar_t* name=0;
+		IDWriteFontFamily* pFontFamily=nullptr;
+		IDWriteLocalizedStrings* pFamilyNames=nullptr;
+		wchar_t* name=nullptr;
 		try
 		{
 			try
@@ -1255,7 +1255,7 @@ bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 		{
 			SafeRelease(&pFontFamily);
 			SafeRelease(&pFamilyNames);
-			delete [] name;
+			delete [] name; name = nullptr;
 		}
 	}
 

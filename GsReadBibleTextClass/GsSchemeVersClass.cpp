@@ -100,12 +100,12 @@ __fastcall  GsChildBibleScheme::~GsChildBibleScheme()
 			delete pGsChildBibleScheme; pGsChildBibleScheme = nullptr;
 		}
   }
-	delete this->ListChildren; this->ListChildren = nullptr; //Kasowanie listy potomków, po ich usuniêciu
-	//Kasowanie objektu z listy g³ównej
+	delete this->ListChildren; this->ListChildren = nullptr; //Kasowanie listy potomków, po ich usunięciu
+	//Kasowanie objektu z listy głównej
 	iIndex = this->DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(this);
 	if(iIndex > -1) this->DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
 
-	if(this->SListVers) {delete this->SListVers; this->SListVers = nullptr;} //Lista wersetów ze wszystkich t³umaczeñ
+	if(this->SListVers) {delete this->SListVers; this->SListVers = nullptr;} //Lista wersetów ze wszystkich tłumaczeñ
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::CreateWnd()
@@ -267,7 +267,7 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
 */
 {
 	this->Font->Quality = TFontQuality::fqClearType;
-  this->StyleElements = TStyleElements();
+	//this->StyleElements = TStyleElements();
 	this->DoubleBuffered = true;
 	this->AutoSize = true;
   this->BevelOuter = bvNone;
@@ -730,7 +730,7 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
 	//---
 	this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
-  this->StyleElements = TStyleElements();
+  //this->StyleElements = TStyleElements();
 }
 //---------------------------------------------------------------------------
 __fastcall GsMasterBibleScheme::~GsMasterBibleScheme()

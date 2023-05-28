@@ -2016,7 +2016,7 @@ void __fastcall GsTabSheetClass::_DisplayInfosTranslates(const int iTab)
 	}
 	__finally
 	{
-		if(pStringStream) delete pStringStream;
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------

@@ -88,7 +88,7 @@ void __fastcall TImageAndTextWindow::FormShow(TObject *Sender)
 		int iIndexFontName = this->CBoxSelectFont->Items->IndexOf(CFNameFont);
 		this->CBoxSelectFont->ItemIndex = iIndexFontName;
 
-    delete pTHashedStringList;
+		delete pTHashedStringList; pTHashedStringList = nullptr;
 	}
   //---
 	for(unsigned int i=0; i<ARRAYSIZE(ustrFontSize); i++)
@@ -164,7 +164,7 @@ void __fastcall TImageAndTextWindow::Act_CloseActiveSheetExecute(TObject *Sender
 	GsTabSheetGraphics *pGsTabSheetGraphics = dynamic_cast<GsTabSheetGraphics *>(this->PControlImageAndText->ActivePage);
 	if(pGsTabSheetGraphics)
 	{
-		delete pGsTabSheetGraphics;
+		delete pGsTabSheetGraphics; pGsTabSheetGraphics = nullptr;
 		this->Act_CloseActiveSheet->Enabled = (this->PControlImageAndText->PageCount > 0);
 		this->Act_SaveAs->Enabled = this->Act_CloseActiveSheet->Enabled;
 		this->Act_Save->Enabled = this->Act_CloseActiveSheet->Enabled;

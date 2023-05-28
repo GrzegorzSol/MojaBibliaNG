@@ -26,9 +26,9 @@ const UnicodeString ustrListNameEffects[] = { //Efekty działajace na Windows 7
 																							"Morphology", "DiscreteTransfer", "GammaTransfer", "LuminanceToAlpha",
 																							"3DPerspectiveTransform", "BitmapSource-Flip", "Brightness",
 																							//Efekty działajace, tylko na minimum Windows 10 //Zlikwidować w wypadku obostrzenia na system min. Windows 10
-																							"EdgeDetection(Win10)", "Emboss(Win10)", "Posterize(Win10)", "Vignette(Win10)",
-																							"Grayscale(Win10)", "HighlightsShadows(Win10)", "Invert(Win10)", "Sepia(Win10)",
-																							"Sharpen(Win10)"
+																							"EdgeDetection", "Emboss", "Posterize", "Vignette",
+																							"Grayscale", "HighlightsShadows", "Invert", "Sepia",
+																							"Sharpen"
 																						},
 										//Zdefiniowane wielkości czcionek
                     ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"};

@@ -56,9 +56,10 @@ object ImageAndTextWindow: TImageAndTextWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
+    ExplicitWidth = 1463
   end
   object SplitViewImageAndText: TSplitView
-    Left = 1167
+    Left = 1163
     Top = 42
     Width = 300
     Height = 787
@@ -69,14 +70,14 @@ object ImageAndTextWindow: TImageAndTextWindow
     Placement = svpRight
     TabOrder = 2
     OnOpened = SplitViewImageAndTextOpened
-    ExplicitLeft = 1163
+    ExplicitLeft = 1159
     ExplicitHeight = 786
     object PControlTools: TPageControl
       Left = 0
       Top = 0
       Width = 300
       Height = 787
-      ActivePage = TabSheetTools
+      ActivePage = TabSheetSelectImages
       Align = alClient
       MultiLine = True
       OwnerDraw = True
@@ -316,6 +317,7 @@ object ImageAndTextWindow: TImageAndTextWindow
             TabOrder = 0
             OnClick = LBoxSelectEffectsClick
             OnDrawItem = LBoxSelectEffectsDrawItem
+            ExplicitHeight = 247
           end
         end
       end

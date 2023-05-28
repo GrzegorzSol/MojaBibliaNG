@@ -673,7 +673,7 @@ class DataGrecWordDictClass
 	};
 	virtual ~DataGrecWordDictClass()
 	{
-		delete this->pHSListVers; this->pHSListVers = 0;
+		delete this->pHSListVers; this->pHSListVers = nullptr;
 	};
 	//---
 	bool IsDataEmpty;	//Domyślnie true.Klasa jeszcze nie wypełniona, przy pierwszym wypełnieniu, zmienia wartość na false
