@@ -12,12 +12,14 @@ object MainBibleWindow: TMainBibleWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
+  KeyPreview = True
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyUp = FormKeyUp
   OnResize = FormResize
   TextHeight = 13
   object ImageBackgroundWindow: TImage
@@ -54,8 +56,8 @@ object MainBibleWindow: TMainBibleWindow
     OnChange = MBW_PageControlAllChange
     OnDrawTab = MBW_PageControlsAllDrawTab
     OnEnter = PageControlBibleTextEnter
-    ExplicitWidth = 886
-    ExplicitHeight = 816
+    ExplicitWidth = 884
+    ExplicitHeight = 819
   end
   object StatusBarMain: TStatusBar
     Left = 0
@@ -72,8 +74,8 @@ object MainBibleWindow: TMainBibleWindow
         Width = 50
       end>
     OnDrawPanel = StatusBarMainDrawPanel
-    ExplicitTop = 862
-    ExplicitWidth = 1186
+    ExplicitTop = 865
+    ExplicitWidth = 1184
   end
   object CoolBarMain: TCoolBar
     Left = 0
@@ -99,6 +101,7 @@ object MainBibleWindow: TMainBibleWindow
     ParentShowHint = False
     ShowHint = True
     ShowText = False
+    ExplicitWidth = 1184
     object ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
@@ -150,7 +153,7 @@ object MainBibleWindow: TMainBibleWindow
     Align = alLeft
     Caption = 'PanelTools'
     TabOrder = 3
-    ExplicitHeight = 816
+    ExplicitHeight = 819
     object PageControlTools: TPageControl
       Left = 1
       Top = 1
@@ -174,6 +177,7 @@ object MainBibleWindow: TMainBibleWindow
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
       OnDrawTab = MBW_PageControlsAllDrawTab
+      ExplicitHeight = 817
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'

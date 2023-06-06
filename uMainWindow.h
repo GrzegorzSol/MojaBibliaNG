@@ -102,6 +102,7 @@ __published:	// IDE-managed Components
           int X, int Y, TDragState State, bool &Accept);
 	void __fastcall Act_ReadingPlanExecute(TObject *Sender);
 	void __fastcall Act_HistoryChaptersExecute(TObject *Sender);
+	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;

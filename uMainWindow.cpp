@@ -448,6 +448,22 @@ void __fastcall TMainBibleWindow::FormResize(TObject *Sender)
 	this->StatusBarMain->Panels->Items[enPanelMain_InfoText]->Width = (int)(0.75 * this->Width);
 }
 //---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	switch(Key)
+	{
+		case vkF1:
+      Application->HelpContext(HELP_Wprowadzenie);
+    break;
+  }
+}
+//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_AppException(TObject *Sender, Exception *pException)
 /**
 	OPIS METOD(FUNKCJI): Obsługa błędów całej aplikacji
@@ -1279,6 +1295,12 @@ void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
+  if(this->Act_Help->Checked)
+	{
+		this->_DisplayHelp(pAction);
+    return;
+	}
+	//---
 	if(!GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, false))
 	{
 		MessageBox(NULL, TEXT("Brak aktywnego Planu czytania Pisma Świętego. Wybierz w ustawieniach programy Plan czytania, następnie wybierz datę jego rozpoczęcia i aktywuj go."),
@@ -1314,6 +1336,12 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
+  if(this->Act_Help->Checked)
+	{
+		this->_DisplayHelp(pAction);
+    return;
+	}
+	//---
 	THistoryOpenChaptersWindow *pHistoryOpenChaptersWindow = new THistoryOpenChaptersWindow(this, pAction);
 	if(!pHistoryOpenChaptersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
 	//pHistoryOpenChaptersWindow->ShowModal();
@@ -1321,4 +1349,5 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
   //pAction->Enabled = false;
 }
 //---------------------------------------------------------------------------
+
 

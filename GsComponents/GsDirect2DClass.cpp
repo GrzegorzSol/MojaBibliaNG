@@ -5,12 +5,6 @@
 //#include <d2d1_3.h>
 #include <D2D1Effects_2.h>
 /*
-	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
-		//Your code.
-	#endif
-	#if defined(__BORLANDC__) && defined(__clang__)
-    //Your code.
-	#endif
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 #endif
@@ -138,58 +132,65 @@ void __fastcall GsDirect2DClass::GsD2D_LoadPicture(const UnicodeString custrPath
 
 	try
 	{
-		hr = this->pIWICImagingFactory->CreateDecoderFromFilename(
-			custrPathImage.c_str(),          //Dekodowanie obrazu
-			NULL,
-			GENERIC_READ,                    //Prawo odczytu pliku
-			WICDecodeMetadataCacheOnDemand,  //Kesz metadanych, gdy trzeba
-			&pIWICBitmapDecoder              //Wskaźnik do dekodera
-		);
-		if(FAILED(hr)) throw(Exception("Błąd metody CreateDecoderFromFilename())"));
-
-		//Pozyskanie pierwszej klatki obrazka dla dekodera
-		hr = pIWICBitmapDecoder->GetFrame(0, &pIWICBitmapFrameDecode);
-		if(FAILED(hr)) throw(Exception("Błąd metody GetFrame())"));
-
-		SafeRelease(&this->pIWICFormatConverter);
-		hr = this->pIWICImagingFactory->CreateFormatConverter(&this->pIWICFormatConverter);
-		if(FAILED(hr)) throw(Exception("Błąd metody CreateFormatConverter())"));
-
-		hr = this->pIWICFormatConverter->Initialize(
-			pIWICBitmapFrameDecode,          //Wejściowa bitmapa do konwersji
-			GUID_WICPixelFormat32bppPBGRA,   //Pikselowy format przeznaczenia
-			WICBitmapDitherTypeNone,         //Specyfikacja metody wygładzania
-			NULL,                            //Specyfikacja palety
-			0.f,                             //Przezroczystaść
-			WICBitmapPaletteTypeCustom       //Typ przeksztaucenia palety
-		);
-		if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
-
-		if(!_bAutosize)
-		//Jeśli brak dostosowywania widoku obrazu do wielkości okna. Czyli obraz nie będzie skalowany do wymiarów okna.
+		try
 		{
-			unsigned int uiWidth, uiHeight;
-			//Odczytaj prawdziwą wymiary obrazu
-			this->pIWICFormatConverter->GetSize(&uiWidth, &uiHeight);
-			//Ustaw wymiary komponentu klasy, na wymiary obrazu, by móc umieścic objekt, klasy
-			//w klasie, objektu TScrollBox, w celu skalowania obrazu
-			this->Width = uiWidth; this->Height = uiHeight;
-		}
+  		hr = this->pIWICImagingFactory->CreateDecoderFromFilename(
+  			custrPathImage.c_str(),          //Dekodowanie obrazu
+  			NULL,
+  			GENERIC_READ,                    //Prawo odczytu pliku
+  			WICDecodeMetadataCacheOnDemand,  //Kesz metadanych, gdy trzeba
+  			&pIWICBitmapDecoder              //Wskaźnik do dekodera
+  		);
+  		if(FAILED(hr)) throw(Exception("Błąd metody CreateDecoderFromFilename())"));
 
-		hr = this->CreateDeviceResources(this->Handle);
-		if(SUCCEEDED(hr))
+  		//Pozyskanie pierwszej klatki obrazka dla dekodera
+  		hr = pIWICBitmapDecoder->GetFrame(0, &pIWICBitmapFrameDecode);
+  		if(FAILED(hr)) throw(Exception("Błąd metody GetFrame())"));
+
+  		SafeRelease(&this->pIWICFormatConverter);
+  		hr = this->pIWICImagingFactory->CreateFormatConverter(&this->pIWICFormatConverter);
+  		if(FAILED(hr)) throw(Exception("Błąd metody CreateFormatConverter())"));
+
+  		hr = this->pIWICFormatConverter->Initialize(
+  			pIWICBitmapFrameDecode,          //Wejściowa bitmapa do konwersji
+  			GUID_WICPixelFormat32bppPBGRA,   //Pikselowy format przeznaczenia
+  			WICBitmapDitherTypeNone,         //Specyfikacja metody wygładzania
+  			NULL,                            //Specyfikacja palety
+  			0.f,                             //Przezroczystaść
+  			WICBitmapPaletteTypeCustom       //Typ przeksztaucenia palety
+  		);
+  		if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
+
+  		if(!_bAutosize)
+  		//Jeśli brak dostosowywania widoku obrazu do wielkości okna. Czyli obraz nie będzie skalowany do wymiarów okna.
+  		{
+  			unsigned int uiWidth, uiHeight;
+  			//Odczytaj prawdziwą wymiary obrazu
+  			this->pIWICFormatConverter->GetSize(&uiWidth, &uiHeight);
+  			//Ustaw wymiary komponentu klasy, na wymiary obrazu, by móc umieścic objekt, klasy
+  			//w klasie, objektu TScrollBox, w celu skalowania obrazu
+  			this->Width = uiWidth; this->Height = uiHeight;
+  		}
+
+  		hr = this->CreateDeviceResources(this->Handle);
+  		if(SUCCEEDED(hr))
+  		{
+  			SafeRelease(&this->pID2D1Bitmap);
+  			//Tworzy ID2D1Bitmap, kopiując określoną mapę bitową Microsoft Windows Imaging Component (WIC).
+  			hr = this->pID2D1HwndRenderTarget->CreateBitmapFromWicBitmap(this->pIWICFormatConverter, NULL, &this->pID2D1Bitmap);
+  			if(FAILED(hr)) throw(Exception("Błąd metody CreateBitmapFromWicBitmap())"));
+  			this->FIsLoadedImage = true; //Obrazek został załadowany
+  		}
+  		else
+  		{
+  			throw(Exception("Błąd metody CreateDeviceResources())"));
+			}
+		} //try catch
+		catch(Exception &e)
 		{
-			SafeRelease(&this->pID2D1Bitmap);
-			//Tworzy ID2D1Bitmap, kopiując określoną mapę bitową Microsoft Windows Imaging Component (WIC).
-			hr = this->pID2D1HwndRenderTarget->CreateBitmapFromWicBitmap(this->pIWICFormatConverter, NULL, &this->pID2D1Bitmap);
-			if(FAILED(hr)) throw(Exception("Błąd metody CreateBitmapFromWicBitmap())"));
-			this->FIsLoadedImage = true; //Obrazek został załadowany
+			MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
-		else
-		{
-			throw(Exception("Błąd metody CreateDeviceResources())"));
-		}
-	}
+	} //try
 	__finally
 	{
 		SafeRelease(&pIWICBitmapDecoder);
@@ -406,12 +407,20 @@ void __fastcall GsDirect2DClass::WMSize(TWMSize &Message)
 */
 {
   //HRESULT hr = S_OK;
-	RECT rRect;
+	//RECT rRect;
 	int iWidth, iHeight;
 
-	::GetClientRect(this->Handle, &rRect);
-	iWidth = rRect.right - rRect.left;
-	iHeight = rRect.bottom - rRect.top;
+	//::GetClientRect(this->Handle, &rRect);
+
+	//iWidth = rRect.right - rRect.left;
+	//iHeight = rRect.bottom - rRect.top;
+	iWidth = this->ClientWidth;
+	iHeight = this->ClientHeight;
+
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("iWidth: %d, iHeight: %d", ARRAYOFCONST((iWidth, iHeight))));
+		GsDebugClass::WriteDebug(Format("ClientWidth: %d, ClientHeight: %d", ARRAYOFCONST((this->ClientWidth, this->ClientHeight))));
+	#endif
 
 	D2D1_SIZE_U size = D2D1::SizeU(iWidth, iHeight);
 

@@ -26,7 +26,8 @@ enum {
   HELP_Sciezkidostepu = 18,
   HELP_Inneustawienia = 19,
   HELP_Wybortlumaczen = 20,
-  HELP_PlanczytaniaBiblii = 21
+  HELP_PlanczytaniaBiblii = 21,
+  HELP_Tematygraficzne = 22
 };
 
 #endif
