@@ -110,7 +110,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	//Ustawienia na karcie tematów
 	if(TStyleManager::Enabled)
 	{
-		this->SW_LBoxSelectTheme->Items->AddStrings(TStyleManager::StyleNames); //Wczytanie temetów załadowanych do aplikacji
+		this->SW_LBoxSelectTheme->Items->AddStrings(TStyleManager::StyleNames); //Wczytanie tematów załadowanych do aplikacji
 	}
   //Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
@@ -695,10 +695,41 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 		//---
 		case enSetup_Help:
 		{
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("HELP_Ustawieniaaplikacji: %d", ARRAYOFCONST((HELP_Ustawieniaaplikacji))));
-			#endif
-			Application->HelpContext(HELP_Ustawieniaaplikacji);
+			int iIndexPage = this->SW_PControlSelected->TabIndex;
+			switch(iIndexPage)
+			{
+				case enPageSetups_Layout:
+					Application->HelpContext(HELP_Set_Wygladaplikacji);
+				break;
+				//---
+				case enPageSetup_Flags:
+					Application->HelpContext(HELP_Set_Flagiiprzelaczniki);
+				break;
+				//---
+				case enPageSetup_Paths:
+					Application->HelpContext(HELP_Set_Sciezkidostepu);
+				break;
+				//---
+				case enPageSetup_OtherSetups:
+					Application->HelpContext(HELP_Set_Inneustawienia);
+				break;
+				//---
+				case enPageSetup_Translates:
+					Application->HelpContext(HELP_Set_Wybortlumaczen);
+				break;
+				//---
+				case enPageSetups_ReadingPlan:
+					Application->HelpContext(HELP_Set_PlanczytaniaBiblii);
+				break;
+				//---
+				case enPageSetups_SelectThemes:
+        	Application->HelpContext(HELP_Set_Tematygraficzne);
+				break;
+				//---
+				default:
+					Application->HelpContext(HELP_Ustawieniaaplikacji);
+			}
+
 		}
 		break;
 		//Wyświetlenie wybranego tematu

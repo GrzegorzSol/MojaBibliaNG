@@ -1,8 +1,6 @@
 ﻿[Closed Files]
 File_0=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\uViewAllResourcesWindow.cpp',0,1,1,71,10,0,0,{{18,79}
 File_1=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\uReadingPlanWindow.cpp',0,1,7,83,325,0,0,{{36,69}
-File_2=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\uGlobalVar.cpp',0,1,1,1,1,0,0,,
-File_3=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\GsReadBibleTextClass\GsReadBibleTextClass.cpp',0,1,3088,212,3088,0,0,{{46,69}
 
 [Modules]
 Module0=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
@@ -50,7 +48,7 @@ CursorX=56
 CursorY=494
 TopLine=103
 LeftCol=1
-Elisions={{129,65},{181,0},{'...'}}{{183,49},{199,0},{'...'}}{{201,62},{299,0},{'...'}}{{301,64},{353,0},{'...'}}{{355,82},{385,0},{'...'}}{{387,83},{425,0},{'...'}}{{427,63},{436,0},{'...'}}{{438,62},{449,0},{'...'}}{{451,88},{462,0},{'...'}}{{464,97},{478,0},{'...'}}{{480,62},{492,0},{'...'}}{{494,55},{545,0},{'...'}}{{547,76},{559,0},{'...'}}{{561,57},{583,0},{'...'}}{{585,78},{597,0},{'...'}}{{599,83},{617,0},{'...'}}{{619,86},{639,0},{'...'}}{{641,79},{686,0},{'...'}}{{688,78},{706,0},{'...'}}{{708,78},{728,0},{'...'}}{{730,120},{751,0},{'...'}}{{753,75},{773,0},{'...'}}{{775,73},{803,0},{'...'}}{{805,88},{825,0},{'...'}}{{827,80},{846,0},{'...'}}{{848,74},{873,0},{'...'}}{{875,79},{895,0},{'...'}}{{897,73},{913,0},{'...'}}{{915,85},{938,0},{'...'}}{{940,76},{979,0},{'...'}}{{981,135},{1033,0},{'...'}}{{1035,71},{1053,0},{'...'}}{{1055,69},{1079,0},{'...'}}{{1081,77},{1105,0},{'...'}}{{1107,74},{1136,0},{'...'}}{{1138,74},{1166,0},{'...'}}{{1168,72},{1191,0},{'...'}}{{1193,75},{1213,0},{'...'}}{{1215,67},{1230,0},{'...'}}{{1232,66},{1247,0},{'...'}}{{1249,67},{1269,0},{'...'}}{{1271,74},{1291,0},{'...'}}{{1293,144},{1304,0},{'...'}}{{1306,78},{1322,0},{'...'}}
+Elisions={{129,65},{181,0},{'...'}}{{183,49},{199,0},{'...'}}{{201,62},{299,0},{'...'}}{{301,64},{353,0},{'...'}}{{355,82},{385,0},{'...'}}{{387,83},{425,0},{'...'}}{{427,63},{436,0},{'...'}}{{438,62},{449,0},{'...'}}
 Bookmarks=
 EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
 
@@ -155,11 +153,11 @@ State=0
 Left=0
 Top=0
 Width=1750
-Height=4046
+Height=3972
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1750
-ClientHeight=4046
+ClientHeight=3972
 TBDockHeight=7157
 LRDockWidth=2000
 Dockable=1
@@ -193,12 +191,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1917
-Height=5889
+Width=1750
+Height=8352
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1917
-ClientHeight=5889
+ClientWidth=1750
+ClientHeight=8352
 TBDockHeight=5963
 LRDockWidth=2510
 Dockable=1
@@ -211,7 +209,7 @@ Visible=0
 Docked=1
 State=0
 Left=-16
-Top=-169
+Top=-126
 Width=276
 Height=361
 MaxLeft=-1
@@ -415,8 +413,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=16
-Top=50
+Left=0
+Top=-28
 Width=1849
 Height=3139
 MaxLeft=-1
@@ -603,7 +601,7 @@ Dockable=1
 StayOnTop=0
 TabPosition=2
 ActiveTabID=ProjectManager
-TabDockClients=StructureView,ProjectManager,ClassBrowserTool,DataExplorerContainer,frmDesignPreview
+TabDockClients=StructureView,ProjectManager,ClassBrowserTool,frmDesignPreview,DataExplorerContainer
 
 [DockSite3]
 HostDockSite=DockLeftPanel

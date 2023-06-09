@@ -21,13 +21,13 @@ enum {
   HELP_Wysylaniewybranegorozdzialuemail = 13,
   HELP_Tworzeniegrafikiztekstem = 14,
   HELP_Ustawieniaaplikacji = 15,
-  HELP_Wygladaplikacji1 = 16,
-  HELP_Flagiiprzelaczniki = 17,
-  HELP_Sciezkidostepu = 18,
-  HELP_Inneustawienia = 19,
-  HELP_Wybortlumaczen = 20,
-  HELP_PlanczytaniaBiblii = 21,
-  HELP_Tematygraficzne = 22
+  HELP_Set_Wygladaplikacji = 16,
+  HELP_Set_Flagiiprzelaczniki = 17,
+  HELP_Set_Sciezkidostepu = 18,
+  HELP_Set_Inneustawienia = 19,
+  HELP_Set_Wybortlumaczen = 20,
+  HELP_Set_PlanczytaniaBiblii = 21,
+  HELP_Set_Tematygraficzne = 22
 };
 
 #endif

@@ -178,6 +178,8 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 		//TStyleManager::TrySetStyle(GlobalVar::Global_DefaultStyleName, false);
 		TStyleManager::SetStyle(GlobalVar::Global_DefaultStyleName);
 	}
+  //Wyłączenie styli dla okien dialogowych, w tym przypadku chodzi o wyłączenie styli dla okna pomocy
+	TStyleManager::SystemHooks = TStyleManager::SystemHooks >> TStyleManager::shDialogs;
 }
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::~TMainBibleWindow()
@@ -486,7 +488,7 @@ bool __fastcall TMainBibleWindow::_AppHelp(System::Word Command, NativeInt Data,
 */
 {
   #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST((GlobalVar::Global_custrPathGlobalHelp))));
+		GsDebugClass::WriteDebug(Format("%d - %d", ARRAYOFCONST((Command, Data))));
 	#endif
 	Application->HelpFile = GlobalVar::Global_custrPathGlobalHelp;
 	CallHelp = true;

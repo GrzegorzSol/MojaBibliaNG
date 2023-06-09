@@ -25,15 +25,13 @@ object SetupsWindow: TSetupsWindow
     Width = 953
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetFlags
+    ActivePage = SW_SheetSelectThemes
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitWidth = 951
-    ExplicitHeight = 552
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -317,7 +315,7 @@ object SetupsWindow: TSetupsWindow
         ShowHint = True
         TabOrder = 0
         OnClick = SW_CBox_Click
-        ExplicitWidth = 938
+        ExplicitWidth = 935
       end
       object SW_CBoxIsRequestEnd: TCheckBox
         AlignWithMargins = True
@@ -332,6 +330,7 @@ object SetupsWindow: TSetupsWindow
         ShowHint = True
         TabOrder = 1
         OnClick = SW_CBox_Click
+        ExplicitWidth = 935
       end
       object SW_CBoxOnlyOne: TCheckBox
         AlignWithMargins = True
@@ -343,6 +342,7 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Dozwolona tylko jedna kopia aplikacji'
         TabOrder = 2
+        ExplicitWidth = 935
       end
       object SW_CBoxAutoFindUpdate: TCheckBox
         AlignWithMargins = True
@@ -354,6 +354,7 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Czy sprawdza'#263' aktualizacje podczas uruchamiania aplikacji ?'
         TabOrder = 3
+        ExplicitWidth = 935
       end
       object SW_CBoxReLoadBooks: TCheckBox
         AlignWithMargins = True
@@ -367,6 +368,7 @@ object SetupsWindow: TSetupsWindow
           'Czy po ponownym uruchomieniu aplikacji, b'#281'd'#261' wczytywane ksi'#281'gi, ' +
           'kt'#243're zosta'#322'y ostatnio zamkni'#281'te podczas opuszczania aplikacji?'
         TabOrder = 4
+        ExplicitWidth = 935
       end
       object SW_CBoxTips: TCheckBox
         AlignWithMargins = True
@@ -380,7 +382,7 @@ object SetupsWindow: TSetupsWindow
           'Czy okno szybkich podpowiedzi ma sie pojawia'#263' przy starcie aplik' +
           'acji ?'
         TabOrder = 5
-        ExplicitWidth = 358
+        ExplicitWidth = 935
       end
       object SW_CBoxDisplayTrayInfoStart: TCheckBox
         AlignWithMargins = True
@@ -394,7 +396,7 @@ object SetupsWindow: TSetupsWindow
           'Czy wy'#347'wietla'#263' informacje o aplikacji w pasku powiadamiania, pod' +
           'czas jej uruchamiania ?'
         TabOrder = 6
-        ExplicitWidth = 446
+        ExplicitWidth = 935
       end
     end
     object SW_SheetPaths: TTabSheet
@@ -762,8 +764,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 373
-            Height = 73
+            Width = 4
+            Height = 16
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -775,8 +777,6 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
-            ExplicitWidth = 4
-            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -947,7 +947,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 548
+          Width = 232
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -964,7 +964,6 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
-          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           Left = 1
@@ -1108,8 +1107,8 @@ object SetupsWindow: TSetupsWindow
       end>
     ShowCaption = False
     TabOrder = 1
-    ExplicitTop = 594
-    ExplicitWidth = 1136
+    ExplicitTop = 597
+    ExplicitWidth = 1134
     DesignSize = (
       1138
       29)
@@ -1127,6 +1126,7 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 0
       OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 83
     end
     object SW_ButtSetupCancel: TButton
       Left = 673
@@ -1142,7 +1142,7 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 1
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 672
+      ExplicitLeft = 671
     end
     object SW_ButtSetupReturn: TButton
       Left = 348
@@ -1158,6 +1158,7 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 2
       OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 347
     end
     object SW_ButtSetupHelp: TButton
       Left = 957
@@ -1168,7 +1169,7 @@ object SetupsWindow: TSetupsWindow
       Caption = 'Pomoc...'
       TabOrder = 3
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 956
+      ExplicitLeft = 954
     end
   end
   object SW_STextInfo: TStaticText
@@ -1184,8 +1185,8 @@ object SetupsWindow: TSetupsWindow
     Color = clInfoBk
     ParentColor = False
     TabOrder = 2
-    ExplicitTop = 552
-    ExplicitWidth = 1136
+    ExplicitTop = 555
+    ExplicitWidth = 1134
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
@@ -1194,7 +1195,7 @@ object SetupsWindow: TSetupsWindow
     Height = 556
     Align = alLeft
     TabOrder = 3
-    ExplicitHeight = 552
+    ExplicitHeight = 555
     object SW_ButGroupSections: TButtonGroup
       Left = 1
       Top = 1
@@ -1242,7 +1243,7 @@ object SetupsWindow: TSetupsWindow
       TabOrder = 0
       OnButtonClicked = SW_ButGroupSectionsButtonClicked
       OnKeyUp = SW_ButGroupSectionsKeyUp
-      ExplicitHeight = 367
+      ExplicitHeight = 370
     end
     object SW_PanelImageLogo: TPanel
       Left = 1
@@ -1252,7 +1253,7 @@ object SetupsWindow: TSetupsWindow
       Align = alBottom
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 368
+      ExplicitTop = 371
       object SW_SetupsImageLogo: TImage
         AlignWithMargins = True
         Left = 27
