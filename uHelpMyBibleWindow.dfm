@@ -4,7 +4,7 @@ object HelpMyBibleWindow: THelpMyBibleWindow
   AlphaBlend = True
   AlphaBlendValue = 220
   BorderStyle = bsSingle
-  Caption = 'HelpMyBibleWindow'
+  Caption = 'Ma'#322'y pomocnik aplikacji'
   ClientHeight = 531
   ClientWidth = 954
   Color = clBtnFace
@@ -14,12 +14,10 @@ object HelpMyBibleWindow: THelpMyBibleWindow
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object PanelImageHelp: TPanel
     Left = 0
@@ -31,6 +29,7 @@ object HelpMyBibleWindow: THelpMyBibleWindow
     ParentBackground = False
     ShowCaption = False
     TabOrder = 0
+    ExplicitWidth = 950
     object LabelTitle: TLabel
       AlignWithMargins = True
       Left = 48
@@ -92,10 +91,6 @@ object HelpMyBibleWindow: THelpMyBibleWindow
     Height = 482
     Align = alClient
     TabOrder = 1
-    ExplicitLeft = 192
-    ExplicitTop = 360
-    ExplicitWidth = 300
-    ExplicitHeight = 150
     ControlData = {
       4C00000099620000D13100000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800

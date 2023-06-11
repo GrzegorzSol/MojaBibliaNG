@@ -695,6 +695,8 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 		if(this->PageControlBibleText->PageCount == 0)
 		{
 			this->PageControlBibleText->Visible = false; //01-02-2020
+      // W wypadku zamkniecia ostatniej zakładki, wskaźnik na pasku zadań zostaje wyzerowany
+			this->TaskbarMain->ProgressValue = 0; //11-06-2023
 		}
 	}
   //Stan przycisku zmiany obszaru tekstu 12-04-2021

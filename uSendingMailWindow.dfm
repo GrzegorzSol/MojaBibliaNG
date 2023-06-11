@@ -1,7 +1,7 @@
 object SendingMailWindow: TSendingMailWindow
   Left = 0
   Top = 0
-  Caption = 'SendingMailWindow'
+  Caption = 'Wysy'#322'anie poczt'#261' aktywnego rozdzia'#322'u'
   ClientHeight = 139
   ClientWidth = 635
   Color = clBtnFace
@@ -12,10 +12,8 @@ object SendingMailWindow: TSendingMailWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
-  PixelsPerInch = 96
   TextHeight = 13
   object LabelLastUseAddress: TLabel
     Left = 35
@@ -35,12 +33,12 @@ object SendingMailWindow: TSendingMailWindow
     Ctl3D = False
     EditLabel.AlignWithMargins = True
     EditLabel.Width = 162
-    EditLabel.Height = 13
+    EditLabel.Height = 19
     EditLabel.Caption = 'Podaj prawid'#322'owy email adresata:'
-    EditLabel.Layout = tlCenter
     LabelPosition = lpLeft
     ParentCtl3D = False
     TabOrder = 0
+    Text = ''
   end
   object PanelMailSending: TPanel
     Left = 0
@@ -50,6 +48,8 @@ object SendingMailWindow: TSendingMailWindow
     Align = alBottom
     ShowCaption = False
     TabOrder = 1
+    ExplicitTop = 97
+    ExplicitWidth = 631
     object ButtSendingMail: TButton
       Left = 279
       Top = 5

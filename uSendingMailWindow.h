@@ -9,6 +9,7 @@
 #include <System.IniFiles.hpp>
 #include <System.ImageList.hpp>
 #include <Vcl.ImgList.hpp>
+#include <Vcl.Mask.hpp>
 //---------------------------------------------------------------------------
 class TSendingMailWindow : public TForm
 {
