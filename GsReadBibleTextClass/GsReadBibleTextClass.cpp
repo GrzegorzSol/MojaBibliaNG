@@ -206,7 +206,7 @@ int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
 	{
     return AnsiCompareText(List->Strings[Index1], List->Strings[Index2]);
 	}
-	//return 0;
+	return 0;
 }
 //---------------------------------------------------------------------------
 GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
@@ -2134,131 +2134,6 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 		this->bIsCreate = false;
 	}
 }
-/****************************************************************************
- *            Całkowicie statyczna klasalasa GsReadBibleTextData            *
- ****************************************************************************/
-TImageList *GsReadBibleTextData::_GsImgListData = nullptr; //Globalna lista grafik
-TImageList *GsReadBibleTextData::_GsImgListDataDisable = nullptr; //Globalna lista grafik nieaktywnych
-TPageControl *GsReadBibleTextData::_GsPageControl = nullptr; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki
-TTaskbar *GsReadBibleTextData::_GsTaskBar = nullptr;	//Wskaźnik na objekt, klasy TTaskBar
-GsTabSheetSelectVersClass *GsReadBibleTextData::GsSheetListVers = nullptr;//Globalny wskażnik na zakładkę z listąwybranych wersetów za pomocą klasy GsBarSelectVers
-
-GsListBoxFavoritiesClass *GsReadBibleTextData::pGsListBoxFavoritiesClass = nullptr; //Wskażnik na klasę listy ulubionych wersetów, w głównym oknie
-GsReadBibleTextClass *GsReadBibleTextData::pGsReadBibleTextClass = nullptr;	//Wskaźnik na główną klasę
-GsTreeBibleClass *GsReadBibleTextData::pGsTreeBibleClass = nullptr; //Wskaźnik na klasę drzewa ksiąg bibliinych
-GsLViewCommentsAllClass *GsReadBibleTextData::pGsLViewCommentsAllClass = nullptr; //Wskażnik na klasę listy komentarzy do wersetów, w głównym oknie
-enReturnError GsReadBibleTextData::EnErrorCode = enR_NoError; //Kod błędu
-const UnicodeString GsReadBibleTextData::GsExtendFileTranslateFull = "*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendFileTranslateGrecOrg = "*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendFileTranslateHbrOrg = "*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendFileTranslateAll = "*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM (polskim, hebrajskim i greckim)tłumaczeniem JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull = ".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
-										GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg = ".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
-										GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg = ".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
-										GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate = ".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
-							//--- Globalne style
-UnicodeString	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
-							GsReadBibleTextData::GsHTMLHeaderText = "", //Nagłówek wyświetla w formie html, głównego tekstu
-							GsReadBibleTextData::GsHTMLHeaderSearch = "", //Nagłówek wyświetla w formie html, wynik wyszukiwania słów lub wyrażeń w tekście bilijnym
-							//Wyświetlenie pojedyńczego wersetu
-							GsReadBibleTextData::GsHTMLHeaderDisplayVer = ""; //Nagłówek wyświetla w formie html, tekst w onie wyboru pojedyńczego wersetu
-							//---
-bool GsReadBibleTextData::IsInitLibrary=false; //Czy została zainicjowana bibliteka (moduł)
-TBalloonHint *GsReadBibleTextData::_GsBalloonHint = nullptr;
-//Tablica struktur opisująca parametry ksiąg biblijnych, potrzebna przy tworzeniu drzewa struktury bibli
-const InfoAllBooks GsReadBibleTextData::GsInfoAllBooks[GsReadBibleTextData::GsNumberBooks] =
-{															//--- Stary Testament
-															InfoAllBooks(1,	"1 Mojżeszowa", 						    "1Moj", 	50), //0
-															InfoAllBooks(2, "2 Mojżeszowa", 							  "2Moj", 	40), //1
-															InfoAllBooks(3,	"3 Mojżeszowa", 							  "3Moj", 	27), //2
-															InfoAllBooks(4,	"4 Księga Mojżeszowa", 		 	 	  "4Moj", 	 36), //3
-															InfoAllBooks(5,	"5 Księga Mojżeszowa",     	 	  "5Moj",   34), //4
-															InfoAllBooks(6,	"Księga Jozuego",          			"Joz",    24), //5
-															InfoAllBooks(7,	"Księga Sędziów",          			"Sędź",   21), //6
-															InfoAllBooks(8,	"Księga Rut",              			"Rut",    4),  //7
-															InfoAllBooks(9,	"1 Księga Samuela",        			"1Sam",   31), //8
-															InfoAllBooks(10,	"2 Księga Samuela",        			"2Sam",   24), //9
-															InfoAllBooks(11,	"1 Księga Królewska",        		"1Król",  22), //10
-															InfoAllBooks(12,	"2 Księga Królewska",        		"2Król",  25), //11
-															InfoAllBooks(13,	"1 Księga Kronik",           		"1Kron",    29), //12
-															InfoAllBooks(14,	"2 Księga Kronik",           		"2Kron",    36), //13
-															InfoAllBooks(15,	"Księga Ezdrasza",           		"Ezdr",   10), //14
-															InfoAllBooks(16,	"Księga Nechemiasza",        		"Nech",   13), //15
-															InfoAllBooks(17,	"Księga Estery",             		"Est",    10), //16
-															InfoAllBooks(18,	"Księga Joba",               		"Job",    42), //17
-															InfoAllBooks(19,	"Księga Psalmów",            		"Ps",     150),//18
-															InfoAllBooks(20,	"Przypowieści Salomona",     		"Przyp",  31), //19
-															InfoAllBooks(21,	"Księga Kaznodziei Salomona",		"Kazn",   12), //20
-															InfoAllBooks(22,	"Pieśni nad Pieśniami",      		"PnP",    8),  //21
-															InfoAllBooks(23,	"Księga Izajasza",           		"Iz",     66), //22
-															InfoAllBooks(24,	"Księga Jeremiasza",         		"Jer",    52), //23
-															InfoAllBooks(25,	"Treny",                     		"Tren",   5),  //24
-															InfoAllBooks(26,	"Księga Ezechiela",          		"Ez",     48), //25
-															InfoAllBooks(27,	"Księga Daniela",            		"Dan",    14), //26
-															InfoAllBooks(28,	"Księga Ozeasza",            		"Oz",     14), //27
-															InfoAllBooks(29,	"Księga Joela",              		"Jo",     3),  //28
-															InfoAllBooks(30,	"Księga Amosa",              		"Am",     9),  //29
-															InfoAllBooks(31,	"Księga Abdiasza",           		"Abd",    1),  //30
-															InfoAllBooks(32,	"Księga Jonasza",            		"Jon",    4),  //31
-															InfoAllBooks(33,	"Księga Micheasza",          		"Mich",   7),  //32
-															InfoAllBooks(34,	"Księga Nahuma",             		"Nah",    3),  //33
-															InfoAllBooks(35,	"Księga Habakuka",           		"Hab",    3),  //34
-															InfoAllBooks(36,	"Księga Sofoniasza",         		"Sof",    3),  //35
-															InfoAllBooks(37,	"Księga Aggeusza",           		"Agg",    2),  //36
-															InfoAllBooks(38,	"Księga Zachariasza",        		"Zach",   14), //37
-															InfoAllBooks(39,	"Księga Malachiasza",        		"Mal",    3),  //38
-															//--- Nowy Testament
-															InfoAllBooks(40,	"Ewangelia Mateusza",    		 		"Mt",     28), //39
-															InfoAllBooks(41,	"Ewangelia Marka",           		"Mk",     16), //40
-															InfoAllBooks(42,	"Ewangelia Łukasza",         		"Łk",     24), //41
-															InfoAllBooks(43,	"Ewangelia Jana",            		"Jan",    21), //42
-															InfoAllBooks(44,	"Dzieje Apostolskie",        		"DzAp",   28), //43
-															InfoAllBooks(45,	"List Pawła do Rzymian",     		"Rzym",   16), //44
-															InfoAllBooks(46,	"1 List Pawła do Koryntian", 		"1Kor",   16), //45
-															InfoAllBooks(47,	"2 List Pawła do Koryntian", 		"2Kor",   13), //46
-															InfoAllBooks(48,	"List Pawła do Galacjan",    		"Gal",    6),  //47
-															InfoAllBooks(49,	"List Pawła do Efezjan",     		"Efez",   6),  //48
-															InfoAllBooks(50,	"List Pawła do Filipian",    		"Filip",  4),  //49
-															InfoAllBooks(51,	"List Pawła do Kolosan",     		"Kol",    4),  //50
-															InfoAllBooks(52,	"1 List Pawła do Tesaloniczan",	"1Tes",   5),  //51
-															InfoAllBooks(53,	"2 List Pawła do Tesaloniczan",	"2Tes",   3),  //52
-															InfoAllBooks(54,	"1 List Pawła do Tymoteusza",  	"1Tym",   6),  //53
-															InfoAllBooks(55,	"2 List Pawła do Tymoteusza",  	"2Tym",   4),  //54
-															InfoAllBooks(56,	"List Pawła do Tytusa",         "Tyt",    3),  //55
-															InfoAllBooks(57,	"List Pawła do Filemona",       "Filem",  1),  //56
-															InfoAllBooks(58,	"List do Hebrajczyków",         "Hbr",    13), //57
-															InfoAllBooks(59,	"List Jakuba",                  "Jak",    5),  //58
-															InfoAllBooks(60,	"1 List Piotra",                "1Pt",    5),  //59
-															InfoAllBooks(61,	"2 List Piotra",                "2Pt",    3),  //60
-															InfoAllBooks(62,	"1 List Jana",                  "1Jan",   5),  //61
-															InfoAllBooks(63,	"2 List Jana",                  "2Jan",   1),  //62
-															InfoAllBooks(64,	"3 List Jana",                  "3Jan",   1),  //63
-															InfoAllBooks(65,	"List Judy",                    "Jud",    1),  //64
-															InfoAllBooks(66,	"Objawienie Jana",              "Obj",    22), //65
-															//--- Apokryfy
-															InfoAllBooks(67,	"Księga Tobiasza",              "Tob",    14), //66
-															InfoAllBooks(68,	"Księga Judyty",                "Judyt",  16), //67
-															InfoAllBooks(69,	"Księga I Machabejska",         "1Mach",  16), //68
-															InfoAllBooks(70,	"Księga II Machabejska",        "2Mach",  15), //69
-															InfoAllBooks(71,	"Księga Mądrości",              "Mądr",   19), //70
-															InfoAllBooks(72,	"Księga Syracha",               "Syr",    51), //71
-															InfoAllBooks(73,	"Księga Barucha",               "Bar",    6)   //72
-};
-//Tablica struktur PairsGroupBooks, danych dla grup ksiąg biblijnych, dla funkcji wyszukiwania
-const PairsGroupBooks GsReadBibleTextData::GsPairsGroupBible[GsReadBibleTextData::GsNumberAllGroups] =
-{
-	_PairsGroupBooks(0, 72),    //Wszystkie księgi wraz z apokryfami ->_PairsGroupBooks(const char ucStartRange, ucStopRange);
-	_PairsGroupBooks(0, 65),    //Wszystkie księgi, bez apokryfów
-	_PairsGroupBooks(0, 38),    //Księgi Starego Testamentu
-	_PairsGroupBooks(39, 65),   //Księgi Nowego Testamentu
-	_PairsGroupBooks(66, 72),   //Księgi apokryficzne
-	_PairsGroupBooks(-1, -1),   //Własny zakres
-	_PairsGroupBooks(-1, -1)    //Pojedyńcza księga
-};
-const UnicodeString GsReadBibleTextData::GsNameAllRanges[en_GrSearch_Count] =
-	{"Całe Pismo Święte", "Protestancki kanon Pisma Świętego", "Stary Testament", "Nowy Testament", "Apokryfy", "Własny zakres", "Pojedyńcza księga"};
-const unsigned char GsReadBibleTextData::GsTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] = {39, 27, 7}; //Ilość ksiąg w poszczególnych grupack bibli
-const UnicodeString GsReadBibleTextData::GsNamesTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] = {"Stary Testament", "Nowy Testament", "Księgi Apokryficzne"}; //Nazwy ksiąg w poszczególnych grupack bibli
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //Inicjalizacja zmiennych klasy
 /**
