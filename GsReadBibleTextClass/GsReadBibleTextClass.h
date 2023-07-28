@@ -159,7 +159,7 @@ typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijn
 const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 class GsListBoxFavoritiesClass;
 class GsLViewCommentsAllClass;
-class GsReadBibleTextData
+class GsReadBibleTextData : public TObject
 {
 	//Klasa GsReadBibleTextData, musi mieć deklaracje przyjaźni, prawie z każdą klasą modułu
 	friend class GsReadBibleTextItem;
@@ -374,7 +374,7 @@ enum EnTypeTranslate {enTypeTr_Full=0x10,	//Cały przekład Pisma Świętego
 											enTypeTr_Greek,	//Tekst oryginalny Nowego Testamentu w języku greckim
 											enTypeTr_Hebrew	//Tekst oryginalny Starego Testamentu w języku hebrajskim
 										 };
-class GsReadBibleTextItem
+class GsReadBibleTextItem : public TObject
 {
 	friend class GsReadBibleTextClass;
 	friend class GsReadBibleTextData;
@@ -403,7 +403,7 @@ class GsReadBibleTextItem
 //Stałe dla metody GetCountTranslates, informującą czy zwracana ilość przekładów będzie dotyczyła wszystkich tłumaczeń,
 //tylko polskich, czy oryginalnych
 //enum EnTypeGetTranslates {enTypeGTr_All = 0x20, enTypeGTr_Pol, enTypeGTr_Org};
-class GsReadBibleTextClass
+class GsReadBibleTextClass : public TObject
 {
 	friend class GsTabSheetClass;
 	friend class GsTreeBibleClass;
@@ -749,7 +749,7 @@ class GsListBoxVersClass : public TCustomListBox
 *                 dla klasy GsLViewDictionaryClass.                         *
 *****************************************************************************/
 //--- Całkowicie prywatna klasa, służaca jako dane do każdego słowa w słowniku grecko-polskim
-class DataGrecWordDictClass
+class DataGrecWordDictClass : public TObject
 {
 	friend class GsLViewDictionaryClass;
 
@@ -803,7 +803,7 @@ class GsLViewDictionaryClass : public TCustomListView
  *  Klasa wizualna listy, która znajduje sie na zkładce                                *
  *  okna gównego MBW_TabSheetAllCommentsVers;                                          *
  ***************************************************************************************/
-class ListComments//Struktura pojedyńczego komentarz
+class ListComments : public TObject//Struktura pojedyńczego komentarz
 {
 	friend class GsLViewCommentsAllClass;
 	ListComments(const UnicodeString _ustrName);
