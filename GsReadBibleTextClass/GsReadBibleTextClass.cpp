@@ -2513,6 +2513,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	GsReadBibleTextData::InitHistoryList(); //Metoda inicjuje zmienne dotyczące historii [30-07-2023]
 	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy
 	//---
 	if(GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Objekt GsReadBibleTextClass jest już zainicjowany"));
@@ -2654,7 +2655,16 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	{
 		GlobalVar::Global_HSListAllFavoritiesVers->SaveToFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);
 		delete GlobalVar::Global_HSListAllFavoritiesVers; GlobalVar::Global_HSListAllFavoritiesVers = nullptr;
-  }
+	}
+	//Zapis zaktualizowanego pliku historii, oraz usuwanie THashedStringListy z historią [30-07-2023]
+	GlobalVar::Global_HListHistoryChapterOpen->SaveToFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
+	if(GlobalVar::Global_HListHistoryChapterOpen)
+	{
+		delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("delete GlobalVar::Global_HListHistoryChapterOpen");
+		#endif
+	}
 	//--- Zamykanie głownej klasy
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
 	{
@@ -3134,6 +3144,27 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 	return ustrRet;
 }
 //---------------------------------------------------------------------------
+void GsReadBibleTextData::InitHistoryList()
+/**
+	OPIS METOD(FUNKCJI): Metoda inicjuje zmienne dotyczące historii [30-07-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //----- String lista histori otwieranych rozdziałow księg biblijnych
+	GlobalVar::Global_HListHistoryChapterOpen = new THashedStringList();
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	//Odczyt pliku historii
+	if(TFile::Exists(GlobalVar::Global_custrPathHistory))
+	{
+		GlobalVar::Global_HListHistoryChapterOpen->LoadFromFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
+	}
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("InitHistoryList: %s", ARRAYOFCONST(( GlobalVar::Global_custrPathHistory ))));
+	#endif
+}
+//---------------------------------------------------------------------------
 void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 /**
 	OPIS METOD(FUNKCJI): Metoda dodajaca informacje o otwartym rozdziale do listy historii
@@ -3147,7 +3178,7 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 //	#if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug("Debug: 008");
 //	#endif
-	GlobalVar::Global_HListHistoryChapterOpen->Add(Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
+	GlobalVar::Global_HListHistoryChapterOpen->Insert(0, Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
 //	#if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug("Debug: 009");
 //	#endif

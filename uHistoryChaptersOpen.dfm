@@ -2,8 +2,8 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
   Left = 0
   Top = 0
   Caption = 'Historia otwieranych rozdzia'#322#243'w, ksi'#261'g Pisma '#346'wi'#281'tego'
-  ClientHeight = 865
-  ClientWidth = 986
+  ClientHeight = 864
+  ClientWidth = 982
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -18,8 +18,8 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     AlignWithMargins = True
     Left = 3
     Top = 45
-    Width = 980
-    Height = 817
+    Width = 976
+    Height = 816
     Align = alClient
     Columns = <>
     OwnerData = True
@@ -40,7 +40,7 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
   object ActionToolBarHistoryCh: TActionToolBar
     Left = 0
     Top = 0
-    Width = 986
+    Width = 982
     Height = 42
     ActionManager = ActionManagerHistoryCh
     Caption = 'ActionToolBarHistoryCh'
@@ -58,7 +58,6 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
-    ExplicitWidth = 984
   end
   object ActionManagerHistoryCh: TActionManager
     ActionBars = <

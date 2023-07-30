@@ -190,7 +190,6 @@ __fastcall TMainBibleWindow::~TMainBibleWindow()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  if(GlobalVar::Global_HListHistoryChapterOpen) {delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;}
 	if(GlobalVar::Global_SListPathMultiM) {delete GlobalVar::Global_SListPathMultiM; GlobalVar::Global_SListPathMultiM = nullptr;}
 	if(GlobalVar::Global_ConfigFile) {delete GlobalVar::Global_ConfigFile; GlobalVar::Global_ConfigFile = nullptr;}
 	#if defined(_DEBUGINFO_) //Konsola debuggera
@@ -422,8 +421,6 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	{
 		GlobalVar::Global_ConfigFile->UpdateFile();	//Zrzut pliku ini z pamięci, do pliku ini
 	}
-	//Zapis zaktualizowanego pliku histori
-	GlobalVar::Global_HListHistoryChapterOpen->SaveToFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)

@@ -339,6 +339,8 @@ class GsReadBibleTextData : public TObject
 		//Metoda wyświetla zakres wersetów z wybranego tłumaczenia w dowolnym objekcie, klasy TWebBrowser
 		static UnicodeString __fastcall DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
 			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay);
+		//Metoda inicjuje zmienne dotyczące historii [30-07-2023]
+		static void InitHistoryList();
 		//Metoda dodajaca informacje o otwartym rozdziale do listy historii
 		static void AddItemHistoryList(const UnicodeString _ustrTextItem);
 };

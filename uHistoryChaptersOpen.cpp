@@ -240,7 +240,8 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 		}
 	}
 	GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
-	GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
+	//GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
+	GlobalVar::Global_HListHistoryChapterOpen->Delete(0);
   this->Close();
 }
 //---------------------------------------------------------------------------
