@@ -1135,6 +1135,7 @@ void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
 	if(Msg.message == WM_RBUTTONDOWN || Msg.message == WM_RBUTTONUP/* ||
 		 Msg.message == WM_LBUTTONDOWN || Msg.message == WM_LBUTTONUP*/)
 	//Zabezpieczenie przed reakcją na każdy przycisk myszy w obrębie klasy TWebBrowser [09-11-2019]
+	//Odblokowanie [29-07-2023]
 	{
 		const int ciMaxClassName=255;
 		const UnicodeString custrClassExplorerName = "Internet Explorer_Server";
@@ -1150,7 +1151,8 @@ void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
 		//---
 		if(ustrClassName == custrClassExplorerName)
 		{
-			Handled = true; //Zablokowanie działania myszy dla objektu klasy TWebBrowser [09-11-2019]
+			//Handled = true; //Zablokowanie działania myszy dla objektu klasy TWebBrowser [09-11-2019]
+			//Odblokowanie [29-07-2023]
 		}
 	}
 }

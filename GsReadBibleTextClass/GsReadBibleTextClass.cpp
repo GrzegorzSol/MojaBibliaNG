@@ -37,7 +37,7 @@
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug("");
 #endif
-#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
+[30-07-2023]
 */
 const int ciMaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
 /****************************************************************************
@@ -488,6 +488,9 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	THashedStringList *_pHListChapt=nullptr;
 	//---
 	this->_ClearListAllTrChap();  //Wyczyszczenie TYLKO zawartości listy!!!
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 006");
+//	#endif
 	for(int i=0; i<this->_ListItemsTranslates->Count; i++)
 	{
 		THashedStringList *_pTempHSList =  this->GetSelectBookTranslate(i, iGetBook); //String lista wybranej księgi kolejnego tłumaczenia
@@ -505,11 +508,17 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 			}
 		}
 	}
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 007");
+//	#endif
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie powiodło się wyłuskanie wskaźnika na aktualną zakładkę"));
 	pGsTabSheetClass->Caption = Format("%s: %u rozdział", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iGetBook].FullNameBook, iGetChap+1)));
   //Metoda dodajaca informacje o otwartym rozdziale do listy historii
-	GsReadBibleTextData::AddItemHistoryList(pGsTabSheetClass->Caption);
+	GsReadBibleTextData::AddItemHistoryList(pGsTabSheetClass->Caption); //TUTAJ JEST BŁĄD!!!
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 010");
+//	#endif
 	//Informacja w strukturze zakładki o numerze księgi i rozdziału
 	pGsTabSheetClass->_ShucIndexBook = iGetBook;
 	pGsTabSheetClass->_ShucIndexChapt = iGetChap;
@@ -861,7 +870,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 //---------------------------------------------------------------------------
 __fastcall GsTreeBibleClass::~GsTreeBibleClass()
 /**
-	OPIS METOD(FUNKCJI): Główny Destruktor, klasy MBNGTreeVBibleClass
+	OPIS METOD(FUNKCJI): Główny Destruktor, klasy GsTreeBibleClass
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -938,8 +947,14 @@ void __fastcall GsTreeBibleClass::DblClick()
 {
 	GsTreeNodeClass *pSelectNode = dynamic_cast<GsTreeNodeClass *>(this->Selected);
 	if((pSelectNode == 0) || (pSelectNode->Level < 2)) return;
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 001");
+//	#endif
 	//---
 	GsReadBibleTextData::OpenSelectBookAndChapter(pSelectNode->ucIndexBook+1, 1);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 011");
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::GetImageIndex(TTreeNode* Node)
@@ -1084,6 +1099,7 @@ void __fastcall GsTreeBibleClass::Delete(TTreeNode* Node)
 	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(Node);
 	if(pGsTreeNodeClass)
 	{
+    //delete pGsTreeNodeClass; pGsTreeNodeClass = nullptr; //[30-07-2023]
   }
 }
 //---------------------------------------------------------------------------
@@ -2934,7 +2950,9 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 {
 	int iBook;
 	if((_iBook < 1) && (_iBook > 73)) return;
-
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 002");
+//	#endif
 
 	if((_iBook >= 0) && (_iBook < 40)) iBook = _iBook + 1;
 	if((_iBook >= 40) && (_iBook < 67)) iBook = _iBook + 2;
@@ -2946,9 +2964,18 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA. NUMER ROZDZIAŁU LICZYMY OD ZERA !!!
 	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 003");
+//	#endif
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(_iBook-1, _iChapt-1);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 004");
+//	#endif
 	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
 	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 005");
+//	#endif
 }
 //---------------------------------------------------------------------------
 TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
@@ -3115,9 +3142,15 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Nie zainicjowana lista histori (THashedStringList)"));
 	UnicodeString ustrbDateNow = FormatDateTime("yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
-
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 008");
+//	#endif
 	GlobalVar::Global_HListHistoryChapterOpen->Add(Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 009");
+//	#endif
 }
 /****************************************************************************
  *                          KLASA GsBarSelectVers                           *
