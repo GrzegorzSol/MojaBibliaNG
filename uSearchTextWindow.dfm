@@ -178,6 +178,7 @@ object SearchTextWindow: TSearchTextWindow
           Height = 203
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 591
           ControlData = {
             4C0000007F3D0000FB1400000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -482,7 +483,7 @@ object SearchTextWindow: TSearchTextWindow
     ParentColor = False
     TabOrder = 2
     ExplicitWidth = 1190
-    ExplicitHeight = 385
+    ExplicitHeight = 389
     object STW_PControlViewsText: TPageControl
       AlignWithMargins = True
       Left = 5
@@ -498,7 +499,7 @@ object SearchTextWindow: TSearchTextWindow
       OnChanging = STW_PControlChanging
       OnDrawTab = STW_PControlViewsTextDrawTab
       ExplicitWidth = 1180
-      ExplicitHeight = 362
+      ExplicitHeight = 366
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9
@@ -550,10 +551,12 @@ object SearchTextWindow: TSearchTextWindow
           Height = 217
           Align = alClient
           TabOrder = 1
+          ExplicitWidth = 1172
+          ExplicitHeight = 216
           ControlData = {
             4C0000008B7900006D1600000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
-            2B2E126201000000000000004C0000000114020000000000C000000000000046
+            2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
             00000000000000000100000000000000000000000000000000000000}
         end
@@ -569,7 +572,7 @@ object SearchTextWindow: TSearchTextWindow
     Panels = <>
     SimplePanel = True
     SizeGrip = False
-    ExplicitTop = 807
+    ExplicitTop = 811
     ExplicitWidth = 1190
   end
   object STW_PanelButtons: TPanel
@@ -580,7 +583,7 @@ object SearchTextWindow: TSearchTextWindow
     Align = alBottom
     ShowCaption = False
     TabOrder = 4
-    ExplicitTop = 778
+    ExplicitTop = 782
     ExplicitWidth = 1190
     object STW_ButtonSearchStart: TButton
       AlignWithMargins = True

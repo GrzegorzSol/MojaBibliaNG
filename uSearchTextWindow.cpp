@@ -388,18 +388,37 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 				}
 				else //Wyszukiwanie tradycyjne
 				{
+					UnicodeString ustrSearchString;
 					if(this->STW_ChBoxSizeTextSearch->Checked) //Uwzględniana wielkość liter
-						{iPositionSearch = pBookListText->Strings[i].Pos(this->STW_CBoxHistorySearchText->Text);}
-					else {iPositionSearch = System::Sysutils::AnsiLowerCase(pBookListText->Strings[i]).Pos(System::Sysutils::AnsiLowerCase(this->STW_CBoxHistorySearchText->Text));}
+					{
+						ustrSearchString = this->STW_CBoxHistorySearchText->Text;
+						iPositionSearch = pBookListText->Strings[i].Pos(ustrSearchString);
+					}
+					else
+					{
+						ustrSearchString = System::Sysutils::AnsiLowerCase(this->STW_CBoxHistorySearchText->Text);
+						iPositionSearch = System::Sysutils::AnsiLowerCase(pBookListText->Strings[i]).Pos(ustrSearchString);
+					}
+//					if(iPositionSearch > 0)
+//					{
+//						UnicodeString ustrReplace = custrStyleF + ustrSearchString + "</span>";
+//  						ustrTemp = StringReplace(pBookListText->Strings[i], ustrSearchString,
+//  							ustrReplace, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
+//
+//						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
+//						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
+//						MyDataStatistic->uiCountFind++;
+//					}
 					if(iPositionSearch > 0)
 					{
 						//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia
 						ustrTemp = pBookListText->Strings[i].Insert(custrStyleF, iPositionSearch); //Wstawienie początku stylu, przed słowem szukanym
 						//Wstawienie zakończenia stylu po szukanym słowie, plus wcześniej wstawionym stylu.
 						ustrTemp = ustrTemp.Insert("</span>", iPositionSearch + this->STW_CBoxHistorySearchText->Text.Length() + custrStyleF.Length());
+
 						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-            MyDataStatistic->uiCountFind++;
+						MyDataStatistic->uiCountFind++;
 					} //if(iPositionSearch > 0)
 				} //if(this->STW_ChBoxIsRegEx->Checked)
 			} //for(int i=0; i<pBookListText->Count; i++)

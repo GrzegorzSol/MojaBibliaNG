@@ -28,6 +28,7 @@
 #include <System.StrUtils.hpp>
 #include "uGlobalVar.h"
 #include "GsCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
+#include <Mshtml.h> //[31-07-2023]
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -564,6 +565,8 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	if(!this->_ListAllTrChap) {throw(Exception("Nie zainicjowano listy wszystkich tłumaczeń, wybranej księgi i rozdziału"));}
 	if(this->_ListAllTrChap->Count == 0) return;  //Pusta lista
 	//---
+	TTreeNode *pTreeNodeSelect = GsReadBibleTextData::pGsTreeBibleClass->Selected; //[03-08-2023]
+	//---
 	MyObjectVers *pMyOjectVers=nullptr;
 	THashedStringList *pTempHSList=nullptr;
 	int iIndex=0, //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
@@ -582,8 +585,10 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	pGsTabSheetClass->pHSListActualText->Clear(); //Wyczyszczenie listy surowej aktualnie przeglądanego rozdziału
 	pGsTabSheetClass->pLBoxSelectText->Items->BeginUpdate();
 	pGsTabSheetClass->pLBoxSelectText->Clear(); //Wyczyszczenie listy ulubionych wersetów (objekt, klasy TListBox)
-
-	pStringStream->WriteString(GsReadBibleTextData::GsHTMLHeaderText);
+	//Podmiana elementu /title w kodzie html wczytanego rozdziału i księgi na nazwę księgi - [03-08-2023]
+	UnicodeString ustrHeaderText = StringReplace(GsReadBibleTextData::GsHTMLHeaderText, GsReadBibleTextData::GsHTMLTitle,
+		"<title>" + pTreeNodeSelect->Text + "</title>", TReplaceFlags() << rfReplaceAll); //[03-08-2023]
+	pStringStream->WriteString(ustrHeaderText); //Zapis nagłówka kodu html do strumienia
 	try
 	{
 		do
@@ -1002,7 +1007,7 @@ void __fastcall GsTreeBibleClass::DoContextPopup(const Types::TPoint &MousePos, 
 	this->FPMenuBook->Popup(ScrXY.X, ScrXY.Y);  //Pojawienie się popupmenu
 
 	pGsTreeNodeClass->Selected = true;
-	Handled = True;
+	Handled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::DragOver(System::TObject* Source, int X, int Y, System::Uitypes::TDragState State, bool &Accept)
@@ -1543,12 +1548,14 @@ void __fastcall GsTabSheetClass::_InitPanelTextBible(TPanel *pPanelParent)
 	//---Inicjalizacja objektu, klasy TWebBrowser
 	this->pWebBrowser = new TWebBrowser(pPanelParent);
 	if(!this->pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	//pPanelParent->InsertControl(this->pWebBrowser); //Też działa
 	this->pWebBrowser->TOleControl::Parent = pPanelParent;
 	this->pWebBrowser->Align = alClient;
 	this->pWebBrowser->Offline = true;
-	this->pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
+	this->pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	this->pWebBrowser->OnDragDrop = pPanelParent->OnDragDrop;
 	this->pWebBrowser->OnDragOver = pPanelParent->OnDragOver;
+	this->pWebBrowser->OnDocumentComplete = this->_OnDocumentComplete; //[31-07-2023]
 	//Wybieralny tekst rozdziału
 	this->pLBoxSelectText = new GsListBoxSelectedVersClass(pPanelParent);
 	if(!this->pLBoxSelectText) throw(Exception("Błąd inicjalizacji klasy GsListBoxSelectedVersClass"));
@@ -1951,6 +1958,42 @@ void __fastcall GsTabSheetClass::_OnSaveComments(System::TObject* Sender)
 	if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);//Powtórne wczytanie tekstu rozdziału 07-01-2019
   //Odswierzenie głównej listy komentarzy w głównym oknie
   GsReadBibleTextData::pGsLViewCommentsAllClass->ReloadAllVersComments(false);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL)
+/**
+	OPIS METOD(FUNKCJI): [31-07-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TWebBrowser *pBrowser = dynamic_cast<TWebBrowser *>(ASender);
+	if(!pBrowser) return;
+	//---
+	TTreeNode *pTreeNodeSelect = GsReadBibleTextData::pGsTreeBibleClass->Selected; //[03-08-2023]
+	UnicodeString ustrInfoPanel = Format("Strona wczytana z tekstem [%s]", ARRAYOFCONST(( pTreeNodeSelect->Text ))); //[04-08-2023]
+
+	TForm *pMainForm = Application->MainForm;
+
+	for(int i=0; i<pMainForm->ComponentCount; i++)
+	{
+		TComponent *pComponent = pMainForm->Components[i];
+		if(pComponent->ClassNameIs("TStatusBar"))
+		{
+			TStatusBar *pStatusBar = dynamic_cast<TStatusBar *>(pComponent);
+			if(pStatusBar)
+			{
+				if(pStatusBar->SimplePanel)
+					{pStatusBar->SimpleText = ustrInfoPanel;}
+				else
+				{
+					if(pStatusBar->Panels->Count > 0)
+						{pStatusBar->Panels->Items[0]->Text = ustrInfoPanel;}
+				}
+			}
+		}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_GetHTMLText(UnicodeString &_ustrTextHTML)
@@ -2593,10 +2636,12 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 								  //Styl dla adresu oryginalnego tłumaczenia
 								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
 	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
+
 	GsReadBibleTextData::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html><head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-																												"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
+																												GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
+																												//"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
 																												"<style type=\"text/css\">\n" +
 																												_ColorAdressFullTranslates +
 																												_VersOryginalAdress +

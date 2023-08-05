@@ -205,6 +205,7 @@ class GsReadBibleTextData : public TObject
 														 GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
 		static UnicodeString inline //--- Nagłówki dla plików html
 															 GsHTMLHeaderText="",	//Tekst nagłówka dla tekstu zwykłego
+															 GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", //[03-08-2023]
 															 GsHTMLHeaderSearch="",//Tekst nagłówka dla tekstu, wyniku wyszukiwania
 															 GsHTMLHeaderDisplayVer="";//Tekst nagłówka dla tekstu wybranego wersetu
 		static const unsigned char inline GsNumberBooks = 73,	//Maksymalna ilość wszystkich ksiąg
@@ -554,8 +555,10 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _InitCBoxChaptersSelect(TPanel *pPanelParent); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
 	void __fastcall _InitPanelInfoTranslation(); //Panel z objektami informacyjnymi o wybranym tłumaczeniu
 	void __fastcall _InitPanelTextBible(TPanel *pPanelParent); //Kontrolki dotyczące tekstu biblijnego: TProgressBar,
-																														  //TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
-		void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
+																															//TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
+	void __fastcall _OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL); //[31-07-2023]
+
+	void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń
