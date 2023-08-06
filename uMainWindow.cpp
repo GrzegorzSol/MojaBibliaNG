@@ -718,8 +718,34 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 		this->_DisplayHelp(pAction);
     return;
 	}
+	TFileSaveDialog  *pFileSaveDialog  = new TFileSaveDialog (this);
+	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
 	//---
-	GsReadBibleTextData::WriteCurrentSheetText();
+	UnicodeString ustrTypesFile[] = {"Wszystkie pliki", "*.*", "Pliki typu html", "*.html"},
+								ustrSelect;
+	TFileTypeItem *pFileTypeItem = nullptr;
+	pFileSaveDialog->Title = "Wybierz nazwę pliku do zapisu...";
+	pFileSaveDialog->Options << fdoOverWritePrompt << fdoNoDereferenceLinks;
+	pFileSaveDialog->DefaultExtension = ".html";
+
+	for(int i=0; i<ARRAYSIZE(ustrTypesFile); i+=2)
+	{
+    pFileTypeItem = pFileSaveDialog->FileTypes->Add();
+		pFileTypeItem->DisplayName = ustrTypesFile[i];
+		pFileTypeItem->FileMask = ustrTypesFile[i+1];
+  }
+
+	if(pFileSaveDialog->Execute())
+	{
+		ustrSelect = pFileSaveDialog->FileName;
+    #if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
+		#endif
+  }
+
+	if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
+	//---
+	GsReadBibleTextData::WriteCurrentSheetText(ustrSelect);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)

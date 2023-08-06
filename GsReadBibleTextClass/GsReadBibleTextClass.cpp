@@ -40,7 +40,6 @@
 #endif
 [30-07-2023]
 */
-/* TODO : W module GsReadBibleTextClass sokończyć mozliwość zapisywania kod html, otwartego rozdziału */
 const int ciMaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
@@ -87,7 +86,6 @@ __fastcall MyObjectVers::~MyObjectVers()
 /****************************************************************************
  *                          Klasa ReadBibletextItem                         *
  ****************************************************************************/
-
 GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex)
 	: IsActiveTranslate(true),	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 		enTypeTranslate(IdenTypeTranslate)
