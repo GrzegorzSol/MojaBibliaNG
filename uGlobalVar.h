@@ -5,7 +5,7 @@
 #include <System.IniFiles.hpp>
 #include <Vcl.HtmlHelpViewer.hpp>
 #include "HelpMojaBibliaNT.h"
-//#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
+#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif

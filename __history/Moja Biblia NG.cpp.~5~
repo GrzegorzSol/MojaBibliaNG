@@ -2,11 +2,15 @@
 #pragma hdrstop
 #include <tchar.h>
 #include "uGlobalVar.h"
-#include "uInformationsAppWindow.h"
+
 //---------------------------------------------------------------------------
+#include <Vcl.Styles.hpp>
+#include <Vcl.Themes.hpp>
 USEFORM("uMainWindow.cpp", MainBibleWindow);
+USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
 USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
+USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
@@ -16,7 +20,9 @@ USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
-USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
+USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
+//---------------------------------------------------------------------------
+#include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------
@@ -80,6 +86,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		//--- Klasyczny kod rozruchowy aplikacji
 		Application->Initialize();
 		Application->MainFormOnTaskBar = true;
+		TStyleManager::TrySetStyle("Sapphire Kamri");
 		Application->CreateForm(__classid(TMainBibleWindow), &MainBibleWindow);
 		Application->Run();
 	}
