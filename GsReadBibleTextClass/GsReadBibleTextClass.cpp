@@ -40,6 +40,7 @@
 #endif
 [30-07-2023]
 */
+/* TODO : W module GsReadBibleTextClass sokończyć mozliwość zapisywania kod html, otwartego rozdziału */
 const int ciMaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
