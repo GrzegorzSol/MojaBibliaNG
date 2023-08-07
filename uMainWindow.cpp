@@ -727,6 +727,7 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 	pFileSaveDialog->Title = "Wybierz nazwę pliku do zapisu...";
 	pFileSaveDialog->Options << fdoOverWritePrompt << fdoNoDereferenceLinks;
 	pFileSaveDialog->DefaultExtension = ".html";
+	pFileSaveDialog->OkButtonLabel = "Zapisz otwarty rozdział do pliku";
 
 	for(int i=0; i<ARRAYSIZE(ustrTypesFile); i+=2)
 	{
@@ -741,11 +742,15 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
     #if defined(_DEBUGINFO_)
 			GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
 		#endif
+		GsReadBibleTextData::WriteCurrentSheetText(ustrSelect);
+	}
+	else
+	{
+		MessageBox(NULL, TEXT("Nie wybrałeś lokalizacji, ani nazwy do zapisu otwartego rozdziału, więc plik będzie zapisany pod domyślną nazwą i w domyślnej lokalizacji"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+		GsReadBibleTextData::WriteCurrentSheetText();
   }
 
 	if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
-	//---
-	GsReadBibleTextData::WriteCurrentSheetText(ustrSelect);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
