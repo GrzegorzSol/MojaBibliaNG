@@ -76,13 +76,9 @@ class GsTabSheetSelectVersClass;
 class GsReadBibleTextItem;
 class GsTabSetClass;
 class GsPanelSelectVers;
-/****************************************************************************
- *            Całkowicie statyczna klasalasa GsReadBibleTextData            *
- ****************************************************************************/
-/*
-	TWORZENIE NAZW SKŁADOWYCH KLASY GsReadBibleTextData
-	Gs + Typ + Data
-*/
+const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
+class GsListBoxFavoritiesClass;
+class GsLViewCommentsAllClass;
 /*============================================================================
  =                          STRUKTURA InfoAllBooks                           =
  ============================================================================*/
@@ -155,10 +151,14 @@ typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijn
 		bool bIsHorizontLine;               //Czy istnieje pozioma linia między wersetami
 
 	} DataDisplayTextAnyBrowser, *PDataDisplayTextAnyBrowser;
-//---------------------------------------------------------------------------
-const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
-class GsListBoxFavoritiesClass;
-class GsLViewCommentsAllClass;
+
+/****************************************************************************
+ *            Całkowicie statyczna klasalasa GsReadBibleTextData            *
+ ****************************************************************************/
+/*
+	TWORZENIE NAZW SKŁADOWYCH KLASY GsReadBibleTextData
+	Gs + Typ + Data
+*/
 class GsReadBibleTextData : public TObject
 {
 	//Klasa GsReadBibleTextData, musi mieć deklaracje przyjaźni, prawie z każdą klasą modułu
@@ -353,6 +353,7 @@ class MyObjectVers : public TObject
 {
 	friend class GsReadBibleTextClass; //Klasa GsReadBibleTextClass ma pełny dostęp
 	friend class GsReadBibleTextItem;  //Klasa GsReadBibleTextItem ma pełny dostęp
+	friend class GsHashedStringListItem; //Przyjaźń - klasa GsHashedStringListItem wywołuje destruktor
 
 	__fastcall MyObjectVers(const UnicodeString &HeadVers);
 	virtual __fastcall ~MyObjectVers();
@@ -370,8 +371,19 @@ class MyObjectVers : public TObject
 									ucIndexVersOnList;//Indeks wersetu w liście wersetów dla bierzącej księgi
 };
 /****************************************************************************
- *                     Główna klasa GsReadBibleTextItem                      *
+ *                     Główna klasa GsReadBibleTextItem                     *
  ****************************************************************************/
+  //Klasa GsHashedStringListItem
+	//Klasa dziedziczy z THashedStringList i jest obsługiwana przez klasę GsReadBibleTextItem
+class GsHashedStringListItem : public THashedStringList //[07-08-2023]
+{
+	friend class GsReadBibleTextItem; //Przyjeźń - klasa GsReadBibleTextItem wywołuje konstruktor
+	//---
+	__fastcall GsHashedStringListItem();
+	__fastcall virtual ~GsHashedStringListItem();
+	//---
+	virtual void __fastcall Clear();
+};
 //Typy tłumaczeń (w języku polskim, lub oryginalnym)
 enum EnTypeTranslate {enTypeTr_Full=0x10,	//Cały przekład Pisma Świętego
 											enTypeTr_Greek,	//Tekst oryginalny Nowego Testamentu w języku greckim
@@ -383,13 +395,14 @@ class GsReadBibleTextItem : public TObject
 	friend class GsReadBibleTextData;
 	friend class GsTabSheetClass;
 	friend class GsBarSelectVers;
+	friend class GsListItemTranslates; //Przyjaźń - GsListItemTranslates wywołuje destruktor
 	//---
 	GsReadBibleTextItem(const UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
 	virtual ~GsReadBibleTextItem();
 	//---
 	//Tablica wskaźników do klasy THashedStringList wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
-	THashedStringList *_pHListAllListBooks[GsReadBibleTextData::GsNumberBooks];
-	THashedStringList *__fastcall GetSelectBooks(const unsigned char uiSelectBook=0); //Metoda zwraca wskaźnik na konkrętną księge
+	GsHashedStringListItem *_pGsHListAllListBooks[GsReadBibleTextData::GsNumberBooks];  //73 wskaźniki (tablica) na GsHashedStringListItem
+	GsHashedStringListItem *__fastcall GetSelectBooks(const unsigned char uiSelectBook=0); //Metoda zwraca wskaźnik na konkrętną księge
 	bool IsActiveTranslate;	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 	unsigned char ucCountBooks, //Ilość ksiąg w tłumaczeniu (oryginalne tłumaczenia, katolickie)
 								ucStartBook,	 //Od numeru jakiej księgi zaczyna się tłumaczenie
@@ -403,6 +416,19 @@ class GsReadBibleTextItem : public TObject
 /****************************************************************************
  *                        Klasa GsReadBibleTextClass                        *
  ****************************************************************************/
+	//Klasa GsListItemTranslates
+	//Klasa dziedziczy z TList i jest obsługiwana przez klasę GsReadBibleTextClass
+class GsListItemTranslates : public TList //[08-08-2023]
+{
+	friend class GsReadBibleTextClass; //Przyjaźń - GsReadBibleTextClasswywołuje konstruktora i dectruktora
+	//---
+	__fastcall GsListItemTranslates();
+	__fastcall virtual ~GsListItemTranslates();
+	//---
+	virtual void __fastcall Clear(); //Tylko wywołanie TList::Clear();
+	protected:
+		virtual void __fastcall Notify(void * Ptr, TListNotification Action);
+};
 //Stałe dla metody GetCountTranslates, informującą czy zwracana ilość przekładów będzie dotyczyła wszystkich tłumaczeń,
 //tylko polskich, czy oryginalnych
 //enum EnTypeGetTranslates {enTypeGTr_All = 0x20, enTypeGTr_Pol, enTypeGTr_Org};
@@ -421,11 +447,10 @@ class GsReadBibleTextClass : public TObject
 		//---
 	inline static UnicodeString __fastcall GetVersionClass() {return Format("Biblioteka: \"GsReadBibleTextClass\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
 	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich przekładów
-	//void __fastcall DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
 	void __fastcall DisplayAllTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate=-1); //Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
 	void __fastcall SaveCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
-	inline TList *__fastcall GetListAllTranslates() {return this->_ListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
-	inline unsigned int __fastcall GetCountTranslates() {return (unsigned int)this->_ListItemsTranslates->Count;};
+	inline TList *__fastcall GetListAllTranslates() {return this->_GsListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
+	inline unsigned int __fastcall GetCountTranslates() {return (unsigned int)this->_GsListItemsTranslates->Count;};
 	GsReadBibleTextItem *__fastcall GetTranslateClass(const int iNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 	void __fastcall _GetInfoNameTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
 	THashedStringList *__fastcall GetSelectBookTranslate(const int iGetTranslate, const int iGetBook); //Metoda zwraca wskażnik THashedStringList na pozycje określonej księgi i tłumaczenia
@@ -438,8 +463,8 @@ class GsReadBibleTextClass : public TObject
 	void __fastcall _GlobalTextDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
 	void __fastcall _DeleteSelectTranslate(const int iNumberTrans); //Skasowanie wybranego tłumaczenia
 	//---
-	TList *_ListItemsTranslates,	//Lista tłumaczeń. Klas GsReadBibleTextItem
-				*_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
+	GsListItemTranslates *_GsListItemsTranslates;	//Lista tłumaczeń. Klas GsReadBibleTextItem
+	TList *_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 	THashedStringList *_SListInterLinear; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	unsigned int uiCountPol, uiCountOryg; //Ilość polskich i oryginalnych tłumaczeń
 
