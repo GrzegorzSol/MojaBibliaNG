@@ -19,9 +19,11 @@
 	Klasa GsLViewCommentsAllClass - Klasa listy wszystkich komentarzy do wersetów biblijnych
 	Klasa GsListBoxFavoritiesClass - Klasa listy ulubionych wersetów
 */
-#ifndef GsReadBibleTextClassH
-#define GsReadBibleTextClassH
+#ifndef MyBibleLibraryH
+#define MyBibleLibraryH
 //---------------------------------------------------------------------------
+//#define _TEST_CONTROLLIST_
+
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.Tabs.hpp>	//TTabSet
@@ -32,7 +34,7 @@
 #include <Vcl.Taskbar.hpp>//TTaskBar
 #include "GsComponents\GsEditorClass.h"
 
-static UnicodeString sustrVersionGsReadBibleTextClass = "0.9.8990.9682";
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.0.4636.6566";
 enum enReturnError {enR_NoError,           //Brak błędu
 										enR_GSelectBoook=1000  //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
@@ -64,6 +66,7 @@ enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_ViewSelectText,	//20.Obraz widoku tekstu biblijnego do selekcji wersetów
 			enImageIndex_ReadOnlyText,    //21.Obraz widoku tekstu biblijnego tylko do przeglądania
 			enImageIndex_EditText,        //22.Obraz rozpoczęcia edycji
+      enImageIndex_DisplayInfoTranslates, //23.Obraz wyświetlania informacji o przekładach, lub wybranym przekładzie, rozdziale
 			enImageIndex_Count            //Ilość grafik w objekcie GsReadBibleTextData::GsImgListData, typu TImageList
 		 };
 //Deklaracja niektórych klas
@@ -73,13 +76,9 @@ class GsTabSheetSelectVersClass;
 class GsReadBibleTextItem;
 class GsTabSetClass;
 class GsPanelSelectVers;
-/****************************************************************************
- *            Całkowicie statyczna klasalasa GsReadBibleTextData            *
- ****************************************************************************/
-/*
-	TWORZENIE NAZW SKŁADOWYCH KLASY GsReadBibleTextData
-	Gs + Typ + Data
-*/
+const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
+class GsListBoxFavoritiesClass;
+class GsLViewCommentsAllClass;
 /*============================================================================
  =                          STRUKTURA InfoAllBooks                           =
  ============================================================================*/
@@ -140,10 +139,26 @@ typedef struct //Struktura danych jako argument dla metody wyszukiwania
 			PairsGroupBooks pairToUserSearch;  //Wskaźnik na parę numerów ksiąg do wyszukania
 		} DataSearch, *PDataSearch;
 //---------------------------------------------------------------------------
-const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
-class GsListBoxFavoritiesClass;
-class GsLViewCommentsAllClass;
-class GsReadBibleTextData
+//enum enTypeRangeText {enTypeRange_Vers=100,       //Zakres ograniczony pełnymi adresami wersetów (po 9 znaków)
+//											enTypeRange_Chapter,        //Zakres ograniczony tylko adresamo rozdziałów (po 6 znaków)
+//											enTypeRange_OnlyOneChapter};//Zakres dotyczy pojedyńczego rozdziału (6 znaków)
+typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijnego w dowolnym objekcie, klasy TWebBrowser
+	{
+		UnicodeString strBackgroundColor,   //Kolor podkładu
+									strNameFont;          //nazwa czcionki
+		int iSizeFont;                      //Wielkość czcionki strNameFont
+		TMemoryStream *pMemoryStream=nullptr;       //Zapis wyniku wyszukiwania jako danych html, do objektu, klasy TMemoryStream
+		bool bIsHorizontLine;               //Czy istnieje pozioma linia między wersetami
+
+	} DataDisplayTextAnyBrowser, *PDataDisplayTextAnyBrowser;
+/****************************************************************************
+ *            Całkowicie statyczna klasalasa GsReadBibleTextData            *
+ ****************************************************************************/
+/*
+	TWORZENIE NAZW SKŁADOWYCH KLASY GsReadBibleTextData
+	Gs + Typ + Data
+*/
+class GsReadBibleTextData : public TObject
 {
 	//Klasa GsReadBibleTextData, musi mieć deklaracje przyjaźni, prawie z każdą klasą modułu
 	friend class GsReadBibleTextItem;
@@ -165,44 +180,133 @@ class GsReadBibleTextData
 		static void __fastcall GsInitGlobalImageList(TForm *pMainForm);  //Inicjalizacja zmiennych klasy
 		static void __fastcall GsFreeGlobalImageList();  //Likwidacja zmiennych klasy
 		//---
-		static TImageList *_GsImgListData; //Globalna lista grafik
-		static TImageList *_GsImgListDataDisable; //Globalna lista grafik nieaktywnych
-		static TPageControl *_GsPageControl; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki
-		static TTaskbar *_GsTaskBar;	//Wskaźnik na objekt, klasy TTaskBar
-		static TBalloonHint *_GsBalloonHint; //Globalna klasa podpowiedzi, zdefiniowana w konstruktorze klasy GsTreeBibleClass
-		//static TMemo *GsMemoDebug;	//Wskażnik na objekt typu TMemo, debuggera
+		static inline TImageList *_GsImgListData=nullptr; //Globalna lista grafik
+		static inline TImageList *_GsImgListDataDisable=nullptr; //Globalna lista grafik nieaktywnych
+		static inline TPageControl *_GsPageControl=nullptr; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki z narzędziami
+		static inline TTaskbar *_GsTaskBar=nullptr;	//Wskaźnik na objekt, klasy TTaskBar
+		static inline TBalloonHint *_GsBalloonHint=nullptr; //Globalna klasa podpowiedzi, zdefiniowana w konstruktorze klasy GsTreeBibleClass
 		//---  Wskaźniki na niektóre klasy
-		static GsReadBibleTextClass* pGsReadBibleTextClass;	//Wskaźnik na główną klasę
-		static GsTreeBibleClass* pGsTreeBibleClass; //Wskaźnik na klasę drzewa ksiąg bibliinych
-		static GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass; //Wskaźnik na klasę listy ulubionych wersetów, w głównym oknie
-		static GsLViewCommentsAllClass *pGsLViewCommentsAllClass; //Wskażnik na klasę listy komentarzy do wersetów, w głównym oknie
+		//static inline GsReadBibleTextClass* pGsReadBibleTextClass=nullptr;	//Wskaźnik na główną klasę
+		static inline GsTreeBibleClass* pGsTreeBibleClass=nullptr; //Wskaźnik na klasę drzewa ksiąg bibliinych
+		static inline GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr; //Wskaźnik na klasę listy ulubionych wersetów, w głównym oknie
+		static inline GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr; //Wskażnik na klasę listy komentarzy do wersetów, w głównym oknie
 		//---
-		static enReturnError EnErrorCode;
+		static inline enReturnError EnErrorCode=enR_NoError;
 	public:
-		static const UnicodeString GsExtendFileTranslateFull, //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
-															 GsExtendFileTranslateGrecOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
-															 GsExtendFileTranslateHbrOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
-															 GsExtendFileTranslateAll,//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
-															 GsExtendNoAsteriskFileTranslateFull, //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
-															 GsExtendNoAsteriskFileTranslateGrecOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
-															 GsExtendNoAsteriskFileTranslateHbrOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
-                               GsExtendNoAsteriskTextInfoTranslate; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
-		static UnicodeString			 //--- Nagłówki dla plików html
-															 GsHTMLHeaderText,	//Tekst nagłówka dla tekstu zwykłego
-															 GsHTMLHeaderSearch,//Tekst nagłówka dla tekstu, wyniku wyszukiwania
-															 GsHTMLHeaderDisplayVer;//Tekst nagłówka dla tekstu wybranego wersetu
-		static const unsigned char GsNumberBooks = 73,	//Maksymalna ilość wszystkich ksiąg
-															 GsNumberAllGroups = en_GrSearch_Count,//Ilość grup bibli, do wyszukiwania
+		static inline GsReadBibleTextClass* pGsReadBibleTextClass=nullptr;	//Wskaźnik na główną klasę
+		static const inline UnicodeString GsExtendFileTranslateFull="*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
+                   				 GsExtendFileTranslateGrecOrg="*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
+													 GsExtendFileTranslateHbrOrg="*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
+                   				 GsExtendFileTranslateAll="*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
+													 GsExtendNoAsteriskFileTranslateFull=".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
+                   				 GsExtendNoAsteriskFileTranslateGrecOrg=".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
+                   				 GsExtendNoAsteriskFileTranslateHbrOrg =".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
+														 GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
+		static UnicodeString inline //--- Nagłówki dla plików html
+															 GsHTMLHeaderText="",	//Tekst nagłówka dla tekstu zwykłego
+															 GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", //[03-08-2023]
+															 GsHTMLHeaderSearch="",//Tekst nagłówka dla tekstu, wyniku wyszukiwania
+															 GsHTMLHeaderDisplayVer="";//Tekst nagłówka dla tekstu wybranego wersetu
+		static const unsigned char inline GsNumberBooks = 73,	//Maksymalna ilość wszystkich ksiąg
+															 GsNumberAllGroups = en_GrSearch_Count,//Ilość grup biblii, do wyszukiwania
 															 GsNumberGroups = 3,	//Ilość grup w drzewie struktury bibli
 															 //Ilość ksiąg w poszczególnych grupach
-															 GsTableNameGroupBook[GsReadBibleTextData::GsNumberGroups]; //Ilość ksiąg w poszczególnych grupach bibli
-		static const UnicodeString GsNamesTableNameGroupBook[GsReadBibleTextData::GsNumberGroups]; //Nazwy ksiąg w poszczególnych grupack bibli
-		static GsTabSheetSelectVersClass *GsSheetListVers;//Globalny wskażnik na zakładkę z listąwybranych wersetów za pomocą klasy GsBarSelectVers
+															 GsTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] = {39, 27, 7}; //Ilość ksiąg w poszczególnych grupach bibli
+		static const inline UnicodeString GsNamesTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] =
+			{"Stary Testament", "Nowy Testament", "Księgi Apokryficzne"}; //Nazwy ksiąg w poszczególnych grupack bibli
+		static inline GsTabSheetSelectVersClass *GsSheetListVers=nullptr;//Globalny wskażnik na zakładkę z listąwybranych wersetów za pomocą klasy GsBarSelectVers
 		//---
-		static const UnicodeString GsNameAllRanges[en_GrSearch_Count]; //Tablica nazw zakresów wyszukiwania
-		static const PairsGroupBooks GsPairsGroupBible[en_GrSearch_Count]; //Tablica struktur PairsGroupBooks, danych dla grup ksiąg biblijnych,
-		static const InfoAllBooks GsInfoAllBooks[GsReadBibleTextData::GsNumberBooks];	//Tablica struktur InfoAllBooks, opisująca parametry ksiąg biblijnych
-		static bool IsInitLibrary; //Czy została zainicjowana bibliteka (moduł)
+		static const inline UnicodeString GsNameAllRanges[en_GrSearch_Count] =
+			{"Całe Pismo Święte", "Protestancki kanon Pisma Świętego", "Stary Testament", "Nowy Testament", "Apokryfy", "Własny zakres", "Pojedyńcza księga"}; //Tablica nazw zakresów wyszukiwania
+		static const inline PairsGroupBooks GsPairsGroupBible[en_GrSearch_Count] =
+		{
+			_PairsGroupBooks(0, 72),    //Wszystkie księgi wraz z apokryfami ->_PairsGroupBooks(const char ucStartRange, ucStopRange);
+			_PairsGroupBooks(0, 65),    //Wszystkie księgi, bez apokryfów
+			_PairsGroupBooks(0, 38),    //Księgi Starego Testamentu
+			_PairsGroupBooks(39, 65),   //Księgi Nowego Testamentu
+			_PairsGroupBooks(66, 72),   //Księgi apokryficzne
+			_PairsGroupBooks(-1, -1),   //Własny zakres
+			_PairsGroupBooks(-1, -1)    //Pojedyńcza księga
+		}; //Tablica struktur PairsGroupBooks, danych dla grup ksiąg biblijnych,
+		static const inline InfoAllBooks GsInfoAllBooks[GsReadBibleTextData::GsNumberBooks] =
+		{													//--- Stary Testament
+															InfoAllBooks(1,	"1 Mojżeszowa", 						    "1Moj", 	50), //0
+															InfoAllBooks(2, "2 Mojżeszowa", 							  "2Moj", 	40), //1
+															InfoAllBooks(3,	"3 Mojżeszowa", 							  "3Moj", 	27), //2
+															InfoAllBooks(4,	"4 Księga Mojżeszowa", 		 	 	  "4Moj", 	 36), //3
+															InfoAllBooks(5,	"5 Księga Mojżeszowa",     	 	  "5Moj",   34), //4
+															InfoAllBooks(6,	"Księga Jozuego",          			"Joz",    24), //5
+															InfoAllBooks(7,	"Księga Sędziów",          			"Sędź",   21), //6
+															InfoAllBooks(8,	"Księga Rut",              			"Rut",    4),  //7
+															InfoAllBooks(9,	"1 Księga Samuela",        			"1Sam",   31), //8
+															InfoAllBooks(10,	"2 Księga Samuela",        			"2Sam",   24), //9
+															InfoAllBooks(11,	"1 Księga Królewska",        		"1Król",  22), //10
+															InfoAllBooks(12,	"2 Księga Królewska",        		"2Król",  25), //11
+															InfoAllBooks(13,	"1 Księga Kronik",           		"1Kron",    29), //12
+															InfoAllBooks(14,	"2 Księga Kronik",           		"2Kron",    36), //13
+															InfoAllBooks(15,	"Księga Ezdrasza",           		"Ezdr",   10), //14
+															InfoAllBooks(16,	"Księga Nechemiasza",        		"Nech",   13), //15
+															InfoAllBooks(17,	"Księga Estery",             		"Est",    10), //16
+															InfoAllBooks(18,	"Księga Joba",               		"Job",    42), //17
+															InfoAllBooks(19,	"Księga Psalmów",            		"Ps",     150),//18
+															InfoAllBooks(20,	"Przypowieści Salomona",     		"Przyp",  31), //19
+															InfoAllBooks(21,	"Księga Kaznodziei Salomona",		"Kazn",   12), //20
+															InfoAllBooks(22,	"Pieśni nad Pieśniami",      		"PnP",    8),  //21
+															InfoAllBooks(23,	"Księga Izajasza",           		"Iz",     66), //22
+															InfoAllBooks(24,	"Księga Jeremiasza",         		"Jer",    52), //23
+															InfoAllBooks(25,	"Treny",                     		"Tren",   5),  //24
+															InfoAllBooks(26,	"Księga Ezechiela",          		"Ez",     48), //25
+															InfoAllBooks(27,	"Księga Daniela",            		"Dan",    14), //26
+															InfoAllBooks(28,	"Księga Ozeasza",            		"Oz",     14), //27
+															InfoAllBooks(29,	"Księga Joela",              		"Jo",     3),  //28
+															InfoAllBooks(30,	"Księga Amosa",              		"Am",     9),  //29
+															InfoAllBooks(31,	"Księga Abdiasza",           		"Abd",    1),  //30
+															InfoAllBooks(32,	"Księga Jonasza",            		"Jon",    4),  //31
+															InfoAllBooks(33,	"Księga Micheasza",          		"Mich",   7),  //32
+															InfoAllBooks(34,	"Księga Nahuma",             		"Nah",    3),  //33
+															InfoAllBooks(35,	"Księga Habakuka",           		"Hab",    3),  //34
+															InfoAllBooks(36,	"Księga Sofoniasza",         		"Sof",    3),  //35
+															InfoAllBooks(37,	"Księga Aggeusza",           		"Agg",    2),  //36
+															InfoAllBooks(38,	"Księga Zachariasza",        		"Zach",   14), //37
+															InfoAllBooks(39,	"Księga Malachiasza",        		"Mal",    3),  //38
+															//--- Nowy Testament
+															InfoAllBooks(40,	"Ewangelia Mateusza",    		 		"Mt",     28), //39
+															InfoAllBooks(41,	"Ewangelia Marka",           		"Mk",     16), //40
+															InfoAllBooks(42,	"Ewangelia Łukasza",         		"Łk",     24), //41
+															InfoAllBooks(43,	"Ewangelia Jana",            		"Jan",    21), //42
+															InfoAllBooks(44,	"Dzieje Apostolskie",        		"DzAp",   28), //43
+															InfoAllBooks(45,	"List Pawła do Rzymian",     		"Rzym",   16), //44
+															InfoAllBooks(46,	"1 List Pawła do Koryntian", 		"1Kor",   16), //45
+															InfoAllBooks(47,	"2 List Pawła do Koryntian", 		"2Kor",   13), //46
+															InfoAllBooks(48,	"List Pawła do Galacjan",    		"Gal",    6),  //47
+															InfoAllBooks(49,	"List Pawła do Efezjan",     		"Efez",   6),  //48
+															InfoAllBooks(50,	"List Pawła do Filipian",    		"Filip",  4),  //49
+															InfoAllBooks(51,	"List Pawła do Kolosan",     		"Kol",    4),  //50
+															InfoAllBooks(52,	"1 List Pawła do Tesaloniczan",	"1Tes",   5),  //51
+															InfoAllBooks(53,	"2 List Pawła do Tesaloniczan",	"2Tes",   3),  //52
+															InfoAllBooks(54,	"1 List Pawła do Tymoteusza",  	"1Tym",   6),  //53
+															InfoAllBooks(55,	"2 List Pawła do Tymoteusza",  	"2Tym",   4),  //54
+															InfoAllBooks(56,	"List Pawła do Tytusa",         "Tyt",    3),  //55
+															InfoAllBooks(57,	"List Pawła do Filemona",       "Filem",  1),  //56
+															InfoAllBooks(58,	"List do Hebrajczyków",         "Hbr",    13), //57
+															InfoAllBooks(59,	"List Jakuba",                  "Jak",    5),  //58
+															InfoAllBooks(60,	"1 List Piotra",                "1Pt",    5),  //59
+															InfoAllBooks(61,	"2 List Piotra",                "2Pt",    3),  //60
+															InfoAllBooks(62,	"1 List Jana",                  "1Jan",   5),  //61
+															InfoAllBooks(63,	"2 List Jana",                  "2Jan",   1),  //62
+															InfoAllBooks(64,	"3 List Jana",                  "3Jan",   1),  //63
+															InfoAllBooks(65,	"List Judy",                    "Jud",    1),  //64
+															InfoAllBooks(66,	"Objawienie Jana",              "Obj",    22), //65
+															//--- Apokryfy
+															InfoAllBooks(67,	"Księga Tobiasza",              "Tob",    14), //66
+															InfoAllBooks(68,	"Księga Judyty",                "Judyt",  16), //67
+															InfoAllBooks(69,	"Księga I Machabejska",         "1Mach",  16), //68
+															InfoAllBooks(70,	"Księga II Machabejska",        "2Mach",  15), //69
+															InfoAllBooks(71,	"Księga Mądrości",              "Mądr",   19), //70
+															InfoAllBooks(72,	"Księga Syracha",               "Syr",    51), //71
+															InfoAllBooks(73,	"Księga Barucha",               "Bar",    6)   //72
+		};	//Tablica struktur InfoAllBooks, opisująca parametry ksiąg biblijnych
+		static bool inline IsInitLibrary=false; //Czy została zainicjowana bibliteka (moduł)
 		//---
 		//Metoda zwraca wskaźnik na globalną listę grafik
 		inline static TImageList *__fastcall GetImageListData() {if(GsReadBibleTextData::IsInitLibrary)  return GsReadBibleTextData::_GsImgListData; else return 0;}
@@ -214,8 +318,9 @@ class GsReadBibleTextData
 		static unsigned char __fastcall CountTranslates();	//Metoda zwraca ilość tłumaczeń
 		static void __fastcall GetInfoNameTranslate(const unsigned char i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
 		static void __fastcall WriteCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
+		static void __fastcall GetTextHTMLCurrentSheet(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 		static GsReadBibleTextItem *__fastcall GetTranslate(const unsigned char cucNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
-		static void __fastcall DisplayListText(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
+		//static void __fastcall DisplayListText(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
 		static THashedStringList *__fastcall GetSelectBoksInTranslate(GsReadBibleTextItem *pGsReadBibleTextItem, const signed char scIndexBook); //Wyodrębnienie konkretnej księgi(sciIndex), z wybranej struktury tłumaczenia (GetTranslate)
 		static unsigned int __fastcall GetCountVer(const int iNumberTrans, const signed char scIndexBook, const unsigned char cucChapt);	//Metoda zwraca ilość wersetów, dla danego tłumaczenie, księgi i rozdziału
 		//Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
@@ -231,14 +336,23 @@ class GsReadBibleTextData
 		static void __fastcall GetAdressFromId(UnicodeString &_ustrResult, int _iBook, int _iChapt, int _iVers=0); //Konwersja z podanych informacji typu int, numeru księgi, rozdziału i wersetu, na ciąg identyfikacyjny (001001001)
 		//Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
 		static TList *__fastcall GetListAllTrChap();
+		//Metoda wyświetla zakres wersetów z wybranego tłumaczenia w dowolnym objekcie, klasy TWebBrowser
+		static UnicodeString __fastcall DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
+			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay);
+		//Metoda inicjuje zmienne dotyczące historii [30-07-2023]
+		static void InitHistoryList();
+		//Metoda dodajaca informacje o otwartym rozdziale do listy historii
+		static void AddItemHistoryList(const UnicodeString _ustrTextItem);
 };
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
  ****************************************************************************/
+const int CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER = 3;
 class MyObjectVers : public TObject
 {
 	friend class GsReadBibleTextClass; //Klasa GsReadBibleTextClass ma pełny dostęp
 	friend class GsReadBibleTextItem;  //Klasa GsReadBibleTextItem ma pełny dostęp
+	friend class GsHashedStringListItem; //Przyjaźń - klasa GsHashedStringListItem wywołuje destruktor
 
 	__fastcall MyObjectVers(const UnicodeString &HeadVers);
 	virtual __fastcall ~MyObjectVers();
@@ -247,6 +361,8 @@ class MyObjectVers : public TObject
 		UnicodeString BookChaptVers,	//Identfikacja(adres)wersetu w wersji klasycznej (1Moj 1:1)
 									AdressString,		//Adres wersetu w wersji zakodowanej (001001001)
 									NameTranslate;	//Nazwa tłumaczenia
+		wchar_t ReplaceAdressIsNotValidNumber[CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER]; //Dodatek do adresu wersetu(numeru wersetu), gdy w tłumaczeniu znajduje się
+                                           //dodatek w formie litery
 		unsigned char ucIdTranslate,  //Numer tłumaczenia
 									ucBook,   //Numer księgi
 									ucChapt,  //Numer rozdziału
@@ -254,40 +370,68 @@ class MyObjectVers : public TObject
 									ucIndexVersOnList;//Indeks wersetu w liście wersetów dla bierzącej księgi
 };
 /****************************************************************************
- *                     Główna klasa GsReadBibleTextItem                      *
+ *                     Główna klasa GsReadBibleTextItem                     *
  ****************************************************************************/
+  //Klasa GsHashedStringListItem
+	//Klasa dziedziczy z THashedStringList i jest obsługiwana przez klasę GsReadBibleTextItem
+class GsHashedStringListItem : public THashedStringList //[07-08-2023]
+{
+	friend class GsReadBibleTextItem; //Przyjeźń - klasa GsReadBibleTextItem wywołuje konstruktor
+	//---
+	__fastcall GsHashedStringListItem();
+	__fastcall virtual ~GsHashedStringListItem();
+	//---
+	virtual void __fastcall Clear();
+};
 //Typy tłumaczeń (w języku polskim, lub oryginalnym)
 enum EnTypeTranslate {enTypeTr_Full=0x10,	//Cały przekład Pisma Świętego
 											enTypeTr_Greek,	//Tekst oryginalny Nowego Testamentu w języku greckim
 											enTypeTr_Hebrew	//Tekst oryginalny Starego Testamentu w języku hebrajskim
 										 };
-class GsReadBibleTextItem
+class GsReadBibleTextItem : public TObject
 {
 	friend class GsReadBibleTextClass;
 	friend class GsReadBibleTextData;
 	friend class GsTabSheetClass;
 	friend class GsBarSelectVers;
+	friend class GsListItemTranslates; //Przyjaźń - GsListItemTranslates wywołuje destruktor
 	//---
 	GsReadBibleTextItem(const UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
 	virtual ~GsReadBibleTextItem();
 	//---
-	THashedStringList *_pHListAllListBooks[GsReadBibleTextData::GsNumberBooks];	//Lista wskaźników do wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
-	THashedStringList *__fastcall GetSelectBooks(const unsigned char uiSelectBook=0); //Metoda zwraca wskaźnik na konkrętną księge
+	//Tablica wskaźników do klasy THashedStringList wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
+	GsHashedStringListItem *_pGsHListAllListBooks[GsReadBibleTextData::GsNumberBooks];  //73 wskaźniki (tablica) na GsHashedStringListItem
+	GsHashedStringListItem *__fastcall GetSelectBooks(const unsigned char uiSelectBook=0); //Metoda zwraca wskaźnik na konkrętną księge
 	bool IsActiveTranslate;	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 	unsigned char ucCountBooks, //Ilość ksiąg w tłumaczeniu (oryginalne tłumaczenia, katolickie)
 								ucStartBook,	 //Od numeru jakiej księgi zaczyna się tłumaczenie
 								ucIndexTranslate;//Numer tłumaczenia
 	public:
 		EnTypeTranslate enTypeTranslate; //Typ tłumaczenia, typu EnTypeTranslate (całe pismo, grecki nt. itd.)
-		UnicodeString NameTranslate;	//Nazwa tłumaczenia
+		UnicodeString NameTranslate,	//Nazwa tłumaczenia
+									PathInfoTranslate; //Ścieżka do pliku informacji o tłumaczeniu
+		int uiAllVersCount;  //Ilość wszystkich wersetów
 };
 /****************************************************************************
  *                        Klasa GsReadBibleTextClass                        *
  ****************************************************************************/
+	//Klasa GsListItemTranslates
+	//Klasa dziedziczy z TList i jest obsługiwana przez klasę GsReadBibleTextClass
+class GsListItemTranslates : public TList //[08-08-2023]
+{
+	friend class GsReadBibleTextClass; //Przyjaźń - GsReadBibleTextClasswywołuje konstruktora i dectruktora
+	//---
+	__fastcall GsListItemTranslates();
+	__fastcall virtual ~GsListItemTranslates();
+	//---
+	virtual void __fastcall Clear(); //Tylko wywołanie TList::Clear();
+	protected:
+		virtual void __fastcall Notify(void * Ptr, TListNotification Action);
+};
 //Stałe dla metody GetCountTranslates, informującą czy zwracana ilość przekładów będzie dotyczyła wszystkich tłumaczeń,
 //tylko polskich, czy oryginalnych
 //enum EnTypeGetTranslates {enTypeGTr_All = 0x20, enTypeGTr_Pol, enTypeGTr_Org};
-class GsReadBibleTextClass
+class GsReadBibleTextClass : public TObject
 {
 	friend class GsTabSheetClass;
 	friend class GsTreeBibleClass;
@@ -301,29 +445,30 @@ class GsReadBibleTextClass
 	virtual ~GsReadBibleTextClass();
 		//---
 	inline static UnicodeString __fastcall GetVersionClass() {return Format("Biblioteka: \"GsReadBibleTextClass\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
-	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich pzekładów
-	void __fastcall DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser=ciSelectViewAll); //Metoda wyświetla w formie html, dowolną listę wersetów
+	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich przekładów
 	void __fastcall DisplayAllTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate=-1); //Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
 	void __fastcall SaveCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
-	inline TList *__fastcall GetListAllTranslates() {return this->_ListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
-	inline unsigned int __fastcall GetCountTranslates() {return (unsigned int)this->_ListItemsTranslates->Count;};
+	inline TList *__fastcall GetListAllTranslates() {return this->_GsListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
+	inline unsigned int __fastcall GetCountTranslates() {return (unsigned int)this->_GsListItemsTranslates->Count;};
 	GsReadBibleTextItem *__fastcall GetTranslateClass(const int iNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 	void __fastcall _GetInfoNameTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
 	THashedStringList *__fastcall GetSelectBookTranslate(const int iGetTranslate, const int iGetBook); //Metoda zwraca wskażnik THashedStringList na pozycje określonej księgi i tłumaczenia
 	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook, const EnTypeTranslate _EnTypeTranslate=enTypeTr_Greek); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
 	inline THashedStringList *GetListInterlinearGrec() {return this->_SListInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
-	void __fastcall ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, const UnicodeString _astrColor,
-			THashedStringList *_HStringInput, TMemoryStream *_pMemoStrResult=0, bool IsNameTranslates=true);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
+	void __fastcall _ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
 	bool __fastcall _LoadAllTranslates(const UnicodeString _PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.
 	void __fastcall _ClearListAllTrChap(const bool bIsRemoveList=false);	//Zwolnienie zawartości listy _ListAllTrChap.
-	void __fastcall _GlobalDragDrop(TObject *Sender, TObject *Source, int X, int Y);
-	void __fastcall _GlobalDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
+
+	void __fastcall _GlobalTextDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
 	void __fastcall _DeleteSelectTranslate(const int iNumberTrans); //Skasowanie wybranego tłumaczenia
 	//---
-	TList *_ListItemsTranslates,	//Lista tłumaczeń. Klas GsReadBibleTextItem
-				*_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
+	GsListItemTranslates *_GsListItemsTranslates;	//Lista tłumaczeń. Klas GsReadBibleTextItem
+	TList *_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 	THashedStringList *_SListInterLinear; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	unsigned int uiCountPol, uiCountOryg; //Ilość polskich i oryginalnych tłumaczeń
+
+	public:
+		void __fastcall GlobalTextDragDrop(TObject *Sender, TObject *Source, int X, int Y); //Publiczny ze względu na umożliwienie dostępu z głównego okna
 };
 /****************************************************************************
  *                        Klasalasa GsTreeNodeClass                         *
@@ -426,18 +571,35 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSelectBoxChapter(System::TObject* Sender);
 	void __fastcall _OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
 	void __fastcall _OnSaveComments(System::TObject* Sender);
+	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+	void __fastcall _DisplayInfosTranslates(const int iTab=-1); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
+
+	void __fastcall _InitToolBarAllButtons(TPanel *pPanelParent); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
+	void __fastcall _InitToolBarViewText(TPanel *pPanelParent); //Inicjalizacja objektu klasy TToolbar do zmieniania widoków wyświetlanych wersetów
+	void __fastcall _InitCBoxChaptersSelect(TPanel *pPanelParent); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
+	void __fastcall _InitPanelInfoTranslation(); //Panel z objektami informacyjnymi o wybranym tłumaczeniu
+	void __fastcall _InitPanelTextBible(TPanel *pPanelParent); //Kontrolki dotyczące tekstu biblijnego: TProgressBar,
+																															//TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
+	void __fastcall _OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL); //[31-07-2023]
+
+	void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
 	//---Objekty na zakładce
 	TToolBar *pToolBar, *pToolBarText;
 	GsTabSetClass	*pGsTabSetClass; //Klasa zakładek, tłumaczeń
-	TWebBrowser *pWebBrowser;
+	TWebBrowser *pWebBrowser,
+							*pWebBrowserInfoTranslations;
 	TComboBox *pComboBox; //Lista do wyboru konkretnego rodziału, już bybranej księgi
 	TProgressBar *pProgressBar; //Pionowy wskaźnik, umiejscowienia pozycji w rozdziale
 	TStringBuilder *pStrBuilderHtml;	//Tekst html aktualnie wczytanego rozdziału z wybranej księgi
+	THashedStringList *pHSListActualText; //Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+																				//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 	GsListBoxSelectedVersClass *pLBoxSelectText;	//Lista ulubionych wersetów
 	GsEditorClass *pGsEditorClass;               //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd;
+  TPanel *pPanelInfoTraslates;
 	//--- Niektóre przyciski na TToolbarach
-	TToolButton *pToolButtonEdit;	//Przycisk do edycji
+	TToolButton *pToolButtonEdit,	//Przycisk do edycji
+							*pToolButtonInfoTranslates;//Przycisk do informacji o przekładach
 	public:
 		unsigned char _ShucIndexBook,       //Numer księgi
 									_ShucIndexChapt;      //Numer rozdziału
@@ -539,8 +701,8 @@ class GsPanelSelectVers  : public TCustomPanel
 		__fastcall virtual ~GsPanelSelectVers();
 		//---
 		//Widoczność (true), lub nie (false), możliwości wyboru tłumaczenie
-		__property bool IsVisibleSetTranslate = {read=FIsVisibleSetTranslate, write=_SetDisplayTranslate, default=false}; //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
-		__property bool IsEditComments = {read=FIsEditComments, write=_SetEditComments, default=false}; //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
+		__property bool IsVisibleSetTranslate = {read=FIsVisibleSetTranslate, write=_SetDisplayTranslate, default=true}; //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
+		__property bool IsEditComments = {read=FIsEditComments, write=_SetEditComments, default=true}; //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
 		__property bool IsVisibleAccessories = {read=FIsVisibleAccessories, write=_SetIsVisibleAccessories, default=false}; //Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
 		__property bool IsVisibleIONoteEditors = {read=FVisibleIONoteEditors, write=_SetVisibleIONoteEditors, default=false};//Czy mają być wyświetlane w edytorze notatek przyciski (IO) zapisu i odczytu.
 		//Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
@@ -556,16 +718,16 @@ class GsPanelSelectVers  : public TCustomPanel
 	private:
 		GsBarSelectVers *_pGsBarSelectVers;
 		GsEditorClass *_pEditComment; //Zlikwidować, lub zamienić nas wskaźnik, na klasę GsEditorClass
-		bool FIsVisibleSetTranslate, //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
-				 FIsPanelText,      //Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
-				 FIsEditComments,   //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
+		bool FIsVisibleSetTranslate=true, //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
+				 FIsPanelText=true,      //Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
+				 FIsEditComments=true,   //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (true)
 				 FIsVisibleAccessories,//Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
 				 FVisibleIONoteEditors,//Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
 				 FbSelectComment; //Wybrałeś komentarz w liście komentarzy w głównym oknie
 		TWebBrowser *_pWebBrowser;
 		TStringGrid *_pSGridInterlinearVers; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
 		TPanel *_pPanelCBoxes; //Panel przełączników
-		TCheckBox *_pCBoxIsEditComment,
+		TCheckBox *_pCBoxIsEditComment,  // TUTAJ
 							*_pCBoxIsDisplayTranslates,
 							*_pCBoxIsAccess;
 		//---
@@ -605,7 +767,7 @@ class GsListBoxVersClass : public TCustomListBox
 		__fastcall virtual ~GsListBoxVersClass();
 	protected:
 		void __fastcall DrawItem(int Index, const TRect &Rect, TOwnerDrawState State);
-		//void __fastcall MeasureItem(int Index, int &Height);
+		void __fastcall MeasureItem(int Index, int &Height);
 		DYNAMIC void __fastcall Resize(void);
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
@@ -616,18 +778,18 @@ class GsListBoxVersClass : public TCustomListBox
 *                 dla klasy GsLViewDictionaryClass.                         *
 *****************************************************************************/
 //--- Całkowicie prywatna klasa, służaca jako dane do każdego słowa w słowniku grecko-polskim
-class DataGrecWordDictClass
+class DataGrecWordDictClass : public TObject
 {
 	friend class GsLViewDictionaryClass;
 
-	__fastcall DataGrecWordDictClass()
+	DataGrecWordDictClass()
 	{
 		this->pHSListVers = new THashedStringList();
 		if(!this->pHSListVers) throw(Exception("Błąd funkcji THashedStringList"));
 	};
-	__fastcall virtual ~DataGrecWordDictClass()
+	virtual ~DataGrecWordDictClass()
 	{
-		delete this->pHSListVers; this->pHSListVers = 0;
+		delete this->pHSListVers; this->pHSListVers = nullptr;
 	};
 	//---
 	bool IsDataEmpty;	//Domyślnie true.Klasa jeszcze nie wypełniona, przy pierwszym wypełnieniu, zmienia wartość na false
@@ -670,7 +832,7 @@ class GsLViewDictionaryClass : public TCustomListView
  *  Klasa wizualna listy, która znajduje sie na zkładce                                *
  *  okna gównego MBW_TabSheetAllCommentsVers;                                          *
  ***************************************************************************************/
-class ListComments//Struktura pojedyńczego komentarz
+class ListComments : public TObject//Struktura pojedyńczego komentarz
 {
 	friend class GsLViewCommentsAllClass;
 	ListComments(const UnicodeString _ustrName);

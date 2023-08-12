@@ -7,8 +7,7 @@
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
-//#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
-#include "GsReadBibleTextClass\GsSchemeVersClass.h"
+#include "MyBibleLibrary\GsSchemeVersClass.h"
 #include <Vcl.ActnCtrls.hpp>
 #include <Vcl.ActnMan.hpp>
 #include <Vcl.ToolWin.hpp>

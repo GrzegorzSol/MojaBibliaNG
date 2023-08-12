@@ -1,5 +1,3 @@
-//---------------------------------------------------------------------------
-
 #ifndef uDictGrecPolWindowH
 #define uDictGrecPolWindowH
 //---------------------------------------------------------------------------
@@ -8,7 +6,7 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 //---------------------------------------------------------------------------
 class TDictGrecPolWindow : public TForm
 {

@@ -23,10 +23,12 @@
 
 #pragma hdrstop
 
-#include "GsReadBibleTextClass.h"
+#include "MyBibleLibrary.h"
 #include <System.IOUtils.hpp>
+#include <System.StrUtils.hpp>
 #include "uGlobalVar.h"
-#include "GsCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
+#include "MyBibleCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
+#include <Mshtml.h> //[31-07-2023]
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -36,8 +38,9 @@
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug("");
 #endif
-#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
+[30-07-2023]
 */
+const int ciMaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
 /****************************************************************************
  *                    KLASA MyObjectVers                                    *
  ****************************************************************************/
@@ -53,8 +56,21 @@ __fastcall MyObjectVers::MyObjectVers(const UnicodeString &HeadVers)
 	this->ucBook = HeadVers.SubString(1, 3).ToInt() - 1,//Księgi są numerowane w pliku z tłumaczeniem od 1, a teblice od 0.
 	this->ucChapt = HeadVers.SubString(4, 3).ToInt(),
 	this->ucVers = HeadVers.SubString(7, 3).ToIntDef(0);
+
+	if(this->ucVers == 0)
+	{
+		int iNextVerify=0;
+		wcsncpy(this->ReplaceAdressIsNotValidNumber, HeadVers.SubString(7, 3).LastChar(), 1);
+		this->ucVers = HeadVers.SubString(7, 2).ToIntDef(0);
+
+		if(this->ucVers == 0)
+		{
+			wcsncpy(this->ReplaceAdressIsNotValidNumber, HeadVers.SubString(8, 2).c_str(), 2);
+      this->ucVers = HeadVers.SubString(7, 1).ToIntDef(0);
+    }
+  }
   //----- Tworzenie adresu wersetu
-	this->BookChaptVers = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->ucBook].ShortNameBook, this->ucChapt, this->ucVers)));
+	this->BookChaptVers = Format("%s %d:%d%s", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->ucBook].ShortNameBook, this->ucChapt, this->ucVers, this->ReplaceAdressIsNotValidNumber )));
 }
 //---------------------------------------------------------------------------
 __fastcall MyObjectVers::~MyObjectVers()
@@ -65,40 +81,93 @@ __fastcall MyObjectVers::~MyObjectVers()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+//	#if defined(_DEBUGINFO_)
+//		static int ciMyLicz;
+//		GsDebugClass::WriteDebug(Format("MyObjectVers::~MyObjectVers()->Usunięto - ciMyLicz: %d", ARRAYOFCONST(( ciMyLicz ))));
+//		ciMyLicz++;
+//	#endif
 }
 /****************************************************************************
- *                          Klasa ReadBibletextItem                         *
+ *                          Klasa GsReadBibletextItem                       *
  ****************************************************************************/
+//Klasa GsHashedStringListItem //[07-08-2023]
+//Klasa dziedziczy z THashedStringList i jest obsługiwana przez klasę GsReadBibleTextItem
+__fastcall GsHashedStringListItem::GsHashedStringListItem()
+/**
+	OPIS METOD(FUNKCJI): Konstruktor klasy GsHashedStringListItem
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
 
+}
+//---------------------------------------------------------------------------
+__fastcall GsHashedStringListItem::~GsHashedStringListItem()
+/**
+	OPIS METOD(FUNKCJI): Destruktor klasy GsHashedStringListItem
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->Clear();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsHashedStringListItem::Clear()
+/**
+	OPIS METOD(FUNKCJI): Wirtualna klasa wywolywana podczas czyszczenia całej zawartosci
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	MyObjectVers *_pMyOjectVers=nullptr;
+//  #if defined(_DEBUGINFO_)
+//		static int ciLicz;
+//		GsDebugClass::WriteDebug(Format("GsHashedStringListItem::Clear()->Usunięto - %d - Wersetow: %d", ARRAYOFCONST(( ciLicz, this->Count ))));
+//		ciLicz++;
+//	#endif
+	for(int i=0; i<this->Count; i++)
+	{
+		_pMyOjectVers = dynamic_cast<MyObjectVers *>(this->Objects[i]);
+		if(_pMyOjectVers) {delete _pMyOjectVers; _pMyOjectVers = nullptr;}
+  }
+
+	THashedStringList::Clear();
+}
+	//=========================================================================
 GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex)
 	: IsActiveTranslate(true),	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 		enTypeTranslate(IdenTypeTranslate)
 /**
-	OPIS METOD(FUNKCJI): Konstruktor klasy ReadBibletextItem
+	OPIS METOD(FUNKCJI): Konstruktor klasy GsReadBibletextItem
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH: UnicodeString _PathTransl - Scieżka dostępu do tłumaczenia
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  THashedStringList *_tempHStringList=0; //Hashed String lista z całym tłumaczeniem
+  THashedStringList *_tempHStringList=nullptr; //Hashed String lista z całym tłumaczeniem
 	int iGetBook=0;
-	//---
+	//Ścieżka do pliku informacji o tłumaczeniu
+	this->PathInfoTranslate = Format("%s", ARRAYOFCONST(( TPath::ChangeExtension(_PathTransl, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate) )));
+
 	try
 	{
 		this->ucIndexTranslate = cucIndex; //Indeks tłumaczenia
 		_tempHStringList = new THashedStringList();	//String lista z całym tłumaczeniem
 		if(!_tempHStringList) throw(Exception("Błąd inicjalizacji listy na pojedyńczą księge tłumaczenia"));
 		_tempHStringList->LoadFromFile(_PathTransl, TEncoding::UTF8); //Wczytanie całego tłumaczenia
+		this->uiAllVersCount = _tempHStringList->Count - 1;  //Ilość wszystkich wersetów(pierwszy werset to nazwa tłumaczenia)
 		this->NameTranslate = _tempHStringList->Strings[0]; //Nazwa tłumaczenia
-		//----- Zarezerwowanie tablicy objektów, klasy THashedStringList dla poszczególnych ksiąg.
+		//----- Zarezerwowanie tablicy objektów, klasy GsHashedStringListItem dla poszczególnych ksiąg.
 		for(int iIndex=0; iIndex<GsReadBibleTextData::GsNumberBooks; iIndex++)
 		{
-      //Tworzenie objektów, klasy THashedStringList, dla każdej księgi, wczytanego tłumaczenia
-			this->_pHListAllListBooks[iIndex] = new THashedStringList();
-			if(!this->_pHListAllListBooks[iIndex]) throw(Exception("Błąd inicjalizacji listy na pojedyńczą księge tłumaczenia"));
+			//Tworzenie tablicy wskaźników do klasy GsHashedStringListItem, dla każdej księgi, wczytanego tłumaczenia
+			this->_pGsHListAllListBooks[iIndex] = new GsHashedStringListItem(); //Inicjowanie 73 wskaźników
+			if(!this->_pGsHListAllListBooks[iIndex]) throw(Exception("Błąd inicjalizacji listy na pojedyńczą księge tłumaczenia"));
 		}
-    //----- Wczytanie poszczególnych ksiąg do poszczególnych string list
+		//----- Wczytanie poszczególnych ksiąg do poszczególnych string list
 		for(int iIndex=1; iIndex<_tempHStringList->Count; iIndex++)
 		//Przegląd całego tekstu tłumaczenia, w celu wyodrębnienia poszczególnych ksiąg, i umieszczenia ich w odpowiednich string listach
     //Pętla rozpoczyna się od pozycji 1, gdyż pozycja 0, to nazwa tłumaczenia.
@@ -111,43 +180,41 @@ GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTransl
 			pMyObjectVers->ucIdTranslate = cucIndex; //Indeks tłumaczenia
 			if(iIndex==1) this->ucStartBook = iGetBook; //Początkowy numer księgi (od jakiej księgi zaczyna się tłumaczenie)
 			//Umieszczenie tekstu zależnie od numeru księgi, w odpowiedniej string liście, o indeksie równym numerowi księgi
-			this->_pHListAllListBooks[iGetBook]->AddObject(_tempHStringList->Strings[iIndex], pMyObjectVers);
+			this->_pGsHListAllListBooks[iGetBook]->AddObject(_tempHStringList->Strings[iIndex], pMyObjectVers);
 			//Indeks wersetu w liście wersetów dla bierzącej księgi
-			pMyObjectVers->ucIndexVersOnList = this->_pHListAllListBooks[iGetBook]->Count - 1;
+			pMyObjectVers->ucIndexVersOnList = this->_pGsHListAllListBooks[iGetBook]->Count - 1;
 		}
 		this->ucCountBooks = iGetBook - this->ucStartBook + 1; //Ilość ksiąg w tłumaczeniu
 	}
 	__finally
 	{
-		if(_tempHStringList) {delete _tempHStringList; /*_tempHStringList = 0;*/}
+		if(_tempHStringList) {delete _tempHStringList; _tempHStringList = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
 GsReadBibleTextItem::~GsReadBibleTextItem()
 /**
-	OPIS METOD(FUNKCJI): Destruktor klasy ReadBibletextItem
+	OPIS METOD(FUNKCJI): Destruktor klasy GsReadBibletextItem
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	THashedStringList *_pHSList;//=0;
-	MyObjectVers *_pMyOjectVers;//=0;
+	GsHashedStringListItem *_pGsHSList=nullptr;
+	MyObjectVers *_pMyOjectVers=nullptr;
 	for(int iIndex=0; iIndex<GsReadBibleTextData::GsNumberBooks; iIndex++)
+	//Kolejne wskaźniki na objekt GsHashedStringListItem, z tablicy wszystkich ksiąg tłumaczenia
 	{
-		_pHSList = this->_pHListAllListBooks[iIndex];
-		for(int i=0; i<_pHSList->Count; i++)  //Ilość wersetów w danej księdze
-		//Zwolnienie objektów klasy MyObjectVers z każdego wczytanego wersetu.
-		{
-			_pMyOjectVers = dynamic_cast<MyObjectVers *>(_pHSList->Objects[i]);
-			if(_pMyOjectVers) {delete _pMyOjectVers;}
-		}
-		//Zwolnienie całej THashedStringList(y) z całą księgą (wszystkimi wersetami)
-		if(_pHSList) {delete _pHSList;}
+		_pGsHSList = this->_pGsHListAllListBooks[iIndex]; //Wskaźnik na objekt THashedStringList, z listą wszystkich wersetów danej księgi
+		//Zwolnienie całej GsHashedStringListItem(y) z całą księgą (wszystkimi wersetami)
+		if(_pGsHSList) {delete _pGsHSList; _pGsHSList = nullptr;}
 	}
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("GsReadBibleTextItem::~GsReadBibleTextItem()->Usunięto: %s", ARRAYOFCONST((this->NameTranslate))));
+//	#endif
 }
 //---------------------------------------------------------------------------
-THashedStringList *__fastcall GsReadBibleTextItem::GetSelectBooks(const unsigned char uiSelectBook)
+GsHashedStringListItem *__fastcall GsReadBibleTextItem::GetSelectBooks(const unsigned char uiSelectBook)
 /**
 	OPIS METOD(FUNKCJI): Metoda zwraca wskaźnik na konkrętną księge
 	OPIS ARGUMENTÓW:
@@ -157,11 +224,81 @@ THashedStringList *__fastcall GsReadBibleTextItem::GetSelectBooks(const unsigned
 {
 	//if(uiSelectBook<0 || (uiSelectBook>=GsReadBibleTextData::GsNumberBooks)) return 0; //Przekroczenie zakresu
 	if(uiSelectBook < this->ucStartBook || (uiSelectBook >= (this->ucCountBooks + this->ucStartBook))) return 0;
-	return this->_pHListAllListBooks[uiSelectBook];
+	return this->_pGsHListAllListBooks[uiSelectBook];
 }
 /****************************************************************************
- *                     Główna klasa ReadBibleTextClass                      *
+ *                     Główna klasa GsReadBibleTextClass                      *
  ****************************************************************************/
+	//Klasa GsListItemTranslates //[08-08-2023]
+	//Klasa dziedziczy z TList i jest obsługiwana przez klasę GsReadBibleTextClass
+__fastcall GsListItemTranslates::GsListItemTranslates()
+/**
+	OPIS METOD(FUNKCJI): Konstruktor klasy GsListItemTranslates
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+
+}
+//---------------------------------------------------------------------------
+__fastcall GsListItemTranslates::~GsListItemTranslates()
+/**
+	OPIS METOD(FUNKCJI): Destruktor klasy GsListItemTranslates
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->Clear();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsListItemTranslates::Clear()
+/**
+	OPIS METOD(FUNKCJI): Wirtualna klasa wywolywana podczas czyszczenia całej zawartosci
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TList::Clear();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsListItemTranslates::Notify(void * Ptr, TListNotification Action)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(Ptr);
+	if(!pGsReadBibleTextItem) return;
+  //---
+	if(Action == lnDeleted)
+	{
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("\"%s\"-Notify->this->Count-%d", ARRAYOFCONST(( pGsReadBibleTextItem->NameTranslate, this->Count ))));
+//		#endif
+		if(pGsReadBibleTextItem) {delete pGsReadBibleTextItem; pGsReadBibleTextItem = nullptr;}
+	}
+	else if(Action == lnAdded)
+	{
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("Dodano: \"%s\"", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
+//		#endif
+	}
+	else if(Action == lnExtracted)
+	{
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("Usunięto: \"%s\"", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
+//		#endif
+  }
+
+	TList::Notify(Ptr, Action);
+
+}
+//===========================================================================
 //NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
 int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
 /**
@@ -187,7 +324,7 @@ int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
 	{
     return AnsiCompareText(List->Strings[Index1], List->Strings[Index2]);
 	}
-	//return 0;
+	return 0;
 }
 //---------------------------------------------------------------------------
 GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
@@ -200,18 +337,15 @@ GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
-		GsDebugClass::WriteDebug("GsReadBibleTextClass::GsReadBibleTextClass()");
-	#endif
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Dokonano już inicjalizacji objektu GsReadBibleTextClass"));
 	//---
 	GsReadBibleTextData::pGsReadBibleTextClass = this;	//Wskaźnik na główną klasę
 	//GsReadBibleTextData::GsInitGlobalImageList();  //Inicjalizacja listy ikon
 	//--- Inicjalizacja listy wszystkich tłumaczeń
-	this->_ListItemsTranslates = new TList();
-	if(!this->_ListItemsTranslates) throw(Exception("Błąd inicjalizacji objektu TList"));
-	//--- Inicjalizacja listy ThashedStringList, wybranego rozdziału, wszystkich tłumaczeń,
+	this->_GsListItemsTranslates = new GsListItemTranslates();
+	if(!this->_GsListItemsTranslates) throw(Exception("Błąd inicjalizacji objektu GsListItemTranslates"));
+	//--- Inicjalizacja listy THashedStringList, wybranego rozdziału, wszystkich tłumaczeń,
 	//--- więc ilość elementów listy równa się ilości elementów listy this->_ListItemsTranslates
 	this->_ListAllTrChap = new TList();
 	if(!this->_ListAllTrChap) throw(Exception("Błąd allokacji TList"));
@@ -229,26 +363,22 @@ GsReadBibleTextClass::~GsReadBibleTextClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	GsReadBibleTextItem *pGsReadBibleTextItem;//=0;
-	//--- Usuwanie wszystkich dostępnych tłumaczeń  z listy this->_ListItemsTranslates
-	for(int i=0; i<this->_ListItemsTranslates->Count; i++)
-	{
-		//Usuwanie poszczególnuch tłumaczeń z listy, oraz ich usuwanie z pamięci
-		pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_ListItemsTranslates->Items[i]);
-		if(pGsReadBibleTextItem)
-			{delete pGsReadBibleTextItem; /*pGsReadBibleTextItem = 0;*/}
-	}
+//	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+//	//--- Usuwanie wszystkich dostępnych tłumaczeń  z listy this->_GsListItemsTranslates
+//	for(int i=0; i<this->_GsListItemsTranslates->Count; i++)
+//	{
+//		//Usuwanie poszczególnuch tłumaczeń z listy, oraz ich usuwanie z pamięci
+//		pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[i]);
+//		if(pGsReadBibleTextItem) {delete pGsReadBibleTextItem; pGsReadBibleTextItem = nullptr;}
+//	} //Zlikwidować
   //Likwidacja listy wszystkich, dostępnych tłumaczeń
-	if(this->_ListItemsTranslates) {delete this->_ListItemsTranslates; this->_ListItemsTranslates = 0;}
+	if(this->_GsListItemsTranslates) {delete this->_GsListItemsTranslates; this->_GsListItemsTranslates = nullptr;}
 	//--- Usuwanie listy z objektami, klasy ThashedstringList, zawierającymi tekst wszystkich dostępnych
 	//    tłumaczeń i wybranego rozdziału
 	this->_ClearListAllTrChap(true); //Lista wybranego rozdziału i księgi, jest czyszczona i likwidowana!!!
 	//Likwidacja objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
-	if(this->_SListInterLinear) {delete this->_SListInterLinear; this->_SListInterLinear = 0;}
+	if(this->_SListInterLinear) {delete this->_SListInterLinear; this->_SListInterLinear = nullptr;}
 	GsReadBibleTextData::GsFreeGlobalImageList();  //Likwidacja zmiennych klasy
-	#if defined(_DEBUGINFO_) && defined(_FULL_DEBUG_)
-		GsDebugClass::WriteDebug("GsReadBibleTextClass::~GsReadBibleTextClass()");
-	#endif
 }
 //---------------------------------------------------------------------------
 bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _PathDir)
@@ -290,19 +420,22 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 		//--- Dodawanie klasy(GsReadBibleTextItem) tłumaczenia, listy klas dostępnych tłumaczeń
 		GsReadBibleTextItem *pGsReadBibleTextItem = new GsReadBibleTextItem(pSortedListFileTrans->Strings[i], _enTypeTranslate, i);
 		if(!pGsReadBibleTextItem) throw(Exception("Błąd inicjalizacji objektu, klasy GsReadBibleTextItem"));
-		this->_ListItemsTranslates->Add(pGsReadBibleTextItem); //Dodawanie tłumaczenia
+		this->_GsListItemsTranslates->Add(pGsReadBibleTextItem); //Dodawanie tłumaczenia
 		//--- Dodawanie string listy tłumaczenia, do listy klas THashedStringList, z tekstami wszystkich dostępnych tłumaczeń, dla wybranego rozdziału i księgi.
 		//    Klasy THashedStringList wszystkich tłumaczeń, będą wypełniane gdy zostanie wybrana księga, oraz rozdział
 		THashedStringList *_pHListChapt = new THashedStringList();  //String lista NA PRZYSZŁY wybranego rozdziału i księgi, kolejnego tłumaczenia
     if(!_pHListChapt) throw(Exception("Błąd inicjalizacji danych THashedStringList"));
 		this->_ListAllTrChap->Add(_pHListChapt); //Dodanie String listy, która na początku jest PUSTA, wybranej księgi i tłumaczenia do listy głównej, DLA PRZYSZŁEGO wybranego rozdziału i księgi
-		//Potem gdy zostanie wybrana księga i rozdział, string lista będzie zawierała, wersety wybranej księgi i rozdziału, danego tłumaczenia.
+		//Potem gdy zostanie wybrana księga i rozdział, string lista będzie zawierała, wersety wybranej księgi i rozdziału, każdego tłumaczenia.
 	}
 	//this->_DeleteSelectTranslate(1); //Działa!!!
 	//Wczytanie danych do objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
-	this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);
-	if(pSListExcludeTrans) {delete pSListExcludeTrans; /*pSListExcludeTrans = 0;*/}
-	if(pSortedListFileTrans) {delete pSortedListFileTrans; /*pSortedListFileTrans = 0;*/}
+	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
+		{this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);}
+	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+  //---
+	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+	if(pSortedListFileTrans) {delete pSortedListFileTrans; pSortedListFileTrans = nullptr;}
 	//---
 	return true;
 }
@@ -317,6 +450,7 @@ void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString c
 {
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) return;
+	//---
 	if(custrPath==0)
 	{
 		UnicodeString _custrPath = Format("%s_%u_%s.html", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].FullNameBook, pGsTabSheetClass->_ShucIndexChapt+1,
@@ -337,9 +471,9 @@ void __fastcall GsReadBibleTextClass::_GetInfoNameTranslate(const int i, Unicode
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
 */
 {
-	if(i >= this->_ListItemsTranslates->Count)
+	if(i >= this->_GsListItemsTranslates->Count)
 		{NameTranslate = "Zły numer tłumaczenia!"; return;}
-	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_ListItemsTranslates->Items[i]);
+	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[i]);
 	if(!pGsReadBibleTextItem) throw(Exception("Błąd metody pGsReadBibleTextItem::GetInfoNameTranslate"));
  	NameTranslate = pGsReadBibleTextItem->NameTranslate;
 }
@@ -353,15 +487,15 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookTranslate(const
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
 */
 {
-	if(iGetTranslate >= this->_ListItemsTranslates->Count) return 0;
-	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_ListItemsTranslates->Items[iGetTranslate]);
+	if(iGetTranslate >= this->_GsListItemsTranslates->Count) return 0;
+	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[iGetTranslate]);
 	if(pGsReadBibleTextItem)
 	{
 		//Zabezpieczenie przed niewłaściwym indeksem księgi, w wybranym tłumaczeniu
 		if((iGetBook < static_cast<int>(pGsReadBibleTextItem->ucStartBook)) ||
 			 (iGetBook >=static_cast<int>((pGsReadBibleTextItem->ucCountBooks + pGsReadBibleTextItem->ucStartBook))))
 		{GsReadBibleTextData::EnErrorCode = enR_GSelectBoook; return 0;}
-		return pGsReadBibleTextItem->_pHListAllListBooks[iGetBook];
+		return pGsReadBibleTextItem->_pGsHListAllListBooks[iGetBook];
 	}
 	return 0;
 }
@@ -377,31 +511,30 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(in
 {
 	if(_iBook >= static_cast<int>(GsReadBibleTextData::GsNumberBooks)) return 0;
   //---
-	for(int i=0; i<this->_ListItemsTranslates->Count; i++)
+	for(int i=0; i<this->_GsListItemsTranslates->Count; i++)
 	{
-		GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_ListItemsTranslates->Items[i]);
+		GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[i]);
 		if(pGsReadBibleTextItem)
 		{
 			if(pGsReadBibleTextItem->enTypeTranslate == _EnTypeTranslate)
 			{
-				return pGsReadBibleTextItem->_pHListAllListBooks[_iBook];
+				return pGsReadBibleTextItem->_pGsHListAllListBooks[_iBook];
       }
     }
 	}
 	return 0;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, const UnicodeString _astrColor,
-			THashedStringList *_HStringInput, TMemoryStream *_pMemoStrResult, bool IsNameTranslates)
+void __fastcall GsReadBibleTextClass::_ViewSListBibleToHTML(TWebBrowser *_cWebBrowser,
+			THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay)
 /**
 	OPIS METOD(FUNKCJI): Przekształcenie DOWOLNEJ String listy wersetów, w wizualny tekst html (np. przy wyszukiwaniu)
-	OPIS ARGUMENTÓW: UnicodeString _astrColor - kolor tła.
-									 bool IsNameTranslates - czy ma być wyświetlana nazwa tłumaczenia na końcu wersetu(domyślnie true)
+	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI): Tekst w formacie html
 */
 {
-	if((_astrColor.IsEmpty()) || (_astrColor.Length() != 7)) {return;}	//Opuść metodę jeśli zmienna _astrColor nie jest określeniem koloru w formacie html, czyli np. #CCAAFF
+	if((DataDisplay.strBackgroundColor.IsEmpty()) || (DataDisplay.strBackgroundColor.Length() != 7)) {return;}	//Opuść metodę jeśli zmienna _astrColor nie jest określeniem koloru w formacie html, czyli np. #CCAAFF
 	THashedStringList *_HStringList;//=0;
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
@@ -418,11 +551,10 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
 																		"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>" +
 																		"<style type=\"text/css\">" +
-																		".styleColorAdressTranslates {color: #FF0000; font-size:9pt;font-family:Times New Roman;}" +
-																		//".styleFind {background-color: #FFFF00; color: #0000FF; font-weight:bold; font-size:9pt;font-family:Times New Roman;}" +
-																		//".styleTranslates {color: #F702D6; font-size:8pt;font-family:Times New Roman;}" +
-																		".styleText {color: #000000; font-size:12pt;font-family:Times New Roman;}" +
-																		Format("body {background-color:%s; font-size:10pt;font-family:Times New Roman;}", ARRAYOFCONST((_astrColor))) +
+																		Format(".styleColorAdressTranslates {color: #FF0000; font-size:%dpt;font-family:%s;}",
+																			ARRAYOFCONST((DataDisplay.iSizeFont-3, DataDisplay.strNameFont))) +
+																		Format(".styleText {color: #000000; font-size:%dpt;font-family:%s;}", ARRAYOFCONST((DataDisplay.iSizeFont, DataDisplay.strNameFont))) +
+																		Format("body {background-color:%s;}", ARRAYOFCONST((DataDisplay.strBackgroundColor))) +
 																		"</style></head><body>";
 		pStringStream->WriteString(Format("%s", ARRAYOFCONST((ustrStyle))));
 		//-----
@@ -433,16 +565,16 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 				pStringStream->WriteString(Format("<span class=\"styleColorAdressTranslates\">%s  </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((pMyObjectVers->BookChaptVers, _HStringList->Strings[i]))));
 			//-----
 			pStringStream->WriteString("<br>");
-			pStringStream->WriteString("<hr>");//Pozioma kreska;
+			if(DataDisplay.bIsHorizontLine) pStringStream->WriteString("<hr>");//Pozioma kreska;
 		}
 		pStringStream->WriteString("</body></html>");
 		pStringStream->Position = 0;
-		if(_pMemoStrResult)
+		if(DataDisplay.pMemoryStream)
 		{
 			//Zapis wyniku wyszukiwania jako danych html, do objektu, klasy TMemoryStream (_pMemoryStrResult)
-			_pMemoStrResult->Clear();
-			_pMemoStrResult->Position = 0;
-			pStringStream->SaveToStream(_pMemoStrResult);
+			DataDisplay.pMemoryStream->Clear();
+			DataDisplay.pMemoryStream->Position = 0;
+			pStringStream->SaveToStream(DataDisplay.pMemoryStream);
 			pStringStream->Position = 0;
 		}
 		//Wczytanie do objektu, klasy TWebBrowser (_cWebBrowser) zawartości objeltu, klasy TMemoryStream (stm)
@@ -455,7 +587,7 @@ void __fastcall GsReadBibleTextClass::ViewSListBibleToHTML(TWebBrowser *_cWebBro
 	}
 	__finally
 	{
-    if(pStringStream) {delete pStringStream; /*pStringStream = 0;*/}
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -468,12 +600,15 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
 */
 {
-	if(this->_ListItemsTranslates->Count == 0) throw(Exception("Nie zostały wczytane dostępne tłumaczenia, metodą \"LoadAllTranslates()\""));
-	int iFindChapter;//=0; //Szukany rozdział
-	THashedStringList *_pHListChapt;//=0;
+	if(this->_GsListItemsTranslates->Count == 0) throw(Exception("Nie zostały wczytane dostępne tłumaczenia, metodą \"LoadAllTranslates()\""));
+	int iFindChapter; //Szukany rozdział
+	THashedStringList *_pHListChapt=nullptr;
 	//---
 	this->_ClearListAllTrChap();  //Wyczyszczenie TYLKO zawartości listy!!!
-	for(int i=0; i<this->_ListItemsTranslates->Count; i++)
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 006");
+//	#endif
+	for(int i=0; i<this->_GsListItemsTranslates->Count; i++)
 	{
 		THashedStringList *_pTempHSList =  this->GetSelectBookTranslate(i, iGetBook); //String lista wybranej księgi kolejnego tłumaczenia
 		if(!_pTempHSList) continue;//Gdy wybierzesz księge ze st, metoda zwróci 0 podczas badania GNT, i odwrotnie w przypadku wyboru księgi NT, metoda zwróci 0 podczas badania HST
@@ -486,13 +621,21 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 			iFindChapter = _pTempHSList->Strings[iVers].SubString(4, 3).ToInt(); //Odczyt rozdziału kolejnego wersetu
 			if(iFindChapter == (iGetChap + 1))
 			{
-				_pHListChapt->AddObject(_pTempHSList->Strings[iVers].SubString(10, 255), _pTempHSList->Objects[iVers]);
+				_pHListChapt->AddObject(_pTempHSList->Strings[iVers].SubString(10, ciMaxlengthVers), _pTempHSList->Objects[iVers]);
 			}
 		}
 	}
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 007");
+//	#endif
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie powiodło się wyłuskanie wskaźnika na aktualną zakładkę"));
 	pGsTabSheetClass->Caption = Format("%s: %u rozdział", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iGetBook].FullNameBook, iGetChap+1)));
+  //Metoda dodajaca informacje o otwartym rozdziale do listy historii
+	GsReadBibleTextData::AddItemHistoryList(pGsTabSheetClass->Caption); //TUTAJ JEST BŁĄD!!!
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 010");
+//	#endif
 	//Informacja w strukturze zakładki o numerze księgi i rozdziału
 	pGsTabSheetClass->_ShucIndexBook = iGetBook;
 	pGsTabSheetClass->_ShucIndexChapt = iGetChap;
@@ -508,9 +651,14 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	}
 	//---
 	if(pGsTabSheetClass->pComboBox->ItemIndex!=iGetChap) pGsTabSheetClass->pComboBox->ItemIndex = iGetChap;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
-  //Kontrola aktywności przycisków przewijania rozdziałów do produ i do tyłu
-	TToolButton *pGetToolButtonPrev = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_PrevChapter - enImageIndex_NextChapter];
-	TToolButton *pGetToolButtonNext = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_NextChapter - enImageIndex_NextChapter];
+	//Kontrola aktywności przycisków przewijania do następnej, lub poprzedniej księgi
+	TToolButton *pGetNextBook = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToNextBook - enImageIndex_ToNextBook];
+	TToolButton *pGetPrevBook = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_ToNextBook];
+	pGetNextBook->Enabled = (pGsTabSheetClass->_ShucIndexBook < GsReadBibleTextData::GsNumberBooks-1);
+	pGetPrevBook->Enabled = (pGsTabSheetClass->_ShucIndexBook > 0);
+	//Kontrola aktywności przycisków przewijania rozdziałów do produ i do tyłu
+	TToolButton *pGetToolButtonPrev = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_NextChapter];
+	TToolButton *pGetToolButtonNext = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_PrevChapter];
 	pGetToolButtonNext->Enabled = pGsTabSheetClass->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].ucCountChapt-1;
 	pGetToolButtonPrev->Enabled = pGsTabSheetClass->_ShucIndexChapt > 0;
 
@@ -533,8 +681,10 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	if(!this->_ListAllTrChap) {throw(Exception("Nie zainicjowano listy wszystkich tłumaczeń, wybranej księgi i rozdziału"));}
 	if(this->_ListAllTrChap->Count == 0) return;  //Pusta lista
 	//---
-	MyObjectVers *pMyOjectVers;//=0;
-	THashedStringList *pTempHSList;//=0;
+	TTreeNode *pTreeNodeSelect = GsReadBibleTextData::pGsTreeBibleClass->Selected; //[03-08-2023]
+	//---
+	MyObjectVers *pMyOjectVers=nullptr;
+	THashedStringList *pTempHSList=nullptr;
 	int iIndex=0, //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
 			iIndexFav=-1;//Indeks na globalnej liście wersetów ulubionych
 	unsigned char uiTranslatesIndex;//=0;
@@ -548,10 +698,13 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie mogę uzyskać wskaźnika do aktualnej zakładki!"));
 	pGsTabSheetClass->pStrBuilderHtml->Clear(); //Wyczyszczenie zawartości zakładki, jako strony w kodzie html, do ewentualnego zapisania jako samodzielnej strony html.
-  pGsTabSheetClass->pLBoxSelectText->Items->BeginUpdate();
+	pGsTabSheetClass->pHSListActualText->Clear(); //Wyczyszczenie listy surowej aktualnie przeglądanego rozdziału
+	pGsTabSheetClass->pLBoxSelectText->Items->BeginUpdate();
 	pGsTabSheetClass->pLBoxSelectText->Clear(); //Wyczyszczenie listy ulubionych wersetów (objekt, klasy TListBox)
-
-	pStringStream->WriteString(GsReadBibleTextData::GsHTMLHeaderText);
+	//Podmiana elementu /title w kodzie html wczytanego rozdziału i księgi na nazwę księgi - [03-08-2023]
+	UnicodeString ustrHeaderText = StringReplace(GsReadBibleTextData::GsHTMLHeaderText, GsReadBibleTextData::GsHTMLTitle,
+		"<title>" + pTreeNodeSelect->Text + "</title>", TReplaceFlags() << rfReplaceAll); //[03-08-2023]
+	pStringStream->WriteString(ustrHeaderText); //Zapis nagłówka kodu html do strumienia
 	try
 	{
 		do
@@ -591,6 +744,10 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					//Dodawanie kolejnego wersetu
 					if(!pTempHSList->Strings[iIndex].IsEmpty())
 					{
+						//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+						//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
+						pGsTabSheetClass->pHSListActualText->AddObject(pTempHSList->Strings[iIndex], pMyOjectVers);
+
 						if(pGsTabSheetClass->pLBoxSelectText->Items->IndexOf(pMyOjectVers->AdressString) == -1)
 						//Jeśli nie istnieje jeszcze adres wersetu
 						{
@@ -615,7 +772,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 								_StyleFav_End = "";
 							}
               //Odznaczanie wersetu z komentarzem
-							if(TFile::Exists(TPath::Combine(GlobalVar::Global_custrPathdirComments, pMyOjectVers->AdressString) + GlobalVar::Global_custrExtendCommentsFiles))
+							if(TFile::Exists(TPath::Combine(GlobalVar::Global_custrPathDirComments, pMyOjectVers->AdressString) + GlobalVar::Global_custrExtendCommentsFiles))
 							//Jeśli istnieje plik komentarzy
 							{
 								_Style_CommentStyle = "<span class=styleComment>C";  //Styl zaznaczania wersetu skomentowanego
@@ -668,50 +825,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	}
   __finally
 	{
-		if(pStringStream) {delete pStringStream; pStringStream = 0;}
-	}
-}
-//---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextClass::DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, int iSelectViewInWebBrowser)
-/**
-	OPIS METOD(FUNKCJI): Metoda wyświetla w formie html, dowolną listę wersetów. Urzywana np. do wyświetlania wyników wyszukiwania.
-	OPIS ARGUMENTÓW:
-										int iSelectViewInWebBrowser - Wyświetla TYLKO konkretną pozycje z listy, nie całą pozycje
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	MyObjectVers *pMyOjectVers;//=0;
-	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
-	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
-
-	pStringStream->WriteString(GsReadBibleTextData::GsHTMLHeaderSearch);
-	try
-	{
-		for(int i=0; i<_pHListAnyVers->Count; i++)
-		{
-			// Jeśli ma być NIE wyświetlana cała lista wyników (iSelectViewInWebBrowser != ciSelectViewAll),
-			// ale jednocześnie podano konkretny numer pozycji (iSelectViewInWebBrowser), oczywiście różny od ciSelectViewAll,
-			// i numer tej pozycji NIE RÓWNA się obecnie przeglądanej pozycji, przejdź do następnego obrotu pętli for.
-			if((iSelectViewInWebBrowser != ciSelectViewAll) && (i != iSelectViewInWebBrowser)) continue;
-			pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
-			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
-			//Dodawanie kolejnego wersetu
-			pStringStream->WriteString(Format("<span class=\"styleColorAdressTranslates\">%s</span> <span class=\"styleText\">%s</span>", ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i]))));
-			pStringStream->WriteString("<br>");
-    }
-		pStringStream->WriteString("</body></html>");
-		//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
-		pStringStream->Position = 0;
-		//---
-		IPersistStreamInit *psi;
-		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
-		if(SUCCEEDED(_pWebBrowser->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
-			{psi->Load(sa);}
-	}
-	__finally
-	{
-		if(pStringStream) {delete pStringStream; /*pStringStream = 0;*/}
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -723,8 +837,8 @@ GsReadBibleTextItem *__fastcall GsReadBibleTextClass::GetTranslateClass(const in
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(iNumberTrans >= this->_ListItemsTranslates->Count) return 0;
-	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_ListItemsTranslates->Items[iNumberTrans]);
+	if(iNumberTrans >= this->_GsListItemsTranslates->Count) return 0;
+	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[iNumberTrans]);
 	return pGsReadBibleTextItem;
 }
 //---------------------------------------------------------------------------
@@ -746,14 +860,14 @@ void __fastcall GsReadBibleTextClass::_ClearListAllTrChap(const bool bIsRemoveLi
 			if(_pTempHSList)
 			{
 				_pTempHSList->Clear(); //Tylko czyszczenie ISTNIEJĄCYCH string list, na wybrany rozdział ze wszystkich tłumaczeń!!!
-				if(bIsRemoveList) {delete _pTempHSList; /*_pTempHSList = 0;*/} //USUWANIE istniejących string list!!!
+				if(bIsRemoveList) {delete _pTempHSList; _pTempHSList = nullptr;} //USUWANIE istniejących string list!!!
 			}
 		}
-		if(bIsRemoveList) {delete this->_ListAllTrChap; this->_ListAllTrChap = 0;} //--- Usuwanie listy !!!
+		if(bIsRemoveList) {delete this->_ListAllTrChap; this->_ListAllTrChap = nullptr;} //--- Usuwanie listy !!!
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextClass::_GlobalDragDrop(TObject *Sender, TObject *Source, int X, int Y)
+void __fastcall GsReadBibleTextClass::GlobalTextDragDrop(TObject *Sender, TObject *Source, int X, int Y)
 /**
 	OPIS METOD(FUNKCJI): Główna metoda wywoływana podczas upuszczenia objektu
 	OPIS ARGUMENTÓW:
@@ -764,7 +878,7 @@ void __fastcall GsReadBibleTextClass::_GlobalDragDrop(TObject *Sender, TObject *
 	GsReadBibleTextData::pGsTreeBibleClass->DblClick(); //Załadowanie odpowiedniego rozdziału
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextClass::_GlobalDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept)
+void __fastcall GsReadBibleTextClass::_GlobalTextDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept)
 /**
 	OPIS METOD(FUNKCJI): Główna metoda wywoływana podczas przeciągania elementu
 	OPIS ARGUMENTÓW:
@@ -784,24 +898,24 @@ void __fastcall GsReadBibleTextClass::_DeleteSelectTranslate(const int iNumberTr
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(iNumberTrans >= this->_ListItemsTranslates->Count) return;
+	if(iNumberTrans >= this->_GsListItemsTranslates->Count) return;
 	//---
-	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_ListItemsTranslates->Items[iNumberTrans]);
+	GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[iNumberTrans]);
 	if(pGsReadBibleTextItem)
 	{
 		//--- Skasowanie objektu, klasy wybranego tłumaczenia
-		delete pGsReadBibleTextItem; //pGsReadBibleTextItem = 0;
-		this->_ListItemsTranslates->Delete(iNumberTrans);
+		delete pGsReadBibleTextItem; pGsReadBibleTextItem = nullptr;
+		this->_GsListItemsTranslates->Delete(iNumberTrans);
 		//--- Czysczenie string listy na wybrany rozdział, wybranego tłumaczenia, które zostanie skasowane.
 		//    KONIECZNE zwolnienie THashedStringListy dla wybranego tłumaczenie, i pozycji o numerze tłumaczenia z listy this->_ListAllTrChap
 		THashedStringList *_pTempHSList = static_cast<THashedStringList *>(this->_ListAllTrChap->Items[iNumberTrans]);
 		if(_pTempHSList)
-			{_pTempHSList->Clear(); delete _pTempHSList; /*_pTempHSList = 0;*/}
+			{_pTempHSList->Clear(); delete _pTempHSList; _pTempHSList = nullptr;}
 		this->_ListAllTrChap->Delete(iNumberTrans);
   }
 }
 /****************************************************************************
- *                        Klasalasa GsTreeNodeClass                         *
+ *                          Klasa GsTreeNodeClass                           *
  ****************************************************************************/
 __fastcall GsTreeNodeClass::GsTreeNodeClass(TTreeNodes* Owner) : TTreeNode(Owner)
 /**
@@ -822,8 +936,8 @@ __fastcall GsTreeNodeClass::~GsTreeNodeClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("GsTreeBibleClass::~GsTreeNodeClass(): Text: %s", ARRAYOFCONST((this->Text))));
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("GsTreeNodeClass::~GsTreeNodeClass()");
 	#endif
 }
 /****************************************************************************
@@ -849,6 +963,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	this->DragMode = dmAutomatic;
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements() << seBorder; //Tylko Border
+	this->Font->Quality = TFontQuality::fqClearType;
 	//---
 	this->FPMenuBook = new TPopupMenu(this);
 	if(!this->FPMenuBook) throw(Exception("Błąd inicjalizacji klasy TPopupMenu"));
@@ -860,17 +975,17 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	this->ParentShowHint = false;
   this->OnHint = this->_OnHint;
 	//---
-	GsReadBibleTextData::_GsPageControl = pPageControl;  //globalny wskażnik na klasę TPageControl, będący polem statycznym klasy GsReadBibleTextData
+	GsReadBibleTextData::_GsPageControl = pPageControl;  //Globalny wskażnik na klasę TPageControl, będący polem statycznym klasy GsReadBibleTextData
 	GsReadBibleTextData::_GsPageControl->Images = GsReadBibleTextData::_GsImgListData;
 	//---
-	TPanel *pPanelText = static_cast<TPanel *>(GsReadBibleTextData::_GsPageControl->Parent);
-	if(pPanelText)
-	{
-		pPanelText->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragDrop;
-		pPanelText->OnDragOver = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragOver;
-		GsReadBibleTextData::_GsPageControl->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragDrop;
-		GsReadBibleTextData::_GsPageControl->OnDragOver = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragOver;
-	}
+	//TPanel *pPanelText = static_cast<TPanel *>(GsReadBibleTextData::_GsPageControl->Parent);
+	//if(pPanelText)
+	//{
+		//pPanelText->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragDrop;
+		//pPanelText->OnDragOver = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragOver;
+		//GsReadBibleTextData::_GsPageControl->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragDrop;
+		//GsReadBibleTextData::_GsPageControl->OnDragOver = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragOver;
+	//}
 	//---
 	GsReadBibleTextData::pGsTreeBibleClass = this;
   this->OnMouseLeave = this->_OnMouseLeave;
@@ -878,7 +993,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 //---------------------------------------------------------------------------
 __fastcall GsTreeBibleClass::~GsTreeBibleClass()
 /**
-	OPIS METOD(FUNKCJI): Główny Destruktor, klasy MBNGTreeVBibleClass
+	OPIS METOD(FUNKCJI): Główny Destruktor, klasy GsTreeBibleClass
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -955,15 +1070,14 @@ void __fastcall GsTreeBibleClass::DblClick()
 {
 	GsTreeNodeClass *pSelectNode = dynamic_cast<GsTreeNodeClass *>(this->Selected);
 	if((pSelectNode == 0) || (pSelectNode->Level < 2)) return;
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 001");
+//	#endif
 	//---
 	GsReadBibleTextData::OpenSelectBookAndChapter(pSelectNode->ucIndexBook+1, 1);
-	/*
-	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
-	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
-	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA !!!
-	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pSelectNode->ucIndexBook, 0);
-	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
-  */
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 011");
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::GetImageIndex(TTreeNode* Node)
@@ -1005,12 +1119,13 @@ void __fastcall GsTreeBibleClass::DoContextPopup(const Types::TPoint &MousePos, 
 		NewItem->Tag = iIndex;
 		NewItem->OnClick = this->_SelectPopupTreeBooksExecute;
 		NewItem->ImageIndex = enImageIndex_SelectChapter;
+		if(iIndex==33 || iIndex==66 || iIndex==99 || iIndex==132) NewItem->Break = mbBarBreak; //08-07-2021 -> 25-08-2021
 	}
   TPoint ScrXY = this->ClientToScreen(MousePos);
 	this->FPMenuBook->Popup(ScrXY.X, ScrXY.Y);  //Pojawienie się popupmenu
 
 	pGsTreeNodeClass->Selected = true;
-	Handled = True;
+	Handled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::DragOver(System::TObject* Source, int X, int Y, System::Uitypes::TDragState State, bool &Accept)
@@ -1021,7 +1136,8 @@ void __fastcall GsTreeBibleClass::DragOver(System::TObject* Source, int X, int Y
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	Accept = Source->ClassNameIs("GsTreeBibleClass");
+	//Accept = Source->ClassNameIs("GsTreeBibleClass");
+	Accept = false; //30-03-2021
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::Resize(void)
@@ -1106,6 +1222,10 @@ void __fastcall GsTreeBibleClass::Delete(TTreeNode* Node)
 	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(Node);
 	if(pGsTreeNodeClass)
 	{
+		//delete pGsTreeNodeClass; pGsTreeNodeClass = nullptr; //[30-07-2023]
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("GsTreeBibleClass::Delete");
+		#endif
   }
 }
 //---------------------------------------------------------------------------
@@ -1228,14 +1348,6 @@ void __fastcall GsTreeBibleClass::_SelectPopupTreeBooksExecute(TObject *Sender)
 	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(this->Selected);
 	if((pGsTreeNodeClass == 0) || (pGsTreeNodeClass->Level < 2)) return;
 	GsReadBibleTextData::OpenSelectBookAndChapter(pGsTreeNodeClass->ucIndexBook+1, pItem->Tag+1);
-	return;
-	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
-	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
-	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA !!!
-	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
-	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pGsTreeNodeClass->ucIndexBook, pItem->Tag);
-	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
-	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser/*, pGsTabSheetClass->pGsTabSetClass->TabIndex*/);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::_SectionHeaderResize(THeaderControl* HeaderControl, THeaderSection* Section)
@@ -1281,7 +1393,8 @@ __fastcall GsListBoxSelectedVersClass::GsListBoxSelectedVersClass(TComponent* Ow
 	this->StyleElements = TStyleElements();
 	this->MultiSelect = true; this->ExtendedSelect = false;
 	this->Color = clCream;
-  this->iRIndex = -1;  //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
+	this->iRIndex = -1;  //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
+  this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxSelectedVersClass::~GsListBoxSelectedVersClass()
@@ -1410,7 +1523,7 @@ void __fastcall GsListBoxSelectedVersClass::MouseUp(System::Uitypes::TMouseButto
 	if(Button != mbRight) return;
 	this->iRIndex = this->ItemAtPos(TPoint(X, Y), true);
 	if(this->iRIndex == -1) return;
-	UnicodeString ustrPathComm = TPath::Combine(GlobalVar::Global_custrPathdirComments, this->Items->Strings[this->iRIndex]) + GlobalVar::Global_custrExtendCommentsFiles;
+	UnicodeString ustrPathComm = TPath::Combine(GlobalVar::Global_custrPathDirComments, this->Items->Strings[this->iRIndex]) + GlobalVar::Global_custrExtendCommentsFiles;
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	this->Refresh();
 	if(pGsTabSheetClass)
@@ -1435,21 +1548,24 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::_GsPageControl->Visible = true; //01-02-2020
+	TToolButton *pToolButton = nullptr;
 	//---
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->pStrBuilderHtml = new TStringBuilder();
 	if(!this->pStrBuilderHtml) throw(Exception("Błąd inicjalizacji klasy TStringBuilder"));
 	//---
+	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
+	this->pHSListActualText = new THashedStringList();
+	if(!this->pHSListActualText) throw(Exception("Błąd inicjalizacji klasy THashedStringList"));
+	//---
 	this->PageControl = GsReadBibleTextData::_GsPageControl; //Umieszczanie objektu klasy na objekcie typu TPageControl
 	this->PageControl->ActivePage = this; //Nowostworzona zakładka, staje się zakładką aktualną
-	this->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragDrop; //this->PageControl->OnDragDrop;
-	this->OnDragOver = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalDragOver;//this->PageControl->OnDragOver;
+	this->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->GlobalTextDragDrop;
+	this->OnDragOver = GsReadBibleTextData::pGsReadBibleTextClass->_GlobalTextDragOver;
 	this->ImageIndex = enImageIndex_SelectChapter;
-	static const UnicodeString custrAllTranslatesTab = "Wszystkie tłumaczenia";
-	//---
-	const UnicodeString NameGraphicsButtons[] = {"Następny rozdział", "Poprzedni rozdział"},
-											NameTextButtons[] = {"Widok do czytania", "Widok do wybierania wersetów"};
 	//Panel na TToolBar
 	TPanel *pPanelBox = new TPanel(this);
 	if(!pPanelBox) throw(Exception("Błąd inicjalizacji klasy TPanel"));
@@ -1459,54 +1575,143 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	pPanelBox->BorderStyle = bsNone;
   pPanelBox->BevelOuter = bvNone;
 	pPanelBox->ShowCaption = false;
-  //Wyłuskanie aktywnego objektu, klasy GsTreeNodeClass, z drzewa ksiąg
-	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(GsReadBibleTextData::pGsTreeBibleClass->Selected);
-	if(!pGsTreeNodeClass) throw(Exception("Błąd procedury wyłuskania, objektu klasy GsTreeNodeClass"));
-	this->pComboBox = new TComboBox(pPanelBox);
-	this->pComboBox->Parent = pPanelBox;
-	this->pComboBox->Align = alLeft;
-	this->pComboBox->AlignWithMargins = true;
-	this->pComboBox->Margins->Left = 4; this->pComboBox->Margins->Right = 4;
-	int iITempMargin = (pPanelBox->Height - this->pComboBox->Height) / 2;
-	this->pComboBox->Margins->Top = iITempMargin; this->pComboBox->Margins->Bottom = iITempMargin;
-	this->pComboBox->OnSelect = this->_OnSelectBoxChapter;
-	this->pComboBox->Width = 160;
-	this->pComboBox->Style = csOwnerDrawFixed;
-	this->pComboBox->OnDrawItem = this->_OnSelectChaptCBoxDrawItem;
-	this->pComboBox->CustomHint = GsReadBibleTextData::_GsBalloonHint;;
-	this->pComboBox->ShowHint = true;
-	this->pComboBox->Hint = "Wybór rozdziału|Wybór numeru rozdziału z listy rozdziałów, dostępnych dla wybranej księgi";
-  		//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
-	for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; iChapt++)
-		{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
-	//***************** TToolBary przycisków graficznych
-	this->pToolBar = new TToolBar(pPanelBox);
-	if(!this->pToolBar) throw(Exception("Błąd inicjalizacji klasy TToolBar"));
-	this->pToolBar->StyleElements = TStyleElements();
-	this->pToolBar->Parent = pPanelBox;
-	this->pToolBar->AutoSize = true;
-	this->pToolBar->Align = alLeft;
-	this->pToolBar->Flat = true;
-	this->pToolBar->Images = GsReadBibleTextData::_GsImgListData;
-	this->pToolBar->DisabledImages = GsReadBibleTextData::_GsImgListDataDisable;
-	this->pToolBar->DrawingStyle = (Vcl::Comctrls::TTBDrawingStyle)Vcl::Comctrls::gdoGradient;
-	this->pToolBar->HotTrackColor = clWebDarkOrange;
-		//TToolbar przycisków widoków
-	this->pToolBarText = new TToolBar(pPanelBox);
+	pPanelBox->Font->Quality = TFontQuality::fqClearType;
+
+	this->_InitCBoxChaptersSelect(pPanelBox); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
+	this->_InitToolBarAllButtons(pPanelBox); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
+	this->_InitToolBarViewText(pPanelBox); //Inicjalizacja objektu klasy TToolbar do zmieniania widoków wyświetlanych wersetów
+	this->_InitTabSetDisplayTranslates(); //Stworzenie dolnego objektu, klasy GsTabSetClass, do wyboru wyświetlania
+	this->_InitPanelInfoTranslation(); //Panel z objektami informacyjnymi o wybranym tłumaczeniu
+	this->_DisplayInfosTranslates(); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
+	//Inicjalizacja panelu, dla wyświetlania kontrolek, związanych z tekstem.
+	TPanel *pPanelText = new TPanel(this);
+	if(!pPanelText) throw(Exception("Błąd inicjalizacji klasy TPanel"));
+	pPanelText->Parent = this;
+	pPanelText->Align = alClient;
+	pPanelText->BevelOuter = bvNone;
+	pPanelText->BorderStyle = bsNone;
+	pPanelText->ShowCaption = false;
+	pPanelText->OnDragDrop = this->OnDragDrop;
+	pPanelText->OnDragOver = this->OnDragOver;
+	pPanelText->Font->Quality = TFontQuality::fqClearType;
+	this->_InitPanelTextBible(pPanelText); //Kontrolki dotyczące tekstu biblijnego: TProgressBar, TWebBrowser,
+																				 //GsListBoxSelectedVersClass, GsEditorClass
+	//Splitter
+	this->pSplitterEd = new TSplitter(pPanelText);
+	if(!this->pSplitterEd) throw(Exception("Błąd inicjalizacji klasy TSplitter"));
+	this->pSplitterEd->Parent = pPanelText;
+	this->pSplitterEd->Align = alBottom;
+	this->pSplitterEd->Color = clMaroon;
+	this->pSplitterEd->MinSize = this->pGsEditorClass->Height / 2;
+	this->pSplitterEd->Visible = false;
+	//Aktywacja wczytanego tekstu
+	//this->SetFocus();
+	this->pWebBrowser->SetFocus();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitPanelInfoTranslation()
+/**
+	OPIS METOD(FUNKCJI): Panel z objektami informacyjnymi o wybranym tłumaczeniu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->pPanelInfoTraslates = new TPanel(this);
+	if(!this->pPanelInfoTraslates) throw(Exception("Błąd inicjalizacji klasy TPanel"));
+	this->pPanelInfoTraslates->Parent = this;
+	this->pPanelInfoTraslates->Align = alBottom;
+	this->pPanelInfoTraslates->Height = 128;
+	this->pPanelInfoTraslates->ShowCaption = false;
+	this->pPanelInfoTraslates->BorderStyle = bsSingle;
+	this->pPanelInfoTraslates->Font->Quality = TFontQuality::fqClearType;
+	//---
+	this->pWebBrowserInfoTranslations = new TWebBrowser(this->pPanelInfoTraslates);
+	if(!this->pWebBrowserInfoTranslations) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->pWebBrowserInfoTranslations->TOleControl::Parent = this->pPanelInfoTraslates;
+	this->pWebBrowserInfoTranslations->Align = alClient;
+	this->pWebBrowserInfoTranslations->Offline = true;
+	this->pWebBrowserInfoTranslations->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
+	this->pPanelInfoTraslates->Visible = false;
+	this->pWebBrowserInfoTranslations->Visible = this->pPanelInfoTraslates->Visible;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitPanelTextBible(TPanel *pPanelParent)
+/**
+	OPIS METOD(FUNKCJI): Kontrolki dotyczące tekstu biblijnego: TProgressBar, TWebBrowser,
+											 GsListBoxSelectedVersClass, GsEditorClass
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //---Inicjalizacja pionowego wskaźnika, umiejscowienia pozycji w rozdziale
+	this->pProgressBar = new TProgressBar(pPanelParent);
+	this->pProgressBar->Parent = pPanelParent;
+	this->pProgressBar->Align = alRight;
+	this->pProgressBar->Orientation = pbVertical;
+	this->pProgressBar->Width = 8;
+	this->pProgressBar->BarColor = clRed;
+	this->pProgressBar->CustomHint = GsReadBibleTextData::_GsBalloonHint;
+	this->pProgressBar->ShowHint = true;
+	//SendMessage(this->pProgressBar->Handle, PBM_SETBARCOLOR, 0, clBlue);
+	this->pProgressBar->Hint = Format("Pozycja w księdze|Pionowy pasek pokazujący pozycje wybranego rozdziału, względem całej księgi|%u",
+		ARRAYOFCONST((enImageIndex_InfoHelp)));
+	//---Inicjalizacja objektu, klasy TWebBrowser
+	this->pWebBrowser = new TWebBrowser(pPanelParent);
+	if(!this->pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	//pPanelParent->InsertControl(this->pWebBrowser); //Też działa
+	this->pWebBrowser->TOleControl::Parent = pPanelParent;
+	this->pWebBrowser->Align = alClient;
+	this->pWebBrowser->Offline = true;
+	this->pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->pWebBrowser->OnDragDrop = pPanelParent->OnDragDrop;
+	this->pWebBrowser->OnDragOver = pPanelParent->OnDragOver;
+	this->pWebBrowser->OnDocumentComplete = this->_OnDocumentComplete; //[31-07-2023]
+	//Wybieralny tekst rozdziału
+	this->pLBoxSelectText = new GsListBoxSelectedVersClass(pPanelParent);
+	if(!this->pLBoxSelectText) throw(Exception("Błąd inicjalizacji klasy GsListBoxSelectedVersClass"));
+	this->pLBoxSelectText->Parent = pPanelParent;
+	this->pLBoxSelectText->Align = alLeft;
+	this->pLBoxSelectText->Width = 98;
+	this->pLBoxSelectText->Visible = false;
+	this->pLBoxSelectText->Font->Quality = TFontQuality::fqClearType;
+	//Edycja komentarza do wybranego wersetu, lub rozdziału
+	this->pGsEditorClass = new GsEditorClass(pPanelParent);
+	if(!this->pGsEditorClass) throw(Exception("Błąd inicjalizacji klasy GsEditorClass"));
+	this->pGsEditorClass->Parent = pPanelParent;
+	this->pGsEditorClass->Align = alBottom;
+	this->pGsEditorClass->Height = 160;
+	this->pGsEditorClass->Visible = false;
+	this->pGsEditorClass->OnSave = this->_OnSaveComments;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitToolBarViewText(TPanel *pPanelParent)
+/**
+	OPIS METOD(FUNKCJI): Inicjalizacja objektu klasy TToolbar do zmieniania widoków wyświetlanych wersetów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TToolButton *pToolButton = nullptr;
+  const UnicodeString NameTextButtons[] = {"Widok do czytania", "Widok do wybierania wersetów"};
+
+	this->pToolBarText = new TToolBar(pPanelParent);
 	if(!this->pToolBarText) throw(Exception("Błąd inicjalizacji klasy TToolBar"));
 	this->pToolBarText->StyleElements = TStyleElements();
-	this->pToolBarText->Parent = pPanelBox;
+	this->pToolBarText->Parent = pPanelParent;
 	this->pToolBarText->AutoSize = true;
 	this->pToolBarText->Align = alLeft;
 	this->pToolBarText->Flat = true;
 	this->pToolBarText->Images = GsReadBibleTextData::_GsImgListData;
 	this->pToolBarText->DisabledImages = GsReadBibleTextData::_GsImgListDataDisable;
 	this->pToolBarText->DrawingStyle = (Vcl::Comctrls::TTBDrawingStyle)Vcl::Comctrls::gdoGradient;
-	this->pToolBarText->HotTrackColor = clWebCornFlowerBlue;
+	this->pToolBarText->HotTrackColor = clGreen;//clWebCornFlowerBlue;
 	//--- Przyciski widoków na toolbarze
 	for(int i=ARRAYSIZE(NameTextButtons)-1; i>=0; i--)
 	{
-		TToolButton *pToolButton = new TToolButton(this->pToolBarText);
+		pToolButton = new TToolButton(this->pToolBarText);
 		if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
 		pToolButton->Parent = this->pToolBarText;
 		pToolButton->ImageIndex = enImageIndex_ReadOnlyText - i;
@@ -1524,26 +1729,60 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 		else if(pToolButton->ImageIndex == enImageIndex_ViewSelectText)
 		{
 			pToolButton->Hint = Format("Widok do przeglądania i wybierania wersetów|Widoku tekstu biblijnego do przeglądania, oraz wybierania wersetów z aktualnego rozdziału|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
-    }
+		}
 	}
-	//--- Przyciski nawigacji na toolbarze
-		//Rozpoczęcie edycji komentarza do zaznaczonego wersetu
-	TToolButton *pToolButton = new TToolButton(this->pToolBar);
-	if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
-	pToolButton->Parent = this->pToolBar;
-	pToolButton->ImageIndex = enImageIndex_EditText;
-	pToolButton->ShowHint = true;
-	pToolButton->Tag = pToolButton->ImageIndex;
-	pToolButton->OnClick = this->_OnClickButton;
-	pToolButton->AllowAllUp = true;
-  pToolButton->Style = tbsCheck;
-	pToolButton->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	pToolButton->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego wersetu, lub rozdziału|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
-	this->pToolButtonEdit = pToolButton;	//Przycisk do edycji
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitToolBarAllButtons(TPanel *pPanelParent)
+/**
+	OPIS METOD(FUNKCJI): Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TToolButton *pToolButton = nullptr;
+
+	this->pToolBar = new TToolBar(pPanelParent);
+	if(!this->pToolBar) throw(Exception("Błąd inicjalizacji klasy TToolBar"));
+	this->pToolBar->StyleElements = TStyleElements();
+	this->pToolBar->Parent = pPanelParent;
+	this->pToolBar->AutoSize = true;
+	this->pToolBar->Align = alLeft;
+	this->pToolBar->Flat = true;
+	this->pToolBar->Images = GsReadBibleTextData::_GsImgListData;
+	this->pToolBar->DisabledImages = GsReadBibleTextData::_GsImgListDataDisable;
+	this->pToolBar->DrawingStyle = (Vcl::Comctrls::TTBDrawingStyle)Vcl::Comctrls::gdoGradient;
+	this->pToolBar->HotTrackColor = clWebDarkOrange;
+  	//--- Przyciski nawigacji i innych na toolbarze
+	//Wyświetlanie informacji o wybranym tłumaczeniu, lub tłumaczeniach, oraz rozdziałach
+	this->pToolButtonInfoTranslates = new TToolButton(this->pToolBar);
+	if(!this->pToolButtonInfoTranslates) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
+	this->pToolButtonInfoTranslates->Parent = this->pToolBar;
+	this->pToolButtonInfoTranslates->ImageIndex = enImageIndex_DisplayInfoTranslates;
+	this->pToolButtonInfoTranslates->ShowHint = true;
+	this->pToolButtonInfoTranslates->Tag = this->pToolButtonInfoTranslates->ImageIndex;
+	this->pToolButtonInfoTranslates->OnClick = this->_OnClickButton;
+	this->pToolButtonInfoTranslates->AllowAllUp = true;
+	this->pToolButtonInfoTranslates->Style = tbsCheck;
+	this->pToolButtonInfoTranslates->CustomHint = GsReadBibleTextData::_GsBalloonHint;
+	this->pToolButtonInfoTranslates->Hint = Format("Informacje o przekładach|Wyświetlenie informacji o wszystkich, dostępnych przekładach, lub o bierzącym przekładzie i rozdziale|%u", ARRAYOFCONST((this->pToolButtonInfoTranslates->ImageIndex)));
+	//Rozpoczęcie edycji komentarza do zaznaczonego wersetu
+	this->pToolButtonEdit = new TToolButton(this->pToolBar);
+	if(!this->pToolButtonEdit) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
+	this->pToolButtonEdit->Parent = this->pToolBar;
+	this->pToolButtonEdit->ImageIndex = enImageIndex_EditText;
+	this->pToolButtonEdit->ShowHint = true;
+	this->pToolButtonEdit->Tag = this->pToolButtonEdit->ImageIndex;
+	this->pToolButtonEdit->OnClick = this->_OnClickButton;
+	this->pToolButtonEdit->AllowAllUp = true;
+	this->pToolButtonEdit->Style = tbsCheck;
+	this->pToolButtonEdit->CustomHint = GsReadBibleTextData::_GsBalloonHint;
+	this->pToolButtonEdit->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego wersetu, lub rozdziału|%u", ARRAYOFCONST((this->pToolButtonEdit->ImageIndex)));
 		//Przewijanie rozdziałów
-	for(int i=enImageIndex_PrevChapter; i>=enImageIndex_NextChapter; i--)
+	for(int i=enImageIndex_ToPrevBook; i>=enImageIndex_ToNextBook; i--)
 	{
-		TToolButton *pToolButton = new TToolButton(this->pToolBar);
+		pToolButton = new TToolButton(this->pToolBar);
 		if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
 		pToolButton->Parent = this->pToolBar;
 		pToolButton->ImageIndex = i;
@@ -1551,15 +1790,63 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 		pToolButton->Tag = pToolButton->ImageIndex;
 		pToolButton->OnClick = this->_OnClickButton;
 		pToolButton->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-		if(i == enImageIndex_PrevChapter)
+		//---
+		if(i == enImageIndex_ToNextBook)
+			pToolButton->Hint = Format("Wybór następnej księgi|Przewinięcie do następnej księgi|%u", ARRAYOFCONST((i)));
+		else if(i == enImageIndex_PrevChapter)
 			pToolButton->Hint = Format("Poprzedni rozdział|Przewinięcie zawartości wybranej księgi do poprzedniego rozdziału|%u", ARRAYOFCONST((i)));
 		else if(i == enImageIndex_NextChapter)
-      pToolButton->Hint = Format("Następny rozdział|Przewinięcie zawartości wybranej księgi do następnego rozdziału|%u", ARRAYOFCONST((i)));
+			pToolButton->Hint = Format("Następny rozdział|Przewinięcie zawartości wybranej księgi do następnego rozdziału|%u", ARRAYOFCONST((i)));
+		else if(i == enImageIndex_ToPrevBook)
+			pToolButton->Hint = Format("Wybór poprzedniej księgi|Przewinięcie do poprzedniej księgi|%u", ARRAYOFCONST((i)));
 	}
-	//***************** Stworzenie dolnego objektu, klasy MBNGTabSetClass, do wyboru wyświetlania
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitCBoxChaptersSelect(TPanel *pPanelParent)
+/**
+	OPIS METOD(FUNKCJI): Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //Wyłuskanie aktywnego objektu, klasy GsTreeNodeClass, z drzewa ksiąg
+	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(GsReadBibleTextData::pGsTreeBibleClass->Selected);
+	if(!pGsTreeNodeClass) throw(Exception("Błąd procedury wyłuskania, objektu klasy GsTreeNodeClass"));
+	this->pComboBox = new TComboBox(pPanelParent);
+	this->pComboBox->Parent = pPanelParent;
+	this->pComboBox->Font->Quality = TFontQuality::fqClearType;
+	this->pComboBox->Align = alLeft;
+	this->pComboBox->AlignWithMargins = true;
+	this->pComboBox->Margins->Left = 4; this->pComboBox->Margins->Right = 4;
+	int iITempMargin = (pPanelParent->Height - this->pComboBox->Height) / 2;
+	this->pComboBox->Margins->Top = iITempMargin; this->pComboBox->Margins->Bottom = iITempMargin;
+	this->pComboBox->OnSelect = this->_OnSelectBoxChapter;
+	this->pComboBox->Width = 160;
+	this->pComboBox->Style = csOwnerDrawFixed;
+	this->pComboBox->OnDrawItem = this->_OnSelectChaptCBoxDrawItem;
+	this->pComboBox->CustomHint = GsReadBibleTextData::_GsBalloonHint;;
+	this->pComboBox->ShowHint = true;
+	this->pComboBox->Hint = "Wybór rozdziału|Wybór numeru rozdziału z listy rozdziałów, dostępnych dla wybranej księgi";
+  		//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
+	for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; iChapt++)
+		{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitTabSetDisplayTranslates()
+/**
+	OPIS METOD(FUNKCJI): Zakładki z wyborem sposobu wyświetlania tłumaczeń
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	static const UnicodeString custrAllTranslatesTab = "Wszystkie tłumaczenia";
+
 	this->pGsTabSetClass = new GsTabSetClass(this);
 	if(!this->pGsTabSetClass) throw(Exception("Błąd inicjalizacji klasy TTabSet"));
 	this->pGsTabSetClass->Parent = this;
+
 	this->pGsTabSetClass->Align = alBottom;
 	this->pGsTabSetClass->SelectedColor = clRed;
 	this->pGsTabSetClass->Tabs->Add(custrAllTranslatesTab);
@@ -1567,73 +1854,15 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->pGsTabSetClass->ShowHint = true;
 	this->pGsTabSetClass->Hint = Format("Wybór żródła do wyświetlenia|Wybór sposobu wyświetlania tekstu, po między widokiem równoległym dla wszystkich tłumaczeń, a widokiem dla jednego, wybranego tłumaczeniai|%u",
 		ARRAYOFCONST((enImageIndex_InfoHelp)));
-	const int ciGetTrPol = GsReadBibleTextData::pGsReadBibleTextClass->_ListItemsTranslates->Count; //Ilość polskich tłumaczeń
+	const int ciGetTrPol = GsReadBibleTextData::pGsReadBibleTextClass->_GsListItemsTranslates->Count; //Ilość polskich tłumaczeń
 	//Dodawanie tłumaczeń
 	for(int i=0; i<ciGetTrPol; i++)
 	{
-		GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(GsReadBibleTextData::pGsReadBibleTextClass->_ListItemsTranslates->Items[i]);
+		GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(GsReadBibleTextData::pGsReadBibleTextClass->_GsListItemsTranslates->Items[i]);
 		//Sprawdzanie czy to jest pełne, polskie tłumaczenie
 		if(pGsReadBibleTextItem) {if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) this->pGsTabSetClass->Tabs->Add(pGsReadBibleTextItem->NameTranslate);}
 	}
 	this->pGsTabSetClass->TabIndex = 0; //Domyślna zakładka rodzaju tłumaczenia (wszyskie tłumaczenia)
-  //Inicjalizacja panelu, dla wyświetlania kontrolek, związanych z tekstem.
-	TPanel *pPanelText = new TPanel(this);
-	if(!pPanelText) throw(Exception("Błąd inicjalizacji klasy TPanel"));
-	pPanelText->Parent = this;
-	pPanelText->Align = alClient;
-	pPanelText->BevelOuter = bvNone;
-	pPanelText->BorderStyle = bsNone;
-	pPanelText->ShowCaption = false;
-	pPanelText->OnDragDrop = this->OnDragDrop;
-	pPanelText->OnDragOver = this->OnDragOver;
-	//---Inicjalizacja pionowego wskaźnika, umiejscowienia pozycji w rozdziale
-	this->pProgressBar = new TProgressBar(pPanelText);
-	this->pProgressBar->Parent = pPanelText;
-	this->pProgressBar->Align = alRight;
-	this->pProgressBar->Orientation = pbVertical;
-	this->pProgressBar->Width = 8;
-	this->pProgressBar->BarColor = clRed;
-	this->pProgressBar->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	this->pProgressBar->ShowHint = true;
-	//this->pProgressBar->Brush->Color = clRed;
-  //SendMessage(this->pProgressBar->Handle, PBM_SETBARCOLOR, 0, clBlue);
-	this->pProgressBar->Hint = Format("Pozycja w księdze|Pionowy pasek pokazujący pozycje wybranego rozdziału, względem całej księgi|%u",
-		ARRAYOFCONST((enImageIndex_InfoHelp)));
-	//---Inicjalizacja objektu, klasy TWebBrowser
-	this->pWebBrowser = new TWebBrowser(pPanelText);
-	if(!this->pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
-	this->pWebBrowser->TOleControl::Parent = pPanelText;
-	this->pWebBrowser->Align = alClient;
-	this->pWebBrowser->Offline = true;
-	this->pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
-	this->pWebBrowser->OnDragDrop = pPanelText->OnDragDrop;
-	this->pWebBrowser->OnDragOver = pPanelText->OnDragOver;
-	//Wybieralny tekst rozdziału
-	this->pLBoxSelectText = new GsListBoxSelectedVersClass(pPanelText);
-	if(!this->pLBoxSelectText) throw(Exception("Błąd inicjalizacji klasy GsListBoxSelectedVersClass"));
-	this->pLBoxSelectText->Parent = pPanelText;
-	this->pLBoxSelectText->Align = alLeft;
-	this->pLBoxSelectText->Width = 98;
-	this->pLBoxSelectText->Visible = false;
-	//Edycja komentarza do wybranego wersetu, lub rozdziału
-	this->pGsEditorClass = new GsEditorClass(pPanelText);
-	if(!this->pGsEditorClass) throw(Exception("Błąd inicjalizacji klasy GsEditorClass"));
-	this->pGsEditorClass->Parent = pPanelText;
-	this->pGsEditorClass->Align = alBottom;
-	this->pGsEditorClass->Height = 160;
-	this->pGsEditorClass->Visible = false;
-	/**/this->pGsEditorClass->OnSave = this->_OnSaveComments;
-  //Splitter
-	this->pSplitterEd = new TSplitter(pPanelText);
-	if(!this->pSplitterEd) throw(Exception("Błąd inicjalizacji klasy TSplitter"));
-	this->pSplitterEd->Parent = pPanelText;
-	this->pSplitterEd->Align = alBottom;
-	this->pSplitterEd->Color = clMaroon;
-	this->pSplitterEd->MinSize = this->pGsEditorClass->Height / 2;
-	this->pSplitterEd->Visible = false;
-	//Aktywacja wczytanego tekstu
-  //this->SetFocus();
-	this->pWebBrowser->SetFocus();
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetClass::~GsTabSheetClass()
@@ -1644,10 +1873,14 @@ __fastcall GsTabSheetClass::~GsTabSheetClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->pStrBuilderHtml) {delete this->pStrBuilderHtml; this->pStrBuilderHtml = 0;}
+	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
+	delete this->pHSListActualText; this->pHSListActualText = nullptr;
+	delete this->pStrBuilderHtml; this->pStrBuilderHtml = nullptr;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsTabSheetClass::_OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
+void __fastcall GsTabSheetClass::_OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control,
+	int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
 /**
 	OPIS METOD(FUNKCJI): Własnoręczne rysowanie objektu, klasy TComboBox, wyboru rozdziałów
 	OPIS ARGUMENTÓW:
@@ -1708,11 +1941,46 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 	//---
 	switch(pToolButton->Tag)  //Identyfikowanie, który przycisk został wybrany
 	{
+    case enImageIndex_ToPrevBook:    //Poprzednia księga
+		{
+			if(this->_ShucIndexBook > 0)
+			{
+				this->_ShucIndexBook--;
+				this->pComboBox->ItemIndex = 0;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
+        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
+        //Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
+				this->pComboBox->Clear();
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+				this->pComboBox->ItemIndex = 0;
+				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
+			}
+		}
+		break;
+		//---
+		case enImageIndex_ToNextBook:    //Następna księga
+		{
+			if(this->_ShucIndexBook < GsReadBibleTextData::GsNumberBooks-1)
+			{
+        this->_ShucIndexBook++;
+				this->pComboBox->ItemIndex = 0;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
+        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
+				//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
+				this->pComboBox->Clear();
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+				this->pComboBox->ItemIndex = 0;
+        this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
+			}
+		}
+		break;
+		//---
 		case enImageIndex_NextChapter:     //Następny rozdział
 		{
-			TToolButton *pGetToolButton = this->pToolBar->Buttons[enImageIndex_PrevChapter - enImageIndex_NextChapter];
-			if(!pGetToolButton) throw(Exception("Błąd uzyskania wskaźnika na przycisk"));
-			pGetToolButton->Enabled = true;
 			if(this->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt-1)
 			{
 				this->_ShucIndexChapt++; //Następny rozdział
@@ -1721,23 +1989,22 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//pToolButton->Enabled = this->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt-1;
+				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
 			}
 		}
 		break;
 		//---
 		case enImageIndex_PrevChapter:     //Poprzedni rozdział
 		{
-			TToolButton *pGetToolButton = this->pToolBar->Buttons[enImageIndex_NextChapter - enImageIndex_NextChapter];
-			if(!pGetToolButton) throw(Exception("Błąd uzyskania wskaźnika na przycisk"));
-			pGetToolButton->Enabled = true;
 			if(this->_ShucIndexChapt > 0)
 			{
 				this->_ShucIndexChapt--; //Poprzedni rozdział
-        this->pComboBox->ItemIndex--;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				this->pComboBox->ItemIndex--;  //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
 				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, this->_ShucIndexChapt);
-        //Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//pToolButton->Enabled = this->_ShucIndexChapt > 0;
+				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
 			}
 		}
 		break;
@@ -1760,7 +2027,14 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 			this->pSplitterEd->Visible = pToolButton->Down;
 		}
 		break;
-  }
+		//---
+		case enImageIndex_DisplayInfoTranslates: //Wyświetlanie informacji o przekładach
+		{
+			this->pPanelInfoTraslates->Visible = pToolButton->Down;
+			this->pWebBrowserInfoTranslations->Visible = pToolButton->Down;
+    }
+		break;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnSelectBoxChapter(System::TObject* Sender)
@@ -1796,6 +2070,125 @@ void __fastcall GsTabSheetClass::_OnSaveComments(System::TObject* Sender)
 	if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);//Powtórne wczytanie tekstu rozdziału 07-01-2019
   //Odswierzenie głównej listy komentarzy w głównym oknie
   GsReadBibleTextData::pGsLViewCommentsAllClass->ReloadAllVersComments(false);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL)
+/**
+	OPIS METOD(FUNKCJI): [31-07-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TWebBrowser *pBrowser = dynamic_cast<TWebBrowser *>(ASender);
+	if(!pBrowser) return;
+	//---
+	TTreeNode *pTreeNodeSelect = GsReadBibleTextData::pGsTreeBibleClass->Selected; //[03-08-2023]
+	UnicodeString ustrInfoPanel = Format("Strona wczytana z tekstem [%s]", ARRAYOFCONST(( pTreeNodeSelect->Text ))); //[04-08-2023]
+
+	TForm *pMainForm = Application->MainForm;
+
+	for(int i=0; i<pMainForm->ComponentCount; i++)
+	{
+		TComponent *pComponent = pMainForm->Components[i];
+		if(pComponent->ClassNameIs("TStatusBar"))
+		{
+			TStatusBar *pStatusBar = dynamic_cast<TStatusBar *>(pComponent);
+			if(pStatusBar)
+			{
+				if(pStatusBar->SimplePanel)
+					{pStatusBar->SimpleText = ustrInfoPanel;}
+				else
+				{
+					if(pStatusBar->Panels->Count > 0)
+						{pStatusBar->Panels->Items[0]->Text = ustrInfoPanel;}
+				}
+			}
+		}
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_GetHTMLText(UnicodeString &_ustrTextHTML)
+/**
+	OPIS METOD(FUNKCJI): Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	_ustrTextHTML = "";
+  _ustrTextHTML = this->pStrBuilderHtml->ToString();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_DisplayInfosTranslates(const int iTab)
+/**
+	OPIS METOD(FUNKCJI): Metoda wyświetla informacje o przekładach i wybranym rozdziale
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
+	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(!pGsTabSheetClass) return;
+
+	try
+	{
+		pStringStream->WriteString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+		pStringStream->WriteString(UnicodeString("<html><head>") +
+																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+																		"<title>Informacja o tłumaczeniach</title>" +
+																		"<style type=\"text/css\">" +
+																		".styleColorValue {color: #4B0082; font-size:12pt;font-family:Arial; font-weight:bold; background-position:center;}" +
+																		".styleText {color: #000000; font-size:12pt;font-family:Times;}" +
+																		".styleInfoTranslate {color: #FF0000; font-size:12pt;font-family:Arial; font-weight:bold; background-position:center;}" +
+																		"body {background-color:#CCCCEE; font-size:12pt;font-family:Arial;}" +
+																		"</style></head><body>");
+
+		if(iTab==-1)
+		//Informacje o wszystkich tłumaczeniach
+		{
+			pStringStream->WriteString("<span class=\"styleColorValue\">Nazwa tłumaczenia: </span><span class=\"styleText\">Wszystkie, dostępne tłumaczenia</span>");
+		}
+		else
+		//Wybrane tłumaczenie
+		{
+			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::pGsReadBibleTextClass->GetTranslateClass(iTab); //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Nazwa tłumaczenia: </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
+			pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Ilość wszystkich wersetów w tłumaczeniu: </span><span class=\"styleText\">%d wersetów</span>", ARRAYOFCONST((pGsReadBibleTextItem->uiAllVersCount))));
+      pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrana księga: </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].FullNameBook))));
+			pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrany rozdział: </span><span class=\"styleText\">%d</span>", ARRAYOFCONST((this->_ShucIndexChapt+1))));
+			//Informacje o wybranym tłumaczeniu
+			pStringStream->WriteString("<br><br>");
+			pStringStream->WriteString("<span class=\"styleInfoTranslate\">Informacje o tłumaczeniu:</span>");
+			pStringStream->WriteString("<hr>");
+
+			if(TFile::Exists(pGsReadBibleTextItem->PathInfoTranslate))
+			{
+				pStringStream->WriteString("<span class=\"styleText\">");
+				pStringStream->WriteString(TFile::ReadAllText(pGsReadBibleTextItem->PathInfoTranslate, TEncoding::UTF8));
+				pStringStream->WriteString("</span>");
+			}
+		}
+
+		pStringStream->WriteString("</body></html>");
+		pStringStream->Position = 0;
+
+		//Wczytanie do objektu, klasy TWebBrowser (this->pWebBrowserinfoTranslations) zawartości objeltu, klasy TStringStream (pStringStream)
+		IPersistStreamInit *psi;
+
+		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+		if(SUCCEEDED(this->pWebBrowserInfoTranslations->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+			{psi->Load(sa);}
+	}
+	__finally
+	{
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::CreateWnd()
@@ -1849,6 +2242,7 @@ __fastcall GsTabSetClass::GsTabSetClass(TComponent* Owner) : TTabSet(Owner)
 	this->DoubleBuffered = true;
 	this->OnChange = this->_OnChange;
 	this->bIsCreate = true; //Objekt został stworzony
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSetClass::~GsTabSetClass()
@@ -1897,11 +2291,14 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 	if(!this->bIsCreate)
 	{
 		GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+    if(!pGsTabSheetClass) return;
 		//Ponowne wczytanie wszystkich tłumaczeń, dla wybranej księgi i rozdziału, by przy przełączaniu zakładek wyboru tłumacznia
 		//nie wyświetlano tekstu z sąsiedniej zakładki ksiegi i rozdziału!
-		GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pGsTabSheetClass->_ShucIndexBook, pGsTabSheetClass->_ShucIndexChapt);
+		GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pGsTabSheetClass->_ShucIndexBook, pGsTabSheetClass->_ShucIndexChapt); //Niekoniecznie potrzebne
 		//Od NewTab odejmowane jast 1, gdyż pierwsza pozycja zakładek to nie konkretne tłumaczenie, lecz wszystkie tłumaczenia
-		if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, NewTab-1);
+		/*if(pGsTabSheetClass)*/ GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, NewTab-1);
+
+		pGsTabSheetClass->_DisplayInfosTranslates(NewTab-1);
 	}
 	else
   {
@@ -1909,132 +2306,8 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 	}
 }
 /****************************************************************************
- *            Całkowicie statyczna klasalasa GsReadBibleTextData            *
+ *                łkowicie statyczna KLASA GsReadBibleTextData              *
  ****************************************************************************/
-TImageList *GsReadBibleTextData::_GsImgListData = 0; //Globalna lista grafik
-TImageList *GsReadBibleTextData::_GsImgListDataDisable = 0; //Globalna lista grafik nieaktywnych
-TPageControl *GsReadBibleTextData::_GsPageControl = 0; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki
-TTaskbar *GsReadBibleTextData::_GsTaskBar = 0;	//Wskaźnik na objekt, klasy TTaskBar
-GsTabSheetSelectVersClass *GsReadBibleTextData::GsSheetListVers = 0;//Globalny wskażnik na zakładkę z listąwybranych wersetów za pomocą klasy GsBarSelectVers
-//TMemo *GsReadBibleTextData::GsMemoDebug = 0;          //Wskaźnik na klasę TMemo do debugowania
-GsListBoxFavoritiesClass *GsReadBibleTextData::pGsListBoxFavoritiesClass = 0; //Wskażnik na klasę listy ulubionych wersetów, w głównym oknie
-GsReadBibleTextClass *GsReadBibleTextData::pGsReadBibleTextClass = 0;	//Wskaźnik na główną klasę
-GsTreeBibleClass *GsReadBibleTextData::pGsTreeBibleClass = 0; //Wskaźnik na klasę drzewa ksiąg bibliinych
-GsLViewCommentsAllClass *GsReadBibleTextData::pGsLViewCommentsAllClass = 0; //Wskażnik na klasę listy komentarzy do wersetów, w głównym oknie
-enReturnError GsReadBibleTextData::EnErrorCode = enR_NoError; //Kod błędu
-const UnicodeString GsReadBibleTextData::GsExtendFileTranslateFull = "*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendFileTranslateGrecOrg = "*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendFileTranslateHbrOrg = "*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendFileTranslateAll = "*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM (polskim, hebrajskim i greckim)tłumaczeniem JAKO WZORZEC!!!
-										GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull = ".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
-										GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg = ".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
-										GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg = ".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
-										GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate = ".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
-							//--- Globalne style
-UnicodeString	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
-							GsReadBibleTextData::GsHTMLHeaderText = "", //Nagłówek wyświetla w formie html, głównego tekstu
-							GsReadBibleTextData::GsHTMLHeaderSearch = "", //Nagłówek wyświetla w formie html, wynik wyszukiwania słów lub wyrażeń w tekście bilijnym
-							//Wyświetlenie pojedyńczego wersetu
-							GsReadBibleTextData::GsHTMLHeaderDisplayVer = ""; //Nagłówek wyświetla w formie html, tekst w onie wyboru pojedyńczego wersetu
-							//---
-bool GsReadBibleTextData::IsInitLibrary=false; //Czy została zainicjowana bibliteka (moduł)
-TBalloonHint *GsReadBibleTextData::_GsBalloonHint = 0;
-//Tablica struktur opisująca parametry ksiąg biblijnych, potrzebna przy tworzeniu drzewa struktury bibli
-const InfoAllBooks GsReadBibleTextData::GsInfoAllBooks[GsReadBibleTextData::GsNumberBooks] =
-{
-															//--- Stary Testament
-															InfoAllBooks(1,	"1 Mojżeszowa", 						    "1Moj", 	50),
-															InfoAllBooks(2, "2 Mojżeszowa", 							  "2Moj", 	40), //1
-															InfoAllBooks(3,	"3 Mojżeszowa", 							  "3Moj", 	27), //2
-															InfoAllBooks(4,	"4 Księga Mojżeszowa", 		 	 	  "4Moj", 	 36), //3
-															InfoAllBooks(5,	"5 Księga Mojżeszowa",     	 	  "5Moj",   34), //4
-															InfoAllBooks(6,	"Księga Jozuego",          			"Joz",    24), //5
-															InfoAllBooks(7,	"Księga Sędziów",          			"Sędź",   21), //6
-															InfoAllBooks(8,	"Księga Rut",              			"Rut",    4),  //7
-															InfoAllBooks(9,	"1 Księga Samuela",        			"1Sam",   31), //8
-															InfoAllBooks(10,	"2 Księga Samuela",        			"2Sam",   24), //9
-															InfoAllBooks(11,	"1 Księga Królewska",        		"1Król",  22), //10
-															InfoAllBooks(12,	"2 Księga Królewska",        		"2Król",  25), //11
-															InfoAllBooks(13,	"1 Księga Kronik",           		"1Kron",    29), //12
-															InfoAllBooks(14,	"2 Księga Kronik",           		"2Kron",    36), //13
-															InfoAllBooks(15,	"Księga Ezdrasza",           		"Ezdr",   10), //14
-															InfoAllBooks(16,	"Księga Nechemiasza",        		"Nech",   13), //15
-															InfoAllBooks(17,	"Księga Estery",             		"Est",    10), //16
-															InfoAllBooks(18,	"Księga Joba",               		"Job",    42), //17
-															InfoAllBooks(19,	"Księga Psalmów",            		"Ps",     150),//18
-															InfoAllBooks(20,	"Przypowieści Salomona",     		"Przyp",  31), //19
-															InfoAllBooks(21,	"Księga Kaznodziei Salomona",		"Kazn",   12), //20
-															InfoAllBooks(22,	"Pieśni nad Pieśniami",      		"PnP",    8),  //21
-															InfoAllBooks(23,	"Księga Izajasza",           		"Iz",     66), //22
-															InfoAllBooks(24,	"Księga Jeremiasza",         		"Jer",    52), //23
-															InfoAllBooks(25,	"Treny",                     		"Tren",   5),  //24
-															InfoAllBooks(26,	"Księga Ezechiela",          		"Ez",     48), //25
-															InfoAllBooks(27,	"Księga Daniela",            		"Dan",    14), //26
-															InfoAllBooks(28,	"Księga Ozeasza",            		"Oz",     14), //27
-															InfoAllBooks(29,	"Księga Joela",              		"Jo",     3),  //28
-															InfoAllBooks(30,	"Księga Amosa",              		"Am",     9),  //29
-															InfoAllBooks(31,	"Księga Abdiasza",           		"Abd",    1),  //30
-															InfoAllBooks(32,	"Księga Jonasza",            		"Jon",    4),  //31
-															InfoAllBooks(33,	"Księga Micheasza",          		"Mich",   7),  //32
-															InfoAllBooks(34,	"Księga Nahuma",             		"Nah",    3),  //33
-															InfoAllBooks(35,	"Księga Habakuka",           		"Hab",    3),  //34
-															InfoAllBooks(36,	"Księga Sofoniasza",         		"Sof",    3),  //35
-															InfoAllBooks(37,	"Księga Aggeusza",           		"Agg",    2),  //36
-															InfoAllBooks(38,	"Księga Zachariasza",        		"Zach",   14), //37
-															InfoAllBooks(39,	"Księga Malachiasza",        		"Mal",    3),  //38
-															//--- Nowy Testament
-															InfoAllBooks(40,	"Ewangelia Mateusza",    		 		"Mt",     28), //39
-															InfoAllBooks(41,	"Ewangelia Marka",           		"Mk",     16), //40
-															InfoAllBooks(42,	"Ewangelia Łukasza",         		"Łk",     24), //41
-															InfoAllBooks(43,	"Ewangelia Jana",            		"Jan",    21), //42
-															InfoAllBooks(44,	"Dzieje Apostolskie",        		"DzAp",   28), //43
-															InfoAllBooks(45,	"List Pawła do Rzymian",     		"Rzym",   16), //44
-															InfoAllBooks(46,	"1 List Pawła do Koryntian", 		"1Kor",   16), //45
-															InfoAllBooks(47,	"2 List Pawła do Koryntian", 		"2Kor",   13), //46
-															InfoAllBooks(48,	"List Pawła do Galacjan",    		"Gal",    6),  //47
-															InfoAllBooks(49,	"List Pawła do Efezjan",     		"Efez",   6),  //48
-															InfoAllBooks(50,	"List Pawła do Filipian",    		"Filip",  4),  //49
-															InfoAllBooks(51,	"List Pawła do Kolosan",     		"Kol",    4),  //50
-															InfoAllBooks(52,	"1 List Pawła do Tesaloniczan",	"1Tes",   5),  //51
-															InfoAllBooks(53,	"2 List Pawła do Tesaloniczan",	"2Tes",   3),  //52
-															InfoAllBooks(54,	"1 List Pawła do Tymoteusza",  	"1Tym",   6),  //53
-															InfoAllBooks(55,	"2 List Pawła do Tymoteusza",  	"2Tym",   4),  //54
-															InfoAllBooks(56,	"List Pawła do Tytusa",         "Tyt",    3),  //55
-															InfoAllBooks(57,	"List Pawła do Filemona",       "Filem",  1),  //56
-															InfoAllBooks(58,	"List do Hebrajczyków",         "Hbr",    13), //57
-															InfoAllBooks(59,	"List Jakuba",                  "Jak",    5),  //58
-															InfoAllBooks(60,	"1 List Piotra",                "1Pt",    5),  //59
-															InfoAllBooks(61,	"2 List Piotra",                "2Pt",    3),  //60
-															InfoAllBooks(62,	"1 List Jana",                  "1Jan",   5),  //61
-															InfoAllBooks(63,	"2 List Jana",                  "2Jan",   1),  //62
-															InfoAllBooks(64,	"3 List Jana",                  "3Jan",   1),  //63
-															InfoAllBooks(65,	"List Judy",                    "Jud",    1),  //64
-															InfoAllBooks(66,	"Objawienie Jana",              "Obj",    22), //65
-															//--- Apokryfy
-															InfoAllBooks(67,	"Księga Tobiasza",              "Tob",    14), //66
-															InfoAllBooks(68,	"Księga Judyty",                "Judyt",  16), //67
-															InfoAllBooks(69,	"Księga I Machabejska",         "1Mach",  16), //68
-															InfoAllBooks(70,	"Księga II Machabejska",        "2Mach",  15), //69
-															InfoAllBooks(71,	"Księga Mądrości",              "Mądr",   19), //70
-															InfoAllBooks(72,	"Księga Syracha",               "Syr",    51), //71
-															InfoAllBooks(73,	"Księga Barucha",               "Bar",    6)   //72
-};
-//Tablica struktur PairsGroupBooks, danych dla grup ksiąg biblijnych, dla funkcji wyszukiwania
-const PairsGroupBooks GsReadBibleTextData::GsPairsGroupBible[GsReadBibleTextData::GsNumberAllGroups] =
-{
-	_PairsGroupBooks(0, 72),    //Wszystkie księgi wraz z apokryfami ->_PairsGroupBooks(const char ucStartRange, ucStopRange);
-	_PairsGroupBooks(0, 65),    //Wszystkie księgi, bez apokryfów
-	_PairsGroupBooks(0, 38),    //Księgi Starego Testamentu
-	_PairsGroupBooks(39, 65),   //Księgi Nowego Testamentu
-	_PairsGroupBooks(66, 72),   //Księgi apokryficzne
-	_PairsGroupBooks(-1, -1),   //Własny zakres
-	_PairsGroupBooks(-1, -1)    //Pojedyńcza księga
-};
-const UnicodeString GsReadBibleTextData::GsNameAllRanges[en_GrSearch_Count] =
-	{"Całe Pismo Święte", "Protestancki kanon Pisma Świętego", "Stary Testament", "Nowy Testament", "Apokryfy", "Własny zakres", "Pojedyńcza księga"};
-const unsigned char GsReadBibleTextData::GsTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] = {39, 27, 7}; //Ilość ksiąg w poszczególnych grupack bibli
-const UnicodeString GsReadBibleTextData::GsNamesTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] = {"Stary Testament", "Nowy Testament", "Księgi Apokryficzne"}; //Nazwy ksiąg w poszczególnych grupack bibli
-//---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //Inicjalizacja zmiennych klasy
 /**
 	OPIS METOD(FUNKCJI):
@@ -2057,8 +2330,8 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 	GsReadBibleTextData::_GsImgListDataDisable->ColorDepth = cd32Bit;     //Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListDataDisable->DrawingStyle = dsTransparent;
 	//---
-	TIcon *pIcon=0;
-	TMemoryStream *pMemoryStr=0;
+	TIcon *pIcon=nullptr;
+	TMemoryStream *pMemoryStr=nullptr;
 	try
 	{
 		pIcon = new TIcon();
@@ -2090,104 +2363,122 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 4.Ikona następnego rozdziału
+		//--- 4.Ikona następnej księgi
+		pMemoryStr->WriteBuffer(ID_TONEXT_BOOK, ARRAYSIZE(ID_TONEXT_BOOK)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 5.Ikona następnego rozdziału
 		pMemoryStr->WriteBuffer(ID_NEXTCHAPTER, ARRAYSIZE(ID_NEXTCHAPTER)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 5.Ikona poprzedniego rozdziału
+		//--- 6.Ikona poprzedniego rozdziału
 		pMemoryStr->WriteBuffer(ID_PREVCHAPTER, ARRAYSIZE(ID_PREVCHAPTER)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 6.Ikona wyświetlenia wybranego werseu
+		//--- 7.Ikona poprzedniej księgi
+		pMemoryStr->WriteBuffer(ID_TOPREV_BOOK, ARRAYSIZE(ID_TOPREV_BOOK)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 8.Ikona wyświetlenia wybranego werseu
 		pMemoryStr->WriteBuffer(ID_DISPLAYVERS, ARRAYSIZE(ID_DISPLAYVERS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 7.Ikona wyświetlenia wyboru tłumaczeń
+		//--- 9.Ikona wyświetlenia wyboru tłumaczeń
 		pMemoryStr->WriteBuffer(ID_TRANSLATES, ARRAYSIZE(ID_TRANSLATES)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 8.Ikona wyboru wiersza
+		//--- 10.Ikona wyboru wiersza
 		pMemoryStr->WriteBuffer(ID_SELECTVERS, ARRAYSIZE(ID_SELECTVERS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 9.Ikona informacji i pomocy
+		//--- 11.Ikona informacji i pomocy
 		pMemoryStr->WriteBuffer(ID_INFOHELP, ARRAYSIZE(ID_INFOHELP)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 10.Przeniesienie wybranego tekstu nazakładkę
+		//--- 12.Przeniesienie wybranego tekstu nazakładkę
 		pMemoryStr->WriteBuffer(ID_COPYTOSHEET, ARRAYSIZE(ID_COPYTOSHEET)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 11.Ikona kolumny greckich słów
+		//--- 13.Ikona kolumny greckich słów
 		pMemoryStr->WriteBuffer(ID_GRECWORD_COLUMN, ARRAYSIZE(ID_GRECWORD_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 12.Ikona kolumny greckich słów stronga
+		//--- 14.Ikona kolumny greckich słów stronga
 		pMemoryStr->WriteBuffer(ID_GRECSTRONG_COLUMN, ARRAYSIZE(ID_GRECSTRONG_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 13.Ikona kolumny greckich słów tłumaczenia
+		//--- 15.Ikona kolumny greckich słów tłumaczenia
 		pMemoryStr->WriteBuffer(ID_GRECDICTIONARY_COLUMN, ARRAYSIZE(ID_GRECDICTIONARY_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 14.Ikona kolumny greckich pozycja
+		//--- 16.Ikona kolumny greckich pozycja
 		pMemoryStr->WriteBuffer(ID_GRECWORDITEM_COLUMN, ARRAYSIZE(ID_GRECWORDITEM_COLUMN)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 15.Ikona przełącznika ulubionego wersetu
+		//--- 17.Ikona przełącznika ulubionego wersetu
 		pMemoryStr->WriteBuffer(ID_SELECTFAV_VERSET, ARRAYSIZE(ID_SELECTFAV_VERSET)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 16.Ikona zapisywania
+		//--- 18.Ikona zapisywania
 		pMemoryStr->WriteBuffer(ID_SAVEICON, ARRAYSIZE(ID_SAVEICON)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 17.Ikona usuwania
+		//--- 19.Ikona usuwania
 		pMemoryStr->WriteBuffer(ID_DELETEICON, ARRAYSIZE(ID_DELETEICON)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 18.Ikona do selekcji textu
+		//--- 20.Ikona do selekcji textu
 		pMemoryStr->WriteBuffer(ID_VIEWSELECTTEXT, ARRAYSIZE(ID_VIEWSELECTTEXT)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 19.Ikona do wyłącznie czytania teksty
+		//--- 21.Ikona do wyłącznie czytania teksty
 		pMemoryStr->WriteBuffer(ID_VIEWONLYREADTEXT, ARRAYSIZE(ID_VIEWONLYREADTEXT)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 20.Ikona do rozpoczęcia edycji
+		//--- 22.Ikona do rozpoczęcia edycji
 		pMemoryStr->WriteBuffer(ID_EDITTEXT, ARRAYSIZE(ID_EDITTEXT)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 23.Ikona do wyświetlania informacji o przekładach
+		pMemoryStr->WriteBuffer(ID_INFOSTRANSLATES, ARRAYSIZE(ID_INFOSTRANSLATES)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
@@ -2217,104 +2508,122 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 4.Ikona następnego rozdziału
+		//--- 4.Ikona następnej księgi
+		pMemoryStr->WriteBuffer(ID_TONEXT_BOOK_DIS, ARRAYSIZE(ID_TONEXT_BOOK_DIS)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 5.Ikona następnego rozdziału
 		pMemoryStr->WriteBuffer(ID_NEXTCHAPTER_DIS, ARRAYSIZE(ID_NEXTCHAPTER_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 5.Ikona poprzedniego rozdziału
+		//--- 6.Ikona poprzedniego rozdziału
 		pMemoryStr->WriteBuffer(ID_PREVCHAPTER_DIS, ARRAYSIZE(ID_PREVCHAPTER_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 6.Ikona wyświetlenia wybranego werseu
+		//--- 7.Ikona poprzedniej księgi
+		pMemoryStr->WriteBuffer(ID_TOPREV_BOOK_DIS, ARRAYSIZE(ID_TOPREV_BOOK_DIS)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 8.Ikona wyświetlenia wybranego werseu
 		pMemoryStr->WriteBuffer(ID_DISPLAYVERS_DIS, ARRAYSIZE(ID_DISPLAYVERS_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 7.Ikona wyświetlenia wyboru tłumaczeń
+		//--- 9.Ikona wyświetlenia wyboru tłumaczeń
 		pMemoryStr->WriteBuffer(ID_TRANSLATES_DIS, ARRAYSIZE(ID_TRANSLATES_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 8.Ikona wyboru wiersza
+		//--- 10.Ikona wyboru wiersza
 		pMemoryStr->WriteBuffer(ID_SELECTVERS_DIS, ARRAYSIZE(ID_SELECTVERS_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 9.Ikona informacji i pomocy
+		//--- 11.Ikona informacji i pomocy
 		pMemoryStr->WriteBuffer(ID_INFOHELP_DIS, ARRAYSIZE(ID_INFOHELP_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 10.Przeniesienie wybranego tekstu nazakładkę
+		//--- 12.Przeniesienie wybranego tekstu nazakładkę
 		pMemoryStr->WriteBuffer(ID_COPYTOSHEET_DIS, ARRAYSIZE(ID_COPYTOSHEET_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 11.Ikona kolumny greckich słów
+		//--- 13.Ikona kolumny greckich słów
 		pMemoryStr->WriteBuffer(ID_GRECWORD_COLUMN_DIS, ARRAYSIZE(ID_GRECWORD_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 12.Ikona kolumny greckich słów stronga
+		//--- 14.Ikona kolumny greckich słów stronga
 		pMemoryStr->WriteBuffer(ID_GRECSTRONG_COLUMN_DIS, ARRAYSIZE(ID_GRECSTRONG_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 13.Ikona kolumny greckich słów tłumaczenia
+		//--- 15.Ikona kolumny greckich słów tłumaczenia
 		pMemoryStr->WriteBuffer(ID_GRECDICTIONARY_COLUMN_DIS, ARRAYSIZE(ID_GRECDICTIONARY_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 14.Ikona kolumny greckich pozycja
+		//--- 16.Ikona kolumny greckich pozycja
 		pMemoryStr->WriteBuffer(ID_GRECWORDITEM_COLUMN_DIS, ARRAYSIZE(ID_GRECWORDITEM_COLUMN_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 15.Ikona przełącznika ulubionego wersetu
+		//--- 17.Ikona przełącznika ulubionego wersetu
 		pMemoryStr->WriteBuffer(ID_SELECTFAV_VERSET_DIS, ARRAYSIZE(ID_SELECTFAV_VERSET_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 16.Ikona zapisywania
+		//--- 18.Ikona zapisywania
 		pMemoryStr->WriteBuffer(ID_SAVEICON_DIS, ARRAYSIZE(ID_SAVEICON_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 17.Ikona usuwania
+		//--- 19.Ikona usuwania
 		pMemoryStr->WriteBuffer(ID_DELETEICON_DIS, ARRAYSIZE(ID_DELETEICON_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-    //--- 18.Ikona do selekcji textu
+		//--- 20.Ikona do selekcji textu
 		pMemoryStr->WriteBuffer(ID_VIEWSELECTTEXT_DIS, ARRAYSIZE(ID_VIEWSELECTTEXT_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 19.Ikona do wyłącznie czytania teksty
+		//--- 21.Ikona do wyłącznie czytania teksty
 		pMemoryStr->WriteBuffer(ID_VIEWONLYREADTEXT_DIS, ARRAYSIZE(ID_VIEWONLYREADTEXT_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 20.Ikona do rozpoczęcia edycji
+		//--- 22.Ikona do rozpoczęcia edycji
 		pMemoryStr->WriteBuffer(ID_EDITTEXT_DIS, ARRAYSIZE(ID_EDITTEXT_DIS)); 						//Zapis do strumienia danych
+		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 23.Ikona do wyświetlania informacji o przekładach
+		pMemoryStr->WriteBuffer(ID_INFOSTRANSLATES_DIS, ARRAYSIZE(ID_INFOSTRANSLATES_DIS)); 						//Zapis do strumienia danych
 		pMemoryStr->Position = 0;                                         //Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);                                //Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);                		//Dodanie ikony do listu, objektu klasy TImageList
@@ -2323,8 +2632,8 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)  //
 	__finally
 	{
 		//--- Zwolnienie objektu, klasy TIcon i TMemoryStream
-		if(pIcon) {delete pIcon; /*pIcon = 0;*/}
-		if(pMemoryStr) {delete pMemoryStr; /*pMemoryStr = 0;*/}
+		if(pIcon) {delete pIcon; pIcon = nullptr;}
+		if(pMemoryStr) {delete pMemoryStr; pMemoryStr = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -2361,6 +2670,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	GsReadBibleTextData::InitHistoryList(); //Metoda inicjuje zmienne dotyczące historii [30-07-2023]
 	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy
 	//---
 	if(GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Objekt GsReadBibleTextClass jest już zainicjowany"));
@@ -2379,12 +2689,12 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	GsReadBibleTextData::pGsReadBibleTextClass = _pGsReadBibleTextClass;
 	GsReadBibleTextData::GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 	//---
-	TComponent *Component=0;
+	TComponent *Component=nullptr;
 	for(int i=0; i<MainWindow->ComponentCount; i++)
 	{
 		Component = MainWindow->Components[i];
 		if(Component && Component->ClassNameIs("TTaskbar")) break;
-		Component = 0;
+		Component = nullptr;
   }
 	//GsReadBibleTextData::_GsTaskBar = pTaskBar;	//Wskaźnik na objekt, klasy TTaskBar
 	if(Component) GsReadBibleTextData::_GsTaskBar = dynamic_cast<TTaskbar *>(Component); //23.12.2018
@@ -2440,10 +2750,12 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 								  //Styl dla adresu oryginalnego tłumaczenia
 								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
 	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
+
 	GsReadBibleTextData::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html><head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-																												"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
+																												GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
+																												//"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
 																												"<style type=\"text/css\">\n" +
 																												_ColorAdressFullTranslates +
 																												_VersOryginalAdress +
@@ -2501,13 +2813,22 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	if(GlobalVar::Global_HSListAllFavoritiesVers)
 	{
 		GlobalVar::Global_HSListAllFavoritiesVers->SaveToFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);
-		delete GlobalVar::Global_HSListAllFavoritiesVers; GlobalVar::Global_HSListAllFavoritiesVers = 0;
-  }
+		delete GlobalVar::Global_HSListAllFavoritiesVers; GlobalVar::Global_HSListAllFavoritiesVers = nullptr;
+	}
+	//Zapis zaktualizowanego pliku historii, oraz usuwanie THashedStringListy z historią [30-07-2023]
+	GlobalVar::Global_HListHistoryChapterOpen->SaveToFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
+	if(GlobalVar::Global_HListHistoryChapterOpen)
+	{
+		delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("delete GlobalVar::Global_HListHistoryChapterOpen");
+		#endif
+	}
 	//--- Zamykanie głownej klasy
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
 	{
 		delete GsReadBibleTextData::pGsReadBibleTextClass;
-		GsReadBibleTextData::pGsReadBibleTextClass = 0;
+		GsReadBibleTextData::pGsReadBibleTextClass = nullptr;
 	}
 	else
 	{
@@ -2576,6 +2897,21 @@ void __fastcall GsReadBibleTextData::WriteCurrentSheetText(const UnicodeString c
 	GsReadBibleTextData::pGsReadBibleTextClass->SaveCurrentSheetText(custrPath);
 }
 //---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::GetTextHTMLCurrentSheet(UnicodeString &_ustrTextHTML)
+/**
+	OPIS METOD(FUNKCJI): Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+  GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(!pGsTabSheetClass) return;
+	//---
+	pGsTabSheetClass->_GetHTMLText(_ustrTextHTML);
+}
+//---------------------------------------------------------------------------
 GsReadBibleTextItem *__fastcall GsReadBibleTextData::GetTranslate(const unsigned char cucNumberTrans)
 /**
 	OPIS METOD(FUNKCJI): Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
@@ -2586,18 +2922,6 @@ GsReadBibleTextItem *__fastcall GsReadBibleTextData::GetTranslate(const unsigned
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	return GsReadBibleTextData::pGsReadBibleTextClass->GetTranslateClass(cucNumberTrans);
-}
-//---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextData::DisplayListText(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers, const int iSelectViewInWebBrowser)
-/**
-	OPIS METOD(FUNKCJI): Metoda wyświetla w formie html, dowolną listę wersetów
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
-	GsReadBibleTextData::pGsReadBibleTextClass->DisplayListTextHTML(_pWebBrowser, _pHListAnyVers, iSelectViewInWebBrowser);
 }
 //---------------------------------------------------------------------------
 THashedStringList *__fastcall GsReadBibleTextData::GetSelectBoksInTranslate(GsReadBibleTextItem *pGsReadBibleTextItem, const signed char scIndexBook)
@@ -2655,19 +2979,31 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 	//---
 	_HSListVers->Clear();
 	unsigned char uiTranslates = GsReadBibleTextData::CountTranslates();
+	int iReadVers;
+	bool bVerifyvers=false;
 	for(unsigned char i=0; i<uiTranslates; i++)
 	{
 		GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
 		if(pGsReadBibleTextItem)
 		{
 			THashedStringList *pHSListBook = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, cucBook);
+			//Błąd!!!
 			if(pHSListBook)
 			{
 				for(int i=0; i<pHSListBook->Count; i++)
 				{
-					if((pHSListBook->Strings[i].SubString(4, 3).ToInt() == cucChapt) && (pHSListBook->Strings[i].SubString(7, 3).ToInt() == cucVers))
+					if(pHSListBook->Strings[i].SubString(4, 3).ToInt() == cucChapt)
 					{
-						_HSListVers->AddObject(pHSListBook->Strings[i].SubString(11, 512), pHSListBook->Objects[i]);
+						//bVerifyvers = TryStrToInt(pHSListBook->Strings[i].SubString(7, 3), iReadVers);
+						iReadVers = pHSListBook->Strings[i].SubString(7, 3).ToIntDef(0); //Odczyt numeru wersetu
+						if(iReadVers == cucVers)
+						{
+							_HSListVers->AddObject(pHSListBook->Strings[i].SubString(11, ciMaxlengthVers), pHSListBook->Objects[i]);
+						}
+						else if(iReadVers == 0)
+						{
+							_HSListVers->AddObject(pHSListBook->Strings[i].SubString(11, ciMaxlengthVers), pHSListBook->Objects[i]);
+            }
           } //if(pHSListBook->Strings[i].SubString(7, 3).ToInt() == cucVers)
 				} //for(int i=0; i<pHSListBook->Count; i++)
 			} //if(pHSListBook)
@@ -2678,7 +3014,7 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers,
 	const unsigned char cucTrans, UnicodeString &ustrText)
 /**
-	OPIS METOD(FUNKCJI): Metoda zwraca listę wybranego wersetu, dla wszystkich, dostępnych tłumaczeń
+	OPIS METOD(FUNKCJI): Metoda zwraca string wybranego wersetu(ustrText), dla wszystkich, dostępnych tłumaczeń
 	OPIS ARGUMENTÓW: const unsigned char cucBook - księga
 									 const unsigned char cucChapt - rozdział
 									 const unsigned char cucVers - werset
@@ -2699,7 +3035,7 @@ void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cuc
 			{
 				if((pHSListBook->Strings[i].SubString(4, 3).ToInt() == cucChapt) && (pHSListBook->Strings[i].SubString(7, 3).ToInt() == cucVers))
 				{
-					ustrText = pHSListBook->Strings[i].SubString(11, 512);
+					ustrText = pHSListBook->Strings[i].SubString(11, ciMaxlengthVers);
         }
       }
     }
@@ -2770,31 +3106,7 @@ void __fastcall GsReadBibleTextData::GetAdressFromId(UnicodeString &_ustrResult,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	_ustrResult = "";
-	//--- Numer księgi
-	if(_iBook < 10)
-	{
-		_ustrResult = Format("00%u", ARRAYOFCONST((_iBook)));
-	}
-	else if(_iBook >= 10)
-	{
-		_ustrResult = Format("0%u", ARRAYOFCONST((_iBook)));
-	}
-	//--- Numer rozdziału
-	if(_iChapt < 10)
-	{
-		_ustrResult += Format("00%u", ARRAYOFCONST((_iChapt)));
-	}
-	else if((_iChapt >= 10) && (_iChapt < 100))
-	{
-		_ustrResult += Format("0%u", ARRAYOFCONST((_iChapt)));
-	}
-	else if(_iChapt >= 100)
-	{
-		_ustrResult += Format("%u", ARRAYOFCONST((_iChapt)));
-	}
-	//--- Werset
-  if(_iVers == 0) return;
+	_ustrResult = Format("%.3u%.3u%.3u", ARRAYOFCONST((_iBook, _iChapt, _iVers)));//"";
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _iChapt)
@@ -2807,7 +3119,9 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 {
 	int iBook;
 	if((_iBook < 1) && (_iBook > 73)) return;
-
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 002");
+//	#endif
 
 	if((_iBook >= 0) && (_iBook < 40)) iBook = _iBook + 1;
 	if((_iBook >= 40) && (_iBook < 67)) iBook = _iBook + 2;
@@ -2819,9 +3133,18 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA. NUMER ROZDZIAŁU LICZYMY OD ZERA !!!
 	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 003");
+//	#endif
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(_iBook-1, _iChapt-1);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 004");
+//	#endif
 	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
 	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 005");
+//	#endif
 }
 //---------------------------------------------------------------------------
 TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
@@ -2835,6 +3158,190 @@ TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
 	return GsReadBibleTextData::pGsReadBibleTextClass->_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 }
 //---------------------------------------------------------------------------
+UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
+			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay)
+/**
+	OPIS METOD(FUNKCJI): Metoda wyświetla zakres wersetów z wybranego tłmaczenia w dowolnym objekcie, klasy TWebBrowser
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	MyObjectVers *pMyObjectVers=nullptr;
+	int iLicz=0, iStart=0, iStop=0, iTemps=0, iLastOffsetVers=0;
+	THashedStringList *pHSListText=nullptr;
+	const int ciExceptText=18, ciExceptChapter=12, ciExceptOneChapter=6;
+	UnicodeString ustrStartStop = ReplaceText(ustrInputStartStop, " ", ""), //Usunięcie wszystkich spacji
+								ustrStartVers, ustrStopVers, ustrTemps, ustrRet;
+
+	try
+	{
+		try
+		{
+			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
+			if(!pGsReadBibleTextItem) {throw(Exception("Błąd metody sReadBibleTextData::GetTranslate()"));}
+
+			switch(ustrStartStop.Length())
+			//Formatowanie ciągu wyjściowego dla wyodrębnienia zakresu tekstu z całego tekstu księgi.
+			//wejściowym stringiem jest string pozbawiony spacji.
+			//Format wyjściowy zawsze będzie miał format dla pary: 9 znaków - 9 zanków
+    	{
+    		case ciExceptText:
+    			//Granice dotyczą pełnych adresów wersetów (99)
+    			ustrStartVers=ustrStartStop.SubString(1, 9); //Uzyskanie adresu startowegp
+    			ustrStopVers=ustrStartStop.SubString(10, 9);
+    			iLastOffsetVers = 0;
+    			break;
+    		//---
+    		case ciExceptChapter:
+    			//Granice dotyczą adresów całych rozdziałów (66)
+    			ustrStartVers=ustrStartStop.SubString(1, 6); //Uzyskanie adresu startowegp
+    			ustrStartVers+="001";                        //Dodanie do adresu startowego informacji pierwszego wersetu
+    			ustrStopVers=ustrStartStop.SubString(7, 6);  //Uzyskanie adresu końcowego
+    				//---
+    			iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1
+    			//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
+    			ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
+    			iLastOffsetVers = -1;                        //Odjąć jedną pozycje końcowego wskażnika na tekst
+    			break;
+    		//---
+    		case ciExceptOneChapter:
+          //Tylko jeden cału rozdział (6)
+    			ustrStartVers=ustrStartStop.SubString(1, 6); //Uzyskanie adresu startowegp
+					ustrStartVers+="001";                        //Dodanie do adresu startowego informacji pierwszego wersetu
+					ustrStopVers = ustrStartVers;                //Skopiowanie startowego adresu do końcowego adresu
+    				//---
+    			iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1  !!!
+    			//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
+    			ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
+					iLastOffsetVers = -1; //Odjąć jedną pozycje końcowego wskażnika na tekst
+    			break;
+    		//---
+    		default:
+    			throw(Exception("Niewłaściwy format wejściowy"));
+			}
+
+			//Werset końcowy jest dalej niż początkowy, lub adresy początku i końca są niewłaściwego formatu
+			if( (ustrStopVers.ToInt() < ustrStartVers.ToInt()) || (ustrStartVers.Length() != 9) || (ustrStopVers.Length()!= 9) )
+				{throw(Exception("Niewłaściwy format danych wejściowych"));}
+  		pHSListText = new THashedStringList();
+			if(!pHSListText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+
+			if(pGsReadBibleTextItem)
+			{
+  			THashedStringList *pSelectBook = pGsReadBibleTextItem->GetSelectBooks(ustrStartVers.SubString(1, 3).ToIntDef(1) - 1); //Metoda zwraca wskaźnik na konkretną księge
+
+  			while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStartVers)
+				{
+					//if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
+					if(pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt())
+					{
+						throw(Exception("Końcowy adres tekstu zbyt duży"));
+					}
+					iLicz++;
+          if(iLicz > pSelectBook->Count-1) break;
+				}
+  			iStart = iLicz;
+				iLicz++;
+
+				while(pSelectBook->Strings[iLicz].SubString(1, 9) != ustrStopVers)
+				{
+          //if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
+					if(pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt())
+					{
+						throw(Exception("Końcowy adres tekstu zbyt duży"));
+					}
+					iLicz++;
+          if(iLicz > pSelectBook->Count-1) break;
+				}
+				iStop = iLicz + 1 + iLastOffsetVers; //Wskaźnik na ostatni werset regulowany zależnie od formatu zakresu wybranego tekst
+
+				for(int i=iStart; i<iStop; i++)
+				{
+					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
+					pHSListText->AddObject(pSelectBook->Strings[i].SubString(11, 500), pSelectBook->Objects[i]);
+//          #if defined(_DEBUGINFO_)
+//						GsDebugClass::WriteDebug(Format("Adres: %s", ARRAYOFCONST((pMyObjectVers->BookChaptVers))));
+//					#endif
+				}
+
+			} //if(pGsReadBibleTextItem)
+			//---
+			for(int i=0; i<pHSListText->Count; i++) //Tworzenie stringu wyjściowego, czystego tekstu
+			//for(int i=0; i<2; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
+			{
+				ustrRet += pHSListText->Strings[i] + " ";
+			}
+
+			TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(_pWebBrowser->TOleControl::Parent);
+			if(pTabSheet)
+			//Jeśli przodkiem objektu, klasy TWebBrowser, jest objekt klasy TTabSheet, to wyswietl informacje o zakresie wersetuów na uchwycie zakładki
+			{
+				MyObjectVers *pMyObjectStart = static_cast<MyObjectVers *>(pHSListText->Objects[0]),
+										 *pMyObjectStop = static_cast<MyObjectVers *>(pHSListText->Objects[pHSListText->Count - 1]);
+
+				if(pMyObjectStart && pMyObjectStop)
+				{
+					//Wyświetlenie zakresu na zakładkach
+					pTabSheet->Caption = Format("%s %d:%d - %s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[ustrStartVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+						pMyObjectStart->ucChapt, pMyObjectStart->ucVers,
+						GsReadBibleTextData::GsInfoAllBooks[ustrStopVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+						pMyObjectStop->ucChapt, pMyObjectStop->ucVers)));
+				}
+      }
+			GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(_pWebBrowser, pHSListText, DataDisplay);
+		}
+		catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
+	}
+	__finally
+	{
+		if(pHSListText) {delete pHSListText; pHSListText = nullptr;}
+	}
+	return ustrRet;
+}
+//---------------------------------------------------------------------------
+void GsReadBibleTextData::InitHistoryList()
+/**
+	OPIS METOD(FUNKCJI): Metoda inicjuje zmienne dotyczące historii [30-07-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  //----- String lista histori otwieranych rozdziałow księg biblijnych
+	GlobalVar::Global_HListHistoryChapterOpen = new THashedStringList();
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	//Odczyt pliku historii
+	if(TFile::Exists(GlobalVar::Global_custrPathHistory))
+	{
+		GlobalVar::Global_HListHistoryChapterOpen->LoadFromFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
+	}
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("InitHistoryList: %s", ARRAYOFCONST(( GlobalVar::Global_custrPathHistory ))));
+	#endif
+}
+//---------------------------------------------------------------------------
+void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
+/**
+	OPIS METOD(FUNKCJI): Metoda dodajaca informacje o otwartym rozdziale do listy historii
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Nie zainicjowana lista histori (THashedStringList)"));
+	UnicodeString ustrbDateNow = FormatDateTime("yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 008");
+//	#endif
+	GlobalVar::Global_HListHistoryChapterOpen->Insert(0, Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("Debug: 009");
+//	#endif
+}
 /****************************************************************************
  *                          KLASA GsBarSelectVers                           *
  ****************************************************************************/
@@ -2866,7 +3373,7 @@ __fastcall GsBarSelectVers::GsBarSelectVers(TComponent* Owner, const unsigned ch
 	this->_FucSelectTranslate = 0;
 	//---Wyszukanie pierwszego tłumaczenie z apokryfami (katolickiego przekładu)
 	//   bu był dostęp od początku równierz do ksiąg apokryficznych
-	GsReadBibleTextItem *pGsReadBibleTextItem;//=0;
+	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
 	for(unsigned char i=0; i<GsReadBibleTextData::CountTranslates(); i++)
 	{
 		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
@@ -2885,7 +3392,7 @@ __fastcall GsBarSelectVers::~GsBarSelectVers()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_pHSListSelectVers) {delete this->_pHSListSelectVers; this->_pHSListSelectVers = 0;}
+	if(this->_pHSListSelectVers) {delete this->_pHSListSelectVers; this->_pHSListSelectVers = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::CreateWnd()
@@ -2986,6 +3493,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pSTextSelect = new TStaticText(this);
 	if(!this->_pSTextSelect) throw(Exception("Błąd funkcji TStaticText"));
 	this->_pSTextSelect->Parent = this;
+	this->_pSTextSelect->Font->Quality = TFontQuality::fqClearType;
 	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 	this->_pSTextSelect->Font->Size = this->Height - 10;
 	this->_pSTextSelect->Font->Style = TFontStyles() << fsBold;
@@ -3010,6 +3518,9 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButDisplay->ShowHint = true;
 	this->_pButDisplay->Visible = this->Parent->ClassNameIs(NAMEPANELSELECTVERS) && !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																														                                                  //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.;
+	//this->_pButDisplay->Style = tbsCheck;
+	//this->_pButDisplay->Down = true;
+	//this->_pButDisplay->AllowAllUp = true;
 	this->_pButDisplay->Hint = Format("Pokazuje wybrany werset|Pokazuje wybrany werset|%u", ARRAYOFCONST((this->_pButDisplay->ImageIndex)));
 	//Wybór tłumaczenia
 	this->_pButTranslates = new TToolButton(this);
@@ -3075,6 +3586,18 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_CreatePMenuBooks();
 }
 //---------------------------------------------------------------------------
+void __fastcall GsBarSelectVers::DestroyWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	//Własny kod.
+	TToolBar::DestroyWnd();
+}
+//---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 /**
 	OPIS METOD(FUNKCJI): Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
@@ -3099,7 +3622,7 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 	//---Uwaga: Obrazki w menu powodują że nie są widoczne napisy w popupmenu, podczas włączonych stylów!!!
 	this->_pPMenuBooks->Images = GsReadBibleTextData::_GsImgListData;
 	this->_pPMenuChapt->Images = GsReadBibleTextData::_GsImgListData;
-	this->_pPMenuVers->Images = GsReadBibleTextData::_GsImgListData;
+	this->_pPMenuVers->Images =  GsReadBibleTextData::_GsImgListData;
 	this->_pPMenuTranslates->Images = GsReadBibleTextData::_GsImgListData;
 	//--- Stworzenie popup menu listy tłumaczeń
 	UnicodeString ustrNameTranslates;
@@ -3120,12 +3643,14 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 	{
 		TMenuItem *NewItem = new TMenuItem(this->_pPMenuBooks);
 		if(!NewItem) throw(Exception("Błąd funkcji TMenuItem"));
+
 		this->_pPMenuBooks->Items->Add(NewItem);
 		NewItem->Caption = GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook;
-		if(i==(unsigned char)this->_FucSelectBook) this->_pButBooks->Caption = NewItem->Caption;
+		if(i==(unsigned char)this->_FucSelectBook) this->_pButBooks->Caption = NewItem->Caption; //Wybrana księga domyślnie
 		NewItem->OnClick = this->_OnClick_PMenu;
 		NewItem->Tag = i;
 		NewItem->ImageIndex = enImageIndex_Book;
+		if(i==33 || i==66) NewItem->Break = mbBarBreak; //08-07-2021
 	}
 	//---- Stworzenie listy rozdziałów dla księgi.
 	for(unsigned char i=0; i<GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ucCountChapt; i++)
@@ -3135,8 +3660,8 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 		this->_pPMenuChapt->Items->Add(NewItem);
 		NewItem->Caption = Format("Rozdział: %u", ARRAYOFCONST((i + 1)));
 		if(i==this->_FucSelectChapt) this->_pButChapt->Caption = NewItem->Caption;
-		NewItem->Tag = i;
 		NewItem->OnClick = this->_OnClick_PMenu;
+    NewItem->Tag = i;
 		NewItem->ImageIndex = enImageIndex_SelectChapter;
 	}
 	//--- Stworzenie listy wersetów dla pierwszego tłumaczenia, księgi i rozdziału.
@@ -3150,7 +3675,7 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 		NewItem->Tag = i;
 		NewItem->OnClick = this->_OnClick_PMenu;
 		NewItem->ImageIndex = enImageIndex_SelectVers;
-  }
+	}
 	//---
   this->_pButTranslates->DropdownMenu = this->_pPMenuTranslates;
 	this->_pButBooks->DropdownMenu = this->_pPMenuBooks;
@@ -3174,7 +3699,7 @@ void __fastcall GsBarSelectVers::_OnClickSaveComment(System::TObject* Sender)
 	UnicodeString ustrCreateName, ustrCreateFullPathName;
 	//int iIndexComment=-1;
 	ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers);
-  ustrCreateFullPathName = TPath::Combine(GlobalVar::Global_custrPathdirComments, ustrCreateName);
+  ustrCreateFullPathName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName);
 	ustrCreateFullPathName = TPath::ChangeExtension(ustrCreateFullPathName, GlobalVar::Global_custrExtendCommentsFiles);
 	//--- Zapis komentarza
 	GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent);
@@ -3211,7 +3736,7 @@ void __fastcall GsBarSelectVers::_OnClickNavigateVers(System::TObject* Sender)
 	TToolButton *pToolButton = dynamic_cast<TToolButton *>(Sender);
 	if(!pToolButton) return;
 	//---
-	TMenuItem *pMenuItemSend=0;
+	TMenuItem *pMenuItemSend=nullptr;
 	TMenuItem *pMenuItem = this->_pPMenuVers->Items->Find(this->_pButVers->Caption); //Wyszukanie w menu aktualnego wersetu
 	if(!pMenuItem) throw(Exception("Błąd wyboru wersetu z aktualnego rozdziału"));
 	//---
@@ -3264,6 +3789,7 @@ THashedStringList *__fastcall GsBarSelectVers::GetSListVers()
 */
 {
 	GsReadBibleTextData::GetSelectVerAllTranslates(this->_FucSelectBook, this->_FucSelectChapt+1, this->_FucSelectVers, this->_pHSListSelectVers);
+	//GsReadBibleTextData::GetSelectVerAllTranslates(36, 1, 1, this->_pHSListSelectVers);
 	return this->_pHSListSelectVers;
 }
 //---------------------------------------------------------------------------
@@ -3320,6 +3846,8 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 			//Stworzenie kody html, dla listy każdego, dostępnego tłumaczenie, dla wybranego wersetu
 			pMyOjectVers = static_cast<MyObjectVers *>(this->_pHSListSelectVers->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
+      //---
+	
 			//Jeśli wybór tłumaczenia jest możliwy, to wyświetlany jest tylko werset wybranego tłumaczenia, w przeciwnym wypadku
       //wyświetlane są wszystkie dostępne tłumaczenia, dla wybranego wersetu.
 			if(this->_pButTranslates->Visible && pMyOjectVers->ucIdTranslate != this->_FucSelectTranslate) continue;
@@ -3329,6 +3857,7 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 			//Dwie puste linie
 			if(i<(this->_pHSListSelectVers->Count-1)) pStringStream->WriteString("<br><br>");
 		}
+
 		pStringStream->WriteString("</body></html>");
 		pStringStream->Position = 0;
 		//---
@@ -3339,7 +3868,7 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 		pGsPanelSelectVers->_DisplayInterlinear(this->_FucSelectBook+1, this->_FucSelectChapt+1, this->_FucSelectVers);
 		//Odczyt komentarza
 		ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook+1, this->_FucSelectChapt + 1, this->_FucSelectVers);
-		ustrCreateFullPathName = TPath::Combine(GlobalVar::Global_custrPathdirComments, ustrCreateName);
+		ustrCreateFullPathName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName);
 		ustrCreateFullPathName = TPath::ChangeExtension(ustrCreateFullPathName, GlobalVar::Global_custrExtendCommentsFiles);
 		//---
 		GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent); //03-07-2019 -> Usunięty błąd
@@ -3354,7 +3883,7 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 	}
 	__finally
 	{
-		if(pStringStream) {delete pStringStream; pStringStream = 0;}
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 	}
 }
 //---------------------------------------------------------------------------
@@ -3388,9 +3917,9 @@ void __fastcall GsBarSelectVers::_OnClickCopyToSheet(System::TObject* Sender)
 	GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent);
 	if(!pGsPanelSelectVers) return;
 	//---
-	MyObjectVers *pMyOjectVers;//=0;
+	MyObjectVers *pMyOjectVers=nullptr;
 
-	GsListBoxVersClass *pGsListBoxVersClass;//=0;
+	GsListBoxVersClass *pGsListBoxVersClass=nullptr;
 	if(!GsReadBibleTextData::GsSheetListVers) //Zakładka z wybranymi wersetami nie istnieje
 	{
 		GsTabSheetSelectVersClass *pGsTabSheetSelectVersClass = new GsTabSheetSelectVersClass(GsReadBibleTextData::_GsPageControl);  //Przyporządkowanie zakładki do klasy TPageControl
@@ -3432,6 +3961,7 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	TPopupMenu *pPMenu = dynamic_cast<TPopupMenu *>(pMItem->Owner);
 	if(!pPMenu) return;
 	//---
+
 	if(this->_FbBarSelectComment)
 	//Kliknąleś na pozycje listy komentzry w oknie głównym, więc odrazu wiadomo jaki jest pełny adres wersetu.
 	//Parametr jest przekazywany najpierw w metodzie TMainBibleWindow::_OnDblClick_ListComment(), jako true, do konstruktora okna TSelectVersWindow(),
@@ -3484,6 +4014,8 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 				NewItem->Caption = Format("Rozdział: %u", ARRAYOFCONST((i+1)));
 				NewItem->Tag = i;
 				NewItem->OnClick = this->_OnClick_PMenu;
+				NewItem->ImageIndex = enImageIndex_SelectChapter; //13-06-2021
+				if(i==33 || i==66 || i==99 || i==132 || i==165) NewItem->Break = mbBarBreak; //08-07-2021
 			}
 		}
 		this->_OnClick_PMenu(this->_pPMenuChapt->Items->Items[0]);
@@ -3505,6 +4037,8 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 				NewItem->Caption = Format("Werset %u", ARRAYOFCONST((i + 1)));
         NewItem->Tag = i;
 				NewItem->OnClick = this->_OnClick_PMenu;
+				NewItem->ImageIndex = enImageIndex_SelectVers; //13-06-2021
+				if(i==33 || i==66 || i==99 || i==132 || i==165) NewItem->Break = mbBarBreak; //08-07-2021
       }
 		}
 		this->_OnClick_PMenu(this->_pPMenuVers->Items->Items[0]);
@@ -3517,23 +4051,14 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 			this->_pButPrevVers->Enabled = (pMItem->Tag > 0); //Zabezpieczenie przed minimalnym wersetem
 			this->_FucSelectVers = pMItem->Tag + 1;
 			this->_pButVers->Caption = pMItem->Caption;
+			//08-07-2021. Umieszczenie w wyborze wersetu, wczesniej metoda była wywoływana 3 razy!!!
+			if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie przed brakiem przodka
 		}
 		break;
 	}
+	//
 	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
-	if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie
-}
-//---------------------------------------------------------------------------
-void __fastcall GsBarSelectVers::DestroyWnd()
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	//Własny kod.
-	TToolBar::DestroyWnd();
+	//if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::Resize()
@@ -3569,6 +4094,7 @@ __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigne
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->FIsPanelText = true; //Domyślnie wyświetlany panel z tekstem i jednocześnie panel z interlinearnym widokiem grecko-polskim
 	//Ustawienie domyślne flag typu __property
 	this->FIsVisibleSetTranslate = false; //Domyślnie wybieranie tłumaczenia aktywne
@@ -3631,6 +4157,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pCBoxIsEditComment->ShowHint = true;
 	this->_pCBoxIsEditComment->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pCBoxIsEditComment->Hint = Format("Wyświetlać komentarz?|Czy ma być wyświetlany edytor komentarza, do wybranego wersetu?|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
+	this->_pCBoxIsEditComment->Checked = true;
 	//this->_pCBoxIsEditComment->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 	//																														//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 		//---Czy ma być wyświetlana możliwość wyboru tłumaczenia
@@ -3657,10 +4184,11 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pCBoxIsAccess->ShowHint = true;
 	this->_pCBoxIsAccess->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pCBoxIsAccess->Hint = Format("Wyświetlać dodatkowe przyciski?|Czy ma być wyświetlona dodatkowe przyciski?|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
-	//this->_pCBoxIsAccess->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+  //this->IsEditComments = true;
+	this->_pCBoxIsAccess->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 	//																												//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//---Przyciski główne
-		this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers, this->FbSelectComment);
+	this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers, this->FbSelectComment);
 	if(!this->_pGsBarSelectVers)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsBarSelectVers"));
 	this->_pGsBarSelectVers->Parent = this;
@@ -3699,7 +4227,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pEditComment->Align = alBottom;
 	this->_pEditComment->Height = 240;
 	//Wystarczy by jeden parametr miał wartość true
-	this->_pEditComment->Visible = this->FIsEditComments || this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+	//this->_pEditComment->Visible = this->FIsEditComments || this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																																								 //lub flaga wyświetlania edytora komontarzy ma wartość true, edytor komentarza jest widoczny.
 	//---Tagi
 	this->_pCBoxIsEditComment->Tag = enTagCBoxIsEdit;
@@ -3732,7 +4260,10 @@ void __fastcall GsPanelSelectVers::_OnClickCBoxes(System::TObject* Sender)
 	//---
 	switch(pCBox->Tag)
 	{
-		case enTagCBoxIsEdit:
+		case enTagCBoxIsEdit: //TUTAJ
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("enTagCBoxIsEdit");
+			#endif
 			this->IsEditComments = pCBox->Checked;
 			if(this->IsEditComments) //Wyświetlanie edytora komentarzy
 			{
@@ -3866,7 +4397,7 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(7, 20);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pHSListSelectVers->ValueFromIndex[iIndex];
 	}
-	if(pHSListSelectVers) {delete pHSListSelectVers; /*pHSListSelectVers = 0;*/}
+	if(pHSListSelectVers) {delete pHSListSelectVers; pHSListSelectVers = nullptr;}
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
@@ -3885,6 +4416,7 @@ __fastcall GsTabSheetSelectVersClass::GsTabSheetSelectVersClass(TComponent* Owne
 	//---
   this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->Caption = "Lista wybranych wersetów";
 	this->ImageIndex = enImageIndex_CopyToSheet;
 	GsReadBibleTextData::GsSheetListVers = this;
@@ -3945,6 +4477,7 @@ __fastcall GsListBoxVersClass::GsListBoxVersClass(TComponent* Owner) : TCustomLi
 	this->Style = lbOwnerDrawVariable;
 	this->StyleElements = TStyleElements(); //Musi być
 	this->Color = clWebWheat;
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxVersClass::~GsListBoxVersClass()
@@ -4004,7 +4537,7 @@ void __fastcall GsListBoxVersClass::DrawItem(int Index, const TRect &Rect, TOwne
 	if(!this->Items->Strings[Index].IsEmpty())
 	{
 		MyRect.Left += 4; MyRect.Right -= 4;
-		DrawText(pCanvas->Handle, this->Items->Strings[Index].c_str(), -1, &MyRect, DT_WORDBREAK);
+		DrawText(pCanvas->Handle, this->Items->Strings[Index].c_str(), -1, &MyRect, DT_SINGLELINE | DT_VCENTER);
 	}
 	else
 	{
@@ -4024,15 +4557,12 @@ void __fastcall GsListBoxVersClass::MeasureItem(int Index, int &Height)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TRect Rect = this->ClientRect; Rect.Left += 4; Rect.Right -= 4;
-
 	this->Canvas->Font = this->Font;
-  if(!this->Items->Strings[Index].IsEmpty())
-	{
-		DrawText(this->Canvas->Handle, this->Items->Strings[Index].c_str(), -1, &Rect, DT_CALCRECT | DT_WORDBREAK);
-		Height = Rect.Height() + 2;
-	}
-  else Height = 4;
+
+	if(!this->Items->Strings[Index].IsEmpty())
+		Height = -(this->Font->Height - 8);
+	else
+		Height = 4;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListBoxVersClass::Resize()
@@ -4057,7 +4587,7 @@ void __fastcall GsListBoxVersClass::Resize()
 /****************************************************************************
 *                        Klasa GsLViewDictionaryClass                       *
 *****************************************************************************/
-static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, wedłóg numeracji Stronga
+static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
 //Tablica nazw kolumn w głównej liście
 static UnicodeString ustrColumsNames[] = {"Grecki wyraz", "Numeracja wg. Stronga", "Tłumaczenie na polski"};
 enum {enGreekWord, enNumberStrong, enTranslates, enSize};
@@ -4082,6 +4612,7 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	this->ViewStyle = vsReport;
 	this->_CreateAllColumns();
 	this->SmallImages = GsReadBibleTextData::_GsImgListData; //Ikony kolumn
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
@@ -4098,12 +4629,12 @@ __fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
 		DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[i]);
 		if(pDataGrecWordDictClass)
 		{
-			delete pDataGrecWordDictClass; //pDataGrecWordDictClass = 0;
+			delete pDataGrecWordDictClass; pDataGrecWordDictClass = nullptr;
 		}
 	}
 
 	this->_pListWordGrec->Clear();
-	if(this->_pListWordGrec) {delete this->_pListWordGrec; this->_pListWordGrec = 0;}
+	if(this->_pListWordGrec) {delete this->_pListWordGrec; this->_pListWordGrec = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsLViewDictionaryClass::CreateWnd()
@@ -4152,7 +4683,7 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 	}
 	//Zlikwidowanie pierwszej pozycji
 	DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[0]);
-	if(pDataGrecWordDictClass) {delete pDataGrecWordDictClass; /*pDataGrecWordDictClass = 0;*/}
+	if(pDataGrecWordDictClass) {delete pDataGrecWordDictClass; pDataGrecWordDictClass = nullptr;}
 	this->_pListWordGrec->Delete(0);
 	//---
 	this->Items->Count = this->_pListWordGrec->Count;
@@ -4215,7 +4746,7 @@ void __fastcall GsLViewDictionaryClass::_CreateAllColumns()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TListColumn  *NewColumn;//=0;
+	TListColumn *NewColumn=nullptr;
 
 	//Dodawanie kolumn
 	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNames); iColumns++)
@@ -4314,14 +4845,14 @@ void __fastcall GsLViewDictionaryClass::DrawItem(TListItem* Item, const System::
 //--------------------------------------------------------------------------
 void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selected)
 /**
-	OPIS METOD(FUNKCJI):
+	OPIS METOD(FUNKCJI): Wybranie pozycji z ListView listy
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
 	if(this->ItemIndex == -1) return;	//Kliknąłeś poza pozycje listy, która jest numerem stronga
-	THashedStringList *pHSListTemp=0;
+	THashedStringList *pHSListTemp=nullptr;
 	try
 	{
 		pHSListTemp = new THashedStringList();
@@ -4346,17 +4877,25 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
             //Jeśli adres miejsca wystąpienia greckiego słowa, z kolejnej pozycji, listy wystąpień,
 						//zgadza się z adresem odczytanego, kolejnego wersetu z listy wersetów, wybranego wcześniej rozdiału,
 						//werset zostaje dodany do tymczasowej listy.
-						pHSListTemp->AddObject(pHSListGreek->Strings[i].SubString(11, 512), pHSListGreek->Objects[i]);
+						pHSListTemp->AddObject(pHSListGreek->Strings[i].SubString(11, ciMaxlengthVers), pHSListGreek->Objects[i]);
 						break;
 					}
 				}
 			}
 		}
-		GsReadBibleTextData::pGsReadBibleTextClass->ViewSListBibleToHTML(this->_pWBrowseResult, "#00CC88", pHSListTemp, 0, false);
+		DataDisplayTextAnyBrowser SetDataDisplay;
+		SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
+		SetDataDisplay.strBackgroundColor = "#00CC88";
+		SetDataDisplay.strNameFont = "Times New Roman";
+		SetDataDisplay.iSizeFont = 12;
+		SetDataDisplay.pMemoryStream = nullptr;
+		SetDataDisplay.bIsHorizontLine = true;
+		//---
+		GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(this->_pWBrowseResult, pHSListTemp, SetDataDisplay);
 	}
   __finally
 	{
-		if(pHSListTemp) {delete pHSListTemp; pHSListTemp = 0;}
+		if(pHSListTemp) {delete pHSListTemp; pHSListTemp = nullptr;}
 	}
 }
 /****************************************************************************
@@ -4400,13 +4939,13 @@ __fastcall GsLViewCommentsAllClass::GsLViewCommentsAllClass(TComponent* Owner) :
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TListColumn  *NewColumn;//=0;
-	//THashedStringList *pHSListTemp;//=0;
-	ListComments *pListComments;//=0;
+	TListColumn *NewColumn=nullptr;
+	ListComments *pListComments=nullptr;
 
 	this->_ListComments = new TList();
 	if(!this->_ListComments) throw(Exception("Błąd inicjalizacji objektu, klasy TList"));
 
+	this->Font->Quality = TFontQuality::fqClearType;
   this->OwnerData = true;
 	this->OwnerDraw = true;
 	this->ReadOnly = true;
@@ -4436,7 +4975,7 @@ void __fastcall GsLViewCommentsAllClass::ReloadAllVersComments(bool _bStartup)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	ListComments *pListComments;//=0;
+	ListComments *pListComments=nullptr;
 	UnicodeString ustrExtFileComment = Format("*%s", ARRAYOFCONST((GlobalVar::Global_custrExtendCommentsFiles))); //Wstawienie na początek znaku gwiazdki
 	TStringDynArray SDirFileList; //Lista plików z komentarzem
 	//Najpierw zwolnienie listy this->_ListComments
@@ -4445,13 +4984,13 @@ void __fastcall GsLViewCommentsAllClass::ReloadAllVersComments(bool _bStartup)
 		for(int i=0; i<this->_ListComments->Count; i++)
 		{
 			pListComments = static_cast<ListComments *>(this->_ListComments->Items[i]);
-			if(pListComments) {delete pListComments; /*pListComments = 0;*/}
+			if(pListComments) {delete pListComments; pListComments = nullptr;}
 		}
 		this->_ListComments->Clear();
 	}
 	//---
 	//Odczyt wszystkich dostępnych komentarzy
-	SDirFileList = TDirectory::GetFiles(GlobalVar::Global_custrPathdirComments, ustrExtFileComment, 0);
+	SDirFileList = TDirectory::GetFiles(GlobalVar::Global_custrPathDirComments, ustrExtFileComment, 0);
 	//Stworzenie listy objektów, klasy ListComments
 	for(int i=0; i<SDirFileList.Length; i++)
 	{
@@ -4482,7 +5021,7 @@ __fastcall GsLViewCommentsAllClass::~GsLViewCommentsAllClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	ListComments *pListComments;//=0;
+	ListComments *pListComments=nullptr;
 	//Zwolnienie listy komentarzy
 	if(this->_ListComments)
 	{
@@ -4490,9 +5029,9 @@ __fastcall GsLViewCommentsAllClass::~GsLViewCommentsAllClass()
 		//Zwalnianie poszczególnych klas komentarzy z listy
 		{
 			pListComments = static_cast<ListComments *>(this->_ListComments->Items[i]);
-			if(pListComments) {delete pListComments; /*pListComments = 0;*/}
+			if(pListComments) {delete pListComments; pListComments = nullptr;}
 		}
-		delete this->_ListComments; this->_ListComments = 0; //Konćowe zwolnienie objektu, klasy TList, z listą komentarzy
+		delete this->_ListComments; this->_ListComments = nullptr; //Konćowe zwolnienie objektu, klasy TList, z listą komentarzy
 	}
 }
 //--------------------------------------------------------------------------
@@ -4505,7 +5044,7 @@ ListComments *__fastcall GsLViewCommentsAllClass::GetSelectComent(int iIndex)
 */
 {
 	if(iIndex >= this->_ListComments->Count) return 0;
-	ListComments *pListComments;//=0;
+	ListComments *pListComments=nullptr;
 	pListComments = static_cast<ListComments *>(this->_ListComments->Items[iIndex]);
 	if(pListComments) return pListComments;
 	return 0;
@@ -4588,7 +5127,7 @@ int __fastcall GsLViewCommentsAllClass::OwnerDataFind(TItemFind Find, const Syst
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	ListComments *pListComments;//=0;
+	ListComments *pListComments=nullptr;
 	for(int i=0; i<this->_ListComments->Count; i++)
 	{
 		pListComments = static_cast<ListComments *>(this->_ListComments->Items[i]);
@@ -4610,7 +5149,7 @@ void __fastcall GsLViewCommentsAllClass::DoSelectItem(TListItem* Item, bool Sele
 */
 {
 	if((this->ItemIndex == -1) || (!Selected)) return;	//Kliknąłeś poza pozycje listy
-	ListComments *pListComments;//=0;
+	ListComments *pListComments=nullptr;
 	pListComments = static_cast<ListComments *>(this->_ListComments->Items[Item->Index]);
 	if(!pListComments) return;
 }
@@ -4664,7 +5203,7 @@ void __fastcall GsLViewCommentsAllClass::DblClick()
 {
 	//Sprawdzenie poprawności podwójnego kliknięcia
 	if(this->ItemIndex == -1) return;
-  ListComments *pListComments;//=0;
+	ListComments *pListComments=nullptr;
 	pListComments = static_cast<ListComments *>(this->_ListComments->Items[this->ItemIndex]);
 	if(!pListComments) return;
 	//Jeśli istnieje zewnętrzna metoda OnDblClick() to ją wywołaj
@@ -4684,6 +5223,8 @@ __fastcall GsListBoxFavoritiesClass::GsListBoxFavoritiesClass(TComponent* Owner)
 {
 	this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
+	this->Font->Quality = TFontQuality::fqClearType;
+  this->StyleElements = TStyleElements();
   GsReadBibleTextData::pGsListBoxFavoritiesClass = this;
 }
 //---------------------------------------------------------------------------

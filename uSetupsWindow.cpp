@@ -10,7 +10,7 @@
 #include <System.StrUtils.hpp>
 #include <DateUtils.hpp>
 #include <sapi.h>
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

@@ -2,7 +2,7 @@
 #define GsViewAllResourcesClassH
 
 #include <Vcl.ComCtrls.hpp>
-#include "MyBibleLibrary\MyBibleLibrary.h"
+#include "GsReadBibleTextClass\MyBibleLibrary.h"
 //---------------------------------------------------------------------------
 
 //Dane dla grup

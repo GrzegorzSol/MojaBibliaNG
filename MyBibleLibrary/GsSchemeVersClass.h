@@ -2,7 +2,7 @@
 #define GsSchemeVersClassH
 
 #include <Vcl.ExtCtrls.hpp>
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 //---------------------------------------------------------------------------
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
 const int SIZE_ADDR_VERS = 16;

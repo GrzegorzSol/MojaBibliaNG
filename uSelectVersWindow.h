@@ -7,7 +7,7 @@
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 #include <Vcl.ExtCtrls.hpp> //Główna klasa do pracy z tekstem biblijnym
 //---------------------------------------------------------------------------
 class TSelectVersWindow : public TForm

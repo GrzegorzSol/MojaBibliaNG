@@ -2,7 +2,7 @@
 #pragma hdrstop
 
 #include "uSearchTextWindow.h"
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 #include <System.RegularExpressions.hpp>
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>

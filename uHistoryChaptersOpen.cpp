@@ -2,7 +2,7 @@
 #pragma hdrstop
 
 #include "uHistoryChaptersOpen.h"
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h" //Główna klasa do pracy z tekstem biblijnym
+#include "MyBibleLibrary\MyBibleLibrary.h" //Główna klasa do pracy z tekstem biblijnym
 #include "uGlobalVar.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)

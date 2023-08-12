@@ -3,7 +3,7 @@
 
 #include "uReadingPlanWindow.h"
 #include <System.IOUtils.hpp>
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 #include "uGlobalVar.h"
 #include <DateUtils.hpp>
 #include <System.StrUtils.hpp>

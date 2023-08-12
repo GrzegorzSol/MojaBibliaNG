@@ -5,7 +5,7 @@
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
-#include "GsReadBibleTextClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 //---------------------------------------------------------------------------
 class TChapterEditWindow : public TForm
 {

@@ -1,9 +1,0 @@
-//---------------------------------------------------------------------------
-
-#pragma hdrstop
-
-#include "GsReadBibleImageList.h"
-//---------------------------------------------------------------------------
-#pragma package(smart_init)
-
-extern GsReadBibleImageList(TImageList *_pImgListEnable, TImageList _*pImgListDisable);

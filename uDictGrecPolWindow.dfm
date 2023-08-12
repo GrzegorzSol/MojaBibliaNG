@@ -12,11 +12,9 @@ object DictGrecPolWindow: TDictGrecPolWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
 end

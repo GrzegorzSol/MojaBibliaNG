@@ -14,12 +14,10 @@ object SelectVersWindow: TSelectVersWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
 end

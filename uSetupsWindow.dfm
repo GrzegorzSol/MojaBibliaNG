@@ -32,8 +32,6 @@ object SetupsWindow: TSetupsWindow
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitWidth = 949
-    ExplicitHeight = 555
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -766,8 +764,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 373
-            Height = 73
+            Width = 4
+            Height = 16
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -779,8 +777,6 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
-            ExplicitWidth = 4
-            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -1021,7 +1017,6 @@ object SetupsWindow: TSetupsWindow
           ItemHeight = 13
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
-          ExplicitHeight = 512
         end
       end
       object PanelDisplaySelectTheme: TPanel

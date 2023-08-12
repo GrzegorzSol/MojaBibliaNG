@@ -2,7 +2,7 @@
 #define GsSchemeVersClassH
 
 #include <Vcl.ExtCtrls.hpp>
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h"
+#include "GsReadBibleTextClass\MyBibleLibrary.h"
 //---------------------------------------------------------------------------
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
 const int SIZE_ADDR_VERS = 16;
@@ -40,6 +40,7 @@ class GsCoreBibleScheme : public TCustomPanel
 *****************************************************************************/
 class GsScrollBibleScheme;
 class GsDrawPanelBibleScheme;
+class GsMasterBibleScheme;
 class GsChildBibleScheme : public GsCoreBibleScheme
 {
 	friend class GsDrawPanelBibleScheme;
@@ -137,6 +138,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		GsBarSelectVers *_pGsBarSelectVers;
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme;
 		GsEditorClass *pGsEditorClass;
+    TSplitter *pSplitter;
 		TLabel *_pVersDisplayText; //Wyświetlenie wybranego wersetu
 };
 

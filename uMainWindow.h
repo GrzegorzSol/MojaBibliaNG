@@ -1,7 +1,7 @@
 ﻿#ifndef uMainWindowH
 #define uMainWindowH
 //---------------------------------------------------------------------------
-#include "GsReadBibleTextClass\GsReadBibleTextClass.h" //Główna klasa do pracy z tekstem biblijnym
+#include "MyBibleLibrary\MyBibleLibrary.h" //Główna klasa do pracy z tekstem biblijnym
 #include <System.Actions.hpp>
 #include <System.Classes.hpp>
 #include <System.ImageList.hpp>

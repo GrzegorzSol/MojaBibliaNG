@@ -2,22 +2,27 @@
 #pragma hdrstop
 #include <tchar.h>
 #include "uGlobalVar.h"
-#include "uInformationsAppWindow.h"
+
 //---------------------------------------------------------------------------
-USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
+#include <Vcl.Styles.hpp>
+#include <Vcl.Themes.hpp>
 USEFORM("uMainWindow.cpp", MainBibleWindow);
+USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
+USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
 USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
+USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
+USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
-USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
+//---------------------------------------------------------------------------
+#include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
 void GsGetVersionIExplorer(int *iMajor, int *iMinor);
 //---------------------------------------------------------------------------
@@ -81,6 +86,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		//--- Klasyczny kod rozruchowy aplikacji
 		Application->Initialize();
 		Application->MainFormOnTaskBar = true;
+		TStyleManager::TrySetStyle("Sapphire Kamri");
 		Application->CreateForm(__classid(TMainBibleWindow), &MainBibleWindow);
 		Application->Run();
 	}
