@@ -3,6 +3,7 @@
 #include <Vcl.Dialogs.hpp>
 #include "GsSchemeVersClass.h"
 #include "uGlobalVar.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <Strsafe.h>
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

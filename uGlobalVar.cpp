@@ -9,56 +9,56 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-const UnicodeString GlobalVar::Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName), //Ścieżka dostępu do katalogu głównego programu;
-										GlobalVar::Global_custrNameIVerFile = "MBibleNG.iver",        //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
-										GlobalVar::Global_custrGetVersionUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
-										#if defined(_DEBUGINFO_)
+const UnicodeString //GlobalVar::Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName), //Ścieżka dostępu do katalogu głównego programu;
+										//GlobalVar::Global_custrNameIVerFile = "MBibleNG.iver",        //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
+										//GlobalVar::Global_custrGetVersionUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),    //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
+										//#if defined(_DEBUGINFO_)
 											//Jeśli projekt jest kompilowany z oknem konsoli, dane dla aplikacji są pobierane nie standartowo z zewnętrznego katalogu
-											GlobalVar::Global_custrGetDataDir = "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\",
-										#else
+										//	GlobalVar::Global_custrGetDataDir = "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\",
+										//#else
 											//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
-											GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
-										#endif
-										GlobalVar::Global_custrPathImagesStyles = TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),    //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
-										GlobalVar::Global_custrPathAllReadingPlan = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),//Ścieżka dostępu do katalogu z planami czytania biblii
-										GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
-										GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
-										GlobalVar::Global_custrPathGlobalHelp = TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"), //Ścieżka dostępu do pliku pomocy
-										GlobalVar::Global_custrPathHistory = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistoryChaptersOpen.hco"),//Ściezka dostępu do pliku historii
+										//	GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),      //Ścieżka dostępu do katalogu z danymi aplikacji
+										//#endif
+										//GlobalVar::Global_custrPathImagesStyles = TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),    //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
+										//GlobalVar::Global_custrPathAllReadingPlan = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),//Ścieżka dostępu do katalogu z planami czytania biblii
+										//GlobalVar::Global_custrGetConfigFile = TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),	//Ścieżka do pliku konfiguracyjnego
+										//GlobalVar::Global_custrPathLastUsedAddressFile = TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
+										//GlobalVar::Global_custrPathGlobalHelp = TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"), //Ścieżka dostępu do pliku pomocy
+										//GlobalVar::Global_custrPathHistory = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistoryChaptersOpen.hco"),//Ściezka dostępu do pliku historii
 										//Graficne loga z rozszerzeniem .gli
-										GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
-										GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania
-										GlobalVar::Global_custrPathSetupsLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),//Logo w oknie ustawień
+										//GlobalVar::Global_custrPathBackgroundWindow = TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
+										//GlobalVar::Global_custrPathSearchLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania
+										//GlobalVar::Global_custrPathSetupsLogo = TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),//Logo w oknie ustawień
 										//---
-										GlobalVar::Global_custrExtendCommentsFiles = ".bfc", //Rozszerzenie plików z komentarzami
+										//GlobalVar::Global_custrExtendCommentsFiles = ".bfc", //Rozszerzenie plików z komentarzami
 										//GlobalVar::Global_custrExtendCommentsPlain = "tfc", //Rozszerzenie plików z komentarzem, bez formatowania, jako czysty tekst
-										GlobalVar::Global_custrPathFileInterlinear = TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
-										GlobalVar::Global_custrPathMultimediaFilesData = TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
-										GlobalVar::Global_custrPathFileFavoriteVers = TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),    //Ścieżka dostępu do pliku z listą ulubionych wersetów
-										GlobalVar::Global_custrPathDirComments = TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
-										GlobalVar::Global_custrPathHistorySearch = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),    //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
+										//GlobalVar::Global_custrPathFileInterlinear = TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+										//GlobalVar::Global_custrPathMultimediaFilesData = TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
+										//GlobalVar::Global_custrPathFileFavoriteVers = TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),    //Ścieżka dostępu do pliku z listą ulubionych wersetów
+										//GlobalVar::Global_custrPathDirComments = TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
+										//GlobalVar::Global_custrPathHistorySearch = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),    //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 										//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
-										GlobalVar::Global_custrFTPSourceVersionFile = "/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver", //Ścieżka sieciowa do pliku wersji
-										GlobalVar::Global_custrFTPSourceApplicFile = "/public_html/wp-content/uploads/MojaBibliaNG/MojaBibliaNG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
-										GlobalVar::Global_custrHostName = "ftp.nasz-salem.pl", //Adres hosta
-										GlobalVar::Global_custrUserHost = "naszsalem", //Nazwa użytkownika
-										GlobalVar::Global_custrPassword = "OVpVwXtvdY", //Hasło do hosta
-										GlobalVar::Global_custrNameUpd = "winmbupd.exe",  //nazwa aplikacji zewnętrznej do aktualizacji
-										GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameUpd),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
-										GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
-										GlobalVar::Global_ustrNameDirUpdate = "MojaBibliaNG",//nazwa katalogu z poprawkami
+										//GlobalVar::Global_custrFTPSourceVersionFile = "/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver", //Ścieżka sieciowa do pliku wersji
+										//GlobalVar::Global_custrFTPSourceApplicFile = "/public_html/wp-content/uploads/MojaBibliaNG/MojaBibliaNG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
+										//GlobalVar::Global_custrHostName = "ftp.nasz-salem.pl", //Adres hosta
+										//GlobalVar::Global_custrUserHost = "naszsalem", //Nazwa użytkownika
+										//GlobalVar::Global_custrPassword = "OVpVwXtvdY", //Hasło do hosta
+										//GlobalVar::Global_custrNameUpd = "winmbupd.exe",  //nazwa aplikacji zewnętrznej do aktualizacji
+										//GlobalVar::Global_ustrPathApplicUpdate = TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameUpd),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+										//GlobalVar::Global_ustrMutexName = "MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Nazwa mutexa, do sprawdzenie,  //Mutekst główny aplikacji
+										//GlobalVar::Global_ustrNameDirUpdate = "MojaBibliaNG",//nazwa katalogu z poprawkami
 										//----- Ustawienia dotyczące pomocy i tipsów
-										GlobalVar::Global_ustrDirHelp = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HelpData"),	//Ścieżka dostępu do katalogu z plikami pomocy
-										GlobalVar::Global_ustrExtPathHelp = "hlpmb",				//Rozszerzenie plików pomocy
-										GlobalVar::Global_ustrCoreNameHelp = "FileHlp", //Główny rdzeń nazwy, do której będzie przyczepiony indeks pomocy
+										//GlobalVar::Global_ustrDirHelp = TPath::Combine(GlobalVar::Global_custrGetDataDir, "HelpData"),	//Ścieżka dostępu do katalogu z plikami pomocy
+										//GlobalVar::Global_ustrExtPathHelp = "hlpmb",				//Rozszerzenie plików pomocy
+										//GlobalVar::Global_ustrCoreNameHelp = "FileHlp", //Główny rdzeń nazwy, do której będzie przyczepiony indeks pomocy
 										//----- Ustawienia pomocy
-										GlobalVar::Global_ustrExPathTipsImageHelp = "timg",//Rozszerzenie grafiki to tipsów
-										GlobalVar::Global_ustrCorePathNameImageTips = "ImageTips", //Główny rdzeń nazwy pliku graficznego, do której będzie przyczepiony indeks pomocy tipsów
+										//GlobalVar::Global_ustrExPathTipsImageHelp = "timg",//Rozszerzenie grafiki to tipsów
+										//GlobalVar::Global_ustrCorePathNameImageTips = "ImageTips", //Główny rdzeń nazwy pliku graficznego, do której będzie przyczepiony indeks pomocy tipsów
 										//----- Ustawienia pomocu 2
-										GlobalVar::Global_ustrCoreNameFileTips = "FileTips", //Rdzeń nazwy pliku wskazówek
-										GlobalVar::Global_ustrExPathFileTips = "tfhlp",//Rozszerzenie plików wskazówek
+										//GlobalVar::Global_ustrCoreNameFileTips = "FileTips", //Rdzeń nazwy pliku wskazówek
+										//GlobalVar::Global_ustrExPathFileTips = "tfhlp",//Rozszerzenie plików wskazówek
                     //----- Syle
-										GlobalVar::Global_DefaultStyleName = "Windows", //Domyślny styl
+										//GlobalVar::Global_DefaultStyleName = "Windows", //Domyślny styl
 /*****************************************************************************
  *               Stałe dla pliku konfiguracyjnego typu ini                   *
  *****************************************************************************/
@@ -136,14 +136,11 @@ UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja bibli
 							GlobalVar::Global_custrLocalVersionFile = "", //Ścieżka dostępu lokalna, do pobranego pliku wersji
 							GlobalVar::Global_custrLocalApplicFile = ""; //Ścieżka dostępu lokalna, do pobranej aplikacji
 const unsigned char GlobalVar::cuchABlendValue = 200; //Współczynnik przezroczystości okna, gdy jest nieaktywne
-bool GlobalVar::IsWindows10 = false; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 //***************************************************************************
-TStringList *GlobalVar::Global_SListPathMultiM=nullptr;  //Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
-TMemIniFile *GlobalVar::Global_ConfigFile=nullptr;			 //Globalny wskażnik na plik konfiguracyjny
-TStringDynArray GlobalVar::SDirTranslatesList;     //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
-THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=nullptr, //String lista do wszystkich ulubionych wesrsetów
-									*GlobalVar::Global_HListHistoryChapterOpen=nullptr; //String lista histori otwieranych rozdziałow księg biblijnych
-int GlobalVar::iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
+//TStringDynArray GlobalVar::SDirTranslatesList;     //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
+//THashedStringList *GlobalVar::Global_HSListAllFavoritiesVers=nullptr, //String lista do wszystkich ulubionych wesrsetów
+//									*GlobalVar::Global_HListHistoryChapterOpen=nullptr; //String lista histori otwieranych rozdziałow księg biblijnych
+//int GlobalVar::iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
 																//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 																//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
 																//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować

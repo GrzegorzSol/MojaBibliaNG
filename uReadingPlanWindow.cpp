@@ -4,6 +4,7 @@
 #include "uReadingPlanWindow.h"
 #include <System.IOUtils.hpp>
 #include "MyBibleLibrary\MyBibleLibrary.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include "uGlobalVar.h"
 #include <DateUtils.hpp>
 #include <System.StrUtils.hpp>

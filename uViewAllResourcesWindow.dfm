@@ -72,7 +72,6 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitWidth = 1182
     end
     object PanelDisplay: TPanel
       Left = 1

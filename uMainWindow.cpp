@@ -47,6 +47,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
 #include <System.IOUtils.hpp>
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "Vcl.HtmlHelpViewer" //!!!
@@ -585,7 +586,7 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 	if(!pImageList) throw(Exception("Błąd wyłuskania listy grafik"));
 	this->PMenuTray->Images = pImageList;
 	//---
-	for(unsigned int i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	for(unsigned int i=0; i<GlobalVar::Global_NumberBooks; i++)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
 		if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));

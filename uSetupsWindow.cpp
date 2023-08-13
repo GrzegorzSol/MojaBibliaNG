@@ -11,6 +11,7 @@
 #include <DateUtils.hpp>
 #include <sapi.h>
 #include "MyBibleLibrary\MyBibleLibrary.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

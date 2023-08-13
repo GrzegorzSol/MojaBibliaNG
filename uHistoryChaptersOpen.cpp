@@ -3,6 +3,7 @@
 
 #include "uHistoryChaptersOpen.h"
 #include "MyBibleLibrary\MyBibleLibrary.h" //Główna klasa do pracy z tekstem biblijnym
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include "uGlobalVar.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -228,7 +229,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 //		GsDebugClass::WriteDebug(Format("iPosSpace: %d", ARRAYOFCONST((iPosSpace))));
 //		GsDebugClass::WriteDebug(Format("ustrChapt: %s - %d", ARRAYOFCONST((ustrChapt, iChapt))));
 //	#endif
-	for(int i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
 	{
 		pInfobook = const_cast<PInfoAllBooks>(&GsReadBibleTextData::GsInfoAllBooks[i]);
 		if(!pInfobook) return;

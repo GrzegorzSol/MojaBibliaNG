@@ -3,6 +3,7 @@
 
 #include "uViewAllResourcesWindow.h"
 #include "uGlobalVar.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <System.IOUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)

@@ -3,6 +3,7 @@
 
 #include "uChapterEditWindow.h"
 #include "uGlobalVar.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

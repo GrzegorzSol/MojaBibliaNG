@@ -4,6 +4,7 @@
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
 #include "GsViewAllResourcesDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*

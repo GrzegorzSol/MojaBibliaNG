@@ -3,6 +3,7 @@
 
 #include "uSearchTextWindow.h"
 #include "MyBibleLibrary\MyBibleLibrary.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <System.RegularExpressions.hpp>
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
@@ -114,7 +115,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	this->STW_ChBoxMemoSetupsSearch->Tag = enTag_CBoxIsMemorySetupsSearch;  //Czy zapamiętać parametry wuszukiwania?
 	//Wstępne ustawienia zawartości komponentów
 		//Definiowanie komponentów wyboru ksiąg biblijnych
-	for(int i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
 		{this->STW_CBoxStartSelectRange->Items->Add(GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook);}
 	this->STW_CBoxStopSelectRange->Items->Assign(this->STW_CBoxStartSelectRange->Items);
 		//Definiowanie komponentu zakresu wyszukiwania
@@ -201,7 +202,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 		NewColumn->ImageIndex = enImageIndex_Root;
 	}
 	this->STW_LViewStatistic->Items->BeginUpdate();
-	for(unsigned char i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; i++)
 	{
 		TListItem *NewItem = this->STW_LViewStatistic->Items->Add();
 		NewItem->Caption = GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook;
@@ -260,7 +261,7 @@ void __fastcall TSearchTextWindow::FormDestroy(TObject *Sender)
 
 	this->STW_CBoxHistorySearchText->Items->SaveToFile(GlobalVar::Global_custrPathHistorySearch, TEncoding::UTF8);
 	//Zwalnianie prywatnych danych związanych z objektem TListitem, dla poszczególnych ksiąg
-	for(int i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
 	{
 		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[i];
 		if(MyItem)
@@ -471,7 +472,7 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 	if(!pCBox) return;
   //Wyczyszczenie objekty klasy TWebBrowser, do przeglądania znalezionych wersetów w wybranek księdze
 	this->STW_WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
-	for(unsigned char i=0; i<GsReadBibleTextData::GsNumberBooks; i++)
+	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; i++)
 	{
 		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[i];
 		if(MyItem)

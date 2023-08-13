@@ -7,20 +7,20 @@
 #include <Vcl.Styles.hpp>
 #include <Vcl.Themes.hpp>
 USEFORM("uMainWindow.cpp", MainBibleWindow);
-USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
-USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
-USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
+USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
+USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
+USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
+USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
+USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
-USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------

@@ -1,6 +1,4 @@
-﻿//---------------------------------------------------------------------------
-
-#ifndef uSearchTextWindowH
+﻿#ifndef uSearchTextWindowH
 #define uSearchTextWindowH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
