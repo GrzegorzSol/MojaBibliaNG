@@ -84,79 +84,75 @@ struct GlobalVar
 																		Global_ustrCoreNameFileTips="FileTips", //Rdzeń nazwy pliku wskazówek
 																		Global_ustrExPathFileTips="tfhlp",//Rozszerzenie plików wskazówek
 																		//----- Syle
-																	  Global_DefaultStyleName="Windows"; //Domyślny styl
-	const static UnicodeString
-/*****************************************************************************
- *               Stałe dla pliku konfiguracyjnego typu ini                   *
- *****************************************************************************/
-														 //----- Sekcje Main pliku ini
-														 GlobalIni_MainSection_Main,           //Główna sekcja Main pliku ini
-																GlobalIni_PathMultiM1, GlobalIni_PathMultiM2, GlobalIni_PathMultiM3, //Ścieżki dostępu do wybranych katalogów z multimediami
-																GlobalIni_AppWidth, GlobalIni_AppHeight, //Szerokość i wysokość głównego okna
-																GlobalIni_LoadBooksOnExit, //Lista otwartych ksią i rozdziałów w momencie zamknięcia aplikacji
-														 //----- Sekcje Flags pliku ini
-														 GlobalIni_FlagsSection_Main,          //Główna sekcja FLAGS pliku ini
-																GlobalIni_IsDisplaySplashStart, //Czy wyświetlać winiete startową podczas startu aplikacji
-																GlobalIni_IsRequestEnd,         //czy pytać o zamknięcie aplikacji
-																GlobalIni_IsOnlyOne,            //Dozwolona tylko jedna kopia aplikacji
-																GlobalIni_IsAutoFindUpdate,       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
-																GlobalIni_IsLoadBooksOnInit, //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
-																GlobalIni_IsTipsWindowStart, //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
-                                Globalini_IsDisplayStartInfoTray, //czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
-																//GlobalIni_IsStartInfo,          //Podczas startu aplikacji czy jest wyświetlane powitanie
-														 //----- Sekcje Colors pliku ini
-														 GlobalIni_ColorsSection_Main,         //Główna sekcja COLORS pliku ini
-																GlobalIni_ColorFavoritesVers,       //Kolor zaznaczenie ulubionych wersetów
-																GlobalIni_ColorCommentVers,         //Kolor zaznaczenie wersetów, do których istnieje komentarz
-																GlobalIni_ColorBackgroundText,      //Kolor podkładu pod wyswietlany tekst
-																GlobalIni_ColorAdressVersFullTranslates, //Kolor adresu, wersetu dla pełnego tłumaczenia
-																GlobalIni_ColorAdressVersPartTranslates, //Kolor adresu, wersetu dla tłumaczeń częściowych(oryginalnych, lub innych)
-																GlobalIni_ColorNameFullTranslates,  //Kolor nazwy pełnego tłumaczenia
-																GlobalIni_ColorNamePartTranslates,  //Kolor nazwy częściowego tłumaczenia
-																GlobalIni_ColorBackgroundMarkerComment,//Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
-																GlobalIni_ColorOryginalTranslates,  //Kolor czcionki, dla oryginalnych tłumaczeń
-																GlobalIni_ColorNameOryginalTranslate, //Kolor nazwy oryginalnego tłumaczenia
-																GlobalIni_ColorAdressOryginalTranslate, //Kolor adresu oryginalnego tłumaczenia
-														 //----- Sekcja ColorsSetups pliku ini
-														 GlobalIni_ColorsSetupsSection_Main, //Główna sekcja ColorsSetups
-																GlobalIni_ColorsSetupsBackGroundAllListSearch,  //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
-																GlobalIni_ColorsSetupBackGroundSelectBookSearch,//Kolor podkładu dla wyświetlenia znalezionych wersetów w wybranej księdze
-																GlobalIni_ColorsSetupBackGroundSelectVers,      //Kolor podkładu dla wyświetlenie pojedyńczego wybranego wersetu
-														 //----- Sekcja ParametersSetupsSearch
-														 GlobalIni_ParametersSetupsSearch_Main, //Główna sekcja ParametersSetupsSearch
-																GlobalIni_IsMemorySetupsSearch, //Czy zapamiętywać parametry wyszukiwania
-																GlobalIni_Translate, //Tłumaczenie
-																GlobalIni_SetupRangeBooks,//Zakres ksiąg
-																GlobalIni_StartUserRange, //Początek zakresu wyszukiwań
-																GlobalIni_StopUserRange,  //Koniec zakresu wyszukiwań
-																GlobalIni_TextSearch, //Tekst wyszukiwany
-																GlobalIni_IsSizeTextSearch, //Podczas wyszukiwania jest brana wielkość liter
-                                GlobalIni_IsRegSearch, //Podczas wyszukiwania są używane wyrażenia regularne
-														 //----- Sekcja Others
-														 GlobalIni_OthersSection,           //Główna sekcja OTHERS
-																GlobalIni_OtherSizeFontMain,    //Wielkość głównej czcionki tekstu wersetu
-																GlobalIni_OtherSizeFontAdress,  //Wielkość czcionki, adresu wersetu
-																GlobalIni_OtherSizeFontNameTranslators, //Wielkość czcionki nazwy tłumaczeń
-																GlobalIni_FontNameMain,           //Nazwa głównej czcionki
-																GlobalIni_FontNameAdress,         //Nazwa czcionki adresu wersetu
-																GlobalIni_FontNameTranslators,    //Nazwa czcionki nazwy tłymaczenia
-																GlobalIni_SelectStyleName,        //Nazwa wybranego z listy tematu dla aplikacji
-														 //----- Sekcje Translates
-														 GlobalIni_TranslatesSection_Main, 	//Główna sekcja TRANSLATES pliku ini
-																GlobalIni_ExcludeTranslates,    //Tłumaczenia nie wyświetlane
-														 //----- Sekcja pany czytania biblii
-														 GlobalIni_ReadingPlan_Main,         //Główna sekcja ustawień planu czytania biblii
-																GlobalIni_TranslateRPlan,        //Tłumaczenie używane w planie
-                                GlobalIni_IDTranslateRPlan,      //Numer identyfikacyjny tłumaczenie wykorzystywanego w planie czytania
-																GlobalIni_SelectPlan,            //Wybrany planu
-																GlobalIni_StartDate,             //Data rozpoczęcia planu czytania biblii
-																GlobalIni_IsStartPlan,           //Czy rozpoczęto plan czytania Pisma Świetego
-																GlobalIni_FontPlan,              //Czcionka wyświetlana w planie czytania biblii
-																GlobalIni_SizeFontPlan,          //Wielkość czcionki w planie
-																GlobalIni_SetRate,               //Szybkość czytania tekstu
-																GlobalIni_SetVolume,             //Głośność czytania
-																GlobalPath_CurrentActivePlan,    //Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
-														 Global_ustrFileReadingPlanExtend;   //Rozszerzenie plików planów czytania = "*.rpf";
+																	  Global_DefaultStyleName="Windows", //Domyślny styl
+																		/*****************************************************************************
+																		 *               Stałe dla pliku konfiguracyjnego typu ini                   *
+																		 *****************************************************************************/
+		                								//----- Sekcje Main pliku ini
+		                								GlobalIni_MainSection_Main="MAIN",           //Główna sekcja MAIN pliku ini
+		                										GlobalIni_PathMultiM1="MultimediaPath1", GlobalIni_PathMultiM2="MultimediaPath2", GlobalIni_PathMultiM3="MultimediaPath3", //Ścieżki dostępu do wybranych katalogów z multimediami
+		                										GlobalIni_AppWidth="ApplicWinWidth", GlobalIni_AppHeight="ApplicWinHeight", //Szerokość i wysokość głównego okna
+		                										GlobalIni_LoadBooksOnExit="LoadBooksOnExit", //Lista otwartych ksiąg i rozdziałów w momencie zamknięcia aplikacji
+		                								//----- Sekcje Flags pliku ini
+		                								GlobalIni_FlagsSection_Main="FLAGS",         //Główna sekcja FLAGS pliku ini
+		                										GlobalIni_IsDisplaySplashStart="IsDisplaySplashStart", //Czy wyświetlać winiete startową podczas startu aplikacji
+		                										GlobalIni_IsRequestEnd="IsRequestEndApplication",      //czy pytać o zamknięcie aplikacji
+		                										GlobalIni_IsOnlyOne="IsOnlyOne",            //Dozwolona tylko jedna kopia aplikacji
+		                										GlobalIni_IsAutoFindUpdate="IsAutoFindUpdate",       //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
+		                										GlobalIni_IsLoadBooksOnInit="IsLoadBooksOnInit", //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
+		                										GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
+		                										Globalini_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
+																		GlobalIni_ColorsSection_Main="COLORS",       //Główna sekcja COLORS pliku ini
+		                										GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",       //Kolor zaznaczenie ulubionych wersetów
+		                										GlobalIni_ColorCommentVers="ColorCommentVers",         //Kolor zaznaczenie wersetów, do których istnieje komentarz
+		                										GlobalIni_ColorBackgroundText="ColorBackgroundText",      //Kolor podkładu pod wyswietlany tekst,
+		                										GlobalIni_ColorAdressVersFullTranslates="ColorAdressVersFullTranslates", //Kolor adresu, wersetu dla pełnego tłumaczenia
+		                										GlobalIni_ColorAdressVersPartTranslates="ColorAdressVersPartTranslates", //Kolor adresu, wersetu dla tłumaczeń częściowych(oryginalnych, lub innych)
+		                										GlobalIni_ColorNameFullTranslates="ColorNameFullTranslates",  //Kolor nazwy pełnego tłumaczenia
+		                										GlobalIni_ColorNamePartTranslates="ColorNamePartTranslates",  //Kolor nazwy częściowego tłumaczenia
+		                										GlobalIni_ColorBackgroundMarkerComment="ColorBackgroundMarkerComment", //Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
+		                										GlobalIni_ColorOryginalTranslates="ColorOryginalTranslates",  //Kolor czcionki, dla oryginalnych tłumaczeń
+		                										GlobalIni_ColorNameOryginalTranslate="ColorNameOryginalTranslate", //Kolor nazwy oryginalnego tłumaczenia
+		                										GlobalIni_ColorAdressOryginalTranslate="ColorAdressOryginalTranslate", //Kolor adresu oryginalnego tłumaczenia
+		                										//----- Sekcja ColorsSetups pliku ini
+		                								GlobalIni_ColorsSetupsSection_Main="COLORSSETUPS", //Główna sekcja ColorsSetups
+		                										GlobalIni_ColorsSetupsBackGroundAllListSearch="ColorsSetupsBackGroundAllListSearch", //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
+		                										GlobalIni_ColorsSetupBackGroundSelectBookSearch="ColorsSetupBackGroundSelectBookSearch",//Kolor podkładu dla wyświetlenia znalezionych wersetów w wybranej księdze
+		                										GlobalIni_ColorsSetupBackGroundSelectVers="ColorsSetupBackGroundSelectVers",      //Kolor podkładu dla wyświetlenie pojedyńczego wybranego wersetu
+		                								//----- Sekcja ParametersSetupsSearch
+		                								GlobalIni_ParametersSetupsSearch_Main="PARAMETERSSETUPSSEARCH", //Główna sekcja ParametersSetupsSearch
+		                										GlobalIni_IsMemorySetupsSearch="IsMemorySetupsSearch", //Czy zapamiętywać parametry wyszukiwania
+		                										GlobalIni_Translate="SetupSearchTranslate", //Tłumaczenie
+		                										GlobalIni_SetupRangeBooks="SetupSearchRangeBooks",//Zakres ksiąg
+		                										GlobalIni_StartUserRange="SetupSearchStartUserRangeBook", //Początek zakresu wyszukiwań
+		                										GlobalIni_StopUserRange="SetupSearchStopUserRangeBook",  //Koniec zakresu wyszukiwań
+		                										GlobalIni_TextSearch="SetupsSearchText", //Tekst wyszukiwany
+		                										GlobalIni_IsSizeTextSearch="IsSizeTextSearch", //Podczas wyszukiwania jest brana wielkość liter
+		                										GlobalIni_IsRegSearch="IsRegSearch", //Podczas wyszukiwania są używane wyrażenia regularne
+		                										//----- Sekcja Others
+		                								GlobalIni_OthersSection="OTHERS",           //Główna sekcja OTHERS
+		                										GlobalIni_OtherSizeFontMain="OtherSizeFontMain",    //Wielkość głównej czcionki tekstu wersetu
+		                										GlobalIni_OtherSizeFontAdress="OtherSizeFontAdress",  //Wielkość czcionki, adresu wersetu
+		                										GlobalIni_OtherSizeFontNameTranslators="OtherSizeFontTranslators", //Wielkość czcionki nazwy tłumaczeń
+		                										GlobalIni_FontNameMain="FontnameMain",           //Nazwa głównej czcionki
+		                										GlobalIni_FontNameAdress="FontNameAdress",         //Nazwa czcionki adresu wersetu
+		                										GlobalIni_FontNameTranslators="FontNameTranslators",    //Nazwa czcionki nazwy tłymaczenia
+		                										GlobalIni_SelectStyleName="SelectStyleName",        //Nazwa wybranego z listy tematu dla aplikacji
+		                								//----- Sekcje Translates
+		                								GlobalIni_TranslatesSection_Main="TRANSLATES", 				        //Główna sekcja TRANSLATES pliku ini
+		                										GlobalIni_ExcludeTranslates="ExcludeTranslates",    //Tłumaczenia nie wyświetlane
+		                								GlobalIni_ReadingPlan_Main="READINGPLAN",     //Główna sekcja ustawień planu czytania biblii
+		                							  		GlobalIni_TranslateRPlan="TypeTranslateReadingPlan",//Tłumaczenie używane w planie
+		                										GlobalIni_IDTranslateRPlan="IDTranslateReadingPlan",//Numer identyfikacyjny tłumaczenie wykorzystywanego w planie czytania
+		                							  		GlobalIni_SelectPlan="SelectReadingPlan",           //Wybrany planu
+		                										GlobalIni_StartDate="StarDateReadingPlan",         //Data rozpoczęcia planu czytania biblii
+		                							  		GlobalIni_IsStartPlan="IsStartReadingPlan",        //Czy rozpoczęto plan czytania Pisma Świetego
+		                										GlobalIni_FontPlan="FontDisplayNameReadingPlan",   //Czcionka wyświetlana w planie czytania biblii
+		                							  		GlobalIni_SizeFontPlan="FontSizeDisplayReadingPlan",//Wielkość czcionki w planie
+		                										GlobalIni_SetRate="SetRateSpeakText",               //Szybkość czytania tekstu
+		                							  		GlobalIni_SetVolume="SetVolumeSpeakText",           //Głośność czytania
+		                										GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),    //Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
+																		Global_ustrFileReadingPlanExtend=".rpf";   //Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
 	static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
 											 Global_ustrVerAplicMain, 						//Wersja głównej biblioteki

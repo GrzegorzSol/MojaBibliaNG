@@ -46,7 +46,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uFastTipsWindow.h"
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
-#include <System.IOUtils.hpp>
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
