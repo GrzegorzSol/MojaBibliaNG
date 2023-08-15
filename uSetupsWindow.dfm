@@ -25,13 +25,15 @@ object SetupsWindow: TSetupsWindow
     Width = 953
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetSelectThemes
+    ActivePage = SW_SheetFlags
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
+    ExplicitWidth = 949
+    ExplicitHeight = 555
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -300,103 +302,102 @@ object SetupsWindow: TSetupsWindow
       CustomHint = SW_BalloonHint
       Caption = 'Flagi i prze'#322#261'czniki aplikacji'
       ImageIndex = 1
-      object SW_CBoxIsDisplaySplashScreen: TCheckBox
+      object ToggleSwitchIsDisplayInfos: TToggleSwitch
         AlignWithMargins = True
         Left = 3
         Top = 3
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 
-          'Czy wy'#347'wietla'#263' ekran informacyjny podczas uruchamiania aplikacji' +
-          '?'
-        ParentShowHint = False
-        ShowHint = True
+        SwitchWidth = 24
         TabOrder = 0
-        OnClick = SW_CBox_Click
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitWidth = 46
       end
-      object SW_CBoxIsRequestEnd: TCheckBox
+      object ToggleSwitchIsRequestClose: TToggleSwitch
         AlignWithMargins = True
         Left = 3
-        Top = 26
+        Top = 29
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 'Czy przed zamkni'#281'ciem aplikacji pyta'#263' o zgod'#281'?'
-        ParentShowHint = False
-        ShowHint = True
+        SwitchWidth = 24
         TabOrder = 1
-        OnClick = SW_CBox_Click
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitTop = 25
+        ExplicitWidth = 46
       end
-      object SW_CBoxOnlyOne: TCheckBox
+      object ToggleSwitchIsOneInstance: TToggleSwitch
         AlignWithMargins = True
         Left = 3
-        Top = 49
+        Top = 55
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 'Dozwolona tylko jedna kopia aplikacji'
+        SwitchWidth = 24
         TabOrder = 2
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitTop = 47
+        ExplicitWidth = 46
       end
-      object SW_CBoxAutoFindUpdate: TCheckBox
+      object ToggleSwitchIsUpdatesOnStartup: TToggleSwitch
         AlignWithMargins = True
         Left = 3
-        Top = 72
+        Top = 81
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 'Czy sprawdza'#263' aktualizacje podczas uruchamiania aplikacji ?'
+        SwitchWidth = 24
         TabOrder = 3
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitTop = 69
+        ExplicitWidth = 46
       end
-      object SW_CBoxReLoadBooks: TCheckBox
+      object ToggleSwitchIsReopenSchets: TToggleSwitch
         AlignWithMargins = True
         Left = 3
-        Top = 95
+        Top = 107
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 
-          'Czy po ponownym uruchomieniu aplikacji, b'#281'd'#261' wczytywane ksi'#281'gi, ' +
-          'kt'#243're zosta'#322'y ostatnio zamkni'#281'te podczas opuszczania aplikacji?'
+        SwitchWidth = 24
         TabOrder = 4
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitTop = 91
+        ExplicitWidth = 46
       end
-      object SW_CBoxTips: TCheckBox
+      object ToggleSwitchIsHintsOnStart: TToggleSwitch
         AlignWithMargins = True
         Left = 3
-        Top = 118
+        Top = 133
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 
-          'Czy okno szybkich podpowiedzi ma sie pojawia'#263' przy starcie aplik' +
-          'acji ?'
+        SwitchWidth = 24
         TabOrder = 5
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitTop = 113
+        ExplicitWidth = 46
       end
-      object SW_CBoxDisplayTrayInfoStart: TCheckBox
+      object ToggleSwitchisInfosOnStatusBar: TToggleSwitch
         AlignWithMargins = True
         Left = 3
-        Top = 141
+        Top = 159
         Width = 939
-        Height = 17
+        Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
-        Caption = 
-          'Czy wy'#347'wietla'#263' informacje o aplikacji w pasku powiadamiania, pod' +
-          'czas jej uruchamiania ?'
+        SwitchWidth = 24
         TabOrder = 6
-        ExplicitWidth = 935
+        ThumbWidth = 10
+        ExplicitTop = 135
+        ExplicitWidth = 46
       end
     end
     object SW_SheetPaths: TTabSheet
@@ -412,7 +413,6 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Wyb'#243'r katalog'#243'w z multimediami - uwaga nr. 1'
         TabOrder = 0
-        ExplicitWidth = 943
         object SW_LEditPath3: TLabeledEdit
           Left = 161
           Top = 80
@@ -764,8 +764,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 4
-            Height = 16
+            Width = 373
+            Height = 73
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -777,6 +777,8 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
+            ExplicitWidth = 4
+            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -947,7 +949,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 232
+          Width = 548
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -964,6 +966,7 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
+          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           Left = 1
@@ -1017,6 +1020,7 @@ object SetupsWindow: TSetupsWindow
           ItemHeight = 13
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
+          ExplicitHeight = 512
         end
       end
       object PanelDisplaySelectTheme: TPanel
@@ -1279,8 +1283,8 @@ object SetupsWindow: TSetupsWindow
     DrawingStyle = dsTransparent
     Height = 32
     Width = 32
-    Left = 656
-    Top = 344
+    Left = 1024
+    Top = 152
     Bitmap = {
       494C010107001800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
@@ -2348,8 +2352,8 @@ object SetupsWindow: TSetupsWindow
   object SW_ImgListSmallMain: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
-    Left = 653
-    Top = 296
+    Left = 1021
+    Top = 104
     Bitmap = {
       494C010107001800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
@@ -2625,14 +2629,14 @@ object SetupsWindow: TSetupsWindow
   object SW_BalloonHint: TBalloonHint
     Images = SW_ImgListSmallMain
     HideAfter = 750
-    Left = 653
-    Top = 248
+    Left = 1021
+    Top = 56
   end
   object SW_ImgListMainSmall: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
-    Left = 653
-    Top = 392
+    Left = 1021
+    Top = 200
     Bitmap = {
       494C01010A003001040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030

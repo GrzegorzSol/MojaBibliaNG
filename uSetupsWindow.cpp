@@ -25,7 +25,7 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
       enPageSetups_ReadingPlan, enPageSetups_SelectThemes,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
 			enSetup_Save=10, enSetup_Return, enSetup_Cancel, enSetup_Help,
-			enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
+			//enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
 			//Tagi dla przycisków i innych kontrolek
 			enTagControl_ButtFontMain=100,
 			enTagControl_ButtFontAdress,
@@ -53,7 +53,28 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			//Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 			enTagButt_StartPlan=200,
 			//Nazwy kolumn przeglądu wybranego planu czytania biblii
-			enNameColumnDisplaySelectPlay_NumberDay=0, enNameColumnDisplaySelectPlay_Text, enNameColumnDisplaySelectPlay_CountColumn
+			enNameColumnDisplaySelectPlay_NumberDay=0, enNameColumnDisplaySelectPlay_Text, enNameColumnDisplaySelectPlay_CountColumn,
+			//Opisy przełączników na karcie przełączników, typu TToggleSwitch //[15-08-2023]
+			enToggleCaptionOn_ToggleSwitchIsDisplayInfos=0,
+			enToggleCaptionOff_ToggleSwitchIsDisplayInfos,
+
+			enToggleCaptionOn_ToggleSwitchIsRequestClose,
+			enToggleCaptionOff_ToggleSwitchIsRequestClose,
+
+			enToggleCaptionOn_ToggleSwitchIsOneInstance,
+			enToggleCaptionOff_ToggleSwitchIsOneInstance,
+
+			enToggleCaptionOn_ToggleSwitchIsUpdatesOnStartup,
+			enToggleCaptionOff_ToggleSwitchIsUpdatesOnStartup,
+
+			enToggleCaptionOn_ToggleSwitchIsReopenSchets,
+			enToggleCaptionOff_ToggleSwitchIsReopenSchets,
+
+			enToggleCaptionOn_ToggleSwitchIsHintsOnStart,
+			enToggleCaptionOff_ToggleSwitchIsHintsOnStart,
+
+			enToggleCaptionOn_ToggleSwitchisInfosOnStatusBar,
+			enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar
 		 };
 const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tłumaczenia", "Opis tłumaczenia"},
 										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne"},
@@ -61,7 +82,29 @@ const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tł
 										ustrFontList[] = {"Arial", "Calibri", "Courier New", "DejaVu Sans", "Segoe UI", "Times New Roman", "Verdana"},
 										ustrSizeFontList[] = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26"},
 										//Nazwy kolumn przeglądu wybranego planu czytania biblii
-										ustrNamesColumns[] = {"Dzień planu", "Tekst Pisma świetego do przeczytania"};
+										ustrNamesColumns[] = {"Dzień planu", "Tekst Pisma świetego do przeczytania"},
+										//Opisy przełączników na karcie przełączników, typu TToggleSwitch //[15-08-2023]
+										ustrCaptionToggles[] = {"Będzie wyświetlany ekran informacyjny podczas uruchamiania aplikacji.",
+																						"Nie będzie wyświetlany ekran informacyjny podczas uruchamiania aplikacji.",
+
+																						"Przed zamknięciem aplikacji, zapyta ona o zgodę.",
+																						"Zamykanie aplikacji bez powiadamiania.",
+
+																						"Dozwolona tylko jedna kopia aplikacji.",
+																						"Możliwość otwierania wielu kopi aplikacji.",
+
+																						"Sprawdzanie aktualizacji podczas jej uruchamiania.",
+																						"Brak sprawdzania aktualizacji podczas startu aplikacji.",
+
+																						"Po uruchomieniu aplikacji zostaną wczytane wszystkie zakładki, które były otwarte podczas jej zamykania.",
+																						"Aplikacja uruchamia się bez jakich kolwiek otwartych zakładek z poprzednio wczytanym tekstem.",
+
+																						"Szybkie podpowiedzi pojawia sią po otwarciu aplikacji.",
+																						"Szybkie podpowiedzi nie pojawią się po otwarciu aplikacji.",
+
+																						"Wyświetlanie informacji na pasku zadań, podczas jej uruchamiania.",
+																						"Informacje nie będą wyświetlane na pasku zadań, podczas jej uruchamiania."
+																						};
 
 //---------------------------------------------------------------------------
 __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
@@ -84,12 +127,8 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_ButtSetupSave->Hint = Format("Zapis zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupSave->ImageIndex)));
 	this->SW_ButtSetupCancel->Hint = Format("Anulowanie zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupCancel->ImageIndex)));
   //Tagi
-	this->SW_CBoxIsDisplaySplashScreen->Tag = enTag_IsDisplaySplashScreen;
-	this->SW_CBoxIsRequestEnd->Tag = enTag_IsRequestEnd;
-	this->SW_CBoxOnlyOne->Tag = enTag_IsOnlyOne;
-	this->SW_CBoxAutoFindUpdate->Tag = enTag_IsAutoFindUpdate;
-	this->SW_CBoxReLoadBooks->Tag = enTag_IsLoadBooksOnInit;
-  //Pole tekstowe z wybranymi katalogami z multimediami
+
+	//Pole tekstowe z wybranymi katalogami z multimediami
 	this->SW_LEditPath1->Tag = enSelectDirMulti_1; this->SW_ButtSelectDirMulti_1->Tag = enSelectDirMulti_1;
 	this->SW_LEditPath2->Tag = enSelectDirMulti_2; this->SW_ButtSelectDirMulti_2->Tag = enSelectDirMulti_2;
 	this->SW_LEditPath3->Tag = enSelectDirMulti_3; this->SW_ButtSelectDirMulti_3->Tag = enSelectDirMulti_3;
@@ -151,6 +190,8 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->TrackBarSetVolume->Max = SPVLIMITS::SPMAX_VOLUME;
 	//Wstępne ustawieni na karcie tematów graficznych
 	this->SW_ButtDisplaySelectTheme->Enabled =  this->SW_LBoxSelectTheme->ItemIndex > -1;
+  //Inicjalizacja obsługi przełączników flag //[15-08-2023]
+	this->_InitToggleSwitches();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -197,6 +238,36 @@ void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
 {
 	if(this->_SListOldConfig) {delete this->_SListOldConfig; this->_SListOldConfig = nullptr;} //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
 	if(this->_HSListViewAllTr) {delete this->_HSListViewAllTr; this->_HSListViewAllTr = nullptr;} //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_InitToggleSwitches()
+/**
+	OPIS METOD(FUNKCJI): Inicjalizacja obsługi przełączników flag //[15-08-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->ToggleSwitchIsDisplayInfos->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsDisplayInfos];
+	this->ToggleSwitchIsDisplayInfos->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsDisplayInfos];
+
+	this->ToggleSwitchIsRequestClose->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsRequestClose];
+	this->ToggleSwitchIsRequestClose->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsRequestClose];
+
+	this->ToggleSwitchIsOneInstance->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsOneInstance];
+	this->ToggleSwitchIsOneInstance->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsOneInstance];
+
+	this->ToggleSwitchIsUpdatesOnStartup->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsUpdatesOnStartup];
+	this->ToggleSwitchIsUpdatesOnStartup->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsUpdatesOnStartup];
+
+	this->ToggleSwitchIsReopenSchets->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsReopenSchets];
+	this->ToggleSwitchIsReopenSchets->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsReopenSchets];
+
+	this->ToggleSwitchIsHintsOnStart->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsHintsOnStart];
+	this->ToggleSwitchIsHintsOnStart->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsHintsOnStart];
+
+	this->ToggleSwitchisInfosOnStatusBar->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchisInfosOnStatusBar];
+	this->ToggleSwitchisInfosOnStatusBar->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar];
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
@@ -319,14 +390,27 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->_VaidatePathMedia(this->SW_LEditPath1, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1);
 	this->_VaidatePathMedia(this->SW_LEditPath2, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2);
 	this->_VaidatePathMedia(this->SW_LEditPath3, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3);
-	//Flagi
-	this->SW_CBoxIsDisplaySplashScreen->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, true);
-	this->SW_CBoxIsRequestEnd->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true);
-	this->SW_CBoxOnlyOne->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, true);
-	this->SW_CBoxAutoFindUpdate->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true);
-	this->SW_CBoxReLoadBooks->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true);
-	this->SW_CBoxTips->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true);
-	this->SW_CBoxDisplayTrayInfoStart->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true);
+	//Odczyt flag [15-08-2023]
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, true))
+		this->ToggleSwitchIsDisplayInfos->State = tssOn; else this->ToggleSwitchIsDisplayInfos->State = tssOff;
+
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true))
+		this->ToggleSwitchIsRequestClose->State = tssOn; else this->ToggleSwitchIsRequestClose->State = tssOff;
+
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, true))
+		this->ToggleSwitchIsOneInstance->State = tssOn; else this->ToggleSwitchIsOneInstance->State = tssOff;
+
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true))
+		this->ToggleSwitchIsUpdatesOnStartup->State = tssOn; else this->ToggleSwitchIsUpdatesOnStartup->State = tssOff;
+
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true))
+		this->ToggleSwitchIsReopenSchets->State = tssOn; else this->ToggleSwitchIsReopenSchets->State = tssOff;
+
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
+		this->ToggleSwitchIsHintsOnStart->State = tssOn; else this->ToggleSwitchIsHintsOnStart->State = tssOff;
+
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
+		this->ToggleSwitchisInfosOnStatusBar->State = tssOn; else this->ToggleSwitchisInfosOnStatusBar->State = tssOff;
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
 	this->SW_ColorBoxFavorities->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, clYellow);
@@ -489,16 +573,16 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, this->SW_LEditPath2->Text);}
 	if(!this->SW_LEditPath3->Text.IsEmpty())
 		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, this->SW_LEditPath3->Text);}
-	//Zapis flag
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, this->SW_CBoxIsDisplaySplashScreen->Checked);
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, this->SW_CBoxIsRequestEnd->Checked);
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, this->SW_CBoxOnlyOne->Checked);
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, this->SW_CBoxAutoFindUpdate->Checked);
-  GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, this->SW_CBoxReLoadBooks->Checked);
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, this->SW_CBoxTips->Checked);
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, this->SW_CBoxDisplayTrayInfoStart->Checked);
+	//Zapis flag //[15-08-2023]
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, this->ToggleSwitchIsDisplayInfos->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, this->ToggleSwitchIsRequestClose->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, this->ToggleSwitchIsOneInstance->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, this->ToggleSwitchIsUpdatesOnStartup->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, this->ToggleSwitchIsReopenSchets->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, this->ToggleSwitchIsHintsOnStart->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, this->ToggleSwitchisInfosOnStatusBar->IsOn());
 	//Zapis kolorów
-    //Kolor zaznaczenie ulubionych wersetów
+		//Kolor zaznaczenie ulubionych wersetów
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, this->SW_ColorBoxFavorities->Selected);
 		//Kolor zaznaczenie wersetów, do których istnieje komentarz
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorCommentVers, this->SW_ColorBoxComment->Selected);
@@ -777,27 +861,6 @@ UnicodeString __fastcall TSetupsWindow::_SelectMultimediaDir(UnicodeString _ustr
 
 	if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
 	return ustrSelect;
-}
-//---------------------------------------------------------------------------
-void __fastcall TSetupsWindow::SW_CBox_Click(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TCheckBox *pCBox = dynamic_cast<TCheckBox *>(Sender);
-	if(!pCBox) return;
-	//---
-	switch(pCBox->Tag)
-	{
-		case enTag_IsDisplaySplashScreen:
-		break;
-		//---
-		case enTag_IsRequestEnd:
-    break;
-  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SW_ColorBoxGetColors(TCustomColorBox *Sender,

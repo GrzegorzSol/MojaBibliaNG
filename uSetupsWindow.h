@@ -20,6 +20,7 @@
 #include <Vcl.Samples.Spin.hpp>
 #include <Vcl.Buttons.hpp>
 #include <Vcl.Mask.hpp>
+#include <Vcl.WinXCtrls.hpp>
 //---------------------------------------------------------------------------
 class TSetupsWindow : public TForm
 {
@@ -42,8 +43,6 @@ __published:	// IDE-managed Components
 	TButton *SW_ButtSetupSave;
 	TButton *SW_ButtSetupCancel;
 	TBalloonHint *SW_BalloonHint;
-	TCheckBox *SW_CBoxIsDisplaySplashScreen;
-	TCheckBox *SW_CBoxIsRequestEnd;
 	TButton *SW_ButtSetupReturn;
 	TTabSheet *SW_SheetTranslates;
 	TImageList *SW_ImgListMainSmall;
@@ -65,10 +64,6 @@ __published:	// IDE-managed Components
 	TButton *ButtFontNameMainText;
 	TButton *ButtFontNameAdress;
 	TButton *ButtFontNameTranslates;
-	TCheckBox *SW_CBoxOnlyOne;
-	TCheckBox *SW_CBoxAutoFindUpdate;
-	TCheckBox *SW_CBoxReLoadBooks;
-	TCheckBox *SW_CBoxTips;
 	TPanel *SW_PanelSelectListButtons;
 	TPanel *SW_PanelImageLogo;
 	TImage *SW_SetupsImageLogo;
@@ -118,14 +113,19 @@ __published:	// IDE-managed Components
 	TPanel *PanelListThemes;
 	TPanel *PanelDisplaySelectTheme;
 	TButton *SW_ButtDisplaySelectTheme;
-	TCheckBox *SW_CBoxDisplayTrayInfoStart;
+	TToggleSwitch *ToggleSwitchIsDisplayInfos;
+	TToggleSwitch *ToggleSwitchIsRequestClose;
+	TToggleSwitch *ToggleSwitchIsOneInstance;
+	TToggleSwitch *ToggleSwitchIsUpdatesOnStartup;
+	TToggleSwitch *ToggleSwitchIsReopenSchets;
+	TToggleSwitch *ToggleSwitchIsHintsOnStart;
+	TToggleSwitch *ToggleSwitchisInfosOnStatusBar;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall SW_ButGroupSectionsButtonClicked(TObject *Sender, int Index);
 	void __fastcall SW_PControlSelectedChange(TObject *Sender);
 	void __fastcall SW_ButtSetups_Click(TObject *Sender);
-	void __fastcall SW_CBox_Click(TObject *Sender);
 	void __fastcall SW_ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);
 	void __fastcall SW_PBoxViewSetupColorsPaint(TObject *Sender);
 	void __fastcall SW_ColorAllChange(TObject *Sender);
@@ -152,6 +152,7 @@ private:	// User declarations
 	void __fastcall _DisplaySelectPlan(); //Wyswietlenie wybranego planu
 	void __fastcall _WriteJournalPlan();  //Zapis aktualnego dziennika czytania bibli
 	void __fastcall _InfoStartStopPlan();
+  void __fastcall _InitToggleSwitches();//Inicjalizacja obsługi przełączników flag //[15-08-2023]
 	int _iNumberDayPlan=-1; //Numer kolejnej lekcji z aktywnego planu
 public:		// User declarations
 	__fastcall TSetupsWindow(TComponent* Owner);
