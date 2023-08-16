@@ -520,9 +520,6 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	if(GlobalVar::Global_HListHistoryChapterOpen)
 	{
 		delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("delete GlobalVar::Global_HListHistoryChapterOpen");
-		#endif
 	}
 	//--- Zamykanie głownej klasy
 	if(GsReadBibleTextData::pGsReadBibleTextClass)

@@ -33,7 +33,7 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 	{
 		//Nie istnieje główne okno
 		this->FormStyle = fsStayOnTop;
-		this->AlphaBlendValue = 190;
+		//this->AlphaBlendValue = 190;
 		this->STextHeadInfo->Caption = "Uruchamianie aplikacji...";
 		this->TimerInfoSystem->Enabled = true;
 	}
@@ -91,7 +91,7 @@ void __fastcall TInformationsAppWindow::TimerInfoSystemTimer(TObject *Sender)
 */
 {
 	static unsigned char sucTick;
-  if(sucTick==4) this->Close();
+  if(sucTick==8) this->Close();
 	sucTick++;
 }
 //---------------------------------------------------------------------------

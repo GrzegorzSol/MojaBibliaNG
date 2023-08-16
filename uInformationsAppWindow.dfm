@@ -4,8 +4,8 @@ object InformationsAppWindow: TInformationsAppWindow
   AlphaBlend = True
   BorderStyle = bsSingle
   Caption = 'Informacja o aplikacji'
-  ClientHeight = 670
-  ClientWidth = 657
+  ClientHeight = 668
+  ClientWidth = 649
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object InformationsAppWindow: TInformationsAppWindow
     Left = 0
     Top = 0
     Width = 234
-    Height = 670
+    Height = 668
     Align = alLeft
     Picture.Data = {
       07544269746D6170DE6D0200424DDE6D0200000000003604000028000000EA00
@@ -5001,12 +5001,13 @@ object InformationsAppWindow: TInformationsAppWindow
       47040C02050000000000000000000000000000050C5182470303010C051C0205
       05000000000000000000000000000002020251CD9C88DD514B86DD4704CDBB9C
       51010101010200000000}
+    ExplicitHeight = 670
   end
   object PanelInfo: TPanel
     Left = 234
     Top = 0
-    Width = 423
-    Height = 670
+    Width = 415
+    Height = 668
     Align = alClient
     ShowCaption = False
     TabOrder = 0
@@ -5046,6 +5047,7 @@ object InformationsAppWindow: TInformationsAppWindow
       Font.Quality = fqClearType
       ParentFont = False
       TabOrder = 0
+      ExplicitWidth = 393
     end
     object STextInfoLicence: TStaticText
       AlignWithMargins = True
@@ -5059,7 +5061,6 @@ object InformationsAppWindow: TInformationsAppWindow
       Align = alTop
       AutoSize = False
       TabOrder = 1
-      ExplicitTop = 84
       ExplicitWidth = 393
     end
     object STextInfoVersions: TStaticText
@@ -5075,7 +5076,6 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 2
-      ExplicitTop = 478
       ExplicitWidth = 393
     end
     object STextInfoSystem: TStaticText
@@ -5091,7 +5091,6 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 3
-      ExplicitTop = 556
       ExplicitWidth = 393
     end
   end

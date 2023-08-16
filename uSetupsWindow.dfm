@@ -25,7 +25,7 @@ object SetupsWindow: TSetupsWindow
     Width = 953
     Height = 556
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetFlags
+    ActivePage = SW_SheetLajout
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -326,7 +326,6 @@ object SetupsWindow: TSetupsWindow
         SwitchWidth = 24
         TabOrder = 1
         ThumbWidth = 10
-        ExplicitTop = 25
         ExplicitWidth = 46
       end
       object ToggleSwitchIsOneInstance: TToggleSwitch
@@ -340,7 +339,6 @@ object SetupsWindow: TSetupsWindow
         SwitchWidth = 24
         TabOrder = 2
         ThumbWidth = 10
-        ExplicitTop = 47
         ExplicitWidth = 46
       end
       object ToggleSwitchIsUpdatesOnStartup: TToggleSwitch
@@ -354,7 +352,6 @@ object SetupsWindow: TSetupsWindow
         SwitchWidth = 24
         TabOrder = 3
         ThumbWidth = 10
-        ExplicitTop = 69
         ExplicitWidth = 46
       end
       object ToggleSwitchIsReopenSchets: TToggleSwitch
@@ -368,7 +365,6 @@ object SetupsWindow: TSetupsWindow
         SwitchWidth = 24
         TabOrder = 4
         ThumbWidth = 10
-        ExplicitTop = 91
         ExplicitWidth = 46
       end
       object ToggleSwitchIsHintsOnStart: TToggleSwitch
@@ -382,7 +378,6 @@ object SetupsWindow: TSetupsWindow
         SwitchWidth = 24
         TabOrder = 5
         ThumbWidth = 10
-        ExplicitTop = 113
         ExplicitWidth = 46
       end
       object ToggleSwitchisInfosOnStatusBar: TToggleSwitch
@@ -396,7 +391,6 @@ object SetupsWindow: TSetupsWindow
         SwitchWidth = 24
         TabOrder = 6
         ThumbWidth = 10
-        ExplicitTop = 135
         ExplicitWidth = 46
       end
     end
@@ -883,7 +877,7 @@ object SetupsWindow: TSetupsWindow
             Date = 45010.000000000000000000
             Time = 45010.000000000000000000
             Color = clBtnFace
-            MaxDate = 54818.999988425920000000
+            MaxDate = 54818.999988425930000000
             TabOrder = 0
             StyleElements = []
             OnChange = DateTimePickerSelectStartDatePlanChange
@@ -1007,7 +1001,6 @@ object SetupsWindow: TSetupsWindow
         ParentCtl3D = False
         ShowCaption = False
         TabOrder = 0
-        ExplicitHeight = 520
         object SW_LBoxSelectTheme: TListBox
           AlignWithMargins = True
           Left = 4
@@ -1020,7 +1013,6 @@ object SetupsWindow: TSetupsWindow
           ItemHeight = 13
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
-          ExplicitHeight = 512
         end
       end
       object PanelDisplaySelectTheme: TPanel
@@ -1034,7 +1026,6 @@ object SetupsWindow: TSetupsWindow
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 1
-        ExplicitHeight = 520
         object SW_ImagePreviewSelectStyle: TImage
           AlignWithMargins = True
           Left = 4

@@ -390,27 +390,14 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->_VaidatePathMedia(this->SW_LEditPath1, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1);
 	this->_VaidatePathMedia(this->SW_LEditPath2, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2);
 	this->_VaidatePathMedia(this->SW_LEditPath3, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3);
-	//Odczyt flag [15-08-2023]
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, true))
-		this->ToggleSwitchIsDisplayInfos->State = tssOn; else this->ToggleSwitchIsDisplayInfos->State = tssOff;
-
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true))
-		this->ToggleSwitchIsRequestClose->State = tssOn; else this->ToggleSwitchIsRequestClose->State = tssOff;
-
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, true))
-		this->ToggleSwitchIsOneInstance->State = tssOn; else this->ToggleSwitchIsOneInstance->State = tssOff;
-
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true))
-		this->ToggleSwitchIsUpdatesOnStartup->State = tssOn; else this->ToggleSwitchIsUpdatesOnStartup->State = tssOff;
-
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true))
-		this->ToggleSwitchIsReopenSchets->State = tssOn; else this->ToggleSwitchIsReopenSchets->State = tssOff;
-
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
-		this->ToggleSwitchIsHintsOnStart->State = tssOn; else this->ToggleSwitchIsHintsOnStart->State = tssOff;
-
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
-		this->ToggleSwitchisInfosOnStatusBar->State = tssOn; else this->ToggleSwitchisInfosOnStatusBar->State = tssOff;
+	//Odczyt flag [15-08-2023] - [16-08-2023]
+	this->ToggleSwitchIsDisplayInfos->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, true));
+	this->ToggleSwitchIsRequestClose->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true));
+	this->ToggleSwitchIsOneInstance->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, true));
+	this->ToggleSwitchIsUpdatesOnStartup->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true));
+	this->ToggleSwitchIsReopenSchets->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true));
+	this->ToggleSwitchIsHintsOnStart->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true));
+	this->ToggleSwitchisInfosOnStatusBar->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true));
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
 	this->SW_ColorBoxFavorities->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, clYellow);
