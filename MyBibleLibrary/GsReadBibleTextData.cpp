@@ -520,6 +520,9 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	if(GlobalVar::Global_HListHistoryChapterOpen)
 	{
 		delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("delete GlobalVar::Global_HListHistoryChapterOpen");
+		#endif
 	}
 	//--- Zamykanie głownej klasy
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
@@ -1039,3 +1042,21 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 //		GsDebugClass::WriteDebug("Debug: 009");
 //	#endif
 }
+//---------------------------------------------------------------------------
+void GsReadBibleTextData::GetCurentText(UnicodeString &_ustrText)
+/**
+	OPIS METOD(FUNKCJI): Metoda wyświetla tekst aktualnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(pGsTabSheetClass)
+	{
+		pGsTabSheetClass->_GetText(_ustrText);
+  }
+}
+//---------------------------------------------------------------------------
+

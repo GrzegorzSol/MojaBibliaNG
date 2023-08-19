@@ -380,6 +380,7 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
 	void __fastcall _OnSaveComments(System::TObject* Sender);
 	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
+  void __fastcall _GetText(UnicodeString &_ustrText); //Metoda wypełnią tekstem, zmienną UnicodeString, z aktualnej zakładki
 	void __fastcall _DisplayInfosTranslates(const int iTab=-1); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
 
 	void __fastcall _InitToolBarAllButtons(TPanel *pPanelParent); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
@@ -399,6 +400,7 @@ class GsTabSheetClass : public TTabSheet
 	TComboBox *pComboBox; //Lista do wyboru konkretnego rodziału, już bybranej księgi
 	TProgressBar *pProgressBar; //Pionowy wskaźnik, umiejscowienia pozycji w rozdziale
 	TStringBuilder *pStrBuilderHtml;	//Tekst html aktualnie wczytanego rozdziału z wybranej księgi
+								 //*pStrBuilderText;  //Czysty tekst aktualnie wczytanego rozdziału z wybranej księgi
 	THashedStringList *pHSListActualText; //Lista surowa aktualnie przegladanego rozdziału 25-08-2021
 																				//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 	GsListBoxSelectedVersClass *pLBoxSelectText;	//Lista ulubionych wersetów

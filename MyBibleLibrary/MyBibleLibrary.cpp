@@ -745,7 +745,6 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					if(!pTempHSList->Strings[iIndex].IsEmpty())
 					{
 						//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
-						//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 						pGsTabSheetClass->pHSListActualText->AddObject(pTempHSList->Strings[iIndex], pMyOjectVers);
 
 						if(pGsTabSheetClass->pLBoxSelectText->Items->IndexOf(pMyOjectVers->AdressString) == -1)
@@ -1553,7 +1552,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
-	this->pStrBuilderHtml = new TStringBuilder();
+	this->pStrBuilderHtml = new TStringBuilder();  //Tekst html aktualnie wczytanego rozdziału z wybranej księgi
 	if(!this->pStrBuilderHtml) throw(Exception("Błąd inicjalizacji klasy TStringBuilder"));
 	//---
 	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
@@ -2117,7 +2116,19 @@ void __fastcall GsTabSheetClass::_GetHTMLText(UnicodeString &_ustrTextHTML)
 */
 {
 	_ustrTextHTML = "";
-  _ustrTextHTML = this->pStrBuilderHtml->ToString();
+	_ustrTextHTML = this->pStrBuilderHtml->ToString();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_GetText(UnicodeString &_ustrText)
+/**
+	OPIS METOD(FUNKCJI): Metoda wypełnią tekstem, zmienną UnicodeString, z aktualnej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	_ustrText = "";
+	_ustrText = this->pHSListActualText->Text;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_DisplayInfosTranslates(const int iTab)
