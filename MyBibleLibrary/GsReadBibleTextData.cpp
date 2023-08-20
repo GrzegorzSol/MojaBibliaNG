@@ -1045,7 +1045,7 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 //---------------------------------------------------------------------------
 void GsReadBibleTextData::GetCurentText(UnicodeString &_ustrText)
 /**
-	OPIS METOD(FUNKCJI): Metoda wyświetla tekst aktualnej zakładki
+	OPIS METOD(FUNKCJI): Metoda wyświetla tekst aktualnej zakładki [20-08-2023]
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):

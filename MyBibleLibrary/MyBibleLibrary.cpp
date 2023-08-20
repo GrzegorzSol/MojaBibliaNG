@@ -744,8 +744,8 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					//Dodawanie kolejnego wersetu
 					if(!pTempHSList->Strings[iIndex].IsEmpty())
 					{
-						//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
-						pGsTabSheetClass->pHSListActualText->AddObject(pTempHSList->Strings[iIndex], pMyOjectVers);
+						//Lista surowa aktualnie przegladanego rozdziału [25-08-2021]; [20-08-2023]
+						pGsTabSheetClass->pHSListActualText->AddObject(Format("%s %s", ARRAYOFCONST(( pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex] ))), pMyOjectVers);
 
 						if(pGsTabSheetClass->pLBoxSelectText->Items->IndexOf(pMyOjectVers->AdressString) == -1)
 						//Jeśli nie istnieje jeszcze adres wersetu

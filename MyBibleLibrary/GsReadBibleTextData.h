@@ -203,7 +203,7 @@ class GsReadBibleTextData : public TObject
 		static void InitHistoryList();
 		//Metoda dodajaca informacje o otwartym rozdziale do listy historii
 		static void AddItemHistoryList(const UnicodeString _ustrTextItem);
-		//Metoda wyświetla tekst aktualnej zakładki
+		//Metoda wyświetla tekst aktualnej zakładki [20-08-2023]
 		static void GetCurentText(UnicodeString &_ustrText);
 };
 //---------------------------------------------------------------------------

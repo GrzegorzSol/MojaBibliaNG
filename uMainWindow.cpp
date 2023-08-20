@@ -47,6 +47,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
+#include <System.Win.Registry.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "Vcl.HtmlHelpViewer" //!!!
@@ -82,6 +83,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enImage_Tips,                    //17.Nawigator podpowiedzi
 			enImage_ReadingPlan,             //18.Plan czytania bibli
 			enImage_HistoryTextOpen,         //19.Historia otwieranych rozdziałów
+			enImage_OpenInWord,              //20.Otwarcie wybranego rozdziału w Ms Wordzie
 			enImageMainIndex_Count,
 			//Małe ikony
 			enImage16_Books=0,               //0.Księgi biblijne
@@ -117,6 +119,7 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enTagImage_Tips,      //116.Nawigator podpowiedzi
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
 			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
+			enTagImage_OpenInWord,    //119.Otwarcie wybranego rozdziału w Ms Wordzie
 			//
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,            //Zakładka z narzędziami
@@ -180,6 +183,8 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	}
   //Wyłączenie styli dla okien dialogowych, w tym przypadku chodzi o wyłączenie styli dla okna pomocy
 	TStyleManager::SystemHooks = TStyleManager::SystemHooks >> TStyleManager::shDialogs;
+	//Sprawdzenie czy aplikacja MS Word jest zainstalowana w systemie
+	this->Act_OpenInWord->Enabled = this->_IsWordInstalled();
 }
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::~TMainBibleWindow()
@@ -506,6 +511,39 @@ void __fastcall TMainBibleWindow::_AppOnHint(TObject *Sender)
 	this->StatusBarMain->Panels->Items[enPanelMain_InfoText]->Text = GetShortHint(Application->Hint);//this->XMBW_BalloonHintMain->Description;//
 }
 //---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(Msg.message == WM_RBUTTONDOWN || Msg.message == WM_RBUTTONUP/* ||
+		 Msg.message == WM_LBUTTONDOWN || Msg.message == WM_LBUTTONUP*/)
+	//Zabezpieczenie przed reakcją na każdy przycisk myszy w obrębie klasy TWebBrowser [09-11-2019]
+	//Odblokowanie [29-07-2023]
+	{
+		const int ciMaxClassName=255;
+		const UnicodeString custrClassExplorerName = "Internet Explorer_Server";
+		UnicodeString ustrClassName;
+		POINT cursorPoint; //Msg.pt;
+		//---
+		GetCursorPos(&cursorPoint);
+		HWND hWndSelect = WindowFromPoint(cursorPoint);
+		if(hWndSelect == NULL) return;
+		TCHAR szClassName[ciMaxClassName];
+		GetClassName(hWndSelect, szClassName, ciMaxClassName-1);
+		ustrClassName = szClassName;
+		//---
+		if(ustrClassName == custrClassExplorerName)
+		{
+			//Handled = true; //Zablokowanie działania myszy dla objektu klasy TWebBrowser [09-11-2019]
+			//Odblokowanie [29-07-2023]
+		}
+	}
+}
+//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 /**
 	OPIS METOD(FUNKCJI):
@@ -552,11 +590,40 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
 	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
 	this->Act_HistoryChapters->Hint = Format("Okno histori otwieranych rozdziałów|Otwiera okno z historia rozdziałów otwartych w aplikacji.|%u", ARRAYOFCONST((this->Act_HistoryChapters->ImageIndex)));
+	this->Act_OpenInWord->Tag = enTagImage_OpenInWord;
+	this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
 
 	//this->MBW_HdrControlBooks->Hint = "Nagłówek drzewa ksiąg biblijnych|Nagłówek drzewa ksiąg biblijnych, pokazujący nazwy poszczególnych informacji o księgach biblijnych";
+}
+//---------------------------------------------------------------------------
+bool __fastcall TMainBibleWindow::_IsWordInstalled()
+/**
+	OPIS METOD(FUNKCJI): Metoda sprawdza czy MS Word jest zainstalowany
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	bool bIsInstalled=false;
+	const UnicodeString custrReg = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Winword.exe";
+
+	TRegistry *pRegistry = new TRegistry(KEY_READ);
+	if(!pRegistry) throw(Exception("Błąd załadowania objektu klasy TRegistry"));
+
+	pRegistry->RootKey = HKEY_LOCAL_MACHINE;
+	if(pRegistry->KeyExists(custrReg))
+	{
+    #if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug("MS Word jest zainstalowany");
+		#endif
+		pRegistry->CloseKey();
+		bIsInstalled = true;
+	}
+	if(pRegistry) {delete pRegistry; pRegistry = nullptr;}
+	return bIsInstalled;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::TrayIconMainBalloonClick(TObject *Sender)
@@ -595,6 +662,181 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 		NewItem->Tag = enPMenuTray + i;
 		NewItem->ImageIndex = enImageIndex_Book;
   }
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
+					TObject *Source, int X, int Y, TDragState State, bool &Accept)
+/**
+	OPIS METOD(FUNKCJI): Główna metoda wywoływana podczas przeciągania elementu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	//Akceptacja jeśli jest to objekt odpowiedniej klasy
+	Accept = Source->ClassNameIs("GsTreeBibleClass");
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::_DisplayHelp(TAction *_pAction)
+/**
+	OPIS METOD(FUNKCJI): Wyświetlenie pomocy
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	HelpWindowData pHelpWindowData;
+	SecureZeroMemory(&pHelpWindowData, sizeof(HelpWindowData));
+	pHelpWindowData.pAction = _pAction;
+	//---
+	THelpMyBibleWindow *pTHelpMyBibleWindow = new THelpMyBibleWindow(this, pHelpWindowData);
+	if(!pTHelpMyBibleWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THelpMyBibleWindow"));
+	pTHelpMyBibleWindow->Show();
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Zdarzenie związane z aktywacją zakładki, wykorzystywane do wykrywania pojawienia się pierwszej zakładki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
+	if(!pPageControl) return;
+	//---
+	this->Act_HistoryChapters->Enabled = true;
+  //Stan przycisku zmiany obszaru tekstu 12-04-2021
+	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
+	this->Act_ResizeWork->Checked = (pPageControl->PageCount > 0);
+  this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
+	this->Act_SaveChaptToHTML->Enabled = (pPageControl->PageCount > 0);
+	//---
+	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+	this->Act_CloseSheetActive->Enabled = (pPageControl->PageCount > 0);
+	this->Act_EditChapter->Enabled = (pPageControl->PageCount > 0);
+	this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled;
+	//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
+	this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *Control,
+					int TabIndex, const TRect &Rect, bool Active)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
+	if(!pPControl) return;
+	//-----
+	TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
+	if(!pActSheet) return;
+	//---
+	TRect MyRect(Rect);
+	switch(pPControl->Tag)
+	{
+		case enTagPageControlBibleText: //Zakładki z tekstem
+		{
+			if(Active)
+			{
+				pPControl->Canvas->Font->Color = clYellow;
+				pPControl->Canvas->Brush->Color = clBlue;
+			}
+			pPControl->Canvas->FillRect(Rect);
+			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2), pActSheet->ImageIndex);
+			//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
+			MyRect.Left += (pPControl->Images->Width + 4);
+			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
+		}
+		break;
+    //---
+		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
+		{
+			if(Active)
+			{
+				pPControl->Canvas->Font->Color = clBlack;
+				pPControl->Canvas->Brush->Color = clWebDarkOrange;
+				//Ustwienie szerokosci "ucha" aktywnej zakładki, do jakiej bedzie się zwijać objekt, klasy TPanel.
+				//if(this->PanelTools->Width == 24) this->PanelTools->Width = Rect.GetWidth();
+				Global_WidthTabTools = Rect.GetWidth();
+			}
+			pPControl->Canvas->FillRect(Rect);
+			pPControl->Canvas->Font->Orientation = 900;
+			MyRect.Inflate(-4, 0, 0, -10);
+			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_BOTTOM | DT_SINGLELINE);
+			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + ((Rect.Right - Rect.Left) / 2 - (pPControl->Images->Width / 2)),
+																								 Rect.Bottom - pPControl->Images->Height - 4, pActSheet->ImageIndex);
+		}
+		break;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Metoda wywoływana podczas zmiany zakłedki, we wszystkich objektach klasy TPageControl
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
+	if(!pPageControl) return;
+	//---
+	switch(pPageControl->Tag)
+	{
+		case enTagPageControlBibleText: //Zakładki z tekstem
+		{
+			//TTabSheet *pTabSheet = pPageControl->ActivePage;
+			GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(pPageControl->ActivePage);
+			if(!pGsTabSheetClass)
+			//Jeśli to nie jest zakładka z wybranym rozdziałem z wybranej ksiegi, to wyzeruje się wskaźnik na taskbarze
+			//i metoda zostanie opuszczona
+			{
+				this->TaskbarMain->ProgressValue = 0;
+				return;
+			}
+
+			//Wyłuskanie wskaźnika do TProgressBaru, aktualnej zakładki
+			TProgressBar *pProgressBar = GsReadBibleTextData::GetCurrentNamberChaptOnSheet();
+			if(!pProgressBar) return;
+			//---
+			this->TaskbarMain->ProgressMaxValue = pProgressBar->Max;
+			this->TaskbarMain->ProgressValue = pProgressBar->Position;
+		}
+		break;
+		//---
+		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
+		{
+		}
+		break;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::StatusBarMainDrawPanel(TStatusBar *StatusBar,
+					TStatusPanel *Panel, const TRect &Rect)
+/**
+	OPIS METOD(FUNKCJI): Własna metoda obsługi status panel.
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCanvas *pCanvas = StatusBar->Canvas;
+	switch(Panel->Index)
+	{
+		case enPanelMain_InfoText: //Podstawowy tekst podpowiedzi
+			pCanvas->Font->Style = TFontStyles() << fsBold;
+			pCanvas->Font->Color = clRed;
+			break;
+		case enPanelMain_InfoEx:
+      pCanvas->Font->Color = this->Font->Color;
+			break;
+	}
+	pCanvas->TextOut(Rect.left, Rect.top, Panel->Text);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_OnClick_PMenuTray(System::TObject* Sender)
@@ -680,7 +922,8 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 		delete pActiveSheet; pActiveSheet = nullptr;
 		pAction->Enabled = (this->PageControlBibleText->PageCount > 0);
 		this->Act_EditChapter->Enabled = ((this->PageControlBibleText->PageCount > 0) && (dynamic_cast<GsTabSheetClass *>(pActiveSheet)));
-    //Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
+		this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled;
+		//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
 		this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 		//---
 		if((this->PageControlBibleText->PageCount == 0) && (this->PageControlTools->ActivePageIndex == enPageTools_Books)) //[02-11-2019]
@@ -773,29 +1016,6 @@ void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
 	TSearchTextWindow *pTSearchTextWindow = new TSearchTextWindow(this);
 	if(!pTSearchTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSearchTextWindow"));
 	pTSearchTextWindow->Show();
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::StatusBarMainDrawPanel(TStatusBar *StatusBar,
-					TStatusPanel *Panel, const TRect &Rect)
-/**
-	OPIS METOD(FUNKCJI): Własna metoda obsługi status panel.
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TCanvas *pCanvas = StatusBar->Canvas;
-	switch(Panel->Index)
-	{
-		case enPanelMain_InfoText: //Podstawowy tekst podpowiedzi
-      pCanvas->Font->Style = TFontStyles() << fsBold;
-			pCanvas->Font->Color = clRed;
-			break;
-		case enPanelMain_InfoEx:
-      pCanvas->Font->Color = this->Font->Color;
-      break;
-	}
-	pCanvas->TextOut(Rect.left, Rect.top, Panel->Text);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
@@ -985,101 +1205,6 @@ void __fastcall TMainBibleWindow::Act_OtherInfoTaskbarButtonExecute(TObject *Sen
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Metoda wywoływana podczas zmiany zakłedki, we wszystkich objektach klasy TPageControl
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
-	if(!pPageControl) return;
-	//---
-	switch(pPageControl->Tag)
-	{
-		case enTagPageControlBibleText: //Zakładki z tekstem
-		{
-			//TTabSheet *pTabSheet = pPageControl->ActivePage;
-			GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(pPageControl->ActivePage);
-			if(!pGsTabSheetClass)
-			//Jeśli to nie jest zakładka z wybranym rozdziałem z wybranej ksiegi, to wyzeruje się wskaźnik na taskbarze
-			//i metoda zostanie opuszczona
-			{
-				this->TaskbarMain->ProgressValue = 0;
-				return;
-			}
-
-			//Wyłuskanie wskaźnika do TProgressBaru, aktualnej zakładki
-			TProgressBar *pProgressBar = GsReadBibleTextData::GetCurrentNamberChaptOnSheet();
-			if(!pProgressBar) return;
-			//---
-			this->TaskbarMain->ProgressMaxValue = pProgressBar->Max;
-			this->TaskbarMain->ProgressValue = pProgressBar->Position;
-		}
-		break;
-		//---
-		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
-		{
-		}
-    break;
-	}
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *Control,
-					int TabIndex, const TRect &Rect, bool Active)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
-	if(!pPControl) return;
-	//-----
-	TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
-	if(!pActSheet) return;
-	//---
-	TRect MyRect(Rect);
-	switch(pPControl->Tag)
-	{
-		case enTagPageControlBibleText: //Zakładki z tekstem
-		{
-			if(Active)
-			{
-				pPControl->Canvas->Font->Color = clYellow;
-				pPControl->Canvas->Brush->Color = clBlue;
-			}
-			pPControl->Canvas->FillRect(Rect);
-			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2), pActSheet->ImageIndex);
-			//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
-			MyRect.Left += (pPControl->Images->Width + 4);
-			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
-		}
-		break;
-    //---
-		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
-		{
-			if(Active)
-			{
-				pPControl->Canvas->Font->Color = clBlack;
-				pPControl->Canvas->Brush->Color = clWebDarkOrange;
-				//Ustwienie szerokosci "ucha" aktywnej zakładki, do jakiej bedzie się zwijać objekt, klasy TPanel.
-				//if(this->PanelTools->Width == 24) this->PanelTools->Width = Rect.GetWidth();
-				Global_WidthTabTools = Rect.GetWidth();
-			}
-			pPControl->Canvas->FillRect(Rect);
-			pPControl->Canvas->Font->Orientation = 900;
-			MyRect.Inflate(-4, 0, 0, -10);
-			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_BOTTOM | DT_SINGLELINE);
-			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + ((Rect.Right - Rect.Left) / 2 - (pPControl->Images->Width / 2)),
-			                                           Rect.Bottom - pPControl->Images->Height - 4, pActSheet->ImageIndex);
-		}
-		break;
-	}
-}
-//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_FacePageExecute(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI): Akcja otwiera w domyślnej przeglądarce stronę facebookową
@@ -1124,65 +1249,6 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 			TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 
 	ShellExecute(this->Handle, NULL , TEXT("https://sourceforge.net/projects/moja-biblia-ng/"), NULL, NULL, SW_SHOWNORMAL);
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Zdarzenie związane z aktywacją zakładki, wykorzystywane do wykrywania pojawienia się pierwszej zakładki
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPageControl *pPageControl = dynamic_cast<TPageControl *>(Sender);
-	if(!pPageControl) return;
-	//---
-	this->Act_HistoryChapters->Enabled = true;
-  //Stan przycisku zmiany obszaru tekstu 12-04-2021
-	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
-	this->Act_ResizeWork->Checked = (pPageControl->PageCount > 0);
-  this->Act_ResizeWorkExecute(this->Act_ResizeWork);
-	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
-	this->Act_SaveChaptToHTML->Enabled = (pPageControl->PageCount > 0);
-	//---
-	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
-	this->Act_CloseSheetActive->Enabled = (pPageControl->PageCount > 0);
-	this->Act_EditChapter->Enabled = (pPageControl->PageCount > 0);
-	//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
-	this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	if(Msg.message == WM_RBUTTONDOWN || Msg.message == WM_RBUTTONUP/* ||
-		 Msg.message == WM_LBUTTONDOWN || Msg.message == WM_LBUTTONUP*/)
-	//Zabezpieczenie przed reakcją na każdy przycisk myszy w obrębie klasy TWebBrowser [09-11-2019]
-	//Odblokowanie [29-07-2023]
-	{
-		const int ciMaxClassName=255;
-		const UnicodeString custrClassExplorerName = "Internet Explorer_Server";
-		UnicodeString ustrClassName;
-		POINT cursorPoint; //Msg.pt;
-		//---
-		GetCursorPos(&cursorPoint);
-		HWND hWndSelect = WindowFromPoint(cursorPoint);
-		if(hWndSelect == NULL) return;
-		TCHAR szClassName[ciMaxClassName];
-		GetClassName(hWndSelect, szClassName, ciMaxClassName-1);
-		ustrClassName = szClassName;
-		//---
-		if(ustrClassName == custrClassExplorerName)
-		{
-			//Handled = true; //Zablokowanie działania myszy dla objektu klasy TWebBrowser [09-11-2019]
-			//Odblokowanie [29-07-2023]
-		}
-	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
@@ -1279,23 +1345,6 @@ void __fastcall TMainBibleWindow::Act_HelpExecute(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::_DisplayHelp(TAction *_pAction)
-/**
-	OPIS METOD(FUNKCJI): Wyświetlenie pomocy
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	HelpWindowData pHelpWindowData;
-	SecureZeroMemory(&pHelpWindowData, sizeof(HelpWindowData));
-	pHelpWindowData.pAction = _pAction;
-	//---
-	THelpMyBibleWindow *pTHelpMyBibleWindow = new THelpMyBibleWindow(this, pHelpWindowData);
-	if(!pTHelpMyBibleWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THelpMyBibleWindow"));
-	pTHelpMyBibleWindow->Show();
-}
-//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_TipsExecute(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI): Nawigator podpowiedzi
@@ -1346,19 +1395,6 @@ void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
 	pTReadingPlanWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
-          TObject *Source, int X, int Y, TDragState State, bool &Accept)
-/**
-	OPIS METOD(FUNKCJI): Główna metoda wywoływana podczas przeciągania elementu
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-  //Akceptacja jeśli jest to objekt odpowiedniej klasy
-	Accept = Source->ClassNameIs("GsTreeBibleClass");
-}
-//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI): Okno histori otwieranych rozdziałów
@@ -1367,13 +1403,13 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-  if(this->Act_Help->Checked)
+	if(this->Act_Help->Checked)
 	{
 		this->_DisplayHelp(pAction);
-    return;
+		return;
 	}
 	//---
 	THistoryOpenChaptersWindow *pHistoryOpenChaptersWindow = new THistoryOpenChaptersWindow(this, pAction);
@@ -1383,5 +1419,45 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
   //pAction->Enabled = false;
 }
 //---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Otwarcie wybranego rozdziału w Ms Wordzie
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	if(this->Act_Help->Checked)
+	{
+		this->_DisplayHelp(pAction);
+		return;
+	}
 
+	Variant vMSWord, vWDocuments, vWActiveDoc, vWAdd, vWWords, vWLast, vWSetText, vMRange;
+	UnicodeString ustrText;
+
+	GsReadBibleTextData::GetCurentText(ustrText);
+	BSTR bstrText = SysAllocString(ustrText.c_str());
+
+	#if defined(_DEBUGINFO_)
+		//GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST(( bstrText ))));
+	#endif
+
+  vMSWord = Variant::CreateObject("Word.Application");
+	vMSWord.OlePropertySet("Visible", (Variant)true);
+
+	vWDocuments = vMSWord.OlePropertyGet("Documents");
+	vWAdd = vWDocuments.OleFunction("Add");
+	vWActiveDoc = vMSWord.OlePropertyGet("ActiveDocument");
+	vWWords = vWActiveDoc.OlePropertyGet("Words");
+	vWLast = vWWords.OlePropertyGet("Last");
+	vWLast.OlePropertySet("Text", (Variant)bstrText);
+
+
+	SysFreeString(bstrText);
+}
+//---------------------------------------------------------------------------
 

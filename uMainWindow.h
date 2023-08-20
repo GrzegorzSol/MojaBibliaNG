@@ -20,7 +20,7 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ActnColorMaps.hpp>
 #include <Vcl.WinXCtrls.hpp>
-#include <Vcl.StdStyleActnCtrls.hpp> //???
+#include <Vcl.StdStyleActnCtrls.hpp>
 //---------------------------------------------------------------------------
 class TMainBibleWindow : public TForm
 {
@@ -67,6 +67,7 @@ __published:	// IDE-managed Components
 	TStaticText *STextHeaderFavorteListVers;
 	TAction *Act_ReadingPlan;
 	TAction *Act_HistoryChapters;
+	TAction *Act_OpenInWord;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -103,6 +104,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_ReadingPlanExecute(TObject *Sender);
 	void __fastcall Act_HistoryChaptersExecute(TObject *Sender);
 	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall Act_OpenInWordExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;
@@ -116,6 +118,7 @@ private:	// User declarations
 	void __fastcall _OnDblClick_ListComment(System::TObject* Sender);
 	void __fastcall _OnDblClick_ListFavorities(System::TObject* Sender);
 	void __fastcall _DisplayHelp(TAction *_pAction);
+  bool __fastcall _IsWordInstalled();
 	//---
 public:		// User declarations
 	__fastcall TMainBibleWindow(TComponent* Owner);
