@@ -456,10 +456,10 @@ void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString c
 		UnicodeString _custrPath = Format("%s_%u_%s.html", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].FullNameBook, pGsTabSheetClass->_ShucIndexChapt+1,
 			pGsTabSheetClass->pGsTabSetClass->Tabs->Strings[pGsTabSheetClass->pGsTabSetClass->TabIndex])));
 		//Zapisanie pliku html, pod domyślna nazwą
-		TFile::WriteAllText(_custrPath, pGsTabSheetClass->pStrBuilderHtml->ToString(true), TEncoding::UTF8);
+		TFile::WriteAllText(_custrPath, pGsTabSheetClass->ustrHtmlText, TEncoding::UTF8);
 	}
 	else
-	{TFile::WriteAllText(custrPath, pGsTabSheetClass->pStrBuilderHtml->ToString(true), TEncoding::UTF8);}
+	{TFile::WriteAllText(custrPath, pGsTabSheetClass->ustrHtmlText, TEncoding::UTF8);}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextClass::_GetInfoNameTranslate(const int i, UnicodeString &NameTranslate)
@@ -697,7 +697,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	//Pobranie aktualnej zakładki i wyzerowanie zmiennych z zawartością zakładki i zawartości objektu klasy TListBox
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie mogę uzyskać wskaźnika do aktualnej zakładki!"));
-	pGsTabSheetClass->pStrBuilderHtml->Clear(); //Wyczyszczenie zawartości zakładki, jako strony w kodzie html, do ewentualnego zapisania jako samodzielnej strony html.
+	pGsTabSheetClass->ustrHtmlText = ""; //Wyczyszczenie zawartości zakładki, jako strony w kodzie html, do ewentualnego zapisania jako samodzielnej strony html.
 	pGsTabSheetClass->pHSListActualText->Clear(); //Wyczyszczenie listy surowej aktualnie przeglądanego rozdziału
 	pGsTabSheetClass->pLBoxSelectText->Items->BeginUpdate();
 	pGsTabSheetClass->pLBoxSelectText->Clear(); //Wyczyszczenie listy ulubionych wersetów (objekt, klasy TListBox)
@@ -815,7 +815,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 		pStringStream->WriteString("</body></html>");
 		pStringStream->Position = 0;
 		//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
-		pGsTabSheetClass->pStrBuilderHtml->Append(pStringStream->DataString);
+		pGsTabSheetClass->ustrHtmlText += pStringStream->DataString;
 		//-----
 		IPersistStreamInit *psi;
 		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
@@ -1552,8 +1552,6 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
-	this->pStrBuilderHtml = new TStringBuilder();  //Tekst html aktualnie wczytanego rozdziału z wybranej księgi
-	if(!this->pStrBuilderHtml) throw(Exception("Błąd inicjalizacji klasy TStringBuilder"));
 	//---
 	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
 	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
@@ -1875,7 +1873,6 @@ __fastcall GsTabSheetClass::~GsTabSheetClass()
 	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
 	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 	delete this->pHSListActualText; this->pHSListActualText = nullptr;
-	delete this->pStrBuilderHtml; this->pStrBuilderHtml = nullptr;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control,
@@ -2115,8 +2112,7 @@ void __fastcall GsTabSheetClass::_GetHTMLText(UnicodeString &_ustrTextHTML)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	_ustrTextHTML = "";
-	_ustrTextHTML = this->pStrBuilderHtml->ToString();
+	_ustrTextHTML = this->ustrHtmlText;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_GetText(UnicodeString &_ustrText)
@@ -2127,7 +2123,6 @@ void __fastcall GsTabSheetClass::_GetText(UnicodeString &_ustrText)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	_ustrText = "";
 	_ustrText = this->pHSListActualText->Text;
 }
 //---------------------------------------------------------------------------

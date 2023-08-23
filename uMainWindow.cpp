@@ -1440,7 +1440,7 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	UnicodeString ustrText;
 
 	GsReadBibleTextData::GetCurentText(ustrText);
-	BSTR bstrText = SysAllocString(ustrText.c_str());
+	WideString wstrText = ustrText;
 
 	#if defined(_DEBUGINFO_)
 		//GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST(( bstrText ))));
@@ -1454,10 +1454,7 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	vWActiveDoc = vMSWord.OlePropertyGet("ActiveDocument");
 	vWWords = vWActiveDoc.OlePropertyGet("Words");
 	vWLast = vWWords.OlePropertyGet("Last");
-	vWLast.OlePropertySet("Text", (Variant)bstrText);
-
-
-	SysFreeString(bstrText);
+	vWLast.OlePropertySet("Text", (Variant)wstrText.c_bstr());
 }
 //---------------------------------------------------------------------------
 

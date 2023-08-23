@@ -399,10 +399,11 @@ class GsTabSheetClass : public TTabSheet
 							*pWebBrowserInfoTranslations;
 	TComboBox *pComboBox; //Lista do wyboru konkretnego rodziału, już bybranej księgi
 	TProgressBar *pProgressBar; //Pionowy wskaźnik, umiejscowienia pozycji w rozdziale
-	TStringBuilder *pStrBuilderHtml;	//Tekst html aktualnie wczytanego rozdziału z wybranej księgi
-								 //*pStrBuilderText;  //Czysty tekst aktualnie wczytanego rozdziału z wybranej księgi
+
+	UnicodeString ustrHtmlText; //Tekst html aktualnie wczytanego rozdziału z wybranej księgi
+
 	THashedStringList *pHSListActualText; //Lista surowa aktualnie przegladanego rozdziału 25-08-2021
-																				//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
+																				//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html ???
 	GsListBoxSelectedVersClass *pLBoxSelectText;	//Lista ulubionych wersetów
 	GsEditorClass *pGsEditorClass;               //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd;

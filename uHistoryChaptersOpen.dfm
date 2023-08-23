@@ -22,6 +22,7 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     Height = 816
     Align = alClient
     Columns = <>
+    MultiSelect = True
     OwnerData = True
     OwnerDraw = True
     ReadOnly = True
@@ -29,13 +30,14 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     SmallImages = ImageListSmallHistoryCh
     TabOrder = 0
     ViewStyle = vsReport
+    OnChange = LViewHistoryChChange
     OnData = LViewHistoryChData
     OnDataFind = LViewHistoryChDataFind
     OnDataHint = LViewHistoryChDataHint
     OnDblClick = LViewHistoryChDblClick
     OnDrawItem = LViewHistoryChDrawItem
-    ExplicitWidth = 978
-    ExplicitHeight = 813
+    ExplicitLeft = 8
+    ExplicitTop = 48
   end
   object ActionToolBarHistoryCh: TActionToolBar
     Left = 0
@@ -76,6 +78,7 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     StyleName = 'Platform Default'
     object Act_DeleteSelectItemHistoryCh: TAction
       Caption = 'Skasuj wybran'#261' pozycje...'
+      Enabled = False
       Hint = 'Kasowanie wybranej pozycji'
       ImageIndex = 0
       OnExecute = Act_DeleteSelectItemHistoryChExecute

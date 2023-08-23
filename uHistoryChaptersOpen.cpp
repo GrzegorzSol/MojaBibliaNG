@@ -54,7 +54,6 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 	this->LViewHistoryCh->Items->Count = GlobalVar::Global_HListHistoryChapterOpen->Count;
 	this->LViewHistoryCh->Items->EndUpdate();
 
-	this->Act_DeleteSelectItemHistoryCh->Enabled = this->LViewHistoryCh->Items->Count > 0;
 	this->_pStartAction->Enabled = false;
 }
 //---------------------------------------------------------------------------
@@ -82,20 +81,49 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 	if(!pAction) return;
 	//---
 	TListItem *pListItem = this->LViewHistoryCh->Selected;
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%d - pListItem: %s", ARRAYOFCONST((pListItem->Index, pListItem->Caption))));
-	#endif
+	int iIndexOf=-1;
 
-	int iResult = MessageBox(NULL, TEXT("Czy jesteś pewny, że chcesz skasować wybraną pozycje historii? Nie będzie go można później odzyskać!"),
+	UnicodeString ustrMessage = "Czy jesteś pewny, że chcesz skasować wybraną(ne) pozycje z listy historii? Nie będzie można cofnąć operacji i odzyskać pozycje!";//[23-08-2023]
+
+	THashedStringList *pHSListSelected = new THashedStringList(); //Tymczasowa (buforowa) lista zaznaczonych elementów //[22-08-2023]
+	if(!pHSListSelected) throw(Exception("Błąd inicjalizacji objektu, klasy THashedStringList!"));
+	TItemStates selected = TItemStates() << isSelected;
+
+	while(pListItem)
+	{
+		pHSListSelected->Add(GlobalVar::Global_HListHistoryChapterOpen->Strings[pListItem->Index]);
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("Select: %s", ARRAYOFCONST((GlobalVar::Global_HListHistoryChapterOpen->Strings[pListItem->Index]))));
+//		#endif
+		pListItem = this->LViewHistoryCh->GetNextItem(pListItem, sdAll, selected);
+	}
+
+	int iResult = MessageBox(NULL, ustrMessage.c_str(), //[23-08-2023]
 													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
-	if(iResult == IDNO) return;
+	if(iResult == IDNO)
+	{
+    if(pHSListSelected) {delete pHSListSelected; pHSListSelected = nullptr;}
+		this->LViewHistoryCh->ClearSelection();
+		return;
+	}
 
+	for(int i=0; i<pHSListSelected->Count; i++)
+	{
+		iIndexOf = GlobalVar::Global_HListHistoryChapterOpen->IndexOf(pHSListSelected->Strings[i]);
+		if(iIndexOf == -1) continue;
+//    #if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("iIndexOf: %d - %s", ARRAYOFCONST((iIndexOf, GlobalVar::Global_HListHistoryChapterOpen->Strings[iIndexOf]))));
+//		#endif
+		GlobalVar::Global_HListHistoryChapterOpen->Delete(iIndexOf);
+	}
 
-	GlobalVar::Global_HListHistoryChapterOpen->Delete(pListItem->Index);
-  this->LViewHistoryCh->Items->BeginUpdate();
+	if(pHSListSelected) {delete pHSListSelected; pHSListSelected = nullptr;}
+
+	this->LViewHistoryCh->Items->BeginUpdate();
 	this->LViewHistoryCh->Items->Count = GlobalVar::Global_HListHistoryChapterOpen->Count;
 	this->LViewHistoryCh->Items->EndUpdate();
-	pAction->Enabled = this->LViewHistoryCh->Items->Count > 0;
+
+	this->LViewHistoryCh->ClearSelection();
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChData(TObject *Sender,
@@ -244,6 +272,25 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 	//GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
 	GlobalVar::Global_HListHistoryChapterOpen->Delete(0);
   this->Close();
+}
+//---------------------------------------------------------------------------
+void __fastcall THistoryOpenChaptersWindow::LViewHistoryChChange(TObject *Sender,
+					TListItem *Item, TItemChange Change) //[22-08-2023]
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	if(!pLView) return;
+	//---
+	if(Change == ctState)
+	{
+		//Aktywacja przycisku do kasowania pozycji gdy istnieje choćby jeden element zaznaczony
+		this->Act_DeleteSelectItemHistoryCh->Enabled = (this->LViewHistoryCh->SelCount > 0);
+	}
 }
 //---------------------------------------------------------------------------
 

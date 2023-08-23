@@ -36,6 +36,8 @@ __published:	// IDE-managed Components
           TRect &Rect, TOwnerDrawState State);
 	void __fastcall Act_DeleteSelectItemHistoryChExecute(TObject *Sender);
 	void __fastcall LViewHistoryChDblClick(TObject *Sender);
+	void __fastcall LViewHistoryChChange(TObject *Sender, TListItem *Item, TItemChange Change);
+
 
 private:	// User declarations
 	TAction *_pStartAction=nullptr; //Akcja, króra wywołała okno
