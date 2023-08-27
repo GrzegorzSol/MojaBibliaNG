@@ -745,7 +745,8 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					if(!pTempHSList->Strings[iIndex].IsEmpty())
 					{
 						//Lista surowa aktualnie przegladanego rozdziału [25-08-2021]; [20-08-2023]
-						pGsTabSheetClass->pHSListActualText->AddObject(Format("%s %s", ARRAYOFCONST(( pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex] ))), pMyOjectVers);
+						//pGsTabSheetClass->pHSListActualText->AddObject(Format("%s %s", ARRAYOFCONST(( pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex] ))), pMyOjectVers);
+						pGsTabSheetClass->pHSListActualText->AddObject(Format("%s", ARRAYOFCONST((pTempHSList->Strings[iIndex] ))), pMyOjectVers);
 
 						if(pGsTabSheetClass->pLBoxSelectText->Items->IndexOf(pMyOjectVers->AdressString) == -1)
 						//Jeśli nie istnieje jeszcze adres wersetu
@@ -2124,6 +2125,17 @@ void __fastcall GsTabSheetClass::_GetText(UnicodeString &_ustrText)
 */
 {
 	_ustrText = this->pHSListActualText->Text;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_GetListText(THashedStringList *_pHSListChapt)
+/**
+	OPIS METOD(FUNKCJI): Metoda wypełnia lstę listą z aktualnej zakładki [25-08-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	_pHSListChapt->Assign(this->pHSListActualText);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_DisplayInfosTranslates(const int iTab)

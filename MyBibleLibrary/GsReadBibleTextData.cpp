@@ -1056,7 +1056,23 @@ void GsReadBibleTextData::GetCurentText(UnicodeString &_ustrText)
 	if(pGsTabSheetClass)
 	{
 		pGsTabSheetClass->_GetText(_ustrText);
-  }
+	}
+}
+//---------------------------------------------------------------------------
+void GsReadBibleTextData::GetCurentListText(THashedStringList *_pHSList)
+/**
+	OPIS METOD(FUNKCJI): Metoda zwraca surową listę aktualnej zakładki [25-08-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+  GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(pGsTabSheetClass)
+	{
+		pGsTabSheetClass->_GetListText(_pHSList);
+	}
 }
 //---------------------------------------------------------------------------
 

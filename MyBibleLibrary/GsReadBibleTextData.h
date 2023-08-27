@@ -205,6 +205,8 @@ class GsReadBibleTextData : public TObject
 		static void AddItemHistoryList(const UnicodeString _ustrTextItem);
 		//Metoda wyświetla tekst aktualnej zakładki [20-08-2023]
 		static void GetCurentText(UnicodeString &_ustrText);
+		//Metoda zwraca surową listę aktualnej zakładki [25-08-2023]
+		static void GetCurentListText(THashedStringList *_pHSList);
 };
 //---------------------------------------------------------------------------
 #endif

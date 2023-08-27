@@ -35,7 +35,7 @@
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.0.4636.6566";
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.0.82632.96566";
 enum enReturnError {enR_NoError,           //Brak błędu
 										enR_GSelectBoook=1000  //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
@@ -381,6 +381,7 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSaveComments(System::TObject* Sender);
 	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
   void __fastcall _GetText(UnicodeString &_ustrText); //Metoda wypełnią tekstem, zmienną UnicodeString, z aktualnej zakładki
+	void __fastcall _GetListText(THashedStringList *_pHSListChapt);//Metoda wypełnia lstę listą z aktualnej zakładki [25-08-2023]
 	void __fastcall _DisplayInfosTranslates(const int iTab=-1); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
 
 	void __fastcall _InitToolBarAllButtons(TPanel *pPanelParent); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami

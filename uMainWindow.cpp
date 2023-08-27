@@ -1436,25 +1436,72 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 		return;
 	}
 
-	Variant vMSWord, vWDocuments, vWActiveDoc, vWAdd, vWWords, vWLast, vWSetText, vMRange;
-	UnicodeString ustrText;
+	Variant vWDocuments, vWActiveDoc, vMApplication, vWWords, vWAdd, vWLast,
+					vWRange, vMFont;
+	int iStart=0, iStop=0;
+	UnicodeString ustrAddressVers, ustrTextVers;
+	const int wdRed=6;
 
-	GsReadBibleTextData::GetCurentText(ustrText);
-	WideString wstrText = ustrText;
+	MyObjectVers *pMyOjectVers=nullptr;
+	TForm *pMainForm = Application->MainForm;
+	if(!pMainForm) throw(Exception("Nie można wyłuskać wskaźnika na główne okno"));
 
-	#if defined(_DEBUGINFO_)
-		//GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST(( bstrText ))));
-	#endif
+	THashedStringList *pHSListGetText = new THashedStringList();
+	if(!pHSListGetText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 
-  vMSWord = Variant::CreateObject("Word.Application");
-	vMSWord.OlePropertySet("Visible", (Variant)true);
+	GsReadBibleTextData::GetCurentListText(pHSListGetText);
+	int iASize = pHSListGetText->Count; //Ilość wersetów (lini w liście)
+  //Wskaźnik zaawansowania
+	TProgressBar *pPBar = new TProgressBar(pMainForm);
+	pPBar->Parent = pMainForm;
+	pPBar->Width = 400; pPBar->Height = 30;
+	pPBar->Left = pMainForm->ClientWidth / 2 - (pPBar->Width / 2);
+	pPBar->Top = pMainForm->ClientHeight / 2 - (pPBar->Height / 2);
+	pPBar->Max = iASize;
 
-	vWDocuments = vMSWord.OlePropertyGet("Documents");
+	vMApplication = Variant::CreateObject("Word.Application");
+	vMApplication.OlePropertySet("Visible", (Variant)true);
+
+	vWDocuments = vMApplication.OlePropertyGet("Documents");
 	vWAdd = vWDocuments.OleFunction("Add");
-	vWActiveDoc = vMSWord.OlePropertyGet("ActiveDocument");
+	vWActiveDoc = vMApplication.OlePropertyGet("ActiveDocument");
 	vWWords = vWActiveDoc.OlePropertyGet("Words");
-	vWLast = vWWords.OlePropertyGet("Last");
-	vWLast.OlePropertySet("Text", (Variant)wstrText.c_bstr());
+
+	for(int i=0; i<iASize; i++)
+	{
+		pPBar->Position = i;
+    Application->ProcessMessages();
+		pMyOjectVers = static_cast<MyObjectVers *>(pHSListGetText->Objects[i]);
+		if(pMyOjectVers)
+		{
+			ustrAddressVers = pMyOjectVers->BookChaptVers;
+      iStart = iStop;
+			iStop += ustrAddressVers.Length();
+
+      vWLast = vWWords.OlePropertyGet("Last");
+			vWLast.OlePropertySet("Text", (Variant)ustrAddressVers);
+  		vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
+
+  		vMFont = vWRange.OlePropertyGet("Font");
+  		vMFont.OleFunction("Reset");
+			vMFont.OlePropertySet("Bold", (Variant)true);
+			vMFont.OlePropertySet("ColorIndex", (Variant)wdRed);
+      //---
+			iStart = iStop;
+			if(i<(iASize-1)) ustrTextVers = pHSListGetText->Strings[i] + "\n";
+			else ustrTextVers = pHSListGetText->Strings[i];
+			iStop += ustrTextVers.Length();
+
+      vWLast = vWWords.OlePropertyGet("Last");
+			vWLast.OlePropertySet("Text", (Variant)ustrTextVers);
+			vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
+			vMFont = vWRange.OlePropertyGet("Font");
+			vMFont.OleFunction("Reset");
+    }
+	}
+
+	if(pHSListGetText) {delete pHSListGetText; pHSListGetText = nullptr;}
+  if(pPBar) {delete pPBar; pPBar = nullptr;}
 }
 //---------------------------------------------------------------------------
 
