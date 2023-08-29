@@ -103,6 +103,7 @@ object MainBibleWindow: TMainBibleWindow
     ParentShowHint = False
     ShowHint = True
     ShowText = False
+    ExplicitWidth = 1184
     object ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
@@ -178,6 +179,7 @@ object MainBibleWindow: TMainBibleWindow
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
       OnDrawTab = MBW_PageControlsAllDrawTab
+      ExplicitHeight = 817
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'

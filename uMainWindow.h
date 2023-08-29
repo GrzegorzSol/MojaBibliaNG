@@ -118,7 +118,8 @@ private:	// User declarations
 	void __fastcall _OnDblClick_ListComment(System::TObject* Sender);
 	void __fastcall _OnDblClick_ListFavorities(System::TObject* Sender);
 	void __fastcall _DisplayHelp(TAction *_pAction);
-  bool __fastcall _IsWordInstalled();
+	bool __fastcall _IsWordInstalled();
+  bool _bIsWordInstalled=false;
 	//---
 public:		// User declarations
 	__fastcall TMainBibleWindow(TComponent* Owner);

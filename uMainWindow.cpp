@@ -163,7 +163,7 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	}
 	//---
 	Application->OnHint = this->_AppOnHint;
-	Application->OnMessage = this->_AppMessage;
+	//Application->OnMessage = this->_AppMessage;
 	Application->OnHelp = this->_AppHelp;
 	//Kontrola wymiarów okna, minimalne, dopuszczalne wymiary
 	this->Constraints->MinHeight = 600;
@@ -171,8 +171,6 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	//Uzależnienie wymiarów okna, od wymiarów ekranu
 	if(Screen->DesktopWidth > 1280) this->Width = 1280;
 	if(Screen->DesktopHeight > 800) this->Height = 795; else this->Height = 600;
-	//---BallonHint
-	this->_InitAllTagAndHint();
 	//---Wczytanie stylu
 	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
 	if(!TStyleManager::TrySetStyle(ustrSelectStyle, false)) //[02-05-2023]
@@ -184,7 +182,10 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
   //Wyłączenie styli dla okien dialogowych, w tym przypadku chodzi o wyłączenie styli dla okna pomocy
 	TStyleManager::SystemHooks = TStyleManager::SystemHooks >> TStyleManager::shDialogs;
 	//Sprawdzenie czy aplikacja MS Word jest zainstalowana w systemie
-	this->Act_OpenInWord->Enabled = this->_IsWordInstalled();
+	this->_bIsWordInstalled = this->_IsWordInstalled();
+	this->Act_OpenInWord->Enabled = false;
+		//---BallonHint
+	this->_InitAllTagAndHint(); //Musi być ostatni [28-08-2023]
 }
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::~TMainBibleWindow()
@@ -519,29 +520,7 @@ void __fastcall TMainBibleWindow::_AppMessage(tagMSG &Msg, bool &Handled)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(Msg.message == WM_RBUTTONDOWN || Msg.message == WM_RBUTTONUP/* ||
-		 Msg.message == WM_LBUTTONDOWN || Msg.message == WM_LBUTTONUP*/)
-	//Zabezpieczenie przed reakcją na każdy przycisk myszy w obrębie klasy TWebBrowser [09-11-2019]
-	//Odblokowanie [29-07-2023]
-	{
-		const int ciMaxClassName=255;
-		const UnicodeString custrClassExplorerName = "Internet Explorer_Server";
-		UnicodeString ustrClassName;
-		POINT cursorPoint; //Msg.pt;
-		//---
-		GetCursorPos(&cursorPoint);
-		HWND hWndSelect = WindowFromPoint(cursorPoint);
-		if(hWndSelect == NULL) return;
-		TCHAR szClassName[ciMaxClassName];
-		GetClassName(hWndSelect, szClassName, ciMaxClassName-1);
-		ustrClassName = szClassName;
-		//---
-		if(ustrClassName == custrClassExplorerName)
-		{
-			//Handled = true; //Zablokowanie działania myszy dla objektu klasy TWebBrowser [09-11-2019]
-			//Odblokowanie [29-07-2023]
-		}
-	}
+	//
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_InitAllTagAndHint()
@@ -591,7 +570,10 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
 	this->Act_HistoryChapters->Hint = Format("Okno histori otwieranych rozdziałów|Otwiera okno z historia rozdziałów otwartych w aplikacji.|%u", ARRAYOFCONST((this->Act_HistoryChapters->ImageIndex)));
 	this->Act_OpenInWord->Tag = enTagImage_OpenInWord;
-	this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
+	if(this->_bIsWordInstalled) //[28-08-2023]
+		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
+	else
+		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
@@ -716,7 +698,7 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 	this->Act_CloseSheetActive->Enabled = (pPageControl->PageCount > 0);
 	this->Act_EditChapter->Enabled = (pPageControl->PageCount > 0);
-	this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled;
+	this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled && this->_bIsWordInstalled;
 	//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
 	this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 }
@@ -922,7 +904,7 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 		delete pActiveSheet; pActiveSheet = nullptr;
 		pAction->Enabled = (this->PageControlBibleText->PageCount > 0);
 		this->Act_EditChapter->Enabled = ((this->PageControlBibleText->PageCount > 0) && (dynamic_cast<GsTabSheetClass *>(pActiveSheet)));
-		this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled;
+		this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled && this->_bIsWordInstalled;
 		//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
 		this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 		//---
