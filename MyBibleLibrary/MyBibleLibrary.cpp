@@ -28,7 +28,7 @@
 #include <System.StrUtils.hpp>
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include "MyBibleLibrary\MyBibleCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
-#include <Mshtml.h> //[31-07-2023]
+//#include <Mshtml.h> //[31-07-2023]
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -691,7 +691,10 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	UnicodeString _Style_FavoriteStyle = "", //Styl zaznaczania ulubionego wersetu
 								_Style_CommentStyle = "",  //Styl zaznaczania wersetu skomentowanego
 								_StyleFav_End = "",
-								_StyleComm_End = "";
+								_StyleComm_End = "",
+								//---
+								DisplaySelectNameTranslate; //Nazwa tlumaczenia wyłuskana z GsReadBibleTextItem->NameTranslate. W wypadku wybrania pojedyńczego
+																						// tłumaczenia bedzie pusta[30-08-2023]
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 	//Pobranie aktualnej zakładki i wyzerowanie zmiennych z zawartością zakładki i zawartości objektu klasy TListBox
@@ -726,6 +729,9 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 				//Wyłuskanie THashedStringListy konkretnego tłumaczenia, dla wybranego rozdziału
 				pTempHSList = static_cast<THashedStringList *>(this->_ListAllTrChap->Items[i]);
 				if(!pTempHSList || !pGsReadBibleTextItem) throw(Exception("Błąd metody łączenia wszystkich tłumaczeń"));
+				//Nazwa tlumaczenia wyłuskana z GsReadBibleTextItem->NameTranslate.
+				//W wypadku wybrania pojedyńczego tłumaczenia bedzie pusta //[30-08-2023]
+				if(iSelectTranslate == -1) DisplaySelectNameTranslate = pGsReadBibleTextItem->NameTranslate; else DisplaySelectNameTranslate = "";
 				//Gdy string lista pusta (hebrajski tekst w nowym testamencie, grecki tekst w starym testamencie), to nie wpływa na opuszczenie pętli do, while.
 				if(pTempHSList->Count == 0)
         //Gdy lista konkretnego tłumaczenia i rozdziału jest pusta, bo brak księgi.
@@ -786,13 +792,13 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							pStringStream->WriteString(Format("%s%s<span class=\"styleColorAdressTranslates\"> %s</span> %s<span title=\"%s\" class=\"styleText\">%s </span>%s",
 								ARRAYOFCONST((_Style_CommentStyle, _StyleComm_End, pMyOjectVers->BookChaptVers, _Style_FavoriteStyle, pTempHSList->Strings[iIndex],  pTempHSList->Strings[iIndex], _StyleFav_End))));
 							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format("<span class=\"styleTranslates\">[%s]</span>", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
+							pStringStream->WriteString(Format("<span class=\"styleTranslates\">%s</span>", ARRAYOFCONST((DisplaySelectNameTranslate))));
 						}
 						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{
 							pStringStream->WriteString(Format("<span class=\"styleVersOryg\">%s</span> <span title=\"%s\" class=\"styleOrygin\">%s </span>", ARRAYOFCONST((pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex], pTempHSList->Strings[iIndex]))));
 							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format("<span class=\"styleOrygTrans\">[%s]</span>", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
+							pStringStream->WriteString(Format("<span class=\"styleOrygTrans\">%s</span>", ARRAYOFCONST((DisplaySelectNameTranslate))));
 						}
 						pStringStream->WriteString("<br>");
 					} //if(!pTempHSList->Strings[iIndex].IsEmpty())

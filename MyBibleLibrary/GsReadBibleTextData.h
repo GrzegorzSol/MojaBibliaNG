@@ -47,7 +47,6 @@ class GsReadBibleTextData : public TObject
 		static inline TTaskbar *_GsTaskBar=nullptr;	//Wskaźnik na objekt, klasy TTaskBar
 		static inline TBalloonHint *_GsBalloonHint=nullptr; //Globalna klasa podpowiedzi, zdefiniowana w konstruktorze klasy GsTreeBibleClass
 		//---  Wskaźniki na niektóre klasy
-		//static inline GsReadBibleTextClass* pGsReadBibleTextClass=nullptr;	//Wskaźnik na główną klasę
 		static inline GsTreeBibleClass* pGsTreeBibleClass=nullptr; //Wskaźnik na klasę drzewa ksiąg bibliinych
 		static inline GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr; //Wskaźnik na klasę listy ulubionych wersetów, w głównym oknie
 		static inline GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr; //Wskażnik na klasę listy komentarzy do wersetów, w głównym oknie
@@ -62,7 +61,7 @@ class GsReadBibleTextData : public TObject
 													 GsExtendNoAsteriskFileTranslateFull=".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
                    				 GsExtendNoAsteriskFileTranslateGrecOrg=".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
                    				 GsExtendNoAsteriskFileTranslateHbrOrg =".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
-														 GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
+													 GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
 		static UnicodeString inline //--- Nagłówki dla plików html
 															 GsHTMLHeaderText="",	//Tekst nagłówka dla tekstu zwykłego
 															 GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", //[03-08-2023]
