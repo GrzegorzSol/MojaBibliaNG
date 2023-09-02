@@ -354,6 +354,18 @@ object MainBibleWindow: TMainBibleWindow
           end
           item
             Caption = '-'
+          end
+          item
+            Action = Act_Help
+            Caption = 'O&kno pomocnika'
+            ImageIndex = 16
+            ShowCaption = False
+          end
+          item
+            Action = Act_Tips
+            Caption = '&Nawigator podpowiedzi'
+            ImageIndex = 17
+            ShowCaption = False
           end>
         ActionBar = ActionToolBarTools
       end>
@@ -439,6 +451,17 @@ object MainBibleWindow: TMainBibleWindow
       Caption = 'Tworzenie grafiki z tekstem.'
       ImageIndex = 15
       OnExecute = Act_ImageAndTextExecute
+    end
+    object Act_Help: TAction
+      AutoCheck = True
+      Caption = 'Okno pomocnika'
+      ImageIndex = 16
+      OnExecute = Act_HelpExecute
+    end
+    object Act_Tips: TAction
+      Caption = 'Nawigator podpowiedzi'
+      ImageIndex = 17
+      OnExecute = Act_TipsExecute
     end
     object Act_ReadingPlan: TAction
       Caption = 'Otwarcie planu czytania Biblii...'

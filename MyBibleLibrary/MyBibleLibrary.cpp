@@ -738,7 +738,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 				{
 					uiTranslatesIndex--;
 					if(iSelectTranslate>-1)
-						{pStringStream->WriteString("<span class=\"styleNoTranslate\">To tłumaczenie nie zawiera tekstu, wybranej księgi!</span>");}
+						{pStringStream->WriteString("<span class=\"styleNoTranslate\">To tłumaczenie nie zawiera tekstu, wybranej księgi!</span>\n");}
 					continue;
 				}
 
@@ -789,18 +789,18 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 								_Style_CommentStyle = "";  //Styl zaznaczania wersetu skomentowanego
 								_StyleComm_End = "";
               }
-							pStringStream->WriteString(Format("%s%s<span class=\"styleColorAdressTranslates\"> %s</span> %s<span title=\"%s\" class=\"styleText\">%s </span>%s",
-								ARRAYOFCONST((_Style_CommentStyle, _StyleComm_End, pMyOjectVers->BookChaptVers, _Style_FavoriteStyle, pTempHSList->Strings[iIndex],  pTempHSList->Strings[iIndex], _StyleFav_End))));
+							pStringStream->WriteString(Format("%s%s<span class=\"styleColorAdressTranslates\"> %s</span> %s\n<span class=\"styleText\">%s </span>%s\n",
+								ARRAYOFCONST((_Style_CommentStyle, _StyleComm_End, pMyOjectVers->BookChaptVers, _Style_FavoriteStyle,  pTempHSList->Strings[iIndex], _StyleFav_End))));
 							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format("<span class=\"styleTranslates\">%s</span>", ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString(Format("<span class=\"styleTranslates\">%s</span>\n", ARRAYOFCONST((DisplaySelectNameTranslate))));
 						}
 						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{
-							pStringStream->WriteString(Format("<span class=\"styleVersOryg\">%s</span> <span title=\"%s\" class=\"styleOrygin\">%s </span>", ARRAYOFCONST((pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex], pTempHSList->Strings[iIndex]))));
+							pStringStream->WriteString(Format("<span class=\"styleVersOryg\">%s</span>\n<span class=\"styleOrygin\">%s </span>\n", ARRAYOFCONST((pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex]))));
 							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format("<span class=\"styleOrygTrans\">%s</span>", ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString(Format("<span class=\"styleOrygTrans\">%s</span>\n", ARRAYOFCONST((DisplaySelectNameTranslate))));
 						}
-						pStringStream->WriteString("<br>");
+						pStringStream->WriteString("<br>\n");
 					} //if(!pTempHSList->Strings[iIndex].IsEmpty())
 				} //if(iIndex < pTempHSList->Count)
 				else
@@ -819,7 +819,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 		}while(uiTranslatesIndex > 0);
 		pGsTabSheetClass->pLBoxSelectText->Items->EndUpdate();
 		//---
-		pStringStream->WriteString("</body></html>");
+		pStringStream->WriteString("</body>\n</html>\n");
 		pStringStream->Position = 0;
 		//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
 		pGsTabSheetClass->ustrHtmlText += pStringStream->DataString;

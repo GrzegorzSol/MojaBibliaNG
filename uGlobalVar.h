@@ -56,6 +56,7 @@ struct GlobalVar
 																		Global_custrPathBackgroundWindow=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
 																		Global_custrPathSearchLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania
 																		Global_custrPathSetupsLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),//Logo w oknie ustawień
+                                    Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"),
 																		//---
 																		Global_custrExtendCommentsFiles=".bfc", //Rozszerzenie plików z komentarzami
 																		Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
@@ -63,26 +64,8 @@ struct GlobalVar
 																		Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),    //Ścieżka dostępu do pliku z listą ulubionych wersetów
 																		Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),      //Katalog do pojedyńczych plików z komentarzami do wersetów
 																		Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),    //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
-																		//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
-																		Global_custrFTPSourceVersionFile="/public_html/wp-content/uploads/MojaBibliaNG/MBibleNG.iver", //Ścieżka sieciowa do pliku wersji
-																		Global_custrFTPSourceApplicFile="/public_html/wp-content/uploads/MojaBibliaNG/MojaBibliaNG.zip", //Ścieżka sieciowa do głównego pliku aplikacji
-																		Global_custrHostName="ftp.nasz-salem.pl", //Adres hosta
-																		Global_custrUserHost="naszsalem", //Nazwa użytkownika
-																		Global_custrPassword="OVpVwXtvdY", //Hasło do hosta
-																		Global_custrNameUpd="winmbupd.exe",  //nazwa aplikacji zewnętrznej do aktualizacji
-																		Global_ustrPathApplicUpdate=TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameUpd),   //Ścieżka dostępu do konsolowej aplikacji do aktualizacji
+																		//--- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 																		Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),  //Mutekst główny aplikacji
-																		Global_ustrNameDirUpdate="MojaBibliaNG",//nazwa katalogu z poprawkami
-																		//----- Ustawienia dotyczące pomocy i tipsów
-																		Global_ustrDirHelp=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HelpData"),	//Ścieżka dostępu do katalogu z plikami pomocy
-																		Global_ustrExtPathHelp="hlpmb",	//Rozszerzenie plików pomocy
-																		Global_ustrCoreNameHelp="FileHlp", //Główny rdzeń nazwy, do której będzie przyczepiony indeks pomocy
-                                    //----- Ustawienia pomocy
-																		Global_ustrExPathTipsImageHelp="timg",//Rozszerzenie grafiki to tipsów
-																		Global_ustrCorePathNameImageTips="ImageTips", //Główny rdzeń nazwy pliku graficznego, do której będzie przyczepiony indeks pomocy tipsów
-																		//----- Ustawienia pomocy 2
-																		Global_ustrCoreNameFileTips="FileTips", //Rdzeń nazwy pliku wskazówek
-																		Global_ustrExPathFileTips="tfhlp",//Rozszerzenie plików wskazówek
 																		//----- Syle
 																	  Global_DefaultStyleName="Windows", //Domyślny styl
 																		/*****************************************************************************

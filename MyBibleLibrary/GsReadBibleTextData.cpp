@@ -431,6 +431,8 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 								ustr_FontNameAdress = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_FontNameAdress, "Times New Roman"),
 								ustr_FontNameTranslators = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_FontNameTranslators, "Times New Roman");
 	//--- Style dla wyświetlanych tekstów
+		//Przeksztaucenie ścieżek dostępu Windows na Unix [01-09-2023]
+	//UnicodeString ustrTemp = StringReplace(GlobalVar::Global_custrPathBacgroundImageText, "\\", "/", TReplaceFlags() << rfReplaceAll); //[01-09-2023]
 	UnicodeString   //Styl dla głównego tekstu
 								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
@@ -438,7 +440,9 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
 								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n", ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
 									//Kolor podkładu głównego tekstu
-								_BackGroundMainText = Format("body {background-color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain))),
+								_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain))),
+								//_BackGroundMainText = Format("body {background-color: %s;\n\tbackground-image: url(\"%s\");\n\tbackground-repeat: no-repeat;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+								//	ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), ustrTemp, iSizeFontMain, ustr_FontNameMain))), //[01-09-2023]
 									//Kolor nazwy przekładu, dla pełnego tłumaczenia
 								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
 									//Kolor adresu dla pełnych tłumaczeń
@@ -447,12 +451,12 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 								_VersOryginalText = Format(".styleOrygin {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorOryginalTranslates), iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla nazwy tłumaczenia oryginalnego
 								_VersOryginalName = Format(".styleOrygTrans {color: %s;font-size:9pt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameOryginalTranslate), ustr_FontNameTranslators))),
-								  //Styl dla adresu oryginalnego tłumaczenia
+									//Styl dla adresu oryginalnego tłumaczenia
 								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
 	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
 
 	GsReadBibleTextData::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-																												"<html><head>\n" +
+																												"<html>\n<head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
 																												GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
 																												//"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
@@ -467,9 +471,9 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												_FavoriteStyle + //Kolor zaznaczenie ulubionego wersetu
 																												_CommentStyle + //Kolor zaznaczania wersetu z komentarzem
 																												_BackGroundMainText +
-																												"</style></head><body>\n";
-  GsReadBibleTextData::GsHTMLHeaderSearch = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
-																												"<html><head>" +
+																												"</style>\n</head>\n\n<body>\n";
+	GsReadBibleTextData::GsHTMLHeaderSearch = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																												"<html>\n<head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
 																												"<title>Wyniki wyszukiwania</title>" +
 																												"<style type=\"text/css\">" +
@@ -479,9 +483,9 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}" +  //Informacja o braku księgi
 																												".styleFound {background-color: #FFFF00;}" +
 																												"body {background-color:#33CCCC;font-size:12pt;font-family:Times New Roman;}" +
-																												"</style></head><body>";
-  GsReadBibleTextData::GsHTMLHeaderDisplayVer = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
-																												"<html><head>" +
+																												"</style>\n</head>\n<body>\n";
+  GsReadBibleTextData::GsHTMLHeaderDisplayVer = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																												"<html>\n<head>" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
 																												"<title>Wyswietlanie pojedyńczego werstu</title>" +
 																												"<style type=\"text/css\">" +
@@ -491,7 +495,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}" + //Informacja o braku księgi
 																												".styleFound {background-color: #FFFF00;}" +
 																												"body {background-color:#FCD9BA;font-size:12pt;font-family:Times New Roman;}" +
-																												"</style></head><body>";
+																												"</style>\n</head>\n<body>";
 	//--- Aktualizacja wyglądu strony, po zmianie konfiguracji kolorów aplikacji
 	if(GsReadBibleTextData::_GsPageControl) //Istnieje zakładka
 	{

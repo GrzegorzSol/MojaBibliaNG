@@ -6,11 +6,10 @@
 //---------------------------------------------------------------------------
 #include <Vcl.Styles.hpp>
 #include <Vcl.Themes.hpp>
-USEFORM("uMainWindow.cpp", MainBibleWindow);
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
-USEFORM("uHelpMyBibleWindow.cpp", HelpMyBibleWindow);
-USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
+USEFORM("uMainWindow.cpp", MainBibleWindow);
 USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
+USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
@@ -20,7 +19,6 @@ USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
-USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------

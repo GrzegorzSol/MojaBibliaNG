@@ -42,8 +42,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uChapterEditWindow.h"
 #include "uSendingMailWindow.h"
 #include "uImageAndTextWindow.h"
-#include "uHelpMyBibleWindow.h"
-#include "uFastTipsWindow.h"
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
@@ -350,13 +348,13 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
 	this->Act_SaveChaptToHTML->Enabled = (this->PageControlBibleText->PageCount > 0);
 	//---
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
-  //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
-	{
-		TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
-		if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji okna TFastTipsWindow"));
-    pTFastTipsWindow->ShowModal();
-  }
+//	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
+//  //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
+//	{
+//		TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
+//		if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji okna TFastTipsWindow"));
+//    pTFastTipsWindow->ShowModal();
+//  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose)
@@ -561,10 +559,6 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_MailChapt->Hint = Format("Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
 	this->Act_ImageAndText->Tag = enTagImageAndText;
 	this->Act_ImageAndText->Hint = Format("Tworzenie grafiki z tekstem biblijnym, lub innym|Moduł do tworzenia grafiki w formie podkładu i dowolnego tekstu.|%u", ARRAYOFCONST((this->Act_ImageAndText->ImageIndex)));
-	this->Act_Help->Tag = enTagImageHelp;
-	this->Act_Help->Hint = Format("Okno pomocnika|Moduł pomocnika do wyświetlania informacji o funkcjach aplikacji.|%u", ARRAYOFCONST((this->Act_Help->ImageIndex)));
-	this->Act_Tips->Tag = enTagImage_Tips;
-	this->Act_Tips->Hint = Format("Okno nawigatora pomocy|Moduł nawigatora do wyświetlania najważniejszych wskazówek dla aplikacji.|%u", ARRAYOFCONST((this->Act_Tips->ImageIndex)));
 	this->Act_ReadingPlan->Tag = enTagImage_ReadingPlan;
 	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
 	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
@@ -667,13 +661,13 @@ void __fastcall TMainBibleWindow::_DisplayHelp(TAction *_pAction)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	HelpWindowData pHelpWindowData;
-	SecureZeroMemory(&pHelpWindowData, sizeof(HelpWindowData));
-	pHelpWindowData.pAction = _pAction;
-	//---
-	THelpMyBibleWindow *pTHelpMyBibleWindow = new THelpMyBibleWindow(this, pHelpWindowData);
-	if(!pTHelpMyBibleWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THelpMyBibleWindow"));
-	pTHelpMyBibleWindow->Show();
+//	HelpWindowData pHelpWindowData;
+//	SecureZeroMemory(&pHelpWindowData, sizeof(HelpWindowData));
+//	pHelpWindowData.pAction = _pAction;
+//	//---
+//	THelpMyBibleWindow *pTHelpMyBibleWindow = new THelpMyBibleWindow(this, pHelpWindowData);
+//	if(!pTHelpMyBibleWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THelpMyBibleWindow"));
+//	pTHelpMyBibleWindow->Show();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
@@ -888,12 +882,6 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	if((this->PageControlBibleText->PageCount == 0)  || (this->PageControlBibleText->ActivePageIndex == -1)) return;
 	//---
 	TTabSheet* pActiveSheet = this->PageControlBibleText->ActivePage;
@@ -938,11 +926,6 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	TFileSaveDialog  *pFileSaveDialog  = new TFileSaveDialog (this);
 	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
 	//---
@@ -989,12 +972,6 @@ void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	TSearchTextWindow *pTSearchTextWindow = new TSearchTextWindow(this);
 	if(!pTSearchTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSearchTextWindow"));
 	pTSearchTextWindow->Show();
@@ -1011,12 +988,6 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	TSetupsWindow *pSetupsWindow = new TSetupsWindow(this);
 	if(!pSetupsWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSetupsWindow"));
 	pSetupsWindow->ShowModal();
@@ -1032,12 +1003,6 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
 {
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
-	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	//---
 	TSelectVersWindow *pSelectVersWindow=nullptr;
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->ActivePage);
@@ -1063,12 +1028,6 @@ void __fastcall TMainBibleWindow::Act_CorcordanceDictionaryGrecExecute(TObject *
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	TDictGrecPolWindow *pTDictGrecPolWindow = new TDictGrecPolWindow(this);
 	if(!pTDictGrecPolWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TDictGrecPolWindow"));
   pTDictGrecPolWindow->ShowModal();
@@ -1084,11 +1043,6 @@ void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
 {
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	//---
 	TSchemeVersWindow *pTSchemeVersWindow = new TSchemeVersWindow(this);
 	if(!pTSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSchemeVersWindow"));
@@ -1105,12 +1059,6 @@ void __fastcall TMainBibleWindow::Act_InfomationsExecute(TObject *Sender)
 {
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
-	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	//---
 	static bool sbIsOpenInfo; //Informacja że okno już otwarto
 	if(sbIsOpenInfo) return;
@@ -1132,12 +1080,6 @@ void __fastcall TMainBibleWindow::Act_ViewAllResourcesExecute(TObject *Sender)
 {
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
-	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	//---
 	TViewAllResourcesWindow *pViewAllResourcesWindow = new TViewAllResourcesWindow(this);
 	if(!pViewAllResourcesWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TViewAllResourcesWindow"));
@@ -1198,12 +1140,6 @@ void __fastcall TMainBibleWindow::Act_FacePageExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	ShellExecute(this->Handle, NULL , TEXT("https://www.facebook.com/MojaBiblia/"), NULL, NULL, SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------
@@ -1218,15 +1154,9 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
-	MessageBox(NULL, (UnicodeString("Nistety moduł pobierania aktualizacji został wyłączony ze wzgledu na problemy z serwerem. ") +
+	MessageBox(NULL, (UnicodeString("Niestety moduł pobierania aktualizacji został wyłączony ze względu na problemy z serwerem. ") +
 			"Proszę o pobieranie pełnej paczki z pod adresu \"https://sourceforge.net/projects/moja-biblia-ng/\" \n" +
-			"Po zamknieciu okienka, zostanie uruchomiona domyślna przeglądarka, z załadowaną stroną, do pobierania całej paczki z aplikacją.\n\n"
+			"Po zamknięciu okienka, zostanie uruchomiona domyślna przeglądarka, z załadowaną stroną, do pobierania całej paczki z aplikacją."
 			"Przepraszam za utrudnienia, ale nie wynikają one z mojej winy :(").c_str(),
 			TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 
@@ -1243,12 +1173,6 @@ void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
 {
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
-	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	//---
 	//MessageBox(NULL, TEXT("Funkcje jeszcze nie aktywna"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 	//return;
@@ -1274,12 +1198,6 @@ void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	UnicodeString ustrTextHTML;
 	GsReadBibleTextData::GetTextHTMLCurrentSheet(ustrTextHTML);
 
@@ -1299,54 +1217,9 @@ void __fastcall TMainBibleWindow::Act_ImageAndTextExecute(TObject *Sender)
   TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
 	TImageAndTextWindow *pTImageAndTextWindow = new TImageAndTextWindow(this);
 	if(!pTImageAndTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TImageAndTextWindow"));
 	pTImageAndTextWindow->ShowModal();
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::Act_HelpExecute(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TAction *pAction = dynamic_cast<TAction *>(Sender);
-	if(!pAction) return;
-	//---
-	if(pAction->Checked)
-	{
-		this->_DisplayHelp(pAction);
-	}
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::Act_TipsExecute(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Nawigator podpowiedzi
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TAction *pAction = dynamic_cast<TAction *>(Sender);
-	if(!pAction) return;
-	//---
-  if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
-	//---
-	TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
-	if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
-	pTFastTipsWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
@@ -1359,12 +1232,6 @@ void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
 {
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
-	//---
-  if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-    return;
-	}
 	//---
 	if(!GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IsStartPlan, false))
 	{
@@ -1388,12 +1255,6 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-		return;
-	}
-	//---
 	THistoryOpenChaptersWindow *pHistoryOpenChaptersWindow = new THistoryOpenChaptersWindow(this, pAction);
 	if(!pHistoryOpenChaptersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
 	//pHistoryOpenChaptersWindow->ShowModal();
@@ -1412,12 +1273,6 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if(this->Act_Help->Checked)
-	{
-		this->_DisplayHelp(pAction);
-		return;
-	}
-
 	Variant vWDocuments, vWActiveDoc, vMApplication, vWWords, vWAdd, vWLast,
 					vWRange, vMFont;
 	int iStart=0, iStop=0;

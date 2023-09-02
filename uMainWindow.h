@@ -57,8 +57,6 @@ __published:	// IDE-managed Components
 	TImage *ImageBackgroundWindow;
 	TAction *Act_MailChapt;
 	TAction *Act_ImageAndText;
-	TAction *Act_Help;
-	TAction *Act_Tips;
 	TPanel *PanelTools;
 	TPageControl *PageControlTools;
 	TTabSheet *TabSheetBooks;
@@ -97,8 +95,6 @@ __published:	// IDE-managed Components
 	void __fastcall Act_EditChapterExecute(TObject *Sender);
 	void __fastcall Act_MailChaptExecute(TObject *Sender);
 	void __fastcall Act_ImageAndTextExecute(TObject *Sender);
-	void __fastcall Act_HelpExecute(TObject *Sender);
-	void __fastcall Act_TipsExecute(TObject *Sender);
 	void __fastcall ImageBackgroundWindowDragOver(TObject *Sender, TObject *Source,
           int X, int Y, TDragState State, bool &Accept);
 	void __fastcall Act_ReadingPlanExecute(TObject *Sender);

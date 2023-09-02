@@ -18,9 +18,9 @@ USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
+USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uFastTipsWindow.cpp", FastTipsWindow);
-USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
