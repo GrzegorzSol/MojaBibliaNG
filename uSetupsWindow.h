@@ -120,6 +120,7 @@ __published:	// IDE-managed Components
 	TToggleSwitch *ToggleSwitchIsReopenSchets;
 	TToggleSwitch *ToggleSwitchIsHintsOnStart;
 	TToggleSwitch *ToggleSwitchisInfosOnStatusBar;
+	TLabel *LabelInfoPreview;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

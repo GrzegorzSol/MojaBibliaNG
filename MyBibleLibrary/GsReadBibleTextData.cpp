@@ -436,7 +436,8 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	UnicodeString   //Styl dla głównego tekstu
 								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
-								_FavoriteStyle = Format(".styleFavorite {background-color: %s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
+								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid #FF0000;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
+								//_FavoriteStyle = Format(".styleFavorite {border: 3px solid %s}", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
 									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
 								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n", ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
 									//Kolor podkładu głównego tekstu

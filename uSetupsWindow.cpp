@@ -923,7 +923,7 @@ void __fastcall TSetupsWindow::SW_PBoxViewSetupColorsPaint(TObject *Sender)
 			pPBox->Canvas->Font->Size = this->SpEditSizeMainFont->Value;
 			pPBox->Canvas->TextOut(iLeft, iTop, "C");
 			iLeft += pPBox->Canvas->TextWidth("C") + 3;
-    }
+		}
 		//Atrybuty adresu wersetu
 		pPBox->Canvas->Font = this->ButtFontNameAdress->Font;
 		pPBox->Canvas->Font->Style = TFontStyles();
@@ -942,7 +942,7 @@ void __fastcall TSetupsWindow::SW_PBoxViewSetupColorsPaint(TObject *Sender)
 		ustrTextLine = this->_HSListViewAllTr->Strings[i];
 		iTop -= 3;
 		if(i==0) pPBox->Canvas->Brush->Color = this->SW_ColorBoxFavorities->Selected; //Kolor podkłady ulubionego wersetu
-		else pPBox->Canvas->Brush->Color = this->SW_ColorBoxBackground->Selected; //Kolor podkłady ulubionego wersetu
+		else pPBox->Canvas->Brush->Color = this->SW_ColorBoxBackground->Selected; //Kolor podkłady
 		pPBox->Canvas->TextOut(iLeft, iTop, ustrTextLine);
 		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNametr);
 		iLeft += pPBox->Canvas->TextWidth(ustrTextLine) + 8;

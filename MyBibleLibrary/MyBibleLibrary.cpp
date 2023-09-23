@@ -769,8 +769,8 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 						{
 							if(iIndexFav > -1) ///Werset jest na liście ulubionych 13.01.2019
 							{
-								_Style_FavoriteStyle = "<span class=styleFavorite>"; //Styl zaznaczania ulubionego wersetu
-								_StyleFav_End = "</span>";
+								_Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //"<span class=\"styleFavorite\">"; //Styl zaznaczania ulubionego wersetu
+								_StyleFav_End = "</div>";
 							}
 							else //Wersetu nie ma na liście ulubionych 13.01.2019, style będą puste
 							{
@@ -781,26 +781,46 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							if(TFile::Exists(TPath::Combine(GlobalVar::Global_custrPathDirComments, pMyOjectVers->AdressString) + GlobalVar::Global_custrExtendCommentsFiles))
 							//Jeśli istnieje plik komentarzy
 							{
-								_Style_CommentStyle = "<span class=styleComment>C";  //Styl zaznaczania wersetu skomentowanego
-								_StyleComm_End = "</span>";
+								_Style_CommentStyle = "<span class=\"styleComment\">C";  //Styl zaznaczania wersetu skomentowanego
+								_StyleComm_End = "</span>\n";
 							}
 							else
 							{
 								_Style_CommentStyle = "";  //Styl zaznaczania wersetu skomentowanego
 								_StyleComm_End = "";
               }
-							pStringStream->WriteString(Format("%s%s<span class=\"styleColorAdressTranslates\"> %s</span> %s\n<span class=\"styleText\">%s </span>%s\n",
-								ARRAYOFCONST((_Style_CommentStyle, _StyleComm_End, pMyOjectVers->BookChaptVers, _Style_FavoriteStyle,  pTempHSList->Strings[iIndex], _StyleFav_End))));
+
+							pStringStream->WriteString(Format(UnicodeString("<p>\n") +  //[21-09-2023]
+							"%s" +  //_Style_FavoriteStyle
+							"%s" +  //_Style_CommentStyle
+							"%s" +  "<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
+							"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
+							"<span class=\"styleText\">\n\t" + "%s\n</span>\n" + //pTempHSList->Strings[iIndex]
+							"%s\n", //_StyleFav_End
+							ARRAYOFCONST((_Style_FavoriteStyle,
+														_Style_CommentStyle,
+														_StyleComm_End,
+														pMyOjectVers->BookChaptVers,
+														pTempHSList->Strings[iIndex],
+														_StyleFav_End))));
+
 							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format("<span class=\"styleTranslates\">%s</span>\n", ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
+								ARRAYOFCONST((DisplaySelectNameTranslate))));
 						}
 						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{
-							pStringStream->WriteString(Format("<span class=\"styleVersOryg\">%s</span>\n<span class=\"styleOrygin\">%s </span>\n", ARRAYOFCONST((pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex]))));
+							pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+								"<span class=\"styleVersOryg\">" +
+								"\n\t%s\n</span>\n<span class=\"styleOrygin\">" + //pMyOjectVers->BookChaptVers
+								"\n\t%s\n</span>\n", //pTempHSList->Strings[iIndex]
+								ARRAYOFCONST((pMyOjectVers->BookChaptVers,
+															pTempHSList->Strings[iIndex]))));
 							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format("<span class=\"styleOrygTrans\">%s</span>\n", ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
+								ARRAYOFCONST((DisplaySelectNameTranslate))));
 						}
-						pStringStream->WriteString("<br>\n");
+						pStringStream->WriteString("</p>\n\n");
 					} //if(!pTempHSList->Strings[iIndex].IsEmpty())
 				} //if(iIndex < pTempHSList->Count)
 				else
@@ -813,7 +833,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 			if(uiTranslatesIndex >= cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 			if((iSelectTranslate == -1) && (uiTranslatesIndex > 0))
 			{
-				pStringStream->WriteString("<hr>");
+				pStringStream->WriteString("<hr>\n");
 			}
 
 		}while(uiTranslatesIndex > 0);
