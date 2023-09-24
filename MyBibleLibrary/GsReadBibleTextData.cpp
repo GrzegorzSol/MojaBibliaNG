@@ -418,6 +418,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 			iColorNameFullTranslate = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorNameFullTranslates, clFuchsia),
 			iColorAdressFullTranslates = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorAdressVersFullTranslates, clRed),
 			iColorBackgroundMarkComment = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBackgroundMarkerComment, clYellow),
+			iColorBorderFavoritiesVers = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBorderFavoritiesVers, clRed),
 				//Kolor nazwy oryginalnego tłumaczenia
       iColorOryginalTranslates = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorOryginalTranslates, clMaroon),
 			iColorAdressOryg = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorAdressOryginalTranslate, clBlue),
@@ -436,7 +437,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	UnicodeString   //Styl dla głównego tekstu
 								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
-								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid #FF0000;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
+								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
 								//_FavoriteStyle = Format(".styleFavorite {border: 3px solid %s}", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
 									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
 								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n", ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),

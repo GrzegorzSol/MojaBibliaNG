@@ -96,8 +96,9 @@ struct GlobalVar
 		                										GlobalIni_ColorBackgroundMarkerComment="ColorBackgroundMarkerComment", //Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
 		                										GlobalIni_ColorOryginalTranslates="ColorOryginalTranslates",  //Kolor czcionki, dla oryginalnych tłumaczeń
 		                										GlobalIni_ColorNameOryginalTranslate="ColorNameOryginalTranslate", //Kolor nazwy oryginalnego tłumaczenia
-		                										GlobalIni_ColorAdressOryginalTranslate="ColorAdressOryginalTranslate", //Kolor adresu oryginalnego tłumaczenia
-		                										//----- Sekcja ColorsSetups pliku ini
+																				GlobalIni_ColorAdressOryginalTranslate="ColorAdressOryginalTranslate", //Kolor adresu oryginalnego tłumaczenia
+																				GlobalIni_ColorBorderFavoritiesVers="ColorBorderFavoritiesVers", //Kolor obwódki wokół ulubionego wersetu
+																				//----- Sekcja ColorsSetups pliku ini
 		                								GlobalIni_ColorsSetupsSection_Main="COLORSSETUPS", //Główna sekcja ColorsSetups
 		                										GlobalIni_ColorsSetupsBackGroundAllListSearch="ColorsSetupsBackGroundAllListSearch", //Kolor podkłady dla wyświetlenia wszystkich znalezionych wersetów
 		                										GlobalIni_ColorsSetupBackGroundSelectBookSearch="ColorsSetupBackGroundSelectBookSearch",//Kolor podkładu dla wyświetlenia znalezionych wersetów w wybranej księdze

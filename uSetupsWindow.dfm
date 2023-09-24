@@ -4,8 +4,8 @@ object SetupsWindow: TSetupsWindow
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'G'#322#243'wne ustawienia aplikacji'
-  ClientHeight = 756
-  ClientWidth = 1188
+  ClientHeight = 763
+  ClientWidth = 1192
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -22,8 +22,8 @@ object SetupsWindow: TSetupsWindow
   object SW_PControlSelected: TPageControl
     Left = 185
     Top = 0
-    Width = 1003
-    Height = 673
+    Width = 1007
+    Height = 680
     CustomHint = SW_BalloonHint
     ActivePage = SW_SheetLajout
     Align = alClient
@@ -32,17 +32,16 @@ object SetupsWindow: TSetupsWindow
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitLeft = 177
-    ExplicitTop = -200
-    ExplicitHeight = 691
+    ExplicitWidth = 1003
+    ExplicitHeight = 679
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
       object LabelInfoPreview: TLabel
         AlignWithMargins = True
         Left = 3
-        Top = 363
-        Width = 989
+        Top = 391
+        Width = 993
         Height = 32
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -60,34 +59,30 @@ object SetupsWindow: TSetupsWindow
         Layout = tlCenter
         WordWrap = True
         StyleElements = [seClient, seBorder]
+        ExplicitTop = 363
         ExplicitWidth = 985
       end
       object GrBoxSetColors: TGroupBox
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 989
-        Height = 354
+        Width = 993
+        Height = 382
         CustomHint = SW_BalloonHint
         Align = alTop
         Caption = 'Ustawienia kolor'#243'w aplikacji'
         TabOrder = 0
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 941
         object GrBoxSetupsFullTr: TGroupBox
           AlignWithMargins = True
           Left = 5
           Top = 18
-          Width = 979
+          Width = 983
           Height = 105
           CustomHint = SW_BalloonHint
           Align = alTop
           Caption = 'Kolory dla pe'#322'nych przek'#322'ad'#243'w Pisma '#346'wi'#281'tego'
           TabOrder = 0
-          ExplicitLeft = 2
-          ExplicitTop = 15
-          ExplicitWidth = 937
+          ExplicitWidth = 979
           object LabelColorBacground: TLabel
             Left = 170
             Top = 22
@@ -156,7 +151,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 5
           Top = 129
-          Width = 979
+          Width = 983
           Height = 105
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -164,9 +159,7 @@ object SetupsWindow: TSetupsWindow
             'Koloru dla ulubionych werset'#243'w, ora takich, kt'#243're posiadaj'#261' kome' +
             'ntarze'
           TabOrder = 1
-          ExplicitLeft = 2
-          ExplicitTop = 120
-          ExplicitWidth = 937
+          ExplicitWidth = 979
           object LabelColorFavorities: TLabel
             Left = 170
             Top = 50
@@ -237,16 +230,13 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 5
           Top = 240
-          Width = 979
-          Height = 109
+          Width = 983
+          Height = 137
           CustomHint = SW_BalloonHint
           Align = alClient
           Caption = 'Kolory dla przek'#322'ad'#243'w niekompletnych, lub oryginalnych'
           TabOrder = 2
-          ExplicitLeft = 2
-          ExplicitTop = 225
-          ExplicitWidth = 937
-          ExplicitHeight = 127
+          ExplicitHeight = 111
           object LabelColorAdressOryg: TLabel
             Left = 170
             Top = 50
@@ -275,6 +265,15 @@ object SetupsWindow: TSetupsWindow
             AutoSize = False
             Caption = 'Kolor tekstu, dla oryginalnych t'#322'umacze'#324
             Layout = tlCenter
+          end
+          object LabelColorBorderFavoritiesVers: TLabel
+            Left = 170
+            Top = 104
+            Width = 337
+            Height = 13
+            CustomHint = SW_BalloonHint
+            AutoSize = False
+            Caption = 'Kolor ramki naoko'#322'o ulubionego wersetu'
           end
           object SW_ColorBoxAdressOryg: TColorBox
             Left = 12
@@ -309,41 +308,36 @@ object SetupsWindow: TSetupsWindow
             OnChange = SW_ColorAllChange
             OnGetColors = SW_ColorBoxGetColors
           end
+          object SW_ColorBoxBorderFavoritiesVers: TColorBox
+            Left = 12
+            Top = 101
+            Width = 145
+            Height = 22
+            CustomHint = SW_BalloonHint
+            Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
+            TabOrder = 3
+            OnChange = SW_ColorAllChange
+            OnGetColors = SW_ColorBoxGetColors
+          end
         end
       end
-      object SW_ScrBoxViewSetupColors: TScrollBox
-        AlignWithMargins = True
-        Left = 3
-        Top = 401
-        Width = 989
-        Height = 240
+      object WebBrowserPreview: TWebBrowser
+        Left = 0
+        Top = 426
+        Width = 999
+        Height = 225
         CustomHint = SW_BalloonHint
-        HorzScrollBar.Tracking = True
-        VertScrollBar.Tracking = True
         Align = alClient
         TabOrder = 1
-        ExplicitLeft = 0
-        ExplicitTop = 354
+        ExplicitTop = 398
         ExplicitWidth = 995
-        ExplicitHeight = 208
-        object SW_PBoxViewSetupColors: TPaintBox
-          AlignWithMargins = True
-          Left = 0
-          Top = 0
-          Width = 1300
-          Height = 217
-          CustomHint = SW_BalloonHint
-          Color = clBtnFace
-          Font.Charset = EASTEUROPE_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -16
-          Font.Name = 'Times New Roman'
-          Font.Style = []
-          Font.Quality = fqClearType
-          ParentColor = False
-          ParentFont = False
-          OnPaint = SW_PBoxViewSetupColorsPaint
-        end
+        ExplicitHeight = 252
+        ControlData = {
+          4C00000040670000411700000100000001020000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E126209000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
       end
     end
     object SW_SheetFlags: TTabSheet
@@ -355,7 +349,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -368,7 +362,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 29
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -381,7 +375,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 55
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -394,7 +388,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 81
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -407,7 +401,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 107
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -420,7 +414,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 133
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -433,7 +427,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 159
-        Width = 983
+        Width = 987
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -452,15 +446,12 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 983
+        Width = 987
         Height = 117
         CustomHint = SW_BalloonHint
         Align = alTop
         Caption = 'Wyb'#243'r katalog'#243'w z multimediami - uwaga nr. 1'
         TabOrder = 0
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 945
         object SW_LEditPath3: TLabeledEdit
           Left = 161
           Top = 80
@@ -729,8 +720,8 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 12
         Top = 35
-        Width = 971
-        Height = 597
+        Width = 975
+        Height = 604
         Margins.Left = 12
         Margins.Top = 12
         Margins.Right = 12
@@ -745,14 +736,12 @@ object SetupsWindow: TSetupsWindow
         SmallImages = SW_ImgListMainSmall
         TabOrder = 0
         ViewStyle = vsReport
-        ExplicitWidth = 921
-        ExplicitHeight = 480
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 989
+        Width = 993
         Height = 17
         CustomHint = SW_BalloonHint
         Align = alTop
@@ -761,7 +750,6 @@ object SetupsWindow: TSetupsWindow
         BorderStyle = sbsSunken
         Caption = 'Wyb'#243'r u'#380'ywanych t'#322'umacze'#324' w aplikacji - uwaga nr. 1 '
         TabOrder = 1
-        ExplicitWidth = 939
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -773,15 +761,12 @@ object SetupsWindow: TSetupsWindow
         Left = 3
         Top = 3
         Width = 389
-        Height = 638
+        Height = 645
         CustomHint = SW_BalloonHint
         Align = alLeft
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 0
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitHeight = 527
         object GrBoxSelectTranslate: TGroupBox
           AlignWithMargins = True
           Left = 3
@@ -950,12 +935,11 @@ object SetupsWindow: TSetupsWindow
           Left = 3
           Top = 399
           Width = 383
-          Height = 236
+          Height = 243
           CustomHint = SW_BalloonHint
           Align = alClient
           Caption = 'Ustawienia parametr'#243'w komputerowego  czytania tekstu'
           TabOrder = 5
-          ExplicitHeight = 125
           object TrackBarSetRate: TTrackBar
             AlignWithMargins = True
             Left = 5
@@ -997,21 +981,17 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 398
         Top = 3
-        Width = 594
-        Height = 638
+        Width = 598
+        Height = 645
         CustomHint = SW_BalloonHint
         Align = alClient
         ShowCaption = False
         TabOrder = 1
-        ExplicitLeft = 389
-        ExplicitTop = 0
-        ExplicitWidth = 556
-        ExplicitHeight = 527
         object LabelTitleDisplayListPlan: TLabel
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 586
+          Width = 590
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1034,8 +1014,8 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 23
-          Width = 586
-          Height = 611
+          Width = 590
+          Height = 618
           CustomHint = SW_BalloonHint
           Align = alClient
           Color = clCream
@@ -1050,10 +1030,6 @@ object SetupsWindow: TSetupsWindow
           ViewStyle = vsReport
           OnChanging = LViewDisplayselectPlanChanging
           OnDrawItem = LViewDisplayselectPlanDrawItem
-          ExplicitLeft = 1
-          ExplicitTop = 20
-          ExplicitWidth = 554
-          ExplicitHeight = 506
         end
       end
     end
@@ -1066,7 +1042,7 @@ object SetupsWindow: TSetupsWindow
         Left = 3
         Top = 3
         Width = 185
-        Height = 638
+        Height = 645
         CustomHint = SW_BalloonHint
         Align = alLeft
         Ctl3D = True
@@ -1074,20 +1050,18 @@ object SetupsWindow: TSetupsWindow
         ParentCtl3D = False
         ShowCaption = False
         TabOrder = 0
-        ExplicitHeight = 521
         object SW_LBoxSelectTheme: TListBox
           AlignWithMargins = True
           Left = 4
           Top = 4
           Width = 177
-          Height = 630
+          Height = 637
           CustomHint = SW_BalloonHint
           Align = alClient
           BorderStyle = bsNone
           ItemHeight = 13
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
-          ExplicitHeight = 513
         end
       end
       object PanelDisplaySelectTheme: TPanel
@@ -1095,13 +1069,12 @@ object SetupsWindow: TSetupsWindow
         Left = 194
         Top = 3
         Width = 419
-        Height = 638
+        Height = 645
         ParentCustomHint = False
         Align = alLeft
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 1
-        ExplicitHeight = 521
         object SW_ImagePreviewSelectStyle: TImage
           AlignWithMargins = True
           Left = 4
@@ -1136,8 +1109,8 @@ object SetupsWindow: TSetupsWindow
   object SW_GrPanelButtons: TGridPanel
     AlignWithMargins = True
     Left = 3
-    Top = 724
-    Width = 1182
+    Top = 731
+    Width = 1186
     Height = 29
     Align = alBottom
     Caption = 'SW_GrPanelButtons'
@@ -1181,14 +1154,13 @@ object SetupsWindow: TSetupsWindow
       end>
     ShowCaption = False
     TabOrder = 1
-    ExplicitLeft = 0
-    ExplicitTop = 597
-    ExplicitWidth = 1134
+    ExplicitTop = 730
+    ExplicitWidth = 1182
     DesignSize = (
-      1182
+      1186
       29)
     object SW_ButtSetupSave: TButton
-      Left = 89
+      Left = 90
       Top = 3
       Width = 118
       Height = 22
@@ -1201,10 +1173,10 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 0
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 83
+      ExplicitLeft = 89
     end
     object SW_ButtSetupCancel: TButton
-      Left = 701
+      Left = 703
       Top = 3
       Width = 75
       Height = 22
@@ -1217,10 +1189,10 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 1
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 671
+      ExplicitLeft = 701
     end
     object SW_ButtSetupReturn: TButton
-      Left = 365
+      Left = 366
       Top = 2
       Width = 157
       Height = 25
@@ -1233,10 +1205,10 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 2
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 347
+      ExplicitLeft = 365
     end
     object SW_ButtSetupHelp: TButton
-      Left = 996
+      Left = 999
       Top = 3
       Width = 75
       Height = 22
@@ -1244,14 +1216,14 @@ object SetupsWindow: TSetupsWindow
       Caption = 'Pomoc...'
       TabOrder = 3
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 954
+      ExplicitLeft = 996
     end
   end
   object SW_STextInfo: TStaticText
     AlignWithMargins = True
     Left = 3
-    Top = 676
-    Width = 1182
+    Top = 683
+    Width = 1186
     Height = 42
     Align = alBottom
     AutoSize = False
@@ -1261,23 +1233,22 @@ object SetupsWindow: TSetupsWindow
     Color = clInfoBk
     ParentColor = False
     TabOrder = 2
-    ExplicitLeft = 0
-    ExplicitTop = 555
-    ExplicitWidth = 1134
+    ExplicitTop = 682
+    ExplicitWidth = 1182
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
     Top = 0
     Width = 185
-    Height = 673
+    Height = 680
     Align = alLeft
     TabOrder = 3
-    ExplicitHeight = 555
+    ExplicitHeight = 679
     object SW_ButGroupSections: TButtonGroup
       Left = 1
       Top = 1
       Width = 183
-      Height = 488
+      Height = 495
       CustomHint = SW_BalloonHint
       Align = alClient
       BevelInner = bvNone
@@ -1320,17 +1291,17 @@ object SetupsWindow: TSetupsWindow
       TabOrder = 0
       OnButtonClicked = SW_ButGroupSectionsButtonClicked
       OnKeyUp = SW_ButGroupSectionsKeyUp
-      ExplicitHeight = 370
+      ExplicitHeight = 494
     end
     object SW_PanelImageLogo: TPanel
       Left = 1
-      Top = 489
+      Top = 496
       Width = 183
       Height = 183
       Align = alBottom
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 371
+      ExplicitTop = 495
       object SW_SetupsImageLogo: TImage
         AlignWithMargins = True
         Left = 27

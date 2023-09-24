@@ -21,6 +21,8 @@
 #include <Vcl.Buttons.hpp>
 #include <Vcl.Mask.hpp>
 #include <Vcl.WinXCtrls.hpp>
+#include <SHDocVw.hpp>
+#include <Vcl.OleCtrls.hpp>
 //---------------------------------------------------------------------------
 class TSetupsWindow : public TForm
 {
@@ -50,8 +52,6 @@ __published:	// IDE-managed Components
 	TStaticText *SW_STextInfo;
 	TStaticText *SW_STextInfoHeadSelectTranslates;
 	TGroupBox *GrBoxSetColors;
-	TPaintBox *SW_PBoxViewSetupColors;
-	TScrollBox *SW_ScrBoxViewSetupColors;
 	TTabSheet *SW_OthersSetups;
 	TLabel *LabelSizeMainFont;
 	TLabel *LabelSizeFontAdress;
@@ -121,6 +121,9 @@ __published:	// IDE-managed Components
 	TToggleSwitch *ToggleSwitchIsHintsOnStart;
 	TToggleSwitch *ToggleSwitchisInfosOnStatusBar;
 	TLabel *LabelInfoPreview;
+	TWebBrowser *WebBrowserPreview;
+	TColorBox *SW_ColorBoxBorderFavoritiesVers;
+	TLabel *LabelColorBorderFavoritiesVers;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -128,7 +131,6 @@ __published:	// IDE-managed Components
 	void __fastcall SW_PControlSelectedChange(TObject *Sender);
 	void __fastcall SW_ButtSetups_Click(TObject *Sender);
 	void __fastcall SW_ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);
-	void __fastcall SW_PBoxViewSetupColorsPaint(TObject *Sender);
 	void __fastcall SW_ColorAllChange(TObject *Sender);
 	void __fastcall ButtFontSelectClick(TObject *Sender);
 	void __fastcall SpEditSizeFontChange(TObject *Sender);
@@ -153,7 +155,8 @@ private:	// User declarations
 	void __fastcall _DisplaySelectPlan(); //Wyswietlenie wybranego planu
 	void __fastcall _WriteJournalPlan();  //Zapis aktualnego dziennika czytania bibli
 	void __fastcall _InfoStartStopPlan();
-  void __fastcall _InitToggleSwitches();//Inicjalizacja obsługi przełączników flag //[15-08-2023]
+	void __fastcall _InitToggleSwitches();//Inicjalizacja obsługi przełączników flag //[15-08-2023]
+	void __fastcall _DisplayPreview(); //Wyświetlenie podgladu tekstu
 	int _iNumberDayPlan=-1; //Numer kolejnej lekcji z aktywnego planu
 public:		// User declarations
 	__fastcall TSetupsWindow(TComponent* Owner);

@@ -116,6 +116,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	//Hinty
 	this->SW_ButGroupSections->Hint = "Grupy ustawień";
 	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
@@ -226,6 +227,7 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	//Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
 	this->_InitLViewDisplaySelectPlan();
 	this->_ReadAllConfig();
+  this->_DisplayPreview();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
@@ -287,6 +289,162 @@ void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
     if(iColumns > 0) NewColumn->AutoSize = true;
 		//NewColumn->ImageIndex = 0;
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::_DisplayPreview()
+/**
+	OPIS METOD(FUNKCJI): Wyświetlenie podgladu tekstu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI): //[24-09-2023]
+*/
+{
+	int //Kolory
+			iColorFavVers = this->SW_ColorBoxFavorities->Selected,
+			iColorCommentVers = this->SW_ColorBoxComment->Selected,
+			iColorBackgroundText = this->SW_ColorBoxBackground->Selected,
+			iColorNameFullTranslate = this->SW_ColorBoxNameTranslate->Selected,
+			iColorAdressFullTranslates = this->SW_ColorBoxColorAdressFulltranslates->Selected,
+			iColorBackgroundMarkComment = this->SW_ColorBackgroundMarkerComment->Selected,
+			iColorBorderFavoritiesVers = this->SW_ColorBoxBorderFavoritiesVers->Selected,
+			//Kolor nazwy oryginalnego tłumaczenia
+			iColorOryginalTranslates = this->SW_ColorBoxColorOrygTr->Selected,
+			iColorAdressOryg = this->SW_ColorBoxAdressOryg->Selected,
+			iColorNameOryginalTranslate = this->SW_ColorBoxColorNameOrygTran->Selected,
+			//Other
+			iSizeFontMain = this->SpEditSizeMainFont->Value,
+			iSizeAdressFont = this->SpEditSizeAdressFont->Value,
+			iSizeTranslatesFont = this->SpEditSizeTranslatesFont->Value;
+
+	UnicodeString ustr_FontNameMain = this->ButtFontNameMainText->Caption,
+								ustr_FontNameAdress = this->ButtFontNameAdress->Caption,
+								ustr_FontNameTranslators = this->ButtFontNameTranslates->Caption;
+
+  UnicodeString   //Styl dla głównego tekstu
+								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
+									//Styl dla ulubionych wersetów
+								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
+								//_FavoriteStyle = Format(".styleFavorite {border: 3px solid %s}", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
+									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
+								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n", ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
+									//Kolor podkładu głównego tekstu
+								_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain))),
+								//_BackGroundMainText = Format("body {background-color: %s;\n\tbackground-image: url(\"%s\");\n\tbackground-repeat: no-repeat;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+								//	ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), ustrTemp, iSizeFontMain, ustr_FontNameMain))), //[01-09-2023]
+									//Kolor nazwy przekładu, dla pełnego tłumaczenia
+								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
+									//Kolor adresu dla pełnych tłumaczeń
+								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress))),
+									//Styl dla tekstu oryginalnego
+								_VersOryginalText = Format(".styleOrygin {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorOryginalTranslates), iSizeFontMain, ustr_FontNameMain))),
+									//Styl dla nazwy tłumaczenia oryginalnego
+								_VersOryginalName = Format(".styleOrygTrans {color: %s;font-size:9pt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameOryginalTranslate), ustr_FontNameTranslators))),
+									//Styl dla adresu oryginalnego tłumaczenia
+								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
+	UnicodeString HTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																							 "<html>\n<head>\n" +
+																							 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+																							 GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
+																							 //"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
+																							 "<style type=\"text/css\">\n" +
+																							 _ColorAdressFullTranslates +
+																							 _VersOryginalAdress +
+																							 _ColorNameFullTranslate +
+																							 _GlobalText +
+																							 ".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}\n" + //Informacja o braku księgi
+																							 _VersOryginalText +
+																							 _VersOryginalName +
+																							 _FavoriteStyle + //Kolor zaznaczenie ulubionego wersetu
+																							 _CommentStyle + //Kolor zaznaczania wersetu z komentarzem
+																							 _BackGroundMainText +
+																							 "</style>\n</head>\n\n<body>\n";
+	MyObjectVers *pMyOjectVers=nullptr;
+	UnicodeString _Style_FavoriteStyle = "", //Styl zaznaczania ulubionego wersetu
+								_Style_CommentStyle = "",  //Styl zaznaczania wersetu skomentowanego
+								_StyleFav_End = "",
+								_StyleComm_End = "",
+								//---
+								DisplaySelectNameTranslate; //Nazwa tlumaczenia wyłuskana z GsReadBibleTextItem->NameTranslate.
+
+	THashedStringList *_pTempHSListViewAllTr = new THashedStringList(); //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
+	if(!_pTempHSListViewAllTr) throw(Exception("Błąd funkcji THashedStringList"));
+	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
+	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+
+	GsReadBibleTextData::GetSelectVerAllTranslates(44, 5, 1, _pTempHSListViewAllTr);
+	pStringStream->WriteString(HTMLHeaderText); //Zapis nagłówka kodu html do strumienia
+
+	try
+	{
+		for(int i=0; i<_pTempHSListViewAllTr->Count; i++)
+		{
+			pMyOjectVers = static_cast<MyObjectVers *>(_pTempHSListViewAllTr->Objects[i]);
+			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
+
+			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i); //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+			DisplaySelectNameTranslate = pGsReadBibleTextItem->NameTranslate;
+
+			if(i==0) //Będzie wyswietlony text ulubiony i z komentarzem
+			{
+        _Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //"<span class=\"styleFavorite\">"; //Styl zaznaczania ulubionego wersetu
+				_StyleFav_End = "</div>";
+        _Style_CommentStyle = "<span class=\"styleComment\">C";  //Styl zaznaczania wersetu skomentowanego
+				_StyleComm_End = "</span>\n";
+			}
+			else
+			{
+        _Style_FavoriteStyle = ""; //Styl zaznaczania ulubionego wersetu
+				_StyleFav_End = "";
+        _Style_CommentStyle = "";  //Styl zaznaczania wersetu skomentowanego
+				_StyleComm_End = "";
+      }
+			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //Pełne polskie tłumaczenie
+			{
+		  	pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+		  		"%s" +  //_Style_FavoriteStyle
+		  		"%s" +  //_Style_CommentStyle
+		  		"%s" + "<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
+		  		"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
+		  		"<span class=\"styleText\">\n\t" + "%s\n</span>\n" +
+		  		"%s\n", //_StyleFav_End, //_pTempHSListViewAllTr->Strings[iIndex]
+		  		ARRAYOFCONST((_Style_FavoriteStyle,
+		  									_Style_CommentStyle,
+		  									_StyleComm_End,
+		  									pMyOjectVers->BookChaptVers,
+												_pTempHSListViewAllTr->Strings[i],
+		  									_StyleFav_End))));
+
+		  	//Nazwa tłumaczenia
+		  	pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
+					ARRAYOFCONST((DisplaySelectNameTranslate))));
+			}
+			else
+			{
+        pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+					"<span class=\"styleVersOryg\">" +
+					"\n\t%s\n</span>\n<span class=\"styleOrygin\">" + //pMyOjectVers->BookChaptVers
+					"\n\t%s\n</span>\n", //pTempHSList->Strings[i]
+						ARRAYOFCONST((pMyOjectVers->BookChaptVers,
+													_pTempHSListViewAllTr->Strings[i]))));
+				//Nazwa tłumaczenia
+				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
+					ARRAYOFCONST((DisplaySelectNameTranslate))));
+      }
+			pStringStream->WriteString("</p>\n");
+    }
+		pStringStream->WriteString("</body>\n</html>\n");
+		pStringStream->Position = 0;
+
+    IPersistStreamInit *psi;
+		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+		if(SUCCEEDED(this->WebBrowserPreview->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+			{psi->Load(sa);}
+	}
+	__finally
+	{
+		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
+    if(_pTempHSListViewAllTr) {delete _pTempHSListViewAllTr; _pTempHSListViewAllTr = nullptr;}
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_DisplaySelectPlan()
@@ -411,6 +569,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->SW_ColorBoxColorAdressFulltranslates->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorAdressVersFullTranslates, clRed);
 		//Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
 	this->SW_ColorBackgroundMarkerComment->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBackgroundMarkerComment, clYellow);
+		//Kolor ramki naokoło ulubionego wersetu
+	this->SW_ColorBoxBorderFavoritiesVers->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBorderFavoritiesVers, clRed);
 		//Kolor czcionki, dla oryginalnych tłumaczeń
 	this->SW_ColorBoxColorOrygTr->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorOryginalTranslates, clMaroon);
 		//Kolor nazwy oryginalnego tłumaczenia
@@ -581,6 +741,8 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorAdressVersFullTranslates, this->SW_ColorBoxColorAdressFulltranslates->Selected);
 		//Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBackgroundMarkerComment, this->SW_ColorBackgroundMarkerComment->Selected);
+		//Kolor ramki naokoło ulubionego wersetu
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBorderFavoritiesVers, this->SW_ColorBoxBorderFavoritiesVers->Selected);
 		//Kolor czcionki, dla oryginalnych tłumaczeń
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorOryginalTranslates, this->SW_ColorBoxColorOrygTr->Selected);
 		//Kolor nazwy oryginalnego tłumaczenia
@@ -890,73 +1052,6 @@ void __fastcall TSetupsWindow::SW_ColorBoxGetColors(TCustomColorBox *Sender,
 	Items->AddObject("clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
 }
 //---------------------------------------------------------------------------
-void __fastcall TSetupsWindow::SW_PBoxViewSetupColorsPaint(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPaintBox *pPBox = dynamic_cast<TPaintBox *>(Sender);
-	if(!pPBox) return;
-	//---
-	int iLeft, iTop=8;// iWidth=pPBox->Width;
-	UnicodeString ustrAdres=Format("%s 5:1", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[44].ShortNameBook))),
-								ustrTextLine,
-								ustrNametr;
-	//---
-	pPBox->Canvas->Font = this->ButtFontNameMainText->Font;
-	GsReadBibleTextData::GetSelectVerAllTranslates(44, 5, 1, this->_HSListViewAllTr);
-	pPBox->Canvas->Brush->Color = this->SW_ColorBoxBackground->Selected;
-	pPBox->Canvas->FillRect( this->SW_PBoxViewSetupColors->ClientRect);
-	for(int i=0; i<this->_HSListViewAllTr->Count; i++)
-	{
-		//Znacznik istnienia komentarza
-		iLeft = 4;
-		pPBox->Canvas->Font = this->ButtFontNameMainText->Font;
-		if(i==0)
-		{
-			pPBox->Canvas->Font->Color = this->SW_ColorBoxComment->Selected;
-			pPBox->Canvas->Font->Style = TFontStyles() << fsBold << fsUnderline;
-			pPBox->Canvas->Brush->Color = this->SW_ColorBackgroundMarkerComment->Selected; //Kolor podkładu głównego
-			pPBox->Canvas->Font->Size = this->SpEditSizeMainFont->Value;
-			pPBox->Canvas->TextOut(iLeft, iTop, "C");
-			iLeft += pPBox->Canvas->TextWidth("C") + 3;
-		}
-		//Atrybuty adresu wersetu
-		pPBox->Canvas->Font = this->ButtFontNameAdress->Font;
-		pPBox->Canvas->Font->Style = TFontStyles();
-		iTop += 3;
-		if(i == this->_HSListViewAllTr->Count - 1) pPBox->Canvas->Font->Color = this->SW_ColorBoxAdressOryg->Selected;
-		else pPBox->Canvas->Font->Color = this->SW_ColorBoxColorAdressFulltranslates->Selected;
-		pPBox->Canvas->Brush->Color = this->SW_ColorBoxBackground->Selected;
-		pPBox->Canvas->Font->Size = this->SpEditSizeAdressFont->Value;
-		pPBox->Canvas->TextOut(iLeft, iTop, ustrAdres);
-		iLeft += pPBox->Canvas->TextWidth(ustrAdres) + 8;
-		//Tekst wersetu
-		pPBox->Canvas->Font = this->ButtFontNameMainText->Font;
-		if(i == this->_HSListViewAllTr->Count - 1) pPBox->Canvas->Font->Color = this->SW_ColorBoxColorOrygTr->Selected; //Tekst wersetu oryginalnego tłumaczenia
-		else pPBox->Canvas->Font->Color = clBlack;
-		pPBox->Canvas->Font->Size = this->SpEditSizeMainFont->Value;
-		ustrTextLine = this->_HSListViewAllTr->Strings[i];
-		iTop -= 3;
-		if(i==0) pPBox->Canvas->Brush->Color = this->SW_ColorBoxFavorities->Selected; //Kolor podkłady ulubionego wersetu
-		else pPBox->Canvas->Brush->Color = this->SW_ColorBoxBackground->Selected; //Kolor podkłady
-		pPBox->Canvas->TextOut(iLeft, iTop, ustrTextLine);
-		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNametr);
-		iLeft += pPBox->Canvas->TextWidth(ustrTextLine) + 8;
-		//Znaczniki tekstu, nazwy tłumaczenia
-    pPBox->Canvas->Font = this->ButtFontNameTranslates->Font;
-		pPBox->Canvas->Font->Size = this->SpEditSizeTranslatesFont->Value; iTop += 3;
-		if(i == this->_HSListViewAllTr->Count - 1) pPBox->Canvas->Font->Color = this->SW_ColorBoxColorNameOrygTran->Selected;
-		else pPBox->Canvas->Font->Color = this->SW_ColorBoxNameTranslate->Selected;
-		pPBox->Canvas->Brush->Color = this->SW_ColorBoxBackground->Selected;
-		pPBox->Canvas->TextOut(iLeft, iTop, "[" + ustrNametr + "]");
-		iTop += -pPBox->Canvas->Font->Height + 4;
-	}
-}
-//---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SW_ColorAllChange(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
@@ -968,7 +1063,7 @@ void __fastcall TSetupsWindow::SW_ColorAllChange(TObject *Sender)
 	TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
 	if(!pColorBox) return;
 	//---
-	this->SW_PBoxViewSetupColors->Repaint();
+	this->_DisplayPreview(); //[24-09-2023]
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::ButtFontSelectClick(TObject *Sender)
