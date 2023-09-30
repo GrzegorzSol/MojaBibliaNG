@@ -22,7 +22,7 @@ TSearchTextWindow *SearchTextWindow;
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 //---
-enum {  //Numery zakładek w ustawieniach wyszukiwania
+enum {	//Numery zakładek w ustawieniach wyszukiwania
 				enIndexSetInputSearch, enIndexStatisticSearch, enIndexSetupsSearch,
 				enIndexResultListHtml=0, enIndexResultListSelect,
 				//Numery idyntyfikacyjne kontrolek
@@ -34,49 +34,49 @@ enum {  //Numery zakładek w ustawieniach wyszukiwania
 				enIdent_ColorBBackGroundStatisticList = 0x200,
 				enIdent_ColorBBockGroundSearchList,
 				//Numery indeksów ikon
-				enImageSearch_ButtonSearchStart=0,   //0.Rozpoczęcie wyszukiwania
-				enImageSearch_ViewResultSearch,    //1.Przegląd wyników wyszukiwania
-				enImageSearch_HelpReg,             //2.Pomoc w wyszukiwaniu za pomocą wyrażeń regularnych
-				enImageSearch_StartSelect,         //3.Początkowa księga zakresu wyszukiwania
-				enImageSearch_StopSelect,          //4.Końcowa księga zakresu wyszukiwania
-				enImageSearch_Translates,          //5.Wybór tłumaczenia
-				enImageSearch_SelectRange,         //6.Wybór zakresu wyszukiwania
-				enImageSearch_Statistic,           //7.Zakładka statystyki wyszukiwania
-				enImageSearch_InputText,           //8.Zakładka wprowadzania tekstu szukanego
-				enImageSearch_ResultListHTML,      //9.Zakładka wyników wyszukiwania w formie html
-				enImageSearch_ResultListSelect,    //10.Zakładka wyników wyszukiwania z możliwością wyboru
-        enImageSearch_Setups,              //11.Ustawienia dodakowe dla wyszukiwania
+				enImageSearch_ButtonSearchStart=0,	 //0.Rozpoczęcie wyszukiwania
+				enImageSearch_ViewResultSearch,		 //1.Przegląd wyników wyszukiwania
+				enImageSearch_HelpReg,						 //2.Pomoc w wyszukiwaniu za pomocą wyrażeń regularnych
+				enImageSearch_StartSelect,				 //3.Początkowa księga zakresu wyszukiwania
+				enImageSearch_StopSelect,					 //4.Końcowa księga zakresu wyszukiwania
+				enImageSearch_Translates,					 //5.Wybór tłumaczenia
+				enImageSearch_SelectRange,				 //6.Wybór zakresu wyszukiwania
+				enImageSearch_Statistic,					 //7.Zakładka statystyki wyszukiwania
+				enImageSearch_InputText,					 //8.Zakładka wprowadzania tekstu szukanego
+				enImageSearch_ResultListHTML,			 //9.Zakładka wyników wyszukiwania w formie html
+				enImageSearch_ResultListSelect,		 //10.Zakładka wyników wyszukiwania z możliwością wyboru
+				enImageSearch_Setups,							 //11.Ustawienia dodakowe dla wyszukiwania
 				enImageSearch_Count,
 				//Stałe numerów kolumn dla listy statystyki
 				enColumn_NameBook=0, enColumn_CountFind, enColumn_Progres, enColumn_Count,
 				//Tagi dla kontrolek
 				enTag_PControlSetupsSearch=100, //Zakładki wprowadzanie danych do przeszukiwań i statystyki wyszukiwania
 				enTag_PControlSearchViewText, //Zakładki wyników wyszukiwania
-        //Tagi dla objektów, klasy TListView
+				//Tagi dla objektów, klasy TListView
 				enTag_LViewResultSearch, //Objekt klasy TListView z listą znalezionych wersetów
-				enTag_LViewStatistic,    //Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiąg
+				enTag_LViewStatistic,		 //Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiąg
 				//Tagi dla objektów, klasy TCheckBox
-				enTag_CBoxIsReg,         //Czy używać w wyszukiwaniu wyrażeń regularnych?
-				enTag_CBoxIsSizeText,    //Czy podczas wyszukiwań rozróżniać wielkość liter?
-				enTag_CBoxIsMemorySetupsSearch  //Czy zapamiętać parametry wuszukiwania?
+				enTag_CBoxIsReg,				 //Czy używać w wyszukiwaniu wyrażeń regularnych?
+				enTag_CBoxIsSizeText,		 //Czy podczas wyszukiwań rozróżniać wielkość liter?
+				enTag_CBoxIsMemorySetupsSearch	//Czy zapamiętać parametry wuszukiwania?
 		 };
 //Tekst opisu dla skłdni wyrażeń regularnych
 const static UnicodeString ustrInoRegSearch = UnicodeString(". - (kropka)=dowolny znak\n") +
 		"^ - dopasuj występujące po operatorze wyrażenie do początku wiersza (początek linii)\n" +
 		"$ - dopasuj poprzedzające wyrażenie do końca wiersza (koniec linii)\n" +
-		"\\x - znaki specjalne, gdzie  x to znak specjalny np. \\$ zastąpi znak dolara\n" +
+		"\\x - znaki specjalne, gdzie	 x to znak specjalny np. \\$ zastąpi znak dolara\n" +
 		"[lista] - zastępuje dowolny znak spośród tych wymienionych na liście, mogą to być, przedziały np. [0-9] lub [a-d]\n" +
 		"[^lista] - pasuje do znaku nie podanego na liście\n" +
 		"\\< - początek słowa\n" +
 		"\\> - koniec słowa\n" +
 		"\\w - jest równoważne [0-9a-zA-Z] lub [[:alnum:]] – zastępuje dowolną liczbę lub cyfrę\n" +
 		"\\W - oznacza to samo co $[^[[:alnum:]]]\n" +
-		"()  - grupowanie wyrażeń regularnych\n" +
-		"| 	 - operator LUB\n" +
-		"? 	 - dokładnie zero lub jeden element wcześniejszy\n" +
-		"a|b - dopasuje wyrażenie  a lub wyrażenie  b\n" +
-		"* 	 - dopasuj zero lub więcej wyrażeń znaku poprzedzający operator\n" +
-		"+ 	 - jeden lub więcej elementów poprzedzających operator\n" +
+		"()	 - grupowanie wyrażeń regularnych\n" +
+		"|	 - operator LUB\n" +
+		"?	 - dokładnie zero lub jeden element wcześniejszy\n" +
+		"a|b - dopasuje wyrażenie	 a lub wyrażenie	b\n" +
+		"*	 - dopasuj zero lub więcej wyrażeń znaku poprzedzający operator\n" +
+		"+	 - jeden lub więcej elementów poprzedzających operator\n" +
 		"{n} - poprzedzający element pasuje dokładnie n razy",
 													ustrTextLogoSearch = "DzAp 17:11\n\"...przyjęli oni Słowo z całą gotowością i codziennie BADALI Pisma, czy tak się rzeczy mają\"";
 //Nazwy kolumn dla listy statystyki
@@ -108,11 +108,11 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	this->STW_ColorBoxBackGroundSearchList->Tag = enIdent_ColorBBockGroundSearchList;
 		//Objekty klasy TListView
 	this->STW_LViewResultSearch->Tag = enTag_LViewResultSearch; //Objekt klasy TListView z listą znalezionych wersetów
-	this->STW_LViewStatistic->Tag = enTag_LViewStatistic;     //Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiag
+	this->STW_LViewStatistic->Tag = enTag_LViewStatistic;			//Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiag
 	//Tagi dla objektów, klasy TCheckBox
-	this->STW_ChBoxIsRegEx->Tag = enTag_CBoxIsReg;         //Czy używać w wyszukiwaniu wyrażeń regularnych?
-	this->STW_ChBoxSizeTextSearch->Tag = enTag_CBoxIsSizeText;    //Czy podczas wyszukiwań rozróżniać wielkość liter?
-	this->STW_ChBoxMemoSetupsSearch->Tag = enTag_CBoxIsMemorySetupsSearch;  //Czy zapamiętać parametry wuszukiwania?
+	this->STW_ChBoxIsRegEx->Tag = enTag_CBoxIsReg;				 //Czy używać w wyszukiwaniu wyrażeń regularnych?
+	this->STW_ChBoxSizeTextSearch->Tag = enTag_CBoxIsSizeText;		//Czy podczas wyszukiwań rozróżniać wielkość liter?
+	this->STW_ChBoxMemoSetupsSearch->Tag = enTag_CBoxIsMemorySetupsSearch;	//Czy zapamiętać parametry wuszukiwania?
 	//Wstępne ustawienia zawartości komponentów
 		//Definiowanie komponentów wyboru ksiąg biblijnych
 	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
@@ -131,7 +131,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 			GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTranslate);
 			this->STW_CBoxSelectTranslates->Items->Add(ustrNameTranslate);
 		}
-    this->STW_CBoxSelectTranslates->ItemIndex = 0;  //Domyślne pierwsze, dostępne tłumaczenie
+		this->STW_CBoxSelectTranslates->ItemIndex = 0;	//Domyślne pierwsze, dostępne tłumaczenie
 	}
 	this->STW_CBoxHistorySearchText->Hint = "Pole tekstowe do wprowadzania szukanego tekstu.";
 	this->STW_ChBoxIsRegEx->Hint = "Czy wyszukiwanie będzie używało wyrażeń regularnych";
@@ -193,7 +193,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 			break;
 			//---
 			case enColumn_CountFind:
-      {
+			{
 				NewColumn->AutoSize = false;
 				NewColumn->Width = 98;
 			}
@@ -232,7 +232,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 		//Parametry wyszukiwania
 	this->STW_ChBoxMemoSetupsSearch->Checked = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_IsMemorySetupsSearch, false);
 	if(this->STW_ChBoxMemoSetupsSearch->Checked)
-  //Jeśli zapamiętywanie parametrów jest włączone
+	//Jeśli zapamiętywanie parametrów jest włączone
 	{
 		this->STW_CBoxSelectTranslates->ItemIndex = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_Translate, 0);
 		this->STW_CBoxHistorySearchText->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_TextSearch, "");
@@ -274,7 +274,7 @@ void __fastcall TSearchTextWindow::FormDestroy(TObject *Sender)
 				{
 					delete MyDataStatistic; MyDataStatistic = nullptr;
 				}
-      }
+			}
 		}
 	}
 
@@ -283,14 +283,14 @@ void __fastcall TSearchTextWindow::FormDestroy(TObject *Sender)
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSetupsSection_Main, GlobalVar::GlobalIni_ColorsSetupsBackGroundAllListSearch, this->STW_ColorBoxBackGroundSearchList->Selected);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSetupsSection_Main, GlobalVar::GlobalIni_ColorsSetupBackGroundSelectBookSearch, this->STW_ColorBoxBackGroundStatisticList->Selected);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSetupsSection_Main, GlobalVar::GlobalIni_ColorsSetupBackGroundSelectVers, this->STW_ColorBoxBackGroundSelectVers->Selected);
-  	//Parametry wyszukiwania
+		//Parametry wyszukiwania
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_IsMemorySetupsSearch, this->STW_ChBoxMemoSetupsSearch->Checked);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_Translate, this->STW_CBoxSelectTranslates->ItemIndex);
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_TextSearch, this->STW_CBoxHistorySearchText->Text);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_SetupRangeBooks, this->STW_CBoxSelectRangeSearch->ItemIndex);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_StartUserRange, this->STW_CBoxStartSelectRange->ItemIndex);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_StopUserRange, this->STW_CBoxStopSelectRange->ItemIndex);
-  GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_IsSizeTextSearch, this->STW_ChBoxSizeTextSearch->Checked);
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_IsSizeTextSearch, this->STW_ChBoxSizeTextSearch->Checked);
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_IsRegSearch, this->STW_ChBoxIsRegEx->Checked);
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();
@@ -304,7 +304,7 @@ void __fastcall TSearchTextWindow::FormClose(TObject *Sender, TCloseAction &Acti
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	Action = caFree;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
@@ -322,7 +322,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	//---
 	THashedStringList *pBookListText;//=0;
 	int iPositionSearch,//=0,
-			iIndexTable;//=0;  //Numer księgi liczony od 0.
+			iIndexTable;//=0;	 //Numer księgi liczony od 0.
 	const int ciSizeCutString=512; //Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
 	UnicodeString ustrTemp;
 	const UnicodeString custrStyleF = "<span class=styleFound>";
@@ -349,7 +349,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	else if(this->STW_CBoxSelectRangeSearch->ItemIndex >= en_UserRange)
 	//Jeśli wybranym zakresem, jest zakres własny
 	{
-		if(this->STW_CBoxStartSelectRange->ItemIndex > -1 &&  this->STW_CBoxStopSelectRange->ItemIndex > -1)
+		if(this->STW_CBoxStartSelectRange->ItemIndex > -1 &&	this->STW_CBoxStopSelectRange->ItemIndex > -1)
 		{
 			scTempStart = this->STW_CBoxStartSelectRange->ItemIndex;
 			scTempStop = this->STW_CBoxStopSelectRange->ItemIndex;
@@ -403,8 +403,8 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 //					if(iPositionSearch > 0)
 //					{
 //						UnicodeString ustrReplace = custrStyleF + ustrSearchString + "</span>";
-//  						ustrTemp = StringReplace(pBookListText->Strings[i], ustrSearchString,
-//  							ustrReplace, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
+//							ustrTemp = StringReplace(pBookListText->Strings[i], ustrSearchString,
+//								ustrReplace, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 //
 //						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 //						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
@@ -426,7 +426,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 		} //if(pBookListText)
 	} //for(...)
 
-  this->STW_LViewStatistic->Repaint(); //Odświerzenie listy statystyki 04-05-2021
+	this->STW_LViewStatistic->Repaint(); //Odświerzenie listy statystyki 04-05-2021
 
 	this->_DisplayListTextHTML(this->STW_WBrowserResultSearch, this->_pHSListSearchResult, enTypeDisplay_ResultsearchAll); //Wszystkie znalezione teksty
 	this->STW_LViewResultSearch->Items->BeginUpdate();
@@ -441,22 +441,22 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	//Dodawanie do objekstu, klasy TComboBox sów wyszukiwanych 15-04-2021
 	bool bIsDuplicate=false; //Zmienna oznaczająca że jest(true), lub nie (false) duplicat w słowie szukanym
 	const int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
-                                       //Gdy zostanie ona przekroczona, zostanie usunięte najstarsze słowo, by dodać najnowsze
+																			 //Gdy zostanie ona przekroczona, zostanie usunięte najstarsze słowo, by dodać najnowsze
 
 	for(int i=0; i<this->STW_CBoxHistorySearchText->Items->Count; i++)
 	{
 		if(STW_CBoxHistorySearchText->Text.LowerCase() == this->STW_CBoxHistorySearchText->Items->Strings[i].LowerCase())
 		{
 			bIsDuplicate = true; break;
-    }
+		}
 	}
 
 	if(!bIsDuplicate)
 	{
 		if(ciMaxHistorySearchText <= this->STW_CBoxHistorySearchText->Items->Count) this->STW_CBoxHistorySearchText->Items->Delete(0);
-		this->STW_CBoxHistorySearchText->Items->Add(STW_CBoxHistorySearchText->Text);  //Lista dotyczczasowych tekstów wyszukiwanych
+		this->STW_CBoxHistorySearchText->Items->Add(STW_CBoxHistorySearchText->Text);	 //Lista dotyczczasowych tekstów wyszukiwanych
 	}
-  //Wyczyszczenie objektu klasy TWebBrowser, po wyszukaniu nowego słowa
+	//Wyczyszczenie objektu klasy TWebBrowser, po wyszukaniu nowego słowa
 	this->STW_WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
 }
 //---------------------------------------------------------------------------
@@ -468,9 +468,9 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
+	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
 	if(!pCBox) return;
-  //Wyczyszczenie objekty klasy TWebBrowser, do przeglądania znalezionych wersetów w wybranek księdze
+	//Wyczyszczenie objekty klasy TWebBrowser, do przeglądania znalezionych wersetów w wybranek księdze
 	this->STW_WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
 	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; i++)
 	{
@@ -488,7 +488,7 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 			}
 		}
 	}
-  this->STW_LViewStatistic->Repaint();
+	this->STW_LViewStatistic->Repaint();
 	//---
 	switch(pCBox->Tag)
 	{
@@ -503,11 +503,11 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 		case enIdent_CBoxSelectTranslate:
 			//--- Wyłuskanie tłumaczenia
 			{
-        //Wyłuskanie typu tłumaczenia
+				//Wyłuskanie typu tłumaczenia
 				GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(pCBox->ItemIndex);
 				if(!pGsReadBibleTextItem) return;
 				//this->STW_CBoxHistorySearchText->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !this->STW_CBoxHistorySearchText->Text.IsEmpty());
-      }
+			}
 		break;
 		//
 		case enIdent_CBoxStartSelectRange:
@@ -517,7 +517,7 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 		//
 		case enIdent_CBoxStopSelectRange:
 			if(pCBox->ItemIndex < this->STW_CBoxStartSelectRange->ItemIndex) this->STW_CBoxStartSelectRange->ItemIndex = pCBox->ItemIndex;
-    //--- Końcowy zakres wyszukiwania
+		//--- Końcowy zakres wyszukiwania
 		break;
 	}
 }
@@ -550,7 +550,7 @@ void __fastcall TSearchTextWindow::STW_ChBoxIsRegExClick(TObject *Sender)
 	if(!pChBox) return;
 	//---
 	this->STW_CBoxHistorySearchText->Text = "";
-  this->STW_ButtonHelpRegExp->Enabled = pChBox->Checked;
+	this->STW_ButtonHelpRegExp->Enabled = pChBox->Checked;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
@@ -562,7 +562,7 @@ void __fastcall TSearchTextWindow::FormKeyUp(TObject *Sender, WORD &Key, TShiftS
 */
 {
 	//MessageBox(NULL, L"FormKeyUp()", L"Informacja aplikacji", MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-  if(Key != VK_RETURN) return;
+	if(Key != VK_RETURN) return;
 	this->STW_ButtonSearchStartClick(this->STW_ButtonSearchStart);
 }
 //---------------------------------------------------------------------------
@@ -575,7 +575,7 @@ void __fastcall TSearchTextWindow::STW_LViewResultSearchData(TObject *Sender,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//-----
 	if((Item->Index<this->_iStart_index) || (Item->Index>this->_iEnd_index)) return;
@@ -583,7 +583,7 @@ void __fastcall TSearchTextWindow::STW_LViewResultSearchData(TObject *Sender,
 	if(pMyObjectVers)
 	{
 		Item->Caption = pMyObjectVers->BookChaptVers;
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_LViewResultSearchDataHint(TObject *Sender,
@@ -640,7 +640,7 @@ void __fastcall TSearchTextWindow::STW_LViewAllSelectItem(TObject *Sender,
 		}
 		break;
 		//---
-		case enTag_LViewStatistic:   //Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiąg
+		case enTag_LViewStatistic:	 //Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiąg
 		{
 			THashedStringList *_tempHSLst=nullptr;
 			try
@@ -699,7 +699,7 @@ void __fastcall TSearchTextWindow::STW_ButtonHelpRegExpClick(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TButton *pButtSearch = dynamic_cast<TButton *>(Sender);
+	TButton *pButtSearch = dynamic_cast<TButton *>(Sender);
 	if(!pButtSearch) return;
 	//---
 	MessageBox(this->Handle, ustrInoRegSearch.c_str(), L"Informacja aplikacji", MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -721,7 +721,7 @@ void __fastcall TSearchTextWindow::STW_CBoxSearchDrawItem(TWinControl *Control,
 	if(State.Contains(odSelected))
 	{
 		pCanvas->Brush->Color = clWebOrangeRed;
-    pCanvas->Font->Color = pCBox->Font->Color;
+		pCanvas->Font->Color = pCBox->Font->Color;
 	}
 
 	pCanvas->FillRect(Rect);
@@ -741,9 +741,9 @@ void __fastcall TSearchTextWindow::STW_CBoxSearchDrawItem(TWinControl *Control,
 		break;
 		//---
 		case enIdent_CBoxSelectTranslate:
-      this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_Translates);
-    break;
-  }
+			this->ImgListSmallSearch->Draw(pCanvas, 1, Rect.Height() / 2 - (this->ImgListSmallSearch->Height / 2) + Rect.Top, enImageSearch_Translates);
+		break;
+	}
 	//Rect.Left += 18;
 	Rect.Left += (this->ImgListSmallSearch->Width + 2);
 
@@ -828,13 +828,13 @@ void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *S
 		pLView->Canvas->Font->Color = clGray;
 	}
 	//---
-  RectLabel.Left += 2;
-	DrawText(pLView->Canvas->Handle,  Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+	RectLabel.Left += 2;
+	DrawText(pLView->Canvas->Handle,	Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	//---
 	TRect RectSubItem = RectBounds;
 	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
 	{
-    //Wymiary następnej kolumny
+		//Wymiary następnej kolumny
 		RectSubItem.Left += pLView->Column[iColumn]->Width + 1;
 		if(iColumn==pLView->Columns->Count - 2) RectSubItem.Right = pLView->ClientRect.Right;
 		else RectSubItem.Right += pLView->Column[iColumn + 1]->Width;
@@ -851,7 +851,7 @@ void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *S
 			pLView->Canvas->Brush->Color = clGreen;
 
 			RectSubItem.Right = RectSubItem.Left + (fBarFind * (float)uiCountSearch);
-      RectSubItem.Inflate(0, -4, 0, -4);
+			RectSubItem.Inflate(0, -4, 0, -4);
 			pLView->Canvas->FillRect(RectSubItem);
 			pLView->Canvas->Brush->Color = clBlue;
 
@@ -908,12 +908,12 @@ void __fastcall TSearchTextWindow::STW_PControlViewsTextDrawTab(TCustomTabContro
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
+	TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
 	if(!pPControl) return;
 	//-----
-  TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
+	TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
 	if(!pActSheet) return;
-  //---
+	//---
 	TRect MyRect(Rect);
 	switch(pPControl->Tag)
 	{
@@ -939,7 +939,7 @@ void __fastcall TSearchTextWindow::STW_PControlViewsTextDrawTab(TCustomTabContro
 	}
 
 	pPControl->Canvas->FillRect(Rect);
-  pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2) + 2, pActSheet->ImageIndex);
+	pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2) + 2, pActSheet->ImageIndex);
 	//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
 	MyRect.Left += (pPControl->Images->Width + 4);
 	DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
@@ -954,7 +954,7 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  MyObjectVers *pMyOjectVers=nullptr;
+	MyObjectVers *pMyOjectVers=nullptr;
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 	//---
@@ -998,7 +998,7 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	//---
 	switch(_TypeDisplayHTML)
 	{
-		case enTypeDisplay_ResultsearchAll:        //Wyświetlanie wszystkich znalezionych wersetów
+		case enTypeDisplay_ResultsearchAll:				 //Wyświetlanie wszystkich znalezionych wersetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSearchAll;
 		break;
 		//---
@@ -1006,10 +1006,10 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSearchBook;
 		break;
 		//---
-		case enTypeDisplay_ResultSelectVers:       //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
+		case enTypeDisplay_ResultSelectVers:			 //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSelectSearchVers;
 		break;
-  }
+	}
 	pStringStream->WriteString(ustrDefineDisplayHTML);
 
 	try
@@ -1050,7 +1050,7 @@ void __fastcall TSearchTextWindow::STW_ColorBoxGetColors(TCustomColorBox *Sender
 	TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
 	if(!pColorBox) return;
 	//---
-  Items->AddObject("clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
+	Items->AddObject("clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
 	Items->AddObject("clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
 	Items->AddObject("clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
 	Items->AddObject("clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
@@ -1086,12 +1086,12 @@ void __fastcall TSearchTextWindow::STW_ColorBoxChange(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
+	TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
 	if(!pColorBox) return;
 	//---
 	//UnicodeString ustrSelectColor = RGBToWebColorStr(pColorBox->Selected);
 
-  switch(pColorBox->Tag)
+	switch(pColorBox->Tag)
 	{
 		case enIdent_ColorBBackGroundStatisticList:
 		break;
@@ -1113,7 +1113,7 @@ void __fastcall TSearchTextWindow::STW_ColorBoxChange(TObject *Sender)
 		}
 	}
 	//Odświerzać listy znalezionych wersetów nie trzeba gdyż wywołana metoda this->STW_ButtonSearchStartClick(this->STW_ButtonSearchStart),
-  //powoduje wyczyszczenie wszystkich statystyk
+	//powoduje wyczyszczenie wszystkich statystyk
 }
 //---------------------------------------------------------------------------
 

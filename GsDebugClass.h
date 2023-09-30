@@ -16,10 +16,10 @@ class GsDebugClass
 		{
 			if(AllocConsole())
 			{
-        AttachConsole(GetCurrentProcessId()); //Identyfikator procesu, którego konsola ma być używana.
+				AttachConsole(GetCurrentProcessId()); //Identyfikator procesu, którego konsola ma być używana.
 				SMALL_RECT srctWindow; //Wymiary okna konsoli
-				HMENU hMenuWindow;     //Menu systemowe okna konsoli
-				HWND hConsoleWindow;         //Uchwyt do okna konsoli
+				HMENU hMenuWindow;		 //Menu systemowe okna konsoli
+				HWND hConsoleWindow;				 //Uchwyt do okna konsoli
 				HANDLE _hMyDebugConsole=NULL;
 
 				_hMyDebugConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
@@ -28,7 +28,7 @@ class GsDebugClass
 					hConsoleWindow = GetConsoleWindow();
 					if(hConsoleWindow)
 					{
-            //Dezaktywacja przycisku systemowego zamykania okna konsoli
+						//Dezaktywacja przycisku systemowego zamykania okna konsoli
 						hMenuWindow = GetSystemMenu(hConsoleWindow, false);
 						if(hMenuWindow) DeleteMenu(hMenuWindow, SC_CLOSE, MF_BYCOMMAND);
 						//Ustalenie wymiarów okna konsoli

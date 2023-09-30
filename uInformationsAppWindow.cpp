@@ -57,7 +57,7 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 	#else
 		this->STextInfoLicence->Caption = Format("%s%s", ARRAYOFCONST((ustrTextInfo, ustrInfoVerCompilation)));
 	#endif
-  this->STextInfoSystem->Caption =  Format("Wersja systemu operacyjnego:\n%s", ARRAYOFCONST((TOSVersion::ToString())));
+	this->STextInfoSystem->Caption =	Format("Wersja systemu operacyjnego:\n%s", ARRAYOFCONST((TOSVersion::ToString())));
 }
 //---------------------------------------------------------------------------
 void __fastcall TInformationsAppWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -79,7 +79,7 @@ void __fastcall TInformationsAppWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //
+	//
 }
 //---------------------------------------------------------------------------
 void __fastcall TInformationsAppWindow::TimerInfoSystemTimer(TObject *Sender)
@@ -91,7 +91,7 @@ void __fastcall TInformationsAppWindow::TimerInfoSystemTimer(TObject *Sender)
 */
 {
 	static unsigned char sucTick;
-  if(sucTick==8) this->Close();
+	if(sucTick==8) this->Close();
 	sucTick++;
 }
 //---------------------------------------------------------------------------

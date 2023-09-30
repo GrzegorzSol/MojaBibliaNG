@@ -7,7 +7,7 @@
 #include <d2d1_1.h>
 #include <dwrite.h>
 
-//#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
+//#define _DEBUGINFO_	 //Używanie okna konsoli do debugowania aplikacji
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif
@@ -31,7 +31,7 @@ const UnicodeString ustrListNameEffects[] = { //Efekty działajace na Windows 7
 																							"Sharpen"
 																						},
 										//Zdefiniowane wielkości czcionek
-                    ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"};
+										ustrFontSize[] = {"10", "12", "16", "18", "20", "24", "28", "30", "36", "48", "64", "72", "98", "112", "124", "148"};
 //Domyślne wartosci dla składowych klasy, które są stałe
 const bool CFIsDisplayText = false;
 const UnicodeString CFNameFont = "Arial",
@@ -77,7 +77,7 @@ class GsDirect2DClass : public TCustomPanel
 		__property bool IsModified = {read = FIsModified, write = FIsModified, default = false};
 		__property bool IsGradientColorFont = {read = FIsGradientColorFont, write = _SetGradientText, default = false};
 		__property bool IsLoadedImage = {read = FIsLoadedImage, default = false};
-      //Efekty
+			//Efekty
 		__property bool IsApplyEfects = {read = FIsApplyEfects, default = false};
 		__property EnEffectsGfx SetApplyEffect = {read = FSetApplyEffect, write = _SetApplyEfects};
 
@@ -116,7 +116,7 @@ class GsDirect2DClass : public TCustomPanel
 		void __fastcall _SetD2DColorText(const D2D1::ColorF::Enum _ColorText);
 		void __fastcall _SetD2DColorText2(const D2D1::ColorF::Enum _ColorText);
 		void __fastcall _SetStandardColorText(const TColor _TColorText);
-    void __fastcall _SetStandardColorText2(const TColor _TColorText);
+		void __fastcall _SetStandardColorText2(const TColor _TColorText);
 		void __fastcall _ReCreateTextFont();
 		void __fastcall _SetRotationText(const float _fRotationAngle);
 		void __fastcall _SetOpacityBrush(const float _fOpacityBrush);
@@ -139,11 +139,11 @@ class GsDirect2DClass : public TCustomPanel
 		IWICFormatConverter *pIWICFormatConverter;
 		ID2D1DeviceContext *pID2D1DeviceContext;
 		IWICBitmapScaler *pIWICBitmapScaler; //Przeskalowana bitmapa do wymierów aktualnych okna.
-                                         //W metodzie _ScaleBitmapSource, przeksztaucana jest w objet, klasy ID2D1Bitmap
+																				 //W metodzie _ScaleBitmapSource, przeksztaucana jest w objet, klasy ID2D1Bitmap
 		//DirectWrite
 		IDWriteFactory* pIDWriteFactory;
 		IDWriteTextFormat* pIDWriteTextFormat;
-    IDWriteTextLayout *pIDWriteTextLayout;
+		IDWriteTextLayout *pIDWriteTextLayout;
 		ID2D1SolidColorBrush *pID2D1SolidColorBrush1, *pID2D1SolidColorBrush2;
 };
 //---------------------------------------------------------------------------

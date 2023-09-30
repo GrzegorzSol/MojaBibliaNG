@@ -52,15 +52,15 @@ __published:	// IDE-managed Components
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall PageControlReadingPlanesDrawTab(TCustomTabControl *Control,
-          int TabIndex, const TRect &Rect, bool Active);
+					int TabIndex, const TRect &Rect, bool Active);
 	void __fastcall SButtonStartSpeakClick(TObject *Sender);
 	void __fastcall SButtonJournalingClick(TObject *Sender);
 	void __fastcall ChListBoxJournalingClickCheck(TObject *Sender);
 	void __fastcall ChListBoxJournalingDrawItem(TWinControl *Control, int Index,
-          TRect &Rect, TOwnerDrawState State);
+					TRect &Rect, TOwnerDrawState State);
 	void __fastcall ChListBoxJournalingClick(TObject *Sender);
 	void __fastcall SplitterSizeJournalingCanResize(TObject *Sender, int &NewSize,
-          bool &Accept);
+					bool &Accept);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
 	void __fastcall SButtonStopSpeakClick(TObject *Sender);
@@ -71,8 +71,8 @@ private:	// User declarations
 	TList *_pListWebBrowsers=nullptr;
 	THashedStringList *_pHSListJournaling=nullptr;
 	void __fastcall _ReadSetupsJournal(); //Odczyt i ustawienia dziennika
-	void __fastcall _ReadSelectPlan(const int iSetDayPlan=-1);    //Odczyt i wyświetlenie pozycji aktualnego planu
-  void __fastcall _SpeakText(const UnicodeString ustrTextSpeak); //Tekst do przeczytania na głos przez syntezator mowy
+	void __fastcall _ReadSelectPlan(const int iSetDayPlan=-1);		//Odczyt i wyświetlenie pozycji aktualnego planu
+	void __fastcall _SpeakText(const UnicodeString ustrTextSpeak); //Tekst do przeczytania na głos przez syntezator mowy
 public:		// User declarations
 	__fastcall TReadingPlanWindow(TComponent* Owner);
 };

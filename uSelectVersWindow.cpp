@@ -26,7 +26,7 @@ __fastcall TSelectVersWindow::TSelectVersWindow(TComponent* Owner, const unsigne
 									 const unsigned char _cucStartChapt - Numer rozdziału (od zera).
 									 const unsigned char _cucStarVers - Numer wersetu (od jednego).
 									 bool bSelectComment - czy kliknąłeś na lpozycje w liście komentarzy, w głównym oknie,
-									 											 by otworzyś werset związany z tym komentarzem w oknie wyboru wersetów
+																				 by otworzyś werset związany z tym komentarzem w oknie wyboru wersetów
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */

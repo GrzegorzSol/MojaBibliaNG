@@ -73,7 +73,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_SearchBibleTextExecute(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
 	void __fastcall StatusBarMainDrawPanel(TStatusBar *StatusBar, TStatusPanel *Panel,
-          const TRect &Rect);
+					const TRect &Rect);
 	void __fastcall Act_SetupsApplicExecute(TObject *Sender);
 	void __fastcall Act_SelectVersExecute(TObject *Sender);
 	void __fastcall TrayIconMainBalloonClick(TObject *Sender);
@@ -81,7 +81,7 @@ __published:	// IDE-managed Components
 	void __fastcall MBW_PageControlAllChange(TObject *Sender);
 	void __fastcall Act_CorcordanceDictionaryGrecExecute(TObject *Sender);
 	void __fastcall MBW_PageControlsAllDrawTab(TCustomTabControl *Control, int TabIndex,
-          const TRect &Rect, bool Active);
+					const TRect &Rect, bool Active);
 	void __fastcall Act_ProjectSchemeVersExecute(TObject *Sender);
 	void __fastcall Act_InfomationsExecute(TObject *Sender);
 	void __fastcall Act_ViewAllResourcesExecute(TObject *Sender);
@@ -96,7 +96,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_MailChaptExecute(TObject *Sender);
 	void __fastcall Act_ImageAndTextExecute(TObject *Sender);
 	void __fastcall ImageBackgroundWindowDragOver(TObject *Sender, TObject *Source,
-          int X, int Y, TDragState State, bool &Accept);
+					int X, int Y, TDragState State, bool &Accept);
 	void __fastcall Act_ReadingPlanExecute(TObject *Sender);
 	void __fastcall Act_HistoryChaptersExecute(TObject *Sender);
 	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
@@ -115,7 +115,7 @@ private:	// User declarations
 	void __fastcall _OnDblClick_ListFavorities(System::TObject* Sender);
 	void __fastcall _DisplayHelp(TAction *_pAction);
 	bool __fastcall _IsWordInstalled();
-  bool _bIsWordInstalled=false;
+	bool _bIsWordInstalled=false;
 	//---
 public:		// User declarations
 	__fastcall TMainBibleWindow(TComponent* Owner);

@@ -22,7 +22,7 @@
 */
 TSetupsWindow *SetupsWindow;
 enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_OtherSetups, enPageSetup_Translates,
-      enPageSetups_ReadingPlan, enPageSetups_SelectThemes,
+			enPageSetups_ReadingPlan, enPageSetups_SelectThemes,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
 			enSetup_Save=10, enSetup_Return, enSetup_Cancel, enSetup_Help,
 			//enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
@@ -31,7 +31,7 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enTagControl_ButtFontAdress,
 			enTagControl_ButtFontNameTranslates,
 			enTagControl_ButtDisplayselectTheme,
-        //TSpinEdit
+				//TSpinEdit
 			enTagControl_SpinEdSizeMainFont,
 			enTagControl_SpinEdSizeAdressFont,
 			enTagControl_SpinEdSizeTranslatesFont,
@@ -42,10 +42,10 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 
 			//Indeksy grafik ikon this->SW_ImgListSmallMain
 			enImage_SmallSelectDir=0, enImage_SmallSaveConfig, enImage_SmallCancel, enImage_SmallUndoSetup, enImage_SmallColors, enImage_SmallSelectTranslate,
-      emImage_DisplaySelectTheme, //6
+			emImage_DisplaySelectTheme, //6
 			//Indeksy grafik ikon this->SW_ImgListMainSmall
 			enImage_ViewAplic=0, enImage_SetupFlags, enImage_Paths, enImage_OtherSetups, enImage_Translates, enImage_TypeTranslate, enImage_DescryptionTranslate,
-			enImage_ReadingPlan, enImage_NumberDayPlan, enImage_SelectThemes,  //9
+			enImage_ReadingPlan, enImage_NumberDayPlan, enImage_SelectThemes,	 //9
 			//Numery kolumn dodatkowych w ustawieniach tłumaczeń
 			enColumn_TypeTranslate=0, enColumn_DescryptionTranslate,
 			//Grupy tłumaczeń
@@ -116,7 +116,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	//Hinty
 	this->SW_ButGroupSections->Hint = "Grupy ustawień";
 	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
@@ -127,7 +127,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_ButtSelectDirMulti_3->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_3->ImageIndex)));
 	this->SW_ButtSetupSave->Hint = Format("Zapis zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupSave->ImageIndex)));
 	this->SW_ButtSetupCancel->Hint = Format("Anulowanie zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupCancel->ImageIndex)));
-  //Tagi
+	//Tagi
 
 	//Pole tekstowe z wybranymi katalogami z multimediami
 	this->SW_LEditPath1->Tag = enSelectDirMulti_1; this->SW_ButtSelectDirMulti_1->Tag = enSelectDirMulti_1;
@@ -153,7 +153,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	{
 		this->SW_LBoxSelectTheme->Items->AddStrings(TStyleManager::StyleNames); //Wczytanie tematów załadowanych do aplikacji
 	}
-  //Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
+	//Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
 	//Dodawanie grup do objektu, typu TListView
 	for(int i=0; i<enGroup_Count; i++)
@@ -162,7 +162,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 		pLGroup->Header = ustrGroups[i];
 	}
 	//Dodawanie kolumn do objektu, typu TListView
-	TListColumn  *NewColumn;//=0;
+	TListColumn	 *NewColumn;//=0;
 	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumnLViewTranslates); iColumns++)
 	{
 		NewColumn = this->SW_ListViewAllTranslates->Columns->Add();
@@ -190,8 +190,8 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->TrackBarSetVolume->Min = SPVLIMITS::SPMIN_VOLUME;
 	this->TrackBarSetVolume->Max = SPVLIMITS::SPMAX_VOLUME;
 	//Wstępne ustawieni na karcie tematów graficznych
-	this->SW_ButtDisplaySelectTheme->Enabled =  this->SW_LBoxSelectTheme->ItemIndex > -1;
-  //Inicjalizacja obsługi przełączników flag //[15-08-2023]
+	this->SW_ButtDisplaySelectTheme->Enabled =	this->SW_LBoxSelectTheme->ItemIndex > -1;
+	//Inicjalizacja obsługi przełączników flag //[15-08-2023]
 	this->_InitToggleSwitches();
 }
 //---------------------------------------------------------------------------
@@ -203,7 +203,7 @@ void __fastcall TSetupsWindow::FormClose(TObject *Sender, TCloseAction &Action)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	Action = caFree;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
@@ -227,7 +227,7 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	//Odczyt wszystkich ustawień aplikacji i stanu kontrolek zależnych od posczególnych parametrów odczytanych z konfiguracji
 	this->_InitLViewDisplaySelectPlan();
 	this->_ReadAllConfig();
-  this->_DisplayPreview();
+	this->_DisplayPreview();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
@@ -280,13 +280,13 @@ void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListColumn *NewColumn=nullptr;
+	TListColumn *NewColumn=nullptr;
 	//Dodawanie kolumn
 	for(unsigned int iColumns=0; iColumns<enNameColumnDisplaySelectPlay_CountColumn; iColumns++)
 	{
 		NewColumn = this->LViewDisplayselectPlan->Columns->Add();
 		NewColumn->Caption = ustrNamesColumns[iColumns];
-    if(iColumns > 0) NewColumn->AutoSize = true;
+		if(iColumns > 0) NewColumn->AutoSize = true;
 		//NewColumn->ImageIndex = 0;
 	}
 }
@@ -320,7 +320,7 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 								ustr_FontNameAdress = this->ButtFontNameAdress->Caption,
 								ustr_FontNameTranslators = this->ButtFontNameTranslates->Caption;
 
-  UnicodeString   //Styl dla głównego tekstu
+	UnicodeString		//Styl dla głównego tekstu
 								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
 								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
@@ -360,7 +360,7 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 																							 "</style>\n</head>\n\n<body>\n";
 	MyObjectVers *pMyOjectVers=nullptr;
 	UnicodeString _Style_FavoriteStyle = "", //Styl zaznaczania ulubionego wersetu
-								_Style_CommentStyle = "",  //Styl zaznaczania wersetu skomentowanego
+								_Style_CommentStyle = "",	 //Styl zaznaczania wersetu skomentowanego
 								_StyleFav_End = "",
 								_StyleComm_End = "",
 								//---
@@ -386,41 +386,41 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 
 			if(i==0) //Będzie wyswietlony text ulubiony i z komentarzem
 			{
-        _Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //"<span class=\"styleFavorite\">"; //Styl zaznaczania ulubionego wersetu
+				_Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //"<span class=\"styleFavorite\">"; //Styl zaznaczania ulubionego wersetu
 				_StyleFav_End = "</div>";
-        _Style_CommentStyle = "<span class=\"styleComment\">C";  //Styl zaznaczania wersetu skomentowanego
+				_Style_CommentStyle = "<span class=\"styleComment\">C";	 //Styl zaznaczania wersetu skomentowanego
 				_StyleComm_End = "</span>\n";
 			}
 			else
 			{
-        _Style_FavoriteStyle = ""; //Styl zaznaczania ulubionego wersetu
+				_Style_FavoriteStyle = ""; //Styl zaznaczania ulubionego wersetu
 				_StyleFav_End = "";
-        _Style_CommentStyle = "";  //Styl zaznaczania wersetu skomentowanego
+				_Style_CommentStyle = "";	 //Styl zaznaczania wersetu skomentowanego
 				_StyleComm_End = "";
-      }
+			}
 			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //Pełne polskie tłumaczenie
 			{
-		  	pStringStream->WriteString(Format(UnicodeString("<p>\n") +
-		  		"%s" +  //_Style_FavoriteStyle
-		  		"%s" +  //_Style_CommentStyle
-		  		"%s" + "<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
-		  		"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
-		  		"<span class=\"styleText\">\n\t" + "%s\n</span>\n" +
-		  		"%s\n", //_StyleFav_End, //_pTempHSListViewAllTr->Strings[iIndex]
-		  		ARRAYOFCONST((_Style_FavoriteStyle,
-		  									_Style_CommentStyle,
-		  									_StyleComm_End,
-		  									pMyOjectVers->BookChaptVers,
+				pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+					"%s" +	//_Style_FavoriteStyle
+					"%s" +	//_Style_CommentStyle
+					"%s" + "<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
+					"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
+					"<span class=\"styleText\">\n\t" + "%s\n</span>\n" +
+					"%s\n", //_StyleFav_End, //_pTempHSListViewAllTr->Strings[iIndex]
+					ARRAYOFCONST((_Style_FavoriteStyle,
+												_Style_CommentStyle,
+												_StyleComm_End,
+												pMyOjectVers->BookChaptVers,
 												_pTempHSListViewAllTr->Strings[i],
-		  									_StyleFav_End))));
+												_StyleFav_End))));
 
-		  	//Nazwa tłumaczenia
-		  	pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
+				//Nazwa tłumaczenia
+				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
 					ARRAYOFCONST((DisplaySelectNameTranslate))));
 			}
 			else
 			{
-        pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+				pStringStream->WriteString(Format(UnicodeString("<p>\n") +
 					"<span class=\"styleVersOryg\">" +
 					"\n\t%s\n</span>\n<span class=\"styleOrygin\">" + //pMyOjectVers->BookChaptVers
 					"\n\t%s\n</span>\n", //pTempHSList->Strings[i]
@@ -429,13 +429,13 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 				//Nazwa tłumaczenia
 				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
 					ARRAYOFCONST((DisplaySelectNameTranslate))));
-      }
+			}
 			pStringStream->WriteString("</p>\n");
-    }
+		}
 		pStringStream->WriteString("</body>\n</html>\n");
 		pStringStream->Position = 0;
 
-    IPersistStreamInit *psi;
+		IPersistStreamInit *psi;
 		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
 		if(SUCCEEDED(this->WebBrowserPreview->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
 			{psi->Load(sa);}
@@ -443,8 +443,8 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 	__finally
 	{
 		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
-    if(_pTempHSListViewAllTr) {delete _pTempHSListViewAllTr; _pTempHSListViewAllTr = nullptr;}
-  }
+		if(_pTempHSListViewAllTr) {delete _pTempHSListViewAllTr; _pTempHSListViewAllTr = nullptr;}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_DisplaySelectPlan()
@@ -456,7 +456,7 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 */
 {
 	UnicodeString ustrPathFileReadingPlan, ustrTemp, ustrItemText;
-  const UnicodeString custrSeparator = "|";
+	const UnicodeString custrSeparator = "|";
 	THashedStringList *pHSList=nullptr;
 	TListItem *pItem=nullptr;
 	int iLengthPair;
@@ -466,12 +466,12 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 	{
 		try
 		{
-  		pHSList = new THashedStringList();
+			pHSList = new THashedStringList();
 			if(!pHSList) throw(Exception("Błąd funkcji THashedStringList"));
 			this->LViewDisplayselectPlan->Items->BeginUpdate();
-      this->LViewDisplayselectPlan->Clear();
+			this->LViewDisplayselectPlan->Clear();
 			if(this->CBoxSelectPlan->ItemIndex > -1)
-  		{
+			{
 				ustrPathFileReadingPlan = TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, this->CBoxSelectPlan->Text);
 
 				if(!TFile::Exists(ustrPathFileReadingPlan)) throw(Exception("Brak pliku z wybranym planem czytania biblii"));
@@ -492,7 +492,7 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 						//Formatowanie wyświetlania zależnie od dłygości zcalonej pary (pozbawionej spacji zakresu)
 						{
 							case ciOneChapt:
-								ustrItemText += Format("%s %d", ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook,  ustrTemp.SubString(4, 3).ToInt() )));
+								ustrItemText += Format("%s %d", ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook,	 ustrTemp.SubString(4, 3).ToInt() )));
 								break;
 
 							case ciTwoChapt:
@@ -508,7 +508,7 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 								break;
 
 							default:
-                #if defined(_DEBUGINFO_)
+								#if defined(_DEBUGINFO_)
 									GsDebugClass::WriteDebug(Format("Linia: %d", ARRAYOFCONST((i+1))));
 								#endif
 								throw(Exception("Niewłaściwy format pliku z wybranym planem"));
@@ -597,7 +597,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	//Lista tłumaczeń wyłączonych z wyświetlania
 	TStringList *pSListExcludeTrans = new TStringList();
 	if(!pSListExcludeTrans) throw(Exception("Błąd inicjalizacji objektu TStringList"));
-  //Odczyt z pliku ini, tłumaczeń wykluczonych
+	//Odczyt z pliku ini, tłumaczeń wykluczonych
 	pSListExcludeTrans->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, "");
 	//Dodawanie ścieżek dostępu do wszystkich tłumaczeń
 	UnicodeString ustrNameTranslate;
@@ -635,7 +635,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
 			{this->CBoxSelectTranslate->AddItem(Format("%s - %s", ARRAYOFCONST((NewItem->Caption, ustrNameTranslate))), 0);}
 	}
-  if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
 	//---Planu czytania biblii
 		//--- Odczyt planów
 	TStringDynArray SDirReadingPlanList = TDirectory::GetFiles(GlobalVar::Global_custrPathAllReadingPlan, "*" +GlobalVar::Global_ustrFileReadingPlanExtend, 0);
@@ -652,7 +652,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		//--- Odczyt wybranego tłumaczenia dla Planu czytania biblii z konfiguracji
 	this->CBoxSelectTranslate->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	this->CBoxSelectTranslate->ItemIndex = this->CBoxSelectTranslate->Items->IndexOf(this->CBoxSelectTranslate->Text);
-  this->_DisplaySelectPlan();
+	this->_DisplaySelectPlan();
 		//--- Lista czcionek dla planu czytania biblii
 	this->CBoxSelectFontReadingPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
 	for(int i=0; i<ARRAYSIZE(ustrFontList); i++)
@@ -676,14 +676,14 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	//--- Parametry mowy
 	this->TrackBarSetRate->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, -2);
 	this->TrackBarSetVolume->Position = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, 100);
-  //--- Parametry styli aplikacji
+	//--- Parametry styli aplikacji
 	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
 	this->SW_LBoxSelectTheme->ItemIndex = this->SW_LBoxSelectTheme->Items->IndexOf(ustrSelectStyle);
 	if(this->SW_LBoxSelectTheme->ItemIndex == -1)
 	//Jeśli nie ma takiego stylu na liście, znajdowany jest styl domyślny
 	{
 		this->SW_LBoxSelectTheme->ItemIndex = this->SW_LBoxSelectTheme->Items->IndexOf(GlobalVar::Global_DefaultStyleName);
-  }
+	}
 	this->SW_ButtSetups_Click(this->SW_ButtDisplaySelectTheme);
 }
 //---------------------------------------------------------------------------
@@ -779,7 +779,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 		//Jeśli tłumaczenie jest zaznaczone, dodaj tłumaczenie do listy używanych
 		{
 			//pSListIncludeTrans->Add(this->SW_ListViewAllTranslates->Items->Item[i]->Caption);
-    }
+		}
 	}
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, pSListExcludeTrans->CommaText);
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
@@ -788,7 +788,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	int iIDTranslatePlan=-1, intPosSpace=0;
 		//--- Wyprowadzania numeru identyfikacyjnego tłumaczenia przeznaczonego do planu czytania biblii
 	if(!this->CBoxSelectTranslate->Text.IsEmpty())
-  //----- Jest wybrane tłumaczenie z listy dla planu
+	//----- Jest wybrane tłumaczenie z listy dla planu
 	{
 		intPosSpace = this->CBoxSelectTranslate->Text.Pos(" ");
 		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
@@ -809,20 +809,20 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	{
 		GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan);
 		GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate);
-    if(TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan)) TFile::Delete(GlobalVar::GlobalPath_CurrentActivePlan);
+		if(TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan)) TFile::Delete(GlobalVar::GlobalPath_CurrentActivePlan);
 	}
 	else
 	{
 		//Wybrany plan czytania
 		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, this->CBoxSelectPlan->Text);
-    //Data rozpoczęcia planu
+		//Data rozpoczęcia planu
 		GlobalVar::Global_ConfigFile->WriteDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, this->DateTimePickerSelectStartDatePlan->Date);
 	}
 		//Nazwa czcionki dla planu
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, this->CBoxSelectFontReadingPlan->Text);
 		//--- Wielkość czcionki dla planu
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, this->CBoxSelectSizeFontPlan->Text);
-  //--- Parametry mowy
+	//--- Parametry mowy
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetRate, this->TrackBarSetRate->Position);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SetVolume, this->TrackBarSetVolume->Position);
 	//--- Parametry styli aplikacji
@@ -849,7 +849,7 @@ void __fastcall TSetupsWindow::SW_ButGroupSectionsButtonClicked(TObject *Sender,
 	TButtonGroup *pButtGr = dynamic_cast<TButtonGroup *>(Sender);
 	if(!pButtGr) return;
 	//---
-  this->SW_PControlSelected->ActivePageIndex = Index;
+	this->SW_PControlSelected->ActivePageIndex = Index;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SW_ButGroupSectionsKeyUp(TObject *Sender, WORD &Key,
@@ -894,7 +894,7 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 	//---
 	switch(pButton->Tag)
 	{
-    //Przyciski wyboru katalogów z multimediami
+		//Przyciski wyboru katalogów z multimediami
 		case enSelectDirMulti_1:
 			this->SW_LEditPath1->Text = this->_SelectMultimediaDir(this->SW_LEditPath1->Text);
 			break;
@@ -907,23 +907,23 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 		//Dolne przyciski akcji
 		case enSetup_Save:
 		{
-      this->_WriteAllConfig();
+			this->_WriteAllConfig();
 			this->Close();
 		}
 		break;
 		//---
 		case enSetup_Return:
 		{
-      //Odczytanie starych ustawień do bufora, pliku ini, z TStringListy
+			//Odczytanie starych ustawień do bufora, pliku ini, z TStringListy
 			GlobalVar::Global_ConfigFile->SetStrings(this->_SListOldConfig);
 			//---Ustawienie wszystkick ustawień na pierwotny stan, przed jaką kolwiek zmianą.
 			this->_ReadAllConfig();
-    }
+		}
 		break;
 		//---
 		case enSetup_Cancel:
 		{
-      this->Close();
+			this->Close();
 		}
 		break;
 		//---
@@ -957,7 +957,7 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 				break;
 				//---
 				case enPageSetups_SelectThemes:
-        	Application->HelpContext(HELP_Set_Tematygraficzne);
+					Application->HelpContext(HELP_Set_Tematygraficzne);
 				break;
 				//---
 				default:
@@ -1000,11 +1000,11 @@ UnicodeString __fastcall TSetupsWindow::_SelectMultimediaDir(UnicodeString _ustr
 	TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
 	if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
 	//---
-  pFileOpenDialog->Title = "Wybierz katalog...";
+	pFileOpenDialog->Title = "Wybierz katalog...";
 	pFileOpenDialog->Options << fdoPickFolders << fdoPathMustExist << fdoForceFileSystem;
 	pFileOpenDialog->DefaultFolder = _ustrPath;
 	//Otwarcie wyboru katalogu
-  if(pFileOpenDialog->Execute())
+	if(pFileOpenDialog->Execute())
 		ustrSelect = pFileOpenDialog->FileName;
 	else ustrSelect = _ustrPath;
 
@@ -1090,7 +1090,7 @@ void __fastcall TSetupsWindow::ButtFontSelectClick(TObject *Sender)
 	{
 		pButt->Font = pFontDialog->Font;
 		pButt->Caption = pFontDialog->Font->Name;
-    switch(pButt->Tag)
+		switch(pButt->Tag)
 		{
 			case enTagControl_ButtFontMain: this->SpEditSizeMainFont->Value = pFontDialog->Font->Size;
 			break;
@@ -1123,7 +1123,7 @@ void __fastcall TSetupsWindow::SpEditSizeFontChange(TObject *Sender)
 		case enTagControl_SpinEdSizeMainFont:
 			this->ButtFontNameMainText->Font->Size = pSpinEdit->Value;
 			break;
-    //---
+		//---
 		case enTagControl_SpinEdSizeAdressFont:
 			this->ButtFontNameAdress->Font->Size = pSpinEdit->Value;
 			break;
@@ -1132,7 +1132,7 @@ void __fastcall TSetupsWindow::SpEditSizeFontChange(TObject *Sender)
 			this->ButtFontNameTranslates->Font->Size = pSpinEdit->Value;
 			break;
 		//---
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SpButtonStartStopReadingPlanClick(TObject *Sender)
@@ -1149,20 +1149,20 @@ void __fastcall TSetupsWindow::SpButtonStartStopReadingPlanClick(TObject *Sender
 	if(pSButton->Down)
 	{
 		if(this->CBoxSelectPlan->Text.IsEmpty())
-    //Brak wybranego planu
+		//Brak wybranego planu
 		{
 			MessageBox(NULL, TEXT("Nie jest wybrany plan czytania, więc nie ma czego aktywować. Wybierz najpierw odpowiedni plan i aktywuj go."), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 			pSButton->Down = false;
 			return;
 		}
-    this->DateTimePickerSelectStartDatePlan->MinDate = 0;
+		this->DateTimePickerSelectStartDatePlan->MinDate = 0;
 		this->DateTimePickerSelectStartDatePlan->Enabled = false;
 		this->_InfoStartStopPlan();//Informacje o wybranym planie
 		this->_WriteJournalPlan(); //Stworzenie pliku dziennika
 	}
 	else //Nieaktywny plan czytania
 	{
-    #if defined(_DEBUGINFO_)
+		#if defined(_DEBUGINFO_)
 			GsDebugClass::WriteDebug("pSButton->Down = false");
 		#endif
 		this->DateTimePickerSelectStartDatePlan->Enabled = true;
@@ -1222,7 +1222,7 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 				pHSList->SaveToFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
 			} //if(!TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
 			else
-      //Plik dziennika istnieje. Trzeba sprawdzić czy nie odnosi sie do aktualnego planu
+			//Plik dziennika istnieje. Trzeba sprawdzić czy nie odnosi sie do aktualnego planu
 			{
 				pHSList->LoadFromFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
 				if(pHSList->Strings[ciNameCurrentPlan] == this->CBoxSelectPlan->Text)
@@ -1230,18 +1230,18 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 					#if defined(_DEBUGINFO_)
 						GsDebugClass::WriteDebug("Ten sam plan");
 					#endif
-        }
-      }
+				}
+			}
 		} //try catch
 		catch(Exception &e)
 		{
 			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
-    }
+		}
 	} //try __finally
 	__finally
 	{
 		if(pHSList) {delete pHSList; pHSList = nullptr;}
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::DateTimePickerSelectStartDatePlanChange(TObject *Sender)
@@ -1262,7 +1262,7 @@ void __fastcall TSetupsWindow::DateTimePickerSelectStartDatePlanChange(TObject *
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::LViewDisplayselectPlanDrawItem(TCustomListView *Sender,
-          TListItem *Item, TRect &Rect, TOwnerDrawState State)
+					TListItem *Item, TRect &Rect, TOwnerDrawState State)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -1277,22 +1277,22 @@ void __fastcall TSetupsWindow::LViewDisplayselectPlanDrawItem(TCustomListView *S
 	TRect RectLabel = Item->DisplayRect(drLabel);
 	TRect RectIcon = Item->DisplayRect(drIcon);
 
-  if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
+	if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
 
 	pLView->Canvas->FillRect(RectBounds);
 	pLView->Canvas->Font = pLView->Font;
 	pLView->Canvas->Font->Style = TFontStyles() << fsBold;
 
-	this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectIcon.Left, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)  / 2)) + RectIcon.Top, enImage_NumberDayPlan);
+	this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectIcon.Left, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)	/ 2)) + RectIcon.Top, enImage_NumberDayPlan);
 	DrawText(pLView->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 
-  TRect RectSubItem  = RectLabel;
+	TRect RectSubItem	 = RectLabel;
 	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
 	{
 		//Wymiary następnej kolumny
 		RectSubItem.Left += pLView->Column[iColumn]->Width;
 		RectSubItem.Right += pLView->Column[iColumn + 1]->Width;
-		this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectSubItem.Left - this->SW_ImgListMainSmall->Width, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)  / 2)) + RectIcon.Top, enImage_ReadingPlan);
+		this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectSubItem.Left - this->SW_ImgListMainSmall->Width, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)	/ 2)) + RectIcon.Top, enImage_ReadingPlan);
 
 		pLView->Canvas->Font->Color = clBlue;
 		pLView->Canvas->Font->Style = TFontStyles();
@@ -1311,7 +1311,7 @@ void __fastcall TSetupsWindow::LViewDisplayselectPlanChanging(TObject *Sender,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//---
 	AllowChange = false;
@@ -1328,7 +1328,7 @@ void __fastcall TSetupsWindow::CBoxSelectPlanChange(TObject *Sender)
 	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
 	if(!pCBox) return;
 	//--- Aktualizacje
-  this->SpButtonStartStopReadingPlanClick(this->SpButtonStartPlan);
+	this->SpButtonStartStopReadingPlanClick(this->SpButtonStartPlan);
 	this->_DisplaySelectPlan();
 }
 //---------------------------------------------------------------------------

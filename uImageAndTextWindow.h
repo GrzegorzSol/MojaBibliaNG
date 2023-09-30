@@ -62,7 +62,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_CloseActiveSheetExecute(TObject *Sender);
 	void __fastcall PControlImageAndTextEnter(TObject *Sender);
 	void __fastcall PControlImageAndTextDrawTab(TCustomTabControl *Control, int TabIndex,
-          const TRect &Rect, bool Active);
+					const TRect &Rect, bool Active);
 	void __fastcall Act_SaveAsExecute(TObject *Sender);
 	void __fastcall Act_SaveExecute(TObject *Sender);
 	void __fastcall Act_TextExecute(TObject *Sender);
@@ -73,7 +73,7 @@ __published:	// IDE-managed Components
 	void __fastcall CBoxSelectColorTextGetColors(TCustomColorBox *Sender, TStrings *Items);
 	void __fastcall CBoxAllSelect(TObject *Sender);
 	void __fastcall PControlToolsMouseDown(TObject *Sender, TMouseButton Button,
-          TShiftState Shift, int X, int Y);
+					TShiftState Shift, int X, int Y);
 	void __fastcall TrBarAllChange(TObject *Sender);
 	void __fastcall ChBoxAllClick(TObject *Sender);
 	void __fastcall SplitViewImageAndTextOpened(TObject *Sender);
@@ -81,14 +81,14 @@ __published:	// IDE-managed Components
 	void __fastcall Act_OnlyTextExecute(TObject *Sender);
 	void __fastcall LBoxSelectEffectsClick(TObject *Sender);
 	void __fastcall LBoxSelectEffectsDrawItem(TWinControl *Control, int Index,
-          TRect &Rect, TOwnerDrawState State);
+					TRect &Rect, TOwnerDrawState State);
 
 private:	// User declarations
 	void __fastcall _InitTagAndHint();
 	GsDirect2DClass *__fastcall _GetDirect2DFromActiveSheet();
-  GsPanelMultiM *_pGsPanelMultiM;
+	GsPanelMultiM *_pGsPanelMultiM;
 	void __fastcall _SetupAllEnable(const bool _bEnable);
-  UnicodeString _ustrInputText;
+	UnicodeString _ustrInputText;
 public:		// User declarations
 	__fastcall TImageAndTextWindow(TComponent* Owner, const UnicodeString ustrInput = "");
 };

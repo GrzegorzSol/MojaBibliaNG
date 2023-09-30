@@ -9,17 +9,17 @@ const int SIZE_ADDR_VERS = 16;
 static UnicodeString sustrVersionGsMasterBibleScheme = "0.7.8235.8529";
 typedef struct _ReadWriteDataObject
 {
-	int RW_ID, 															//Numer identyfikacyjny
+	int RW_ID,															//Numer identyfikacyjny
 			RW_IDList,													//Pozycja w globalnej liście objektu _GsChildBibleSchemeList, klasy TList
-			RW_Left,    												//
-			RW_Top,     												//
-			RW_IDListParent;  									//Numer identyfikacyjny przodka w głównej liście, lub -1, gdy jest to korzeń
-	wchar_t RW_AdressVers[SIZE_ADDR_VERS]; 	//Adres wersetu
+			RW_Left,														//
+			RW_Top,															//
+			RW_IDListParent;										//Numer identyfikacyjny przodka w głównej liście, lub -1, gdy jest to korzeń
+	wchar_t RW_AdressVers[SIZE_ADDR_VERS];	//Adres wersetu
 	unsigned char RW_Book, RW_Chapt, RW_Vers, RW_Trans;
 } ReadWriteDataObject, *PReadWriteDataObject;
 /****************************************************************************
-*          Klasa całkowicie PRYWATNA GsCoreBibleScheme,                     *
-*                    pochodna TCustomPanel.                                 *
+*					 Klasa całkowicie PRYWATNA GsCoreBibleScheme,											*
+*										 pochodna TCustomPanel.																	*
 *****************************************************************************/
 class GsCoreBibleScheme : public TCustomPanel
 {
@@ -35,8 +35,8 @@ class GsCoreBibleScheme : public TCustomPanel
 		bool StartMove;	//Rozpoczıcie przesuwania
 };
 /****************************************************************************
-*          Klasa całkowicie PRYWATNA GsChildBibleScheme,                    *
-*                    pochodna GsCoreBibleScheme.                            *
+*					 Klasa całkowicie PRYWATNA GsChildBibleScheme,										*
+*										 pochodna GsCoreBibleScheme.														*
 *****************************************************************************/
 class GsScrollBibleScheme;
 class GsDrawPanelBibleScheme;
@@ -68,8 +68,8 @@ class GsChildBibleScheme : public GsCoreBibleScheme
 		DYNAMIC void __fastcall MouseMove(System::Classes::TShiftState Shift, int X, int Y);
 };
 /****************************************************************************
-*          Klasa całkowicie PRYWATNA GsDrawPanelBibleScheme,                *
-*                    pochodna TCustomPanel.                                 *
+*					 Klasa całkowicie PRYWATNA GsDrawPanelBibleScheme,								*
+*										 pochodna TCustomPanel.																	*
 *****************************************************************************/
 class GsDrawPanelBibleScheme : public TCustomPanel
 {
@@ -85,7 +85,7 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		virtual void __fastcall Paint();
 	private:
 		GsChildBibleScheme *_pSelectObject,	//Aktualnie aktywny objekt
-										   *_pRootObject;   //Okno głównego korzenia
+											 *_pRootObject;		//Okno głównego korzenia
 		UnicodeString _ustrSelectNameProject; //Nazwa aktualnego projektu
 		TList *_GsChildBibleSchemeList;
 		//---
@@ -96,8 +96,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		void __fastcall _ViewProjectDocument();
 };
 /****************************************************************************
-*                Główna klasa GsScrollBibleScheme,                          *
-*                        pochodna TScrollBox.                               *
+*								 Główna klasa GsScrollBibleScheme,													*
+*												 pochodna TScrollBox.																*
 *****************************************************************************/
 class GsScrollBibleScheme : public TScrollBox
 {
@@ -111,8 +111,8 @@ class GsScrollBibleScheme : public TScrollBox
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme;
 };
 /****************************************************************************
-*                Główna klasa GsMasterBibleScheme,                          *
-*                        pochodna TScrollBox.                               *
+*								 Główna klasa GsMasterBibleScheme,													*
+*												 pochodna TScrollBox.																*
 *****************************************************************************/
 class GsMasterBibleScheme : public TCustomPanel
 {
@@ -138,7 +138,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		GsBarSelectVers *_pGsBarSelectVers;
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme;
 		GsEditorClass *pGsEditorClass;
-    TSplitter *pSplitter;
+		TSplitter *pSplitter;
 		TLabel *_pVersDisplayText; //Wyświetlenie wybranego wersetu
 };
 

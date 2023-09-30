@@ -46,7 +46,7 @@ __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
 	if(!this->pGsMasterBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsMasterBibleScheme"));
 	this->pGsMasterBibleScheme->Parent = this;
 	this->pGsMasterBibleScheme->Align = alClient;
-  //---
+	//---
 	this->Caption = ustrCaptionWindow;
 	this->ActOpenProject->Tag = enTagScheme_Open;
 	this->ActOpenProject->Hint = Format("%s|Otwiera istniejący, zapisany projekt na dysku.|%u", ARRAYOFCONST((this->ActOpenProject->Caption, this->ActOpenProject->ImageIndex)));
@@ -70,7 +70,7 @@ void __fastcall TSchemeVersWindow::FormClose(TObject *Sender, TCloseAction &Acti
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	Action = caFree;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::FormCreate(TObject *Sender)
@@ -92,7 +92,7 @@ void __fastcall TSchemeVersWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  ///
+	///
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
@@ -103,7 +103,7 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	this->pGsMasterBibleScheme->AddNewObjectScheme();
@@ -117,7 +117,7 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 	{
 		this->ActViewEditor->Checked = true;
 		this->ActViewEditorExecute(this->ActViewEditor);
-  }
+	}
 	this->ActViewEditor->Enabled = false; //Zablokowanie wyłączania edytora - 28-03-2021
 
 }
@@ -136,7 +136,7 @@ void __fastcall TSchemeVersWindow::ActDeleteLinkExecute(TObject *Sender)
 	this->pGsMasterBibleScheme->DeleteObjectScheme();
 	this->ActCreateFileFromScheme->Enabled = (this->pGsMasterBibleScheme->GetCountObjectScheme() > 0);
 	this->ActDeleteLink->Enabled = this->ActCreateFileFromScheme->Enabled;
-  //Brak elementów, można włączać i wyłączać edytor - 28-03-2021
+	//Brak elementów, można włączać i wyłączać edytor - 28-03-2021
 	this->ActViewEditor->Enabled = (this->pGsMasterBibleScheme->GetCountObjectScheme() == 0);
 }
 //---------------------------------------------------------------------------
@@ -148,10 +148,10 @@ void __fastcall TSchemeVersWindow::ActSaveExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-  this->pGsMasterBibleScheme->SaveProjectObjectSchemeToFile();
+	this->pGsMasterBibleScheme->SaveProjectObjectSchemeToFile();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActOpenProjectExecute(TObject *Sender)
@@ -191,7 +191,7 @@ void __fastcall TSchemeVersWindow::ActViewEditorExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//Wyłuskanie edytora dokumentu, dla projektu
 	GsEditorClass *pGsEditorClass = this->pGsMasterBibleScheme->GetEditorClass();

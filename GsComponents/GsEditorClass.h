@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.Controls.hpp>
-//#define _DEBUGINFO_  //Używanie okna konsoli do debugowania aplikacji
+//#define _DEBUGINFO_	 //Używanie okna konsoli do debugowania aplikacji
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif
@@ -34,7 +34,7 @@ class GsEditorClass : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 	private:
 		TRichEdit *pTRichEdit;
-    TImageList *pTImageListActive,
+		TImageList *pTImageListActive,
 							 *pTImageListInActive;
 		TToolBar *pToolBar;
 		TToolButton *pTButtBold, *pTButtItalic, *pTButtUnderline, *pTButtStrikeOut,
@@ -53,7 +53,7 @@ class GsEditorClass : public TCustomPanel
 		void __fastcall _OnChangeEdit(System::TObject *Sender);
 		//---
 		void __fastcall _InitImageList();
-    void __fastcall _PrintEditor(); //Drukowanie zawartości edytora
+		void __fastcall _PrintEditor(); //Drukowanie zawartości edytora
 		//---
 		UnicodeString FEditorFileName;
 		bool FIsVisibleAllIOButtons; //Prywatny wskażnik modyfikacji

@@ -15,7 +15,7 @@ MessageBox(NULL, TEXT("Aplikacja do uruchomienia wymaga systemu operacyjnego w w
 */
 #if defined(__BORLANDC__) && defined(_WIN64)
 	#pragma link "D2d1.a"
-  #pragma link "dwrite.a"
+	#pragma link "dwrite.a"
 #else
 	#pragma link "D2d1.lib"
 	#pragma link "dwrite.lib"
@@ -23,7 +23,7 @@ MessageBox(NULL, TEXT("Aplikacja do uruchomienia wymaga systemu operacyjnego w w
 
 #pragma package(smart_init)
 
-const float DEFAULT_DPI = 96.0f;   // Domyślne DPI, które mapuje rozdzielczość obrazu bezpośrednio do rozdzielczości ekranu
+const float DEFAULT_DPI = 96.0f;	 // Domyślne DPI, które mapuje rozdzielczość obrazu bezpośrednio do rozdzielczości ekranu
 //Funkcje pomocnicze
 bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont);
 //Nadanie wartości składnikom statycznym
@@ -63,14 +63,14 @@ __fastcall GsDirect2DClass::GsDirect2DClass(TComponent* Owner) : TCustomPanel(Ow
 	this->pIDWriteTextFormat=nullptr;
 	this->pIDWriteTextLayout=nullptr;
 	this->pID2D1SolidColorBrush1=nullptr;
-  this->pID2D1SolidColorBrush2=nullptr;
+	this->pID2D1SolidColorBrush2=nullptr;
 	//Flagi i zmienne ustawień
 	this->FIsDisplayText=CFIsDisplayText;
 	this->FNameFont = CFNameFont;
 	this->FSizeFont = CFSizeFont;
 	this->FTextWrite = CFTextWrite;
 	this->FD2DColorText = CFD2DColorText;
-  this->FD2DColorText2 = CFD2DColorText2;
+	this->FD2DColorText2 = CFD2DColorText2;
 	this->FStandardColorText = CFStandardColorText;
 	this->FStandardColorText2 = CFStandardColorText2;
 	this->FRotationText = CFRotationText;
@@ -99,7 +99,7 @@ __fastcall GsDirect2DClass::~GsDirect2DClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Direct2D
+	//Direct2D
 	SafeRelease(&this->pID2D1Bitmap);
 	SafeRelease(&this->pIWICFormatConverter);
 	SafeRelease(&this->pIWICImagingFactory);
@@ -110,7 +110,7 @@ __fastcall GsDirect2DClass::~GsDirect2DClass()
 	//DirectWrite
 	SafeRelease(&this->pIDWriteFactory);
 	SafeRelease(&this->pIDWriteTextFormat);
-  SafeRelease(&this->pIDWriteTextLayout);
+	SafeRelease(&this->pIDWriteTextLayout);
 	SafeRelease(&this->pID2D1SolidColorBrush1);
 	SafeRelease(&this->pID2D1SolidColorBrush2);
 }
@@ -134,56 +134,56 @@ void __fastcall GsDirect2DClass::GsD2D_LoadPicture(const UnicodeString custrPath
 	{
 		try
 		{
-  		hr = this->pIWICImagingFactory->CreateDecoderFromFilename(
-  			custrPathImage.c_str(),          //Dekodowanie obrazu
-  			NULL,
-  			GENERIC_READ,                    //Prawo odczytu pliku
-  			WICDecodeMetadataCacheOnDemand,  //Kesz metadanych, gdy trzeba
-  			&pIWICBitmapDecoder              //Wskaźnik do dekodera
-  		);
-  		if(FAILED(hr)) throw(Exception("Błąd metody CreateDecoderFromFilename())"));
+			hr = this->pIWICImagingFactory->CreateDecoderFromFilename(
+				custrPathImage.c_str(),					 //Dekodowanie obrazu
+				NULL,
+				GENERIC_READ,										 //Prawo odczytu pliku
+				WICDecodeMetadataCacheOnDemand,	 //Kesz metadanych, gdy trzeba
+				&pIWICBitmapDecoder							 //Wskaźnik do dekodera
+			);
+			if(FAILED(hr)) throw(Exception("Błąd metody CreateDecoderFromFilename())"));
 
-  		//Pozyskanie pierwszej klatki obrazka dla dekodera
-  		hr = pIWICBitmapDecoder->GetFrame(0, &pIWICBitmapFrameDecode);
-  		if(FAILED(hr)) throw(Exception("Błąd metody GetFrame())"));
+			//Pozyskanie pierwszej klatki obrazka dla dekodera
+			hr = pIWICBitmapDecoder->GetFrame(0, &pIWICBitmapFrameDecode);
+			if(FAILED(hr)) throw(Exception("Błąd metody GetFrame())"));
 
-  		SafeRelease(&this->pIWICFormatConverter);
-  		hr = this->pIWICImagingFactory->CreateFormatConverter(&this->pIWICFormatConverter);
-  		if(FAILED(hr)) throw(Exception("Błąd metody CreateFormatConverter())"));
+			SafeRelease(&this->pIWICFormatConverter);
+			hr = this->pIWICImagingFactory->CreateFormatConverter(&this->pIWICFormatConverter);
+			if(FAILED(hr)) throw(Exception("Błąd metody CreateFormatConverter())"));
 
-  		hr = this->pIWICFormatConverter->Initialize(
-  			pIWICBitmapFrameDecode,          //Wejściowa bitmapa do konwersji
-  			GUID_WICPixelFormat32bppPBGRA,   //Pikselowy format przeznaczenia
-  			WICBitmapDitherTypeNone,         //Specyfikacja metody wygładzania
-  			NULL,                            //Specyfikacja palety
-  			0.f,                             //Przezroczystaść
-  			WICBitmapPaletteTypeCustom       //Typ przeksztaucenia palety
-  		);
-  		if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
+			hr = this->pIWICFormatConverter->Initialize(
+				pIWICBitmapFrameDecode,					 //Wejściowa bitmapa do konwersji
+				GUID_WICPixelFormat32bppPBGRA,	 //Pikselowy format przeznaczenia
+				WICBitmapDitherTypeNone,				 //Specyfikacja metody wygładzania
+				NULL,														 //Specyfikacja palety
+				0.f,														 //Przezroczystaść
+				WICBitmapPaletteTypeCustom			 //Typ przeksztaucenia palety
+			);
+			if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
 
-  		if(!_bAutosize)
-  		//Jeśli brak dostosowywania widoku obrazu do wielkości okna. Czyli obraz nie będzie skalowany do wymiarów okna.
-  		{
-  			unsigned int uiWidth, uiHeight;
-  			//Odczytaj prawdziwą wymiary obrazu
-  			this->pIWICFormatConverter->GetSize(&uiWidth, &uiHeight);
-  			//Ustaw wymiary komponentu klasy, na wymiary obrazu, by móc umieścic objekt, klasy
-  			//w klasie, objektu TScrollBox, w celu skalowania obrazu
-  			this->Width = uiWidth; this->Height = uiHeight;
-  		}
+			if(!_bAutosize)
+			//Jeśli brak dostosowywania widoku obrazu do wielkości okna. Czyli obraz nie będzie skalowany do wymiarów okna.
+			{
+				unsigned int uiWidth, uiHeight;
+				//Odczytaj prawdziwą wymiary obrazu
+				this->pIWICFormatConverter->GetSize(&uiWidth, &uiHeight);
+				//Ustaw wymiary komponentu klasy, na wymiary obrazu, by móc umieścic objekt, klasy
+				//w klasie, objektu TScrollBox, w celu skalowania obrazu
+				this->Width = uiWidth; this->Height = uiHeight;
+			}
 
-  		hr = this->CreateDeviceResources(this->Handle);
-  		if(SUCCEEDED(hr))
-  		{
-  			SafeRelease(&this->pID2D1Bitmap);
-  			//Tworzy ID2D1Bitmap, kopiując określoną mapę bitową Microsoft Windows Imaging Component (WIC).
-  			hr = this->pID2D1HwndRenderTarget->CreateBitmapFromWicBitmap(this->pIWICFormatConverter, NULL, &this->pID2D1Bitmap);
-  			if(FAILED(hr)) throw(Exception("Błąd metody CreateBitmapFromWicBitmap())"));
-  			this->FIsLoadedImage = true; //Obrazek został załadowany
-  		}
-  		else
-  		{
-  			throw(Exception("Błąd metody CreateDeviceResources())"));
+			hr = this->CreateDeviceResources(this->Handle);
+			if(SUCCEEDED(hr))
+			{
+				SafeRelease(&this->pID2D1Bitmap);
+				//Tworzy ID2D1Bitmap, kopiując określoną mapę bitową Microsoft Windows Imaging Component (WIC).
+				hr = this->pID2D1HwndRenderTarget->CreateBitmapFromWicBitmap(this->pIWICFormatConverter, NULL, &this->pID2D1Bitmap);
+				if(FAILED(hr)) throw(Exception("Błąd metody CreateBitmapFromWicBitmap())"));
+				this->FIsLoadedImage = true; //Obrazek został załadowany
+			}
+			else
+			{
+				throw(Exception("Błąd metody CreateDeviceResources())"));
 			}
 		} //try catch
 		catch(Exception &e)
@@ -215,7 +215,7 @@ void __fastcall GsDirect2DClass::GsD2D_SavePicture(const UnicodeString custrPath
 	//Uchwyt kontekstu urządzenia źródłowego.
 	HDC pHDWindowDC = GetWindowDC(this->Handle);
 	if(!pHDWindowDC) throw(Exception("Błąd metody GetWindowDC())"));
-  //Uchwyt kontekstu urządzenia docelowego.
+	//Uchwyt kontekstu urządzenia docelowego.
 	HDC pHDCompatibleDC = CreateCompatibleDC(pHDWindowDC);
 	if(!pHDCompatibleDC) throw(Exception("Błąd metody CreateCompatibleDC())"));
 
@@ -228,7 +228,7 @@ void __fastcall GsDirect2DClass::GsD2D_SavePicture(const UnicodeString custrPath
 	bool bRet = BitBlt(pHDCompatibleDC, //Uchwyt kontekstu urządzenia docelowego.
 				 0, 0,
 				 this->Width, this->Height,
-				 pHDWindowDC,                 //Uchwyt kontekstu urządzenia źródłowego.
+				 pHDWindowDC,									//Uchwyt kontekstu urządzenia źródłowego.
 				 0, 0,
 				 SRCCOPY);
 	if(!bRet) throw(Exception("Błąd metody BitBlt())"));
@@ -260,13 +260,13 @@ void __fastcall GsDirect2DClass::GsD2D_SavePictureOriginal(const UnicodeString c
 	IWICBitmap *tpIWICBitmap=nullptr;
 	//ID2D1RenderTarget *tpID2D1RenderTarget=nullptr; //Tymczasowo wyłączone
 
-  //Odczytaj prawdziwą wymiary obrazu
+	//Odczytaj prawdziwą wymiary obrazu
 	this->pIWICFormatConverter->GetSize(&uiWidth, &uiHeight);
 
 	hr = this->pIWICImagingFactory->CreateBitmapFromSource(this->pIWICFormatConverter, WICBitmapCacheOnDemand, &tpIWICBitmap);
 	if(FAILED(hr)) throw(Exception("Błąd metody CreateBitmapFromSource())"));
 
-  //Objekt klasy IWICBitmap, staje się objektem bitmapy, dla objektu docelowego dla renderowania grafiki (tpID2D1RenderTarget)
+	//Objekt klasy IWICBitmap, staje się objektem bitmapy, dla objektu docelowego dla renderowania grafiki (tpID2D1RenderTarget)
 	//hr = this->pID2D1Factory->CreateWicBitmapRenderTarget(tpIWICBitmap, D2D1::RenderTargetProperties(), &tpID2D1RenderTarget);
 	//if(FAILED(hr)) throw(Exception("Błąd metody CreateWicBitmapRenderTarget())"));
 
@@ -303,23 +303,23 @@ void __fastcall GsDirect2DClass::_SaveIWICBitmapSource(IWICBitmapSource *pIWICBi
 	if(TPath::GetExtension(ustrPathToSave) == ".tif") GUIDFormat = GUID_ContainerFormatTiff;
 	//if(TPath::GetExtension(ustrPathToSave) == ".gif") {GUIDFormat = GUID_ContainerFormatGif; format = GUID_WICPixelFormatDontCare;}
 
-  //Część kodu zapisująca grafikę i tekst
+	//Część kodu zapisująca grafikę i tekst
 	hr = this->pIWICImagingFactory->CreateStream(&pIWICStream);
 	if(FAILED(hr)) throw(Exception("Błąd metody CreateStream())"));
 
-  hr = pIWICStream->InitializeFromFilename(custrPathSaveImage.c_str(), GENERIC_WRITE);
+	hr = pIWICStream->InitializeFromFilename(custrPathSaveImage.c_str(), GENERIC_WRITE);
 	if(FAILED(hr)) throw(Exception("Błąd metody InitializeFromFilename())"));
 
 	hr = this->pIWICImagingFactory->CreateEncoder(GUIDFormat, NULL, &pIWICBitmapEncoder);
 	if(FAILED(hr)) throw(Exception("Błąd metody CreateEncoder())"));
 
-  hr = pIWICBitmapEncoder->Initialize(pIWICStream, WICBitmapEncoderNoCache);
+	hr = pIWICBitmapEncoder->Initialize(pIWICStream, WICBitmapEncoderNoCache);
 	if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
 
-  hr = pIWICBitmapEncoder->CreateNewFrame(&pIWICBitmapFrameEncode, NULL);
+	hr = pIWICBitmapEncoder->CreateNewFrame(&pIWICBitmapFrameEncode, NULL);
 	if(FAILED(hr)) throw(Exception("Błąd metody CreateNewFrame())"));
 
-  hr = pIWICBitmapFrameEncode->Initialize(NULL);
+	hr = pIWICBitmapFrameEncode->Initialize(NULL);
 	if(FAILED(hr)) throw(Exception("Błąd metody Initialize())"));
 
 	hr = pIWICBitmapFrameEncode->SetSize(_uiWidth, _uiHeight);
@@ -368,8 +368,8 @@ void __fastcall GsDirect2DClass::CreateWnd()
 	//Twórzcie format tekstowy przy użyciu Gabrioli o rozmiarze czcionki 72.
 	//To ustawia domyślną czcionkę, wagę, rozciągliwość, styl i lokalizację.
 	hr = this->pIDWriteFactory->CreateTextFormat(
-		this->FNameFont.c_str(),     //Nazwa rodziny kroju pisma.
-		NULL,                       //Kolekcja czcionek (NULL ustawia ją na korzystanie z systemowej kolekcji czcionek).
+		this->FNameFont.c_str(),		 //Nazwa rodziny kroju pisma.
+		NULL,												//Kolekcja czcionek (NULL ustawia ją na korzystanie z systemowej kolekcji czcionek).
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
@@ -406,7 +406,7 @@ void __fastcall GsDirect2DClass::WMSize(TWMSize &Message)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //HRESULT hr = S_OK;
+	//HRESULT hr = S_OK;
 	//RECT rRect;
 	int iWidth, iHeight;
 
@@ -417,7 +417,7 @@ void __fastcall GsDirect2DClass::WMSize(TWMSize &Message)
 	iWidth = this->ClientWidth;
 	iHeight = this->ClientHeight;
 
-  #if defined(_DEBUGINFO_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug(Format("iWidth: %d, iHeight: %d", ARRAYOFCONST((iWidth, iHeight))));
 		GsDebugClass::WriteDebug(Format("ClientWidth: %d, ClientHeight: %d", ARRAYOFCONST((this->ClientWidth, this->ClientHeight))));
 	#endif
@@ -465,7 +465,7 @@ void __fastcall GsDirect2DClass::WMPaint(TWMPaint &Message)
 	else
 	{
 		this->_PaintApplyEfects(rRect, rectangle);
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDirect2DClass::_PaintNoEfects(const RECT &rRect, const D2D1_RECT_F &rectangle)
@@ -557,7 +557,7 @@ void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  HRESULT hr = S_OK;
+	HRESULT hr = S_OK;
 	PAINTSTRUCT Ps;
 	int iWidth = rRect.right - rRect.left;
 	int iHeight = rRect.bottom - rRect.top;
@@ -567,7 +567,7 @@ void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1
 	//Skalowanie grafiki
 	this->_ScaleBitmapSource(iWidth, iHeight);
 
-  if(BeginPaint(this->Handle, &Ps))
+	if(BeginPaint(this->Handle, &Ps))
 	{
 		if(!(this->pID2D1HwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
 		{
@@ -575,9 +575,9 @@ void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1
 			//Jeśli tak, odtwórz ją ze źródłowej bitmapy
 
 			this->pID2D1HwndRenderTarget->BeginDraw();
-      this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+			this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
-      //Rysowanie obrazu i skalowanie go do bieżących wymiarów okna
+			//Rysowanie obrazu i skalowanie go do bieżących wymiarów okna
 			if (this->pID2D1Bitmap)
 			{
 				pID2D1Effect = this->_ApplyEffect(pID2D1Image);
@@ -590,7 +590,7 @@ void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1
 				this->pID2D1HwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Gray));
 			}
 
-      if(this->FIsDisplayText)
+			if(this->FIsDisplayText)
 			{
 				if(this->FRotationText != 0.00f) this->pID2D1HwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(this->FRotationText, D2D1::Point2F(this->ClientWidth / 2, this->ClientHeight / 2)));
 				//tworzenie objektu klasy IDWriteTextLayout
@@ -629,7 +629,7 @@ void __fastcall GsDirect2DClass::_PaintApplyEfects(const RECT &rRect, const D2D1
 		EndPaint(this->Handle, &Ps);
 	} //if(BeginPaint(this->Handle, &Ps))
 
-  SafeRelease(&pID2D1Effect);
+	SafeRelease(&pID2D1Effect);
 	SafeRelease(&pID2D1Image);
 }
 //---------------------------------------------------------------------------
@@ -643,7 +643,7 @@ void __fastcall GsDirect2DClass::_ScaleBitmapSource(const int _iWidth, const int
 {
 	HRESULT hr = S_OK;
 
-  //Skalowanie grafiki
+	//Skalowanie grafiki
 	SafeRelease(&this->pID2D1Bitmap);
 	SafeRelease(&this->pIWICBitmapScaler);
 	if(this->pIWICFormatConverter)// && !this->pID2D1Bitmap)
@@ -668,7 +668,7 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  HRESULT hr = S_OK;
+	HRESULT hr = S_OK;
 	ID2D1Effect *pEffect=nullptr;
 	CLSID effectId;
 
@@ -702,8 +702,8 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 	hr = this->pID2D1DeviceContext->CreateEffect(effectId, &pEffect);
 	if(!SUCCEEDED(hr)) throw(Exception("Błąd metody CreateEffect()"));
 
-  pEffect->SetInput(0, this->pID2D1Bitmap);
-  switch(this->FSetApplyEffect)
+	pEffect->SetInput(0, this->pID2D1Bitmap);
+	switch(this->FSetApplyEffect)
 	{
 		case EfGfx_NoEffect: SafeRelease(&pEffect); pEffect = nullptr; return 0;
 		case EfGfx_GaussianBlur: break;
@@ -713,19 +713,19 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 		{
 			float matrix[9] = {-1, -1, -1, -1, 9, -1, -1, -1, -1};
 			pEffect->SetValue(D2D1_CONVOLVEMATRIX_PROP_KERNEL_MATRIX, matrix);
-    }
+		}
 		break;
 		//---
 		case EfGfx_Morphology:
 		{
 			pEffect->SetValue(D2D1_MORPHOLOGY_PROP_MODE, D2D1_MORPHOLOGY_MODE_ERODE);
 			pEffect->SetValue(D2D1_MORPHOLOGY_PROP_WIDTH, 14);
-    }
+		}
 		break;
 		//---
 		case EfGfx_DiscreteTransfer:
 		{
-      float table[3] = {0.0f, 0.5f, 1.0f};
+			float table[3] = {0.0f, 0.5f, 1.0f};
 			pEffect->SetValue(D2D1_DISCRETETRANSFER_PROP_RED_TABLE, table);
 			pEffect->SetValue(D2D1_DISCRETETRANSFER_PROP_GREEN_TABLE, table);
 			pEffect->SetValue(D2D1_DISCRETETRANSFER_PROP_BLUE_TABLE, table);
@@ -766,14 +766,14 @@ ID2D1Effect* __fastcall GsDirect2DClass::_ApplyEffect(ID2D1Image *Image, ID2D1Bi
 			pEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_PERSPECTIVE_ORIGIN, D2D1::Vector3F(0.0f, 192.0f, 0.0f));
 			pEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, D2D1::Vector3F(0.0f, 30.0f, 0.0f));
 			//pEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, 1000.0f);
-      this->pID2D1HwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+			this->pID2D1HwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
 		}
 		break;
 		//---
 		case EfGfx_BitmapSource:
 		{
 			pEffect->SetValue(D2D1_BITMAPSOURCE_PROP_WIC_BITMAP_SOURCE, this->pIWICBitmapScaler);
-      pEffect->SetValue(D2D1_BITMAPSOURCE_PROP_ORIENTATION, D2D1_BITMAPSOURCE_ORIENTATION_FLIP_HORIZONTAL);
+			pEffect->SetValue(D2D1_BITMAPSOURCE_PROP_ORIENTATION, D2D1_BITMAPSOURCE_ORIENTATION_FLIP_HORIZONTAL);
 		}
 		break;
 		//---
@@ -871,7 +871,7 @@ HRESULT __fastcall GsDirect2DClass::CreateDeviceResources(HWND hWnd)
 
 	if (!this->pID2D1HwndRenderTarget)
 	{
-    RECT rc;
+		RECT rc;
 		hr = ::GetClientRect(hWnd, &rc) ? S_OK : E_FAIL;
 
 		if(SUCCEEDED(hr))
@@ -889,7 +889,7 @@ HRESULT __fastcall GsDirect2DClass::CreateDeviceResources(HWND hWnd)
 			hr = this->pID2D1Factory->CreateHwndRenderTarget(renderTargetProperties, D2D1::HwndRenderTargetProperties(hWnd, size), &this->pID2D1HwndRenderTarget);
 			if(FAILED(hr)) throw(Exception("Błąd funkcji CreateHwndRenderTarget())"));
 
-      if (!this->pID2D1DeviceContext)
+			if (!this->pID2D1DeviceContext)
 			{
 				this->pID2D1HwndRenderTarget->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&this->pID2D1DeviceContext));
 				if(FAILED(hr)) throw(Exception("Błąd funkcji QueryInterface())"));
@@ -930,7 +930,7 @@ void __fastcall GsDirect2DClass::_CreateGradientBrushDrawText(const D2D1_RECT_F 
 {
 	if(!this->pID2D1HwndRenderTarget) return;
 	//---
-  HRESULT hr=S_OK;
+	HRESULT hr=S_OK;
 	ID2D1GradientStopCollection *pGID2D1GradientStopCollection=nullptr;
 	ID2D1LinearGradientBrush *pID2D1LinearGradientBrush=nullptr;
 
@@ -946,9 +946,9 @@ void __fastcall GsDirect2DClass::_CreateGradientBrushDrawText(const D2D1_RECT_F 
 	//zadeklarowana tablica struktur D2D1_GRADIENT_STOP.
 	hr = this->pID2D1HwndRenderTarget->CreateGradientStopCollection(
 		TableGradientStops,
-    2,
-    D2D1_GAMMA_2_2,
-    D2D1_EXTEND_MODE_CLAMP,
+		2,
+		D2D1_GAMMA_2_2,
+		D2D1_EXTEND_MODE_CLAMP,
 		&pGID2D1GradientStopCollection
 		);
 	if(FAILED(hr)) throw(Exception("Błąd metody CreateGradientStopCollection())"));
@@ -956,7 +956,7 @@ void __fastcall GsDirect2DClass::_CreateGradientBrushDrawText(const D2D1_RECT_F 
 	//Linia określająca kierunek gradientu zaczyna się od
 	//lewy górny róg kwadratu i kończy się w prawym dolnym rogu.
 	hr = this->pID2D1HwndRenderTarget->CreateLinearGradientBrush(
-        D2D1::LinearGradientBrushProperties(
+				D2D1::LinearGradientBrushProperties(
 						D2D1::Point2F(rectTextMetric.left, rectTextMetric.top),
 						D2D1::Point2F(rectTextMetric.right, rectTextMetric.bottom)),
 				pGID2D1GradientStopCollection,
@@ -965,7 +965,7 @@ void __fastcall GsDirect2DClass::_CreateGradientBrushDrawText(const D2D1_RECT_F 
 	if(FAILED(hr)) throw(Exception("Błąd metody CreateLinearGradientBrush())"));
 	pID2D1LinearGradientBrush->SetOpacity(this->FOpacityBrush);
 
-  this->pID2D1HwndRenderTarget->DrawTextLayout(D2D1::Point2F(0, 0), pIDWriteTextLayout, pID2D1LinearGradientBrush);
+	this->pID2D1HwndRenderTarget->DrawTextLayout(D2D1::Point2F(0, 0), pIDWriteTextLayout, pID2D1LinearGradientBrush);
 
 	SafeRelease(&pGID2D1GradientStopCollection);
 	SafeRelease(&pID2D1LinearGradientBrush);
@@ -1017,7 +1017,7 @@ void __fastcall GsDirect2DClass::_SetTextWrite(const UnicodeString _TextWrite)
 */
 {
 	this->FTextWrite = _TextWrite;
-  InvalidateRect(this->Handle, NULL, false);
+	InvalidateRect(this->Handle, NULL, false);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDirect2DClass::_SetD2DColorText(const D2D1::ColorF::Enum _ColorText)
@@ -1060,13 +1060,13 @@ void __fastcall GsDirect2DClass::_ReCreateTextFont()
 {
 	if(!this->pIDWriteTextFormat) return;
 
-  HRESULT hr = S_OK;
+	HRESULT hr = S_OK;
 	SafeRelease(&this->pIDWriteTextFormat);
 	//Twórzcie format tekstowy przy użyciu Gabrioli o rozmiarze czcionki 72.
 	//To ustawia domyślną czcionkę, wagę, rozciągliwość, styl i lokalizację.
 	hr = this->pIDWriteFactory->CreateTextFormat(
-		this->FNameFont.c_str(),     //Nazwa rodziny kroju pisma.
-		NULL,                        //Kolekcja czcionek (NULL ustawia ją na korzystanie z systemowej kolekcji czcionek).
+		this->FNameFont.c_str(),		 //Nazwa rodziny kroju pisma.
+		NULL,												 //Kolekcja czcionek (NULL ustawia ją na korzystanie z systemowej kolekcji czcionek).
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
@@ -1109,7 +1109,7 @@ void __fastcall GsDirect2DClass::_SetOpacityBrush(const float _fOpacityBrush)
 	this->pID2D1SolidColorBrush1->SetOpacity(this->FOpacityBrush);
 	this->pID2D1SolidColorBrush2->SetOpacity(this->FOpacityBrush);
 
-  InvalidateRect(this->Handle, NULL, false);
+	InvalidateRect(this->Handle, NULL, false);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDirect2DClass::_SetStandardColorText(const TColor _TColorText)
@@ -1189,7 +1189,7 @@ bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 {
 	IDWriteFactory *pWriteFactory=nullptr;
 	//---
-  bool bResult=true;
+	bool bResult=true;
 	HRESULT hr = S_OK;
 	unsigned int familyCount=0;
 	IDWriteFontCollection* pFontCollection=nullptr;
@@ -1203,7 +1203,7 @@ bool __fastcall D2D_CreateFontsList(THashedStringList *_pHSListFont)
 	//Uzyskaj liczbę rodzin czcionek w kolekcji.
 	familyCount = pFontCollection->GetFontFamilyCount();
 
-  _pHSListFont->BeginUpdate();
+	_pHSListFont->BeginUpdate();
 	_pHSListFont->Clear();
 	//Pobierz systemową kolekcję czcionek.
 

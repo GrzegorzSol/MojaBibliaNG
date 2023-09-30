@@ -26,7 +26,7 @@ enum {//Kolumny
 			enColumn_Chapter, enColumn_DateTime, enColumn_Count,
 			//Głowne obrazy 32 pikseli
 			enImage_DeleteSelectItem=0,
-      //Małe obrazy 16 pikseli dla listy i jej kolumn
+			//Małe obrazy 16 pikseli dla listy i jej kolumn
 			enSmallImage_ChaptItem=0, enSmallImage_DateItem, enSmallImage__ColumnChapt, enSmallImage_ColumnDate};
 
 //---------------------------------------------------------------------------
@@ -41,12 +41,12 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 {
 	TListColumn *NewColumn;
 
-  //Dodawanie kolumn
+	//Dodawanie kolumn
 	for(unsigned int iColumns=0; iColumns<enColumn_Count; iColumns++)
 	{
 		NewColumn = this->LViewHistoryCh->Columns->Add();
 		NewColumn->Caption = custrNameColumns[iColumns];
-    NewColumn->AutoSize = true;
+		NewColumn->AutoSize = true;
 		NewColumn->ImageIndex = iColumns + enSmallImage__ColumnChapt;
 	}
 
@@ -102,7 +102,7 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 	if(iResult == IDNO)
 	{
-    if(pHSListSelected) {delete pHSListSelected; pHSListSelected = nullptr;}
+		if(pHSListSelected) {delete pHSListSelected; pHSListSelected = nullptr;}
 		this->LViewHistoryCh->ClearSelection();
 		return;
 	}
@@ -111,7 +111,7 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 	{
 		iIndexOf = GlobalVar::Global_HListHistoryChapterOpen->IndexOf(pHSListSelected->Strings[i]);
 		if(iIndexOf == -1) continue;
-//    #if defined(_DEBUGINFO_)
+//		#if defined(_DEBUGINFO_)
 //			GsDebugClass::WriteDebug(Format("iIndexOf: %d - %s", ARRAYOFCONST((iIndexOf, GlobalVar::Global_HListHistoryChapterOpen->Strings[iIndexOf]))));
 //		#endif
 		GlobalVar::Global_HListHistoryChapterOpen->Delete(iIndexOf);
@@ -135,7 +135,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChData(TObject *Sender,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//--- Wyjście, gdy element, nie mieści się w zakresie listy
 	if((Item->Index<iLViewStartIndex) || (Item->Index>iLViewEndIndex)) return;
@@ -145,8 +145,8 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChData(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDataFind(TObject *Sender,
-          TItemFind Find, const UnicodeString FindString, const TPoint &FindPosition,
-          Pointer FindData, int StartIndex, TSearchDirection Direction,
+					TItemFind Find, const UnicodeString FindString, const TPoint &FindPosition,
+					Pointer FindData, int StartIndex, TSearchDirection Direction,
 					bool Wrap, int &Index)
 /**
 	OPIS METOD(FUNKCJI):
@@ -155,7 +155,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDataFind(TObject *Send
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//---
 	Index = -1;
@@ -173,12 +173,12 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDataHint(TObject *Send
 	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//---
-  iLViewStartIndex = StartIndex; //Dolny zakres, elementów listy
-	iLViewEndIndex = EndIndex;     //Górny zakres, elementów listy
+	iLViewStartIndex = StartIndex; //Dolny zakres, elementów listy
+	iLViewEndIndex = EndIndex;		 //Górny zakres, elementów listy
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListView *Sender,
-          TListItem *Item, TRect &Rect, TOwnerDrawState State)
+					TListItem *Item, TRect &Rect, TOwnerDrawState State)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -195,7 +195,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 	TRect RectLabel = Item->DisplayRect(drLabel);
 	TRect RectIcon = Item->DisplayRect(drIcon);
 
-  if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
+	if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
 
 	if(State.Contains(odSelected))
 	{
@@ -210,7 +210,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 	pLView->SmallImages->Draw(pLView->Canvas, RectIcon.Left,
 		RectIcon.Top + ((Rect.Height() - pLView->SmallImages->Height) / 2), enSmallImage_ChaptItem);
 
-	TRect RectSubItem  = RectLabel;
+	TRect RectSubItem	 = RectLabel;
 	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
 	{
 		//Wymiary następnej kolumny
@@ -271,7 +271,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 	GsReadBibleTextData::OpenSelectBookAndChapter(iBook, iChapt);
 	//GlobalVar::Global_HListHistoryChapterOpen->Delete(GlobalVar::Global_HListHistoryChapterOpen->Count - 1);
 	GlobalVar::Global_HListHistoryChapterOpen->Delete(0);
-  this->Close();
+	this->Close();
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChChange(TObject *Sender,
@@ -283,7 +283,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChChange(TObject *Sender
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//---
 	if(Change == ctState)

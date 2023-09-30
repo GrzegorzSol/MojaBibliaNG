@@ -1,10 +1,10 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2008,2009,2010,2011,2012,2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 //
-//               2022,2023                                                                     //
-//                                     Grzegorz Sołtysik                                       //
-//                                     All rights reserved.                                    //
-//                                    grzegorzsol@gmail.com                                    //
-//                                 www.facebook.com/MojaBiblia                                 //
+//							 2022,2023																																		 //
+//																		 Grzegorz Sołtysik																			 //
+//																		 All rights reserved.																		 //
+//																		grzegorzsol@gmail.com																		 //
+//																 www.facebook.com/MojaBiblia																 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 			Zasady tworzenia nazw dla projektu Moja Biblia NG
@@ -24,7 +24,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 4.Argumenty do metod będą miały przedrostek In
 5.Wskaźniki będą miały przedrostek p
 6.Metody prywane będą miały przedrostek _
-  PRZYKŁAD: pInToSearchGsReadBibleTextClass - wskaźnik, będący argumentem metody
+	PRZYKŁAD: pInToSearchGsReadBibleTextClass - wskaźnik, będący argumentem metody
 */
 //---------------------------------------------------------------------------
 #include <vcl.h>
@@ -61,35 +61,35 @@ int Global_WidthTabTools = 0;
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
-enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
-			enImageMainIndex_Search,         //1.Wyszukiwanie
-			enImageMainIndex_Setups,         //2.Ustawienia
-			enImageMainIndex_SaveChapter,    //3.Zapis aktualnego rozdziału
-			enImageMainIndex_ChoiceVers,     //4.Wybór i przegląd pojedyńczego wersetu
-			enImageMainIndex_InformHelp,     //5.Pomoc i informacje
+enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
+			enImageMainIndex_Search,				 //1.Wyszukiwanie
+			enImageMainIndex_Setups,				 //2.Ustawienia
+			enImageMainIndex_SaveChapter,		 //3.Zapis aktualnego rozdziału
+			enImageMainIndex_ChoiceVers,		 //4.Wybór i przegląd pojedyńczego wersetu
+			enImageMainIndex_InformHelp,		 //5.Pomoc i informacje
 			enImageMainIndex_CorcondanceGrek,//6.Konkordancja grecka
-			enImageSchemeVers,               //7.Projektowanie zależności logicznej między wersetami
-			enImageViewAllResources,         //8.Przegląd wszystkich dostępnych zasobów
-			enImageResizeWork,               //9.Poszerzanie obszaru tekstu
-			enImageFacePage,                 //10.Odnośnik do strony FaceBook
-			enImageUpdate,                   //11.Sprawdzanie aktualizacji i ewentualny aktualizacje
-			enImageLogoApplication,          //12.Ikona z główną grafiką aplikacji
-			enImageEditChapter,              //13.Edycja rozdziału
-			enImage_MailChapt,               //14.Wyśli emailem rozdział
-			enImage_ImageAndText,            //15.Tworzenie grafiki z tekstem
-			enImage_Help,                    //16.Pomocnik
-			enImage_Tips,                    //17.Nawigator podpowiedzi
-			enImage_ReadingPlan,             //18.Plan czytania bibli
-			enImage_HistoryTextOpen,         //19.Historia otwieranych rozdziałów
-			enImage_OpenInWord,              //20.Otwarcie wybranego rozdziału w Ms Wordzie
+			enImageSchemeVers,							 //7.Projektowanie zależności logicznej między wersetami
+			enImageViewAllResources,				 //8.Przegląd wszystkich dostępnych zasobów
+			enImageResizeWork,							 //9.Poszerzanie obszaru tekstu
+			enImageFacePage,								 //10.Odnośnik do strony FaceBook
+			enImageUpdate,									 //11.Sprawdzanie aktualizacji i ewentualny aktualizacje
+			enImageLogoApplication,					 //12.Ikona z główną grafiką aplikacji
+			enImageEditChapter,							 //13.Edycja rozdziału
+			enImage_MailChapt,							 //14.Wyśli emailem rozdział
+			enImage_ImageAndText,						 //15.Tworzenie grafiki z tekstem
+			enImage_Help,										 //16.Pomocnik
+			enImage_Tips,										 //17.Nawigator podpowiedzi
+			enImage_ReadingPlan,						 //18.Plan czytania bibli
+			enImage_HistoryTextOpen,				 //19.Historia otwieranych rozdziałów
+			enImage_OpenInWord,							 //20.Otwarcie wybranego rozdziału w Ms Wordzie
 			enImageMainIndex_Count,
 			//Małe ikony
-			enImage16_Books=0,               //0.Księgi biblijne
-			enImage16_Media,                 //1.Multimedia
-			enImage16_Coments,               //2.komentarze
-			enImage16_InfoTaskBarButton,     //3.Obraz dla przycisku informacji na taskbarze, o aktualnie wczytanym rozdziele
+			enImage16_Books=0,							 //0.Księgi biblijne
+			enImage16_Media,								 //1.Multimedia
+			enImage16_Coments,							 //2.komentarze
+			enImage16_InfoTaskBarButton,		 //3.Obraz dla przycisku informacji na taskbarze, o aktualnie wczytanym rozdziele
 			enImage16_InfoApplicationTaskBarButton,//4.Obraz dla przycisku informacji o aplikacji
-      enImage16_Count,                 //Ilość małych ikon
+			enImage16_Count,								 //Ilość małych ikon
 			//Numer paneli na objekcie klasy TStatusBar
 			enPanelMain_InfoText=0, enPanelMain_InfoEx, //Numery paneli
 			//menu Tray
@@ -98,33 +98,33 @@ enum {enImageMainIndex_CloseSheet,     //0.Zamknięcie aktywnej zakładki
 			enPageTools_Books=0, //Zakładka z drzewem ksiąg biblijnych
 			enPageTools_CommentsVers, //Zakładka ze wszystkimi komentarzami
 			//Tagi dla kontrolek
-			enTagCloseSheet=100,  //100.Zamknięcie aktywnej zakładki
+			enTagCloseSheet=100,	//100.Zamknięcie aktywnej zakładki
 			enTagSaveChaptToHTML, //101.Zapis rozdziału z bierzącej zakładki, jako pliku html
 			enTagSearchBibleText, //102.Zaawansowane wyszukiwanie tekstu
-			enTagSetupsApplic,    //103.Wszystkie ustawienia aplikacji.
-			enTagSelectVers,      //104.Wybór pojedyńczego wersetu
-			enTagCorcondance,     //105.Korkondancja grecka
-			enTagSchemeVers,      //106.Projektowanie zależności logicznej między wersetami
-			enTagInformations,    //107.Wyświetlanie informacji
+			enTagSetupsApplic,		//103.Wszystkie ustawienia aplikacji.
+			enTagSelectVers,			//104.Wybór pojedyńczego wersetu
+			enTagCorcondance,			//105.Korkondancja grecka
+			enTagSchemeVers,			//106.Projektowanie zależności logicznej między wersetami
+			enTagInformations,		//107.Wyświetlanie informacji
 			enTagViewAllResources,//108.Przegląd wszystkich dostępnych zasobów
-			enTagResizeWork,      //109.Poszerzanie obszaru tekstu
-			enTagFacePage,        //110.Odnośnik do strony facebook
-			enTagUpdate,          //111.Sprawdzanie aktualizacji i ewentualny aktualizacje
-			enTagEditChapter,     //112.Edycja rozdziału
-			enTagMailChapt,       //113.Wyśli emailem rozdział
-			enTagImageAndText,    //114.Tworzenie grafiki z tekstem
-			enTagImageHelp,       //115.Pomocnik
-			enTagImage_Tips,      //116.Nawigator podpowiedzi
+			enTagResizeWork,			//109.Poszerzanie obszaru tekstu
+			enTagFacePage,				//110.Odnośnik do strony facebook
+			enTagUpdate,					//111.Sprawdzanie aktualizacji i ewentualny aktualizacje
+			enTagEditChapter,			//112.Edycja rozdziału
+			enTagMailChapt,				//113.Wyśli emailem rozdział
+			enTagImageAndText,		//114.Tworzenie grafiki z tekstem
+			enTagImageHelp,				//115.Pomocnik
+			enTagImage_Tips,			//116.Nawigator podpowiedzi
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
 			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
-			enTagImage_OpenInWord,    //119.Otwarcie wybranego rozdziału w Ms Wordzie
+			enTagImage_OpenInWord,		//119.Otwarcie wybranego rozdziału w Ms Wordzie
 			//
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
-			enTagPageControlTools,            //Zakładka z narzędziami
+			enTagPageControlTools,						//Zakładka z narzędziami
 			//Numery dla przycisków na taskbarze
-			enNumTaskBar_InfoReadChapt = 0,  //Informacja o aktualnie wczytanym rozdziale
-			enNumTaskBar_InfoAplic,          //Informacja o aplikacji
-			enNumTaskBar_NumberButtons       //Ilość przycisków na taskbarze
+			enNumTaskBar_InfoReadChapt = 0,	 //Informacja o aktualnie wczytanym rozdziale
+			enNumTaskBar_InfoAplic,					 //Informacja o aplikacji
+			enNumTaskBar_NumberButtons			 //Ilość przycisków na taskbarze
 		 };
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
@@ -172,12 +172,12 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	//---Wczytanie stylu
 	UnicodeString ustrSelectStyle = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_SelectStyleName, GlobalVar::Global_DefaultStyleName);
 	if(!TStyleManager::TrySetStyle(ustrSelectStyle, false)) //[02-05-2023]
-  //Jeśli nie ma takiego stylu, ustawiany jest styl domyślny
+	//Jeśli nie ma takiego stylu, ustawiany jest styl domyślny
 	{
 		//TStyleManager::TrySetStyle(GlobalVar::Global_DefaultStyleName, false);
 		TStyleManager::SetStyle(GlobalVar::Global_DefaultStyleName);
 	}
-  //Wyłączenie styli dla okien dialogowych, w tym przypadku chodzi o wyłączenie styli dla okna pomocy
+	//Wyłączenie styli dla okien dialogowych, w tym przypadku chodzi o wyłączenie styli dla okna pomocy
 	TStyleManager::SystemHooks = TStyleManager::SystemHooks >> TStyleManager::shDialogs;
 	//Sprawdzenie czy aplikacja MS Word jest zainstalowana w systemie
 	this->_bIsWordInstalled = this->_IsWordInstalled();
@@ -215,7 +215,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	if(TFile::Exists(GlobalVar::Global_custrPathBackgroundWindow)) //29-04-2021
 	{
 		//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
-    TWICImage *pWICImage = new TWICImage();
+		TWICImage *pWICImage = new TWICImage();
 		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
 		try
 		{
@@ -229,8 +229,8 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	}
 	//---
 	TThumbBarButton *pNewThumbBarButton;
-  //--- Tworzenie głównego objektu z tłmaczeniami, klasy GsReadBibleTextClass.
-	//    KLASA MUSI BYĆ ZAINICOWANA METODĄ InitMyBible(), PRZED JAKIM KOLWIEK UŻYWANIEM BIBLIOTEKI GsReadBibleTextClass
+	//--- Tworzenie głównego objektu z tłmaczeniami, klasy GsReadBibleTextClass.
+	//		KLASA MUSI BYĆ ZAINICOWANA METODĄ InitMyBible(), PRZED JAKIM KOLWIEK UŻYWANIEM BIBLIOTEKI GsReadBibleTextClass
 	GsReadBibleTextData::InitMyBible(this);
 	if(!GsReadBibleTextData::IsInitLibrary) throw(Exception("Błąd inicjalizacji głównej bilioteki do pracy i analizy pisma Świętego!"));
 	GsReadBibleTextData::CreateTreeBooks(this->TabSheetBooks, this->PageControlBibleText);
@@ -262,14 +262,14 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->pGsListBoxFavoritiesClass->OnDblClick = this->_OnDblClick_ListFavorities;
 	//---
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
-    //Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
+		//Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
 		{this->TrayIconMain->ShowBalloonHint();}
 	this->TrayIconMain->Hint = Format("Moja Biblia NG wersja beta v%s © Grzegorz Sołtysik.", ARRAYOFCONST((ustrVersion)));
 	this->TrayIconMain->BalloonTitle = this->TrayIconMain->Hint;
 	this->TrayIconMain->BalloonHint = "Oprogramowanie do studiowania Pisma Świętego";
-  //this->MBW_TrayIconMain->Icon = Application->Icon;
+	//this->MBW_TrayIconMain->Icon = Application->Icon;
 	this->_CreatePopupTrayIcon(); //Tworzenie menu podręcznego dla traya
-	this->PageControlTools->ActivePage = this->TabSheetBooks;  //Domyślnie aktywna zakładka
+	this->PageControlTools->ActivePage = this->TabSheetBooks;	 //Domyślnie aktywna zakładka
 	static UnicodeString ustrHintTBarButtons[] = {"Informacje o aktualnie wczytanym rozdziele", "Informacje o aplikacji"};
 	//---
 	this->Width = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppWidth, this->Constraints->MinWidth);
@@ -349,12 +349,12 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	this->Act_SaveChaptToHTML->Enabled = (this->PageControlBibleText->PageCount > 0);
 	//---
 //	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
-//  //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
+//	//Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
 //	{
 //		TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
 //		if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji okna TFastTipsWindow"));
-//    pTFastTipsWindow->ShowModal();
-//  }
+//		pTFastTipsWindow->ShowModal();
+//	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose)
@@ -462,9 +462,9 @@ void __fastcall TMainBibleWindow::FormKeyUp(TObject *Sender, WORD &Key, TShiftSt
 	switch(Key)
 	{
 		case vkF1:
-      Application->HelpContext(HELP_Wprowadzenie);
-    break;
-  }
+			Application->HelpContext(HELP_Wprowadzenie);
+		break;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_AppException(TObject *Sender, Exception *pException)
@@ -476,7 +476,7 @@ void __fastcall TMainBibleWindow::_AppException(TObject *Sender, Exception *pExc
 */
 {
 	Application->ShowException(pException);
-  this->OnCloseQuery = nullptr;
+	this->OnCloseQuery = nullptr;
 	Application->Terminate(); //Zamknięcie aplikacji
 }
 //---------------------------------------------------------------------------
@@ -488,7 +488,7 @@ bool __fastcall TMainBibleWindow::_AppHelp(System::Word Command, NativeInt Data,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug(Format("%d - %d", ARRAYOFCONST((Command, Data))));
 	#endif
 	Application->HelpFile = GlobalVar::Global_custrPathGlobalHelp;
@@ -529,15 +529,15 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->Act_CloseSheetActive->Tag = enTagCloseSheet;  //Zamknięcie aktywnej zakładki
+	this->Act_CloseSheetActive->Tag = enTagCloseSheet;	//Zamknięcie aktywnej zakładki
 	this->Act_CloseSheetActive->Hint = Format("Zamknięcie zakładki|Zamknięcie aktualnie aktywnej zakładki z tekstem|%u", ARRAYOFCONST((this->Act_CloseSheetActive->ImageIndex)));
 	this->Act_SaveChaptToHTML->Tag = enTagSaveChaptToHTML; //Zapis rozdziału z bierzącej zakładki, jako pliku html
 	this->Act_SaveChaptToHTML->Hint = Format("Zapis do pliku|Zapis zawartości aktualnej zakładki, do pliku w formacie html.|%u", ARRAYOFCONST((this->Act_SaveChaptToHTML->ImageIndex)));
-	this->Act_SearchBibleText->Tag  = enTagSearchBibleText; //Zaawansowane wyszukiwanie tekstu
+	this->Act_SearchBibleText->Tag	= enTagSearchBibleText; //Zaawansowane wyszukiwanie tekstu
 	this->Act_SearchBibleText->Hint = Format("Wyszukiwanie|Otwiera okno do wyszukiwanie wyrażeń i fraz w tekście biblijnym.|%u", ARRAYOFCONST((this->Act_SearchBibleText->ImageIndex)));
-	this->Act_SetupsApplic->Tag  = enTagSetupsApplic;    //Wszystkie ustawienia aplikacji.
+	this->Act_SetupsApplic->Tag	 = enTagSetupsApplic;		 //Wszystkie ustawienia aplikacji.
 	this->Act_SetupsApplic->Hint = Format("Ustawienia|Wszystkie ustawienia aplikacji.|%u", ARRAYOFCONST((this->Act_SetupsApplic->ImageIndex)));
-	this->Act_SelectVers->Tag = enTagSelectVers;       //Wybór pojedyńczego wersetu
+	this->Act_SelectVers->Tag = enTagSelectVers;			 //Wybór pojedyńczego wersetu
 	this->Act_SelectVers->Hint = Format("Wybór wersetu|Umożliwia wybór pojedyńczego wersetu.|%u", ARRAYOFCONST((this->Act_SelectVers->ImageIndex)));
 	this->Act_CorcordanceDictionaryGrec->Tag = enTagCorcondance;
 	this->Act_CorcordanceDictionaryGrec->Hint = Format("Korkondancja grecka|Korkondancja grecka Nowego Testament, z kodami Stronga.|%u", ARRAYOFCONST((this->Act_CorcordanceDictionaryGrec->ImageIndex)));
@@ -570,7 +570,7 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
-	this->PageControlTools->Tag = enTagPageControlTools;            //Zakładka z narzędziami
+	this->PageControlTools->Tag = enTagPageControlTools;						//Zakładka z narzędziami
 
 	//this->MBW_HdrControlBooks->Hint = "Nagłówek drzewa ksiąg biblijnych|Nagłówek drzewa ksiąg biblijnych, pokazujący nazwy poszczególnych informacji o księgach biblijnych";
 }
@@ -592,7 +592,7 @@ bool __fastcall TMainBibleWindow::_IsWordInstalled()
 	pRegistry->RootKey = HKEY_LOCAL_MACHINE;
 	if(pRegistry->KeyExists(custrReg))
 	{
-    #if defined(_DEBUGINFO_)
+		#if defined(_DEBUGINFO_)
 			GsDebugClass::WriteDebug("MS Word jest zainstalowany");
 		#endif
 		pRegistry->CloseKey();
@@ -637,7 +637,7 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 		NewItem->OnClick = this->_OnClick_PMenuTray;
 		NewItem->Tag = enPMenuTray + i;
 		NewItem->ImageIndex = enImageIndex_Book;
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
@@ -682,10 +682,10 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 	if(!pPageControl) return;
 	//---
 	this->Act_HistoryChapters->Enabled = true;
-  //Stan przycisku zmiany obszaru tekstu 12-04-2021
+	//Stan przycisku zmiany obszaru tekstu 12-04-2021
 	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
 	this->Act_ResizeWork->Checked = (pPageControl->PageCount > 0);
-  this->Act_ResizeWorkExecute(this->Act_ResizeWork);
+	this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
 	this->Act_SaveChaptToHTML->Enabled = (pPageControl->PageCount > 0);
 	//---
@@ -729,8 +729,8 @@ void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *
 			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
 		}
 		break;
-    //---
-		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
+		//---
+		case enTagPageControlTools:						 //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
 		{
 			if(Active)
 			{
@@ -785,7 +785,7 @@ void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
 		}
 		break;
 		//---
-		case enTagPageControlTools:            //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
+		case enTagPageControlTools:						 //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
 		{
 		}
 		break;
@@ -809,7 +809,7 @@ void __fastcall TMainBibleWindow::StatusBarMainDrawPanel(TStatusBar *StatusBar,
 			pCanvas->Font->Color = clRed;
 			break;
 		case enPanelMain_InfoEx:
-      pCanvas->Font->Color = this->Font->Color;
+			pCanvas->Font->Color = this->Font->Color;
 			break;
 	}
 	pCanvas->TextOut(Rect.left, Rect.top, Panel->Text);
@@ -823,7 +823,7 @@ void __fastcall TMainBibleWindow::_OnClick_PMenuTray(System::TObject* Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TMenuItem *pMItem = dynamic_cast<TMenuItem *>(Sender);
+	TMenuItem *pMItem = dynamic_cast<TMenuItem *>(Sender);
 	if(!pMItem) return;
 	//---
 	GsReadBibleTextData::LoadFirstChapt(pMItem->Tag);
@@ -864,10 +864,10 @@ void __fastcall TMainBibleWindow::_OnDblClick_ListFavorities(System::TObject* Se
 	unsigned char ucBook = AdressString.SubString(1, 3).ToInt() - 1,//Księgi są numerowane w pliku z tłumaczeniem od 1, a teblice od 0.
 								ucChapt = AdressString.SubString(4, 3).ToInt(),
 								ucVers = AdressString.SubString(7, 3).ToIntDef(0);
-  TSelectVersWindow *pSelectVersWindow = new TSelectVersWindow(this, ucBook, ucChapt - 1, ucVers, true);
+	TSelectVersWindow *pSelectVersWindow = new TSelectVersWindow(this, ucBook, ucChapt - 1, ucVers, true);
 	if(!pSelectVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
 	pSelectVersWindow->ShowModal();
-  //Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
+	//Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	pGsLViewCommentsAllClass->ReloadAllVersComments(false);
 }
 //---------------------------------------------------------------------------
@@ -879,10 +879,10 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	if((this->PageControlBibleText->PageCount == 0)  || (this->PageControlBibleText->ActivePageIndex == -1)) return;
+	if((this->PageControlBibleText->PageCount == 0)	 || (this->PageControlBibleText->ActivePageIndex == -1)) return;
 	//---
 	TTabSheet* pActiveSheet = this->PageControlBibleText->ActivePage;
 	if(pActiveSheet)
@@ -905,11 +905,11 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 		if(this->PageControlBibleText->PageCount == 0)
 		{
 			this->PageControlBibleText->Visible = false; //01-02-2020
-      // W wypadku zamkniecia ostatniej zakładki, wskaźnik na pasku zadań zostaje wyzerowany
+			// W wypadku zamkniecia ostatniej zakładki, wskaźnik na pasku zadań zostaje wyzerowany
 			this->TaskbarMain->ProgressValue = 0; //11-06-2023
 		}
 	}
-  //Stan przycisku zmiany obszaru tekstu 12-04-2021
+	//Stan przycisku zmiany obszaru tekstu 12-04-2021
 	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
 	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
 	this->Act_SaveChaptToHTML->Enabled = (this->PageControlBibleText->PageCount > 0);
@@ -923,10 +923,10 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	TFileSaveDialog  *pFileSaveDialog  = new TFileSaveDialog (this);
+	TFileSaveDialog	 *pFileSaveDialog	 = new TFileSaveDialog (this);
 	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
 	//---
 	UnicodeString ustrTypesFile[] = {"Wszystkie pliki", "*.*", "Pliki typu html", "*.html"},
@@ -939,15 +939,15 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 
 	for(int i=0; i<ARRAYSIZE(ustrTypesFile); i+=2)
 	{
-    pFileTypeItem = pFileSaveDialog->FileTypes->Add();
+		pFileTypeItem = pFileSaveDialog->FileTypes->Add();
 		pFileTypeItem->DisplayName = ustrTypesFile[i];
 		pFileTypeItem->FileMask = ustrTypesFile[i+1];
-  }
+	}
 
 	if(pFileSaveDialog->Execute())
 	{
 		ustrSelect = pFileSaveDialog->FileName;
-    #if defined(_DEBUGINFO_)
+		#if defined(_DEBUGINFO_)
 			GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
 		#endif
 		GsReadBibleTextData::WriteCurrentSheetText(ustrSelect);
@@ -956,7 +956,7 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 	{
 		MessageBox(NULL, TEXT("Nie wybrałeś lokalizacji, ani nazwy do zapisu otwartego rozdziału, więc plik będzie zapisany pod domyślną nazwą i w domyślnej lokalizacji"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 		GsReadBibleTextData::WriteCurrentSheetText();
-  }
+	}
 
 	if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
 }
@@ -969,7 +969,7 @@ void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TSearchTextWindow *pTSearchTextWindow = new TSearchTextWindow(this);
@@ -985,7 +985,7 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TSetupsWindow *pSetupsWindow = new TSetupsWindow(this);
@@ -1001,7 +1001,7 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TSelectVersWindow *pSelectVersWindow=nullptr;
@@ -1013,7 +1013,7 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
 	//---
 	if(!pSelectVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
 	pSelectVersWindow->ShowModal(); //Musi być okno modalne!
-  //Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
+	//Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	this->pGsLViewCommentsAllClass->ReloadAllVersComments(false);
 }
 //---------------------------------------------------------------------------
@@ -1025,12 +1025,12 @@ void __fastcall TMainBibleWindow::Act_CorcordanceDictionaryGrecExecute(TObject *
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TDictGrecPolWindow *pTDictGrecPolWindow = new TDictGrecPolWindow(this);
 	if(!pTDictGrecPolWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TDictGrecPolWindow"));
-  pTDictGrecPolWindow->ShowModal();
+	pTDictGrecPolWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
@@ -1041,7 +1041,7 @@ void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TSchemeVersWindow *pTSchemeVersWindow = new TSchemeVersWindow(this);
@@ -1057,12 +1057,12 @@ void __fastcall TMainBibleWindow::Act_InfomationsExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	static bool sbIsOpenInfo; //Informacja że okno już otwarto
 	if(sbIsOpenInfo) return;
-  //---
+	//---
 	TInformationsAppWindow *pTInformationsAppWindow = new TInformationsAppWindow(this);
 	if(!pTInformationsAppWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TInformationsAppWindow"));
 	sbIsOpenInfo = true;
@@ -1078,7 +1078,7 @@ void __fastcall TMainBibleWindow::Act_ViewAllResourcesExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TViewAllResourcesWindow *pViewAllResourcesWindow = new TViewAllResourcesWindow(this);
@@ -1115,14 +1115,14 @@ void __fastcall TMainBibleWindow::Act_OtherInfoTaskbarButtonExecute(TObject *Sen
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-  static bool sbIsOpenInfo; //Informacja że okno już otwarto
+	static bool sbIsOpenInfo; //Informacja że okno już otwarto
 	if(sbIsOpenInfo) return;
 	//---
 	if(this->PageControlBibleText->PageCount > 0)
-  //Sprawdzenie czy istnieją zakładki
+	//Sprawdzenie czy istnieją zakładki
 	{
 		UnicodeString ustrMsg;
-    ustrMsg = this->PageControlBibleText->ActivePage->Caption;
+		ustrMsg = this->PageControlBibleText->ActivePage->Caption;
 		sbIsOpenInfo = true;
 		MessageBox(NULL, ustrMsg.c_str(), TEXT("Informacja o aktualnie przeglądanym rozdziale"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 		sbIsOpenInfo = false;
@@ -1137,7 +1137,7 @@ void __fastcall TMainBibleWindow::Act_FacePageExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	ShellExecute(this->Handle, NULL , TEXT("https://www.facebook.com/MojaBiblia/"), NULL, NULL, SW_SHOWNORMAL);
@@ -1151,7 +1151,7 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	MessageBox(NULL, (UnicodeString("Niestety moduł pobierania aktualizacji został wyłączony ze względu na problemy z serwerem. ") +
@@ -1171,7 +1171,7 @@ void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	//MessageBox(NULL, TEXT("Funkcje jeszcze nie aktywna"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -1195,7 +1195,7 @@ void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	UnicodeString ustrTextHTML;
@@ -1214,7 +1214,7 @@ void __fastcall TMainBibleWindow::Act_ImageAndTextExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TImageAndTextWindow *pTImageAndTextWindow = new TImageAndTextWindow(this);
@@ -1238,7 +1238,7 @@ void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
 		MessageBox(NULL, TEXT("Brak aktywnego Planu czytania Pisma Świętego. Wybierz w ustawieniach programy Plan czytania, następnie wybierz datę jego rozpoczęcia i aktywuj go."),
 			TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 		return;
-  }
+	}
 	TReadingPlanWindow *pTReadingPlanWindow = new TReadingPlanWindow(this);
 	if(!pTReadingPlanWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
 	pTReadingPlanWindow->ShowModal();
@@ -1259,7 +1259,7 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
 	if(!pHistoryOpenChaptersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
 	//pHistoryOpenChaptersWindow->ShowModal();
 	pHistoryOpenChaptersWindow->Show();
-  //pAction->Enabled = false;
+	//pAction->Enabled = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
@@ -1288,7 +1288,7 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 
 	GsReadBibleTextData::GetCurentListText(pHSListGetText);
 	int iASize = pHSListGetText->Count; //Ilość wersetów (lini w liście)
-  //Wskaźnik zaawansowania
+	//Wskaźnik zaawansowania
 	TProgressBar *pPBar = new TProgressBar(pMainForm);
 	pPBar->Parent = pMainForm;
 	pPBar->Width = 400; pPBar->Height = 30;
@@ -1307,38 +1307,38 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	for(int i=0; i<iASize; i++)
 	{
 		pPBar->Position = i;
-    Application->ProcessMessages();
+		Application->ProcessMessages();
 		pMyOjectVers = static_cast<MyObjectVers *>(pHSListGetText->Objects[i]);
 		if(pMyOjectVers)
 		{
 			ustrAddressVers = pMyOjectVers->BookChaptVers;
-      iStart = iStop;
+			iStart = iStop;
 			iStop += ustrAddressVers.Length();
 
-      vWLast = vWWords.OlePropertyGet("Last");
+			vWLast = vWWords.OlePropertyGet("Last");
 			vWLast.OlePropertySet("Text", (Variant)ustrAddressVers);
-  		vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
+			vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
 
-  		vMFont = vWRange.OlePropertyGet("Font");
-  		vMFont.OleFunction("Reset");
+			vMFont = vWRange.OlePropertyGet("Font");
+			vMFont.OleFunction("Reset");
 			vMFont.OlePropertySet("Bold", (Variant)true);
 			vMFont.OlePropertySet("ColorIndex", (Variant)wdRed);
-      //---
+			//---
 			iStart = iStop;
 			if(i<(iASize-1)) ustrTextVers = pHSListGetText->Strings[i] + "\n";
 			else ustrTextVers = pHSListGetText->Strings[i];
 			iStop += ustrTextVers.Length();
 
-      vWLast = vWWords.OlePropertyGet("Last");
+			vWLast = vWWords.OlePropertyGet("Last");
 			vWLast.OlePropertySet("Text", (Variant)ustrTextVers);
 			vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
 			vMFont = vWRange.OlePropertyGet("Font");
 			vMFont.OleFunction("Reset");
-    }
+		}
 	}
 
 	if(pHSListGetText) {delete pHSListGetText; pHSListGetText = nullptr;}
-  if(pPBar) {delete pPBar; pPBar = nullptr;}
+	if(pPBar) {delete pPBar; pPBar = nullptr;}
 }
 //---------------------------------------------------------------------------
 

@@ -18,13 +18,13 @@ class DataItemResources
 		virtual ~DataItemResources();
 		//---
 		UnicodeString ustrInfoResource; //Ulubiony werset w formie normalnej (1Moj 1:1)
-    THashedStringList *HSListGetAllTransVers=nullptr;
+		THashedStringList *HSListGetAllTransVers=nullptr;
 };
 //---------------------------------------------------------------------------
 // Klasa przeglądania wszystkich zasobów multimedialnych
 class GsViewAllResourcesClass : public TCustomListView
 {
-  public:
+	public:
 		__fastcall GsViewAllResourcesClass(TComponent* Owner);
 		__fastcall virtual ~GsViewAllResourcesClass();
 		//---
@@ -34,11 +34,11 @@ class GsViewAllResourcesClass : public TCustomListView
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall DoSelectItem(TListItem* Item, bool Selected);
 		virtual void __fastcall DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
-    DYNAMIC void __fastcall Delete(TListItem* Item);
+		DYNAMIC void __fastcall Delete(TListItem* Item);
 	private:
 		void __fastcall _CreateAllColumns(); //Tworzenie kolumn
 		void __fastcall _LoadAllResources(); //Tworzenie kompletnej listy wszystkich zasobów
-		void __fastcall _InitAllImage();     //Tworzenie listy obrazów
+		void __fastcall _InitAllImage();		 //Tworzenie listy obrazów
 		//---
 		TImageList *_pImages;
 		TLVSelectItemEvent FOnSelectItem;

@@ -138,10 +138,10 @@ __published:	// IDE-managed Components
 	void __fastcall SpButtonStartStopReadingPlanClick(TObject *Sender);
 	void __fastcall DateTimePickerSelectStartDatePlanChange(TObject *Sender);
 	void __fastcall LViewDisplayselectPlanDrawItem(TCustomListView *Sender, TListItem *Item,
-          TRect &Rect, TOwnerDrawState State);
+					TRect &Rect, TOwnerDrawState State);
 	void __fastcall CBoxSelectPlanChange(TObject *Sender);
 	void __fastcall LViewDisplayselectPlanChanging(TObject *Sender, TListItem *Item,
-          TItemChange Change, bool &AllowChange);
+					TItemChange Change, bool &AllowChange);
 	void __fastcall SW_LBoxSelectThemeClick(TObject *Sender);
 
 private:	// User declarations
@@ -153,7 +153,7 @@ private:	// User declarations
 	void __fastcall _VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey); //Niewłaściwa ścierzka dostępu do katalogu z mediami //30-03-2021
 	void __fastcall _InitLViewDisplaySelectPlan(); //Inicjalizacja parametrów dla listy przeglądu wybranego planu
 	void __fastcall _DisplaySelectPlan(); //Wyswietlenie wybranego planu
-	void __fastcall _WriteJournalPlan();  //Zapis aktualnego dziennika czytania bibli
+	void __fastcall _WriteJournalPlan();	//Zapis aktualnego dziennika czytania bibli
 	void __fastcall _InfoStartStopPlan();
 	void __fastcall _InitToggleSwitches();//Inicjalizacja obsługi przełączników flag //[15-08-2023]
 	void __fastcall _DisplayPreview(); //Wyświetlenie podgladu tekstu

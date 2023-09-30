@@ -28,7 +28,7 @@ __fastcall TViewAllResourcesWindow::TViewAllResourcesWindow(TComponent* Owner)
 	this->ImageDisplayResource->Height = this->PanelDisplay->Height;
 	this->ImageDisplayResource->Width = this->ImageDisplayResource->Height;
 	this->ImageDisplayResource->Left = this->PanelDisplay->Width / 2 - (this->ImageDisplayResource->Width / 2);
-  this->ImageDisplayResource->Top = 0;
+	this->ImageDisplayResource->Top = 0;
 	//this->ImageDisplayResource->Margins->Left
 }
 //---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ void __fastcall TViewAllResourcesWindow::FormClose(TObject *Sender, TCloseAction
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	Action = caFree;
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
@@ -58,10 +58,10 @@ void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
 	//---
 	this->_pGsViewAllResourcesClass->OnSelectItem = this->_OnSelectItem;
 
-  this->_pDisplayWindow = new TForm(this);
+	this->_pDisplayWindow = new TForm(this);
 	if(!this->_pDisplayWindow) throw(Exception("B³¹d inicjalizacji objektu TForm"));
 
-  this->_pDisplayWindow->Width = Screen->Width;
+	this->_pDisplayWindow->Width = Screen->Width;
 	this->_pDisplayWindow->Height = Screen->Height;
 	this->_pDisplayWindow->Left = 0; this->_pDisplayWindow->Top = 0;
 	this->_pDisplayWindow->BorderStyle = bsNone;
@@ -95,7 +95,7 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	UnicodeString  ustrSelectItem;
+	UnicodeString	 ustrSelectItem;
 	DataItemResources *pDataItemResources = static_cast<DataItemResources *>(Item->Data);
 
 	try
@@ -110,20 +110,20 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 			}
 		}
 		else if(Item->GroupID == enGroup_Graphics)
-    //Podgl¹d grafiki
+		//Podgl¹d grafiki
 		{
 			this->_DisplayImage(Item->Caption);
 		}
 		else if(Item->GroupID == enGroup_CoomentFiles || Item->GroupID == enGroup_FavVers)
-    //Ulubione wersety i wersety z komentarzem
+		//Ulubione wersety i wersety z komentarzem
 		{
 			this->_DisplaySelectVersAllTrans(pDataItemResources);
 		}
 	}
 	catch(...)
 	{
-    MessageBox(NULL, TEXT("B³¹d podczas wczytywania zasobów"), TEXT("B³¹d aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
-  }
+		MessageBox(NULL, TEXT("B³¹d podczas wczytywania zasobów"), TEXT("B³¹d aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
@@ -174,7 +174,7 @@ void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataIt
 			pStringStream->WriteString(Format("%s%s %s " ,ARRAYOFCONST((GlobalSizeFontText, GlobalAdressVersRtf, pDataItemResources->ustrInfoResource))));
 			pStringStream->WriteString(Format("%s %s" ,ARRAYOFCONST((GlobalVersRtf, pDataItemResources->HSListGetAllTransVers->Strings[iLicz]))));
 
-			pStringStream->WriteString(Format("%s%s  [%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, GsReadBibleTextItem->NameTranslate, "\\line"))));
+			pStringStream->WriteString(Format("%s%s	 [%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, GsReadBibleTextItem->NameTranslate, "\\line"))));
 		}
 	}
 
@@ -193,7 +193,7 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	UnicodeString  ustrSelectItem;
+	UnicodeString	 ustrSelectItem;
 	TWICImage *pWICImage=nullptr;
 
 	try
@@ -216,10 +216,10 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 }
 //---------------------------------------------------------------------------
 /////////////////////////////////////////////////////////////////////////////
-//                                                                         //
-// 						 	OTWARCIE PE£NOEKRANOWEGO PODGLADU WYBRANEJ                 //
-//										GRAFIKI I JEGO PRYWATNE METODY                       //
-//                                                                         //
+//																																				 //
+//							OTWARCIE PE£NOEKRANOWEGO PODGLADU WYBRANEJ									//
+//										GRAFIKI I JEGO PRYWATNE METODY											 //
+//																																				 //
 /////////////////////////////////////////////////////////////////////////////
 void __fastcall TViewAllResourcesWindow::ImageDisplayResourceDblClick(TObject *Sender)
 /**
@@ -314,7 +314,7 @@ void __fastcall TViewAllResourcesWindow::_OnKeyPress(TObject *Sender, System::Wi
 					break;
 				}
 				this->ImageDisplayResourceDblClick(this->ImageDisplayResource);
-    	}
+			}
 		break;
 	}
 }

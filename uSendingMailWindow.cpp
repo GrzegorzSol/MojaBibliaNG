@@ -28,7 +28,7 @@ __fastcall TSendingMailWindow::TSendingMailWindow(TComponent* Owner, const Unico
 */
 {
 	this->ButtSendingMail->Tag = enTag_ButtSendingMail;
-  this->ButtSendingMail->Hint = "Wyślij tekst emailem|Wysyłanie wybranego tekstu biblijneo mailem, na wybrany adres";
+	this->ButtSendingMail->Hint = "Wyślij tekst emailem|Wysyłanie wybranego tekstu biblijneo mailem, na wybrany adres";
 	//---
 	if(TFile::Exists(GlobalVar::Global_custrPathLastUsedAddressFile))
 	{
@@ -57,7 +57,7 @@ void __fastcall TSendingMailWindow::ButtSendingMailClick(TObject *Sender)
 {
 	if(this->LEditAdressMail->Text.IsEmpty())
 	{
-    MessageBox(NULL, TEXT("Nie można wysłać wiadomości, ponieważ nie wpisałeś poprawnego adresu odbiorcy. Wpisz prawidłowy adres i spróbuj ponownie."), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		MessageBox(NULL, TEXT("Nie można wysłać wiadomości, ponieważ nie wpisałeś poprawnego adresu odbiorcy. Wpisz prawidłowy adres i spróbuj ponownie."), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		return;
 	}
 	//---
@@ -112,7 +112,7 @@ void __fastcall TSendingMailWindow::CBoxLastUseAddressChange(TObject *Sender)
 {
 	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
 	if(!pCBox) return;
-  //---
+	//---
 	this->LEditAdressMail->Text = pCBox->Items->Strings[pCBox->ItemIndex];
 }
 //---------------------------------------------------------------------------

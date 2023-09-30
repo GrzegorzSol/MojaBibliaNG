@@ -5011,13 +5011,13 @@ object InformationsAppWindow: TInformationsAppWindow
     Align = alClient
     ShowCaption = False
     TabOrder = 0
-    ExplicitWidth = 419
-    ExplicitHeight = 669
+    ExplicitWidth = 411
+    ExplicitHeight = 667
     object BevelPartSystemInfo: TBevel
       AlignWithMargins = True
       Left = 13
       Top = 548
-      Width = 397
+      Width = 389
       Height = 3
       Margins.Left = 12
       Margins.Top = 12
@@ -5025,12 +5025,13 @@ object InformationsAppWindow: TInformationsAppWindow
       Align = alTop
       Shape = bsTopLine
       ExplicitTop = 332
+      ExplicitWidth = 397
     end
     object STextHeadInfo: TStaticText
       AlignWithMargins = True
       Left = 13
       Top = 13
-      Width = 397
+      Width = 389
       Height = 66
       Margins.Left = 12
       Margins.Top = 12
@@ -5047,13 +5048,13 @@ object InformationsAppWindow: TInformationsAppWindow
       Font.Quality = fqClearType
       ParentFont = False
       TabOrder = 0
-      ExplicitWidth = 393
+      ExplicitWidth = 385
     end
     object STextInfoLicence: TStaticText
       AlignWithMargins = True
       Left = 13
       Top = 94
-      Width = 397
+      Width = 389
       Height = 379
       Margins.Left = 12
       Margins.Top = 12
@@ -5061,13 +5062,13 @@ object InformationsAppWindow: TInformationsAppWindow
       Align = alTop
       AutoSize = False
       TabOrder = 1
-      ExplicitWidth = 393
+      ExplicitWidth = 385
     end
     object STextInfoVersions: TStaticText
       AlignWithMargins = True
       Left = 13
       Top = 488
-      Width = 397
+      Width = 389
       Height = 45
       Margins.Left = 12
       Margins.Top = 12
@@ -5076,13 +5077,13 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 2
-      ExplicitWidth = 393
+      ExplicitWidth = 385
     end
     object STextInfoSystem: TStaticText
       AlignWithMargins = True
       Left = 13
       Top = 566
-      Width = 397
+      Width = 389
       Height = 49
       Margins.Left = 12
       Margins.Top = 12
@@ -5091,7 +5092,7 @@ object InformationsAppWindow: TInformationsAppWindow
       Alignment = taCenter
       AutoSize = False
       TabOrder = 3
-      ExplicitWidth = 393
+      ExplicitWidth = 385
     end
   end
   object TimerInfoSystem: TTimer

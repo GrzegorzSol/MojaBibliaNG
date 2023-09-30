@@ -14,7 +14,7 @@ do innych projektów. Z tego powodu jej wszystkie funkcje i metody, musza być k
 
 TCHAR *Library::GetInfo(TCHAR *InfoItem)
 /*
-  OPIS METOD(FUNKCJI): Stworzenie StatusBar
+	OPIS METOD(FUNKCJI): Stworzenie StatusBar
 	OPIS ARGUMENTÓW: GetInfo("Comments");
 									 GetInfo("CompanyName");
 									 GetInfo("FileDescription");
@@ -31,12 +31,12 @@ TCHAR *Library::GetInfo(TCHAR *InfoItem)
 
 */
 {
-  static TCHAR szResult[256] = {0};
+	static TCHAR szResult[256] = {0};
 	TCHAR szFullPath[256];
 	TCHAR szGetName[256];
-	LPWSTR lpVersion;        // String pointer to Item text
-	DWORD dwVerInfoSize,    // Size of version information block
-				dwVerHnd=0;        // An 'ignored' parameter, always '0'
+	LPWSTR lpVersion;				 // String pointer to Item text
+	DWORD dwVerInfoSize,		// Size of version information block
+				dwVerHnd=0;				 // An 'ignored' parameter, always '0'
 	UINT uVersionLen;
 	BOOL bRetCode;
 
@@ -45,10 +45,10 @@ TCHAR *Library::GetInfo(TCHAR *InfoItem)
 
 	if (dwVerInfoSize)
 	{
-		LPSTR   lpstrVffInfo;
-		HANDLE  hMem;
+		LPSTR		lpstrVffInfo;
+		HANDLE	hMem;
 		hMem = GlobalAlloc(GMEM_MOVEABLE, dwVerInfoSize);
-		lpstrVffInfo  =  (LPSTR)GlobalLock(hMem);
+		lpstrVffInfo	=	 (LPSTR)GlobalLock(hMem);
 
 		GetFileVersionInfo(szFullPath, dwVerHnd, dwVerInfoSize, lpstrVffInfo);
 		StringCchCopy(szGetName, 256, TEXT("\\VarFileInfo\\Translation"));
@@ -63,11 +63,11 @@ TCHAR *Library::GetInfo(TCHAR *InfoItem)
 		else
 		{
 			// 041904b0 is a very common one, because it means:
-			//   US English/Russia, Windows MultiLingual characterset
+			//	 US English/Russia, Windows MultiLingual characterset
 			// Or to pull it all apart:
-			// 04------        = SUBLANG_ENGLISH_USA
-			// --09----        = LANG_ENGLISH
-			// --19----        = LANG_RUSSIA
+			// 04------				 = SUBLANG_ENGLISH_USA
+			// --09----				 = LANG_ENGLISH
+			// --19----				 = LANG_RUSSIA
 			// ----04b0 = 1200 = Codepage for Windows:Multilingual
 			StringCchCopy(szResult, 256, TEXT("041904b0"));
 		}
@@ -87,9 +87,9 @@ TCHAR *Library::GetInfo(TCHAR *InfoItem)
 		{
 			StringCchCopy(szResult, 256, TEXT(""));
 		}
-    GlobalUnlock(hMem);
+		GlobalUnlock(hMem);
 		GlobalFree(hMem);
 	}
-   return szResult;
+	 return szResult;
 }
 //---------------------------------------------------------------------------

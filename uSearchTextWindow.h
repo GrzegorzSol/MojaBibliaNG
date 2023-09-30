@@ -15,14 +15,14 @@
 //---------------------------------------------------------------------------
 typedef struct _StatisticFindView //struktura informacyjna o statystyce wyszukiwania
 {
-	unsigned int uiCountFind;   //Ilość znalezień w księdze
-							 //uiWidthBar;    //Obliczona szerokość wskaźnika
+	unsigned int uiCountFind;		//Ilość znalezień w księdze
+							 //uiWidthBar;		//Obliczona szerokość wskaźnika
 } StatisticFindView, *PStatisticFindView;
 //---Typy wyświetlania informacji w trybie html,
 enum EnTypeDisplayHTML {
-												enTypeDisplay_ResultsearchAll=1000,    //Wyświetlanie wszystkich znalezionych wersetów
-												enTypeDisplay_ResultSearchSelectBook,  //Wyświetlanie znelozionych wersetów dla konkretnej księgi
-												enTypeDisplay_ResultSelectVers         //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
+												enTypeDisplay_ResultsearchAll=1000,		 //Wyświetlanie wszystkich znalezionych wersetów
+												enTypeDisplay_ResultSearchSelectBook,	 //Wyświetlanie znelozionych wersetów dla konkretnej księgi
+												enTypeDisplay_ResultSelectVers				 //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
 											 };
 //---------------------------------------------------------------------------
 class TSearchTextWindow : public TForm
@@ -85,29 +85,29 @@ __published:	// IDE-managed Components
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall STW_LViewResultSearchData(TObject *Sender, TListItem *Item);
 	void __fastcall STW_LViewResultSearchDataHint(TObject *Sender, int StartIndex,
-          int EndIndex);
+					int EndIndex);
 	void __fastcall STW_LViewResultSearchGetImageIndex(TObject *Sender, TListItem *Item);
 	void __fastcall STW_LViewAllSelectItem(TObject *Sender, TListItem *Item,
-          bool Selected);
+					bool Selected);
 	void __fastcall STW_ButtonHelpRegExpClick(TObject *Sender);
 	void __fastcall STW_CBoxSearchDrawItem(TWinControl *Control, int Index,
-          TRect &Rect, TOwnerDrawState State);
+					TRect &Rect, TOwnerDrawState State);
 	void __fastcall STW_PControlChanging(TObject *Sender, bool &AllowChange);
 	void __fastcall STW_LViewStatisticDrawItem(TCustomListView *Sender, TListItem *Item,
-          TRect &Rect, TOwnerDrawState State);
+					TRect &Rect, TOwnerDrawState State);
 	void __fastcall FormDeactivate(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
 	void __fastcall STW_CBoxHistorySearchTextChange(TObject *Sender);
 	void __fastcall STW_PControlViewsTextDrawTab(TCustomTabControl *Control, int TabIndex,
 					const TRect &Rect, bool Active);
 	void __fastcall STW_ColorBoxGetColors(TCustomColorBox *Sender,
-          TStrings *Items);
+					TStrings *Items);
 	void __fastcall STW_ColorBoxChange(TObject *Sender);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety
 	int _iStart_index;	//Początkowy index dla TListView
-	int _iEnd_index;    //Końcowy index dla TListView
+	int _iEnd_index;		//Końcowy index dla TListView
 	void __fastcall _DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers,
 		const EnTypeDisplayHTML _TypeDisplayHTML, const int iSelectDisplayVerset=-1);
 public:		// User declarations

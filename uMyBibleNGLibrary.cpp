@@ -16,7 +16,7 @@
 #if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32)
 */
 /****************************************************************************
-*                        Klasa GsListBoxMultiMClass                         *
+*												 Klasa GsListBoxMultiMClass													*
 *****************************************************************************/
 enum {enColumn_Name, enColumn_Size, enColumn_Count};
 static const UnicodeString ustrColumsNames[] = {"Nazwa Pliku", "Wielkość pliku"};
@@ -24,9 +24,9 @@ static int iColumnIndex=enColumn_Name, //Na którą kolumnę kliknąłeś
 					 iToSort=1; //Kierunek sortowania
 typedef struct {
 									UnicodeString ustrPathName, //Nazwa pliku
-                                ustrName;     //Nazwa samego pliku
-									int iSizeFile;              //Wielkość pliku
-									int iIdIcon;                //Numer ikony, przyporządkowanej plikowi
+																ustrName;			//Nazwa samego pliku
+									int iSizeFile;							//Wielkość pliku
+									int iIdIcon;								//Numer ikony, przyporządkowanej plikowi
 							 }MULTIDATA, *PMULTIDATA;
 //---------------------------------------------------------------------------
 __fastcall GsListViewMultiMClass::GsListViewMultiMClass(TComponent* Owner) : TCustomListView(Owner)
@@ -142,7 +142,7 @@ void __fastcall GsListViewMultiMClass::CreateWnd()
 		{
 			ustrTempLowerName = LowerCase(SDirMultiMList[i]);
 			if((TPath::GetExtension(ustrTempLowerName) != ".jpg") &&
-			   (TPath::GetExtension(ustrTempLowerName) != ".jpeg") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".jpeg") &&
 				 (TPath::GetExtension(ustrTempLowerName) != ".bmp") &&
 				 (TPath::GetExtension(ustrTempLowerName) != ".png")) continue; //07-06-2020
 			//---
@@ -175,7 +175,7 @@ void __fastcall GsListViewMultiMClass::_CreateColumns()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TListColumn  *NewColumn;//=0;
+	TListColumn	 *NewColumn;//=0;
 	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNames); iColumns++)
 	{
 		NewColumn = this->Columns->Add();
@@ -191,7 +191,7 @@ void __fastcall GsListViewMultiMClass::_CreateColumns()
 			break;
 		}
 		//
-  }
+	}
 }
 //---------------------------------------------------------------------------
 int __fastcall GsListViewMultiMClass::SortListFiles(void * Item1, void * Item2)
@@ -208,7 +208,7 @@ int __fastcall GsListViewMultiMClass::SortListFiles(void * Item1, void * Item2)
 
 	switch(iColumnIndex)
 	{
-    case enColumn_Name:
+		case enColumn_Name:
 			return AnsiCompareStr(pMultiData1->ustrName, pMultiData2->ustrName) * iToSort;
 		//break;
 
@@ -217,7 +217,7 @@ int __fastcall GsListViewMultiMClass::SortListFiles(void * Item1, void * Item2)
 			else if(pMultiData1->iSizeFile > pMultiData2->iSizeFile) return 1 * iToSort;
 			else if(pMultiData1->iSizeFile < pMultiData2->iSizeFile) return -1 * iToSort;
 		break;
-  }
+	}
 	return 0;
 }
 //---------------------------------------------------------------------------
@@ -243,12 +243,12 @@ bool __fastcall GsListViewMultiMClass::OwnerDataFetch(Comctrls::TListItem* Item,
 {
 	if ((Item->Index > this->_iLViewEndIndex) || (Item->Index < this->_iLViewStartIndex)) return true;
 
-  if(Request.Contains(irText) || Item->Caption.IsEmpty())
+	if(Request.Contains(irText) || Item->Caption.IsEmpty())
 	{
 		PMULTIDATA pMultiData = static_cast<PMULTIDATA>(this->_pListFile->Items[Item->Index]);
 		if(pMultiData) Item->Caption = pMultiData->ustrPathName;
 	}
-  else if (Request.Contains(irImage))
+	else if (Request.Contains(irImage))
 	{
 		//Item->ImageIndex = pItemInfoFile->iIconId;
 		//Item->ImageIndex = pGSFList->ImageIndex;
@@ -265,8 +265,8 @@ bool __fastcall GsListViewMultiMClass::OwnerDataHint(int StartIndex, int EndInde
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->_iLViewStartIndex = StartIndex; //Dolny zakres, elementów listy
-	this->_iLViewEndIndex = EndIndex;     //Górny zakres, elementów listy
+	this->_iLViewStartIndex = StartIndex; //Dolny zakres, elementów listy
+	this->_iLViewEndIndex = EndIndex;			//Górny zakres, elementów listy
 
 	return true;
 }
@@ -285,7 +285,7 @@ int __fastcall GsListViewMultiMClass::OwnerDataFind(TItemFind Find, const System
 	{
 		pMultiData = static_cast<PMULTIDATA>(this->_pListFile->Items[i]);
 		if (UpperCase(pMultiData->ustrPathName) == UpperCase(FindString)) return i;
-  }
+	}
 	return -1;
 }
 //---------------------------------------------------------------------------
@@ -310,10 +310,10 @@ void __fastcall GsListViewMultiMClass::DoSelectItem(TListItem* Item, bool Select
 //---------------------------------------------------------------------------
 void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
 /**
-  OPIS METOD(FUNKCJI): Rysowanie zawartości klasy przez programiste, nie przez system
-  OPIS ARGUMENTÓW:
+	OPIS METOD(FUNKCJI): Rysowanie zawartości klasy przez programiste, nie przez system
+	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
-  OPIS WYNIKU METODY(FUNKCJI):
+	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
 	TRect RectBounds = Item->DisplayRect(drBounds);
@@ -330,7 +330,7 @@ void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::T
 	{
 		this->Canvas->Brush->Color = clWebDarkOrange;
 	}
-  this->Canvas->Font = this->Font;
+	this->Canvas->Font = this->Font;
 	this->Canvas->FillRect(RectBounds);
 	this->Canvas->Font->Color = clWindowText;
 
@@ -340,16 +340,16 @@ void __fastcall GsListViewMultiMClass::DrawItem(TListItem* Item, const System::T
 	DrawText(this->Canvas->Handle, pMultiData->ustrName.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	for(int iColumn=0; iColumn<this->Columns->Count - 1; iColumn++)
 	{
-    //Wymiary następnej kolumny
+		//Wymiary następnej kolumny
 		RectSubItem.Left += this->Column[0]->Width - RectIcon.Width() - 4;
 		RectSubItem.Right += this->Column[1]->Width;
 		if(State.Contains(odSelected)) this->Canvas->Brush->Color = clWebCoral; else this->Canvas->Brush->Color = clWebLinen;
 		this->Canvas->FillRect(RectSubItem);
 		if(iColumn == enColumn_Size - 1)
 		{
-      InflateRect(RectSubItem, -4, 0);
+			InflateRect(RectSubItem, -4, 0);
 			DrawText(this->Canvas->Handle, Format("%u B", ARRAYOFCONST((pMultiData->iSizeFile))).c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-    }
+		}
 	}
 }
 //---------------------------------------------------------------------------
@@ -373,7 +373,7 @@ void __fastcall GsListViewMultiMClass::ColClick(TListColumn* Column)
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
-*                           Klasa GsPanelMultiM                             *
+*														Klasa GsPanelMultiM															*
 *****************************************************************************/
 __fastcall GsPanelMultiM::GsPanelMultiM(TComponent* Owner, TPageControl *_pPControl) : TCustomPanel(Owner)
 /**
@@ -424,15 +424,15 @@ GsTabSheetGraphics *__fastcall GsPanelMultiM::NewSheetOnlyText()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->_pPControlMainWindow->Visible = true; //01-02-2020
+	this->_pPControlMainWindow->Visible = true; //01-02-2020
 	GsTabSheetGraphics *pGsTabSheetGraphics = new GsTabSheetGraphics(this->_pPControlMainWindow);
 	if(!pGsTabSheetGraphics) throw(Exception("Błąd inicjalizacji objektu GsTabSheetGraphics"));
 	//---
-  pGsTabSheetGraphics->PageControl = this->_pPControlMainWindow; //Umieszczanie objektu klasy na objekcie typu TPageControl
+	pGsTabSheetGraphics->PageControl = this->_pPControlMainWindow; //Umieszczanie objektu klasy na objekcie typu TPageControl
 	this->_pPControlMainWindow->ActivePage = pGsTabSheetGraphics; //Nowostworzona zakładka, staje się zakładką aktualną
 
 	this->_pPControlMainWindow->SetFocus();
-	return  pGsTabSheetGraphics;
+	return	pGsTabSheetGraphics;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelMultiM::CreateWnd()
@@ -486,17 +486,17 @@ void __fastcall GsPanelMultiM::_ImageOnClick(System::TObject* Sender)
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
-*                          Klasa GsTabSheetGraphics                         *
+*													 Klasa GsTabSheetGraphics													*
 *****************************************************************************/
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetGraphics::GsTabSheetGraphics(TComponent* Owner) : TTabSheet(Owner)
 {
-  this->DoubleBuffered = true;
-  //---
+	this->DoubleBuffered = true;
+	//---
 	this->pGsDirect2DClass = new GsDirect2DClass(this);
 	if(!this->pGsDirect2DClass) throw(Exception("Błąd inicjalizacji objektu GsDirect2DLiteClass"));
 	this->pGsDirect2DClass->Parent = this;
-  this->pGsDirect2DClass->Align = alClient;
+	this->pGsDirect2DClass->Align = alClient;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetGraphics::~GsTabSheetGraphics()
@@ -517,7 +517,7 @@ void __fastcall GsTabSheetGraphics::CreateWnd()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TTabSheet::CreateWnd();
+	TTabSheet::CreateWnd();
 	//Własny kod.
 }
 //---------------------------------------------------------------------------
@@ -529,12 +529,12 @@ void __fastcall GsTabSheetGraphics::DestroyWnd()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Własny kod.
+	//Własny kod.
 	TTabSheet::DestroyWnd();
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
-*                          Klasa GsPanelSelectVers                          *
+*													 Klasa GsPanelSelectVers													*
 *****************************************************************************/
 __fastcall GsPanelSelectVersImage::GsPanelSelectVersImage(TComponent* Owner) : TCustomPanel(Owner)
 /**
@@ -544,7 +544,7 @@ __fastcall GsPanelSelectVersImage::GsPanelSelectVersImage(TComponent* Owner) : T
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->DoubleBuffered = true;
+	this->DoubleBuffered = true;
 }
 //----------------------------------------------------------------------------
 __fastcall GsPanelSelectVersImage::~GsPanelSelectVersImage()
@@ -578,7 +578,7 @@ void __fastcall GsPanelSelectVersImage::DestroyWnd()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Własny kod.
+	//Własny kod.
 	TCustomPanel::DestroyWnd();
 }
 //---------------------------------------------------------------------------

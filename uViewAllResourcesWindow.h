@@ -28,10 +28,10 @@ __published:	// IDE-managed Components
 private:	// User declarations
 	float fFactorProp;
 	TForm *_pDisplayWindow=nullptr;
-  TImage *_pImageScr=nullptr;
+	TImage *_pImageScr=nullptr;
 
 	void __fastcall _OnKeyPress(TObject *Sender, System::WideChar &Key);
-  GsViewAllResourcesClass *_pGsViewAllResourcesClass;
+	GsViewAllResourcesClass *_pGsViewAllResourcesClass;
 	void __fastcall _OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected);
 	void __fastcall _DisplaySelectVersAllTrans(const DataItemResources *pDataItemResources);
 	void __fastcall _DisplayImage(const UnicodeString _pathImages);

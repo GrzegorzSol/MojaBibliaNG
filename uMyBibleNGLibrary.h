@@ -7,7 +7,7 @@
 #include "GsDirect2DClass.h"
 //---------------------------------------------------------------------------
 /****************************************************************************
-*                        Klasa GsListBoxMultiMClass                         *
+*												 Klasa GsListBoxMultiMClass													*
 *****************************************************************************/
 class GsListViewMultiMClass : public TCustomListView
 {
@@ -39,13 +39,13 @@ class GsListViewMultiMClass : public TCustomListView
 	public:
 };
 /**************************************************************************************************************************************
-*                             Klasa GsPanelMultiM                                																											*
+*															Klasa GsPanelMultiM																																											*
 * Klasa tworzy panel z objektami klas: GsListViewMultiMClass - czyli listą grafik																											*
-*              												 GsDirect2DClass - klasą do wyświetlania i zarzadzania grafikami i obrazami, za pomocą Direct2D *
-* Klasa równierz tworzy zakładke z objektem, klasy GsTabSheetGraphics, na objekcie klasy TPageControl, w głównym oknie aplikacji      *
+*																			 GsDirect2DClass - klasą do wyświetlania i zarzadzania grafikami i obrazami, za pomocą Direct2D *
+* Klasa równierz tworzy zakładke z objektem, klasy GsTabSheetGraphics, na objekcie klasy TPageControl, w głównym oknie aplikacji			*
 ***************************************************************************************************************************************/
 class GsTabSheetGraphics;
-class GsPanelMultiM  : public TCustomPanel
+class GsPanelMultiM	 : public TCustomPanel
 {
 	friend class GsListViewMultiMClass;
 	public:
@@ -65,7 +65,7 @@ class GsPanelMultiM  : public TCustomPanel
 		void __fastcall _ImageOnClick(System::TObject* Sender);
 };
 /****************************************************************************
-*                          Klasa GsTabSheetGraphics                         *
+*													 Klasa GsTabSheetGraphics													*
 *****************************************************************************/
 class GsTabSheetGraphics : public TTabSheet
 {
@@ -81,9 +81,9 @@ class GsTabSheetGraphics : public TTabSheet
 		virtual void __fastcall DestroyWnd();
 };
 /****************************************************************************
-*                          Klasa GsPanelSelectVersImage                          *
+*													 Klasa GsPanelSelectVersImage													 *
 *****************************************************************************/
-class GsPanelSelectVersImage  : public TCustomPanel
+class GsPanelSelectVersImage	: public TCustomPanel
 {
 	friend class GsTabSheetGraphics;
 
@@ -93,6 +93,6 @@ class GsPanelSelectVersImage  : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-    UnicodeString ustrSelectVers;
+		UnicodeString ustrSelectVers;
 };
 #endif

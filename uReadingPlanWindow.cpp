@@ -121,7 +121,7 @@ void __fastcall TReadingPlanWindow::FormActivate(TObject *Sender)
 				 "Jeśli nie przeczytałeś odpowiedniego tekstu na zaległy dzień, wybierz go z listy. Pozycje nieprzeczytane nie mają zaznaczenia w kwadraciku, po lewej stronie pozycji. "+
 				 "Po nadrobieniu zaległości zaznacz odpowiednie pozycje z listy",
 				ARRAYOFCONST((i)))).c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-      this->_bIsSelectDay = true;
+			this->_bIsSelectDay = true;
 			break;
 		}
 	}
@@ -251,7 +251,7 @@ void __fastcall TReadingPlanWindow::_ReadSelectPlan(const int iSetDayPlan)
 						{
 							TTabSheet *pTabSheet = this->PageControlReadingPlanes->Pages[i];
 							if(pTabSheet) pTabSheet->TabVisible = false;
-            }
+						}
 					}
 				}
 			} //try catch
@@ -424,7 +424,7 @@ void __fastcall TReadingPlanWindow::SButtonJournalingClick(TObject *Sender)
 	if(!pSButton) return;
 	//---
 	this->PanelJournaling->Visible = pSButton->Down;
-  this->SplitterSizeJournaling->Left = this->PageControlReadingPlanes->Left + this->PageControlReadingPlanes->Width;
+	this->SplitterSizeJournaling->Left = this->PageControlReadingPlanes->Left + this->PageControlReadingPlanes->Width;
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadingPlanWindow::SButtonStopSpeakClick(TObject *Sender)
@@ -435,14 +435,14 @@ void __fastcall TReadingPlanWindow::SButtonStopSpeakClick(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
+	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
 	if(!pSButton) return;
 	//---
 	if(Gl_pVoice)
 	{
 		Gl_pVoice->Release();
-    Gl_pVoice = nullptr;
-  }
+		Gl_pVoice = nullptr;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TReadingPlanWindow::ChListBoxJournalingClickCheck(TObject *Sender)

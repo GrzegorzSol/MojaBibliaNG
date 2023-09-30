@@ -20,8 +20,8 @@ enum {
 		 };
 TColor ColorObject[] = {clLime, clCream, clWebDarkOrange};
 /****************************************************************************
-*          Klasa całkowicie PRYWATNA GsCoreBibleScheme,                     *
-*                    pochodna TCustomPanel.                                 *
+*					 Klasa całkowicie PRYWATNA GsCoreBibleScheme,											*
+*										 pochodna TCustomPanel.																	*
 *****************************************************************************/
 __fastcall GsCoreBibleScheme::GsCoreBibleScheme(TComponent* Owner) : TCustomPanel(Owner)
 /**
@@ -44,8 +44,8 @@ __fastcall GsCoreBibleScheme::~GsCoreBibleScheme()
 {
 }
 /****************************************************************************
-*          Klasa całkowicie PRYWATNA GsChildBibleScheme,                    *
-*                    pochodna GsCoreBibleScheme.                            *
+*					 Klasa całkowicie PRYWATNA GsChildBibleScheme,										*
+*										 pochodna GsCoreBibleScheme.														*
 *****************************************************************************/
 __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteDataObject _PReadWriteDataObject) : GsCoreBibleScheme(Owner)
 /**
@@ -55,31 +55,31 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Inicjalizacja listy potomków
+	//Inicjalizacja listy potomków
 	this->ListChildren = new TList();
 	if(!this->ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
 	this->Font->Quality = TFontQuality::fqClearType;
-  this->StyleElements = TStyleElements();
+	this->StyleElements = TStyleElements();
 	this->SListVers = new THashedStringList(); //Lista wersetów ze wszystkich tłumaczeñ
 	if(!this->SListVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	//---
 	this->DoubleBuffered = true;
 	this->ParentColor = false;
 	this->ParentBackground = false;
-  this->ParentCtl3D = false;
+	this->ParentCtl3D = false;
 	this->BevelOuter = bvNone;
 	this->BorderStyle = bsSingle;
 	this->Color = ColorObject[enColorNum_Active];
 	this->Ctl3D = false;
 	this->ParentObjectScheme = nullptr; //Wskaźnik na przodka, domyślnie to korzeń
-  this->ShowHint = true;
+	this->ShowHint = true;
 	if(_PReadWriteDataObject) this->IDChild = _PReadWriteDataObject->RW_ID; else this->IDChild = Random(INT_MAX);
 	//this->ID64Child = (__int64)this->IDChild * (__int64)Random(INT_MAX);
 	this->Level = 0; //Poziom
 }
 //---------------------------------------------------------------------------
-__fastcall  GsChildBibleScheme::~GsChildBibleScheme()
+__fastcall	GsChildBibleScheme::~GsChildBibleScheme()
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -100,7 +100,7 @@ __fastcall  GsChildBibleScheme::~GsChildBibleScheme()
 			//Wlaściwe kasowanie potomka
 			delete pGsChildBibleScheme; pGsChildBibleScheme = nullptr;
 		}
-  }
+	}
 	delete this->ListChildren; this->ListChildren = nullptr; //Kasowanie listy potomków, po ich usunięciu
 	//Kasowanie objektu z listy głównej
 	iIndex = this->DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(this);
@@ -168,12 +168,12 @@ void __fastcall GsChildBibleScheme::MouseDown(System::Uitypes::TMouseButton Butt
 		if(this->DrawPanelScheme->_pSelectObject != this)
 		{
 			this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_InActive]; //Dezaktywacja poprzedniego objektu
-			this->DrawPanelScheme->_pSelectObject = this;           //Objekt kliknięty, staje się aktualny
+			this->DrawPanelScheme->_pSelectObject = this;						//Objekt kliknięty, staje się aktualny
 			if(this->DrawPanelScheme->_pRootObject == this)
-				this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Rot];  //Zmiana koloru tła aktualnego objektu
-			else this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Active];  //Zmiana koloru tła , aktualnego objektu
+				this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Rot];	 //Zmiana koloru tła aktualnego objektu
+			else this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Active];	 //Zmiana koloru tła , aktualnego objektu
 		}
-   this->ViewSelectObject();
+	 this->ViewSelectObject();
 	}
 }
 //---------------------------------------------------------------------------
@@ -239,7 +239,7 @@ void __fastcall GsChildBibleScheme::Paint()
 {
 	GsCoreBibleScheme::Paint();
 	//Własny kod
-  this->Canvas->Font->Color = clRed;
+	this->Canvas->Font->Color = clRed;
 	this->Canvas->Font->Style = TFontStyles() << fsBold;
 	this->Canvas->TextOut(1, 0, this->ustrVers);
 	this->Width = this->Canvas->TextWidth(this->ustrVers) + 4;
@@ -256,8 +256,8 @@ void __fastcall GsChildBibleScheme::Paint()
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
-*          Klasa całkowicie PRYWATNA GsDrawPanelBibleScheme,                *
-*                    pochodna TCustomPanel.                                 *
+*					 Klasa całkowicie PRYWATNA GsDrawPanelBibleScheme,								*
+*										 pochodna TCustomPanel.																	*
 *****************************************************************************/
 __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : TCustomPanel(Owner)
 /**
@@ -271,7 +271,7 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
 	//this->StyleElements = TStyleElements();
 	this->DoubleBuffered = true;
 	this->AutoSize = true;
-  this->BevelOuter = bvNone;
+	this->BevelOuter = bvNone;
 	this->_GsChildBibleSchemeList = new TList();
 	if(!this->_GsChildBibleSchemeList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
@@ -285,7 +285,7 @@ __fastcall GsDrawPanelBibleScheme::~GsDrawPanelBibleScheme()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //--- Likwidowanie listy objektów, klasy GsChildBibleScheme
+	//--- Likwidowanie listy objektów, klasy GsChildBibleScheme
 	if(this->_pRootObject)
 	//Usuwany główny korzeń, a wraz z nim wszyscy jego potomkowie
 	{
@@ -331,10 +331,10 @@ void __fastcall GsDrawPanelBibleScheme::Paint()
 	GsChildBibleScheme *pGsChildBibleScheme;//=0;
 	for(int i=0; i<this->_GsChildBibleSchemeList->Count; i++)
 	{
-    pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
+		pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 		if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
 		pGsChildBibleScheme->Repaint();
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
@@ -350,10 +350,10 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 	GsChildBibleScheme *pGsChildBibleScheme, *prevGsChildBibleScheme; //Domyślnie to korzeń
 
 	pGsChildBibleScheme = new GsChildBibleScheme(this);
-  if(!pGsChildBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsChildBibleScheme"));
+	if(!pGsChildBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsChildBibleScheme"));
 	pGsChildBibleScheme->Parent = this;
 
-  if(this->_GsChildBibleSchemeList->Count > 0) //Tylko jeden korzeń!
+	if(this->_GsChildBibleSchemeList->Count > 0) //Tylko jeden korzeń!
 	{
 		prevGsChildBibleScheme = this->_pSelectObject;
 		//Ustawienie pól na poprzedni objekt
@@ -365,7 +365,7 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 	}
 	else //Dodawanie korzenia
 	{
-		this->_pRootObject = pGsChildBibleScheme;   //Okno głównego korzenia
+		this->_pRootObject = pGsChildBibleScheme;		//Okno głównego korzenia
 		this->_pRootObject->Color = ColorObject[enColorNum_Rot];
 	}
 	pGsChildBibleScheme->Top = top; pGsChildBibleScheme->Left = left;
@@ -386,7 +386,7 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  if(this->_pSelectObject)	//Aktualnie aktywny objekt
+	if(this->_pSelectObject)	//Aktualnie aktywny objekt
 	{
 		int iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz skasować objekt razem ze wszystkimi jego pochodnymi?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 		if(iResult == IDNO) return;
@@ -408,7 +408,7 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 			this->_pSelectObject = this->_pRootObject;
 		}
 		else
-    //Skasowanie korzenia
+		//Skasowanie korzenia
 		{
 			//this->ActDeleteLink->Enabled = false;
 			delete this->_pRootObject; this->_pRootObject = nullptr;
@@ -424,7 +424,7 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 	else
 	{
 		MessageBox(NULL, TEXT("Nie wybrałeś objektu do skasowania"), TEXT("Informacja aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-  }
+	}
 
 }
 //---------------------------------------------------------------------------
@@ -436,7 +436,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //int left=0, top=0;
+	//int left=0, top=0;
 	GsChildBibleScheme *pGsChildBibleScheme, *prevGsChildBibleScheme;
 	bool bReturn=false;
 	//---
@@ -448,10 +448,10 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	if(!pOpenDialog) throw(Exception("Błąd inicjalizacji objektu TOpenDialog"));
 
 	pOpenDialog->Title = "Podaj nazwę projektu do odczytu";
-	pOpenDialog->Filter =  "Pliki projektu schematu(*.svp)|*.SVP|Każdy plik (*.*)|*.*"; //Może dać do globalnej zmiennej?
+	pOpenDialog->Filter =	 "Pliki projektu schematu(*.svp)|*.SVP|Każdy plik (*.*)|*.*"; //Może dać do globalnej zmiennej?
 	pOpenDialog->Options << ofHideReadOnly << ofPathMustExist << ofFileMustExist;
 	pOpenDialog->InitialDir = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
-  pOpenDialog->DefaultExt = "svp";
+	pOpenDialog->DefaultExt = "svp";
 
 	try
 	{
@@ -481,7 +481,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 					//--- Typ objektu: korzeń, lub potomstwo
 					if(pDataToOpen->RW_IDListParent == -1) //Korzeñ
 					{
-						this->_pRootObject = pGsChildBibleScheme;   //To jest korzeń
+						this->_pRootObject = pGsChildBibleScheme;		//To jest korzeń
 						this->_pRootObject->Color = ColorObject[enColorNum_Rot]; //Kolor korzenia
 					}
 					else if(pDataToOpen->RW_IDListParent > -1)//Potomstwo
@@ -490,10 +490,10 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 						prevGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[pDataToOpen->RW_IDListParent]);
 						if(prevGsChildBibleScheme)
 						{
-              //Ustawienie pól na poprzedni objekt
+							//Ustawienie pól na poprzedni objekt
 							pGsChildBibleScheme->ParentObjectScheme = prevGsChildBibleScheme;
-              prevGsChildBibleScheme->ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
-            }
+							prevGsChildBibleScheme->ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
+						}
 					}
 					//---
 					pGsChildBibleScheme->Top = pDataToOpen->RW_Top; pGsChildBibleScheme->Left = pDataToOpen->RW_Left;
@@ -513,13 +513,13 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 				}
 
 				//this->Caption = Format("%s. Ilość objektów: %u", ARRAYOFCONST((ustrCaptionWindow, this->_GsChildBibleSchemeList->Count)));
-        this->Invalidate(); //Całe odświerzenie
+				this->Invalidate(); //Całe odświerzenie
 				if(pDataToOpen) {delete pDataToOpen; pDataToOpen = nullptr;}
 				if(pOpenFile) {delete pOpenFile; pOpenFile = nullptr;}
 				bReturn = true;
 			}
 		}
-    catch(const Exception& e)
+		catch(const Exception& e)
 		{
 			MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
@@ -527,9 +527,9 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	__finally
 	{
 		if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
-    //this->ActDeleteLink->Enabled = true;
+		//this->ActDeleteLink->Enabled = true;
 	}
-  return bReturn;
+	return bReturn;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
@@ -540,13 +540,13 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TFileStream *pSaveFile;//=0;
+	TFileStream *pSaveFile;//=0;
 	PReadWriteDataObject pDataToSave;//=0;
 	//---
-  TSaveDialog *pSaveDialog = new TSaveDialog(this);
+	TSaveDialog *pSaveDialog = new TSaveDialog(this);
 	if(!pSaveDialog) throw(Exception("Błąd inicjalizacji objektu TSaveDialog"));
 	pSaveDialog->Title = "Podaj nazwę projektu do zapisu";
-	pSaveDialog->Filter =  "Pliki projektu schematu(*.svp)|*.SVP|Każdy plik (*.*)|*.*"; //Może daĉ do globalnej zmiennej?
+	pSaveDialog->Filter =	 "Pliki projektu schematu(*.svp)|*.SVP|Każdy plik (*.*)|*.*"; //Może daĉ do globalnej zmiennej?
 	pSaveDialog->Options << ofOverwritePrompt << ofHideReadOnly;
 	pSaveDialog->InitialDir = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
 	pSaveDialog->DefaultExt = "svp";
@@ -576,9 +576,9 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 							ZeroMemory(pDataToSave, iSizeStructData); //Wyczyszczenie struktury ReadWriteDataObject, do zapisu i odczytu objektów
 							//Wypełnienie struktury danych do zapisu
 							pDataToSave->RW_ID = pChild->IDChild; //Numer identyfikacyjny
-							pDataToSave->RW_IDList = i;           //Pozycja w globalnej liście objektu _GsChildBibleSchemeList, klasy TList
+							pDataToSave->RW_IDList = i;						//Pozycja w globalnej liście objektu _GsChildBibleSchemeList, klasy TList
 							pDataToSave->RW_Left = pChild->Left; pDataToSave->RW_Top = pChild->Top; //Wspólrzędne objektu
-							pDataToSave->RW_IDListParent = -1;    //Domyślnie objekt nie ma przodka, więc jest korzeniem
+							pDataToSave->RW_IDListParent = -1;		//Domyślnie objekt nie ma przodka, więc jest korzeniem
 							if(pChild->ParentObjectScheme) //Jeśli objekt posiada przodka, czyli nie jest korzeniem
 							{
 								//Indeks przodka w głównej liście
@@ -617,22 +617,22 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
- 	if(this->_GsChildBibleSchemeList->Count==0) return;
+	if(this->_GsChildBibleSchemeList->Count==0) return;
 	//---
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 
 	UnicodeString _ustrVers;
-  const UnicodeString GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
+	const UnicodeString GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
 																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red255\\green0\\blue255;}" +
 																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
 																		 "\\pard\\sa200\\sl276\\slmult1\\cf3\\fs32\\b Dokument projektu, schematu logicznego wersetów, wykonany w aplikacji Moja Biblia NG\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",
-                      //---
+											//---
 											custrAdressVersRtf = "\\f1\\line\\cf2\\b",
 											custrVersRtf = "\\cf1\\b0\\f0",
 											custrEndVersRtf = "\\cf2\\b\\f1";
 
-  try
+	try
 	{
 		pStringStream->WriteString(GlobalHeaderRtf);
 		for(int i=0; i<this->_GsChildBibleSchemeList->Count; i++)
@@ -661,8 +661,8 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
-*                Główna klasa GsScrollBibleScheme,                          *
-*                        pochodna TScrollBox.                               *
+*								 Główna klasa GsScrollBibleScheme,													*
+*												 pochodna TScrollBox.																*
 *****************************************************************************/
 __fastcall GsScrollBibleScheme::GsScrollBibleScheme(TComponent* Owner) : TScrollBox(Owner)
 /**
@@ -672,7 +672,7 @@ __fastcall GsScrollBibleScheme::GsScrollBibleScheme(TComponent* Owner) : TScroll
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->Font->Quality = TFontQuality::fqClearType;
+	this->Font->Quality = TFontQuality::fqClearType;
 	this->DoubleBuffered = true;
 	this->HorzScrollBar->Tracking = true;
 	this->VertScrollBar->Tracking = true;
@@ -716,8 +716,8 @@ void __fastcall GsScrollBibleScheme::DestroyWnd()
 	TScrollBox::DestroyWnd();
 }
 /****************************************************************************
-*          								Klasa GsMasterBibleScheme,                   			*
-*                    				pochodna TCustomPanel.                          *
+*													Klasa GsMasterBibleScheme,												*
+*														pochodna TCustomPanel.													*
 *****************************************************************************/
 __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustomPanel(Owner)
 /**
@@ -727,11 +727,11 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Randomize();  //Uruchomienie generatora liczb losowych.
+	Randomize();	//Uruchomienie generatora liczb losowych.
 	//---
 	this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
-  //this->StyleElements = TStyleElements();
+	//this->StyleElements = TStyleElements();
 }
 //---------------------------------------------------------------------------
 __fastcall GsMasterBibleScheme::~GsMasterBibleScheme()
@@ -755,11 +755,11 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
-  this->_pGsBarSelectVers = new GsBarSelectVers(this);
+	this->_pGsBarSelectVers = new GsBarSelectVers(this);
 	if(!this->_pGsBarSelectVers) throw(Exception("Błąd inicjalizacji objektu GsBarSelectVers"));
 	this->_pGsBarSelectVers->Parent = this;
 	this->_pGsBarSelectVers->Align = alTop;
-  //Utworzenie objektu, klasy do scrollowania
+	//Utworzenie objektu, klasy do scrollowania
 	this->_pGsScrollBibleScheme = new GsScrollBibleScheme(this);
 	if(!this->_pGsScrollBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsScrollBibleScheme"));
 	//Stworzenie panelu do rysowania połączeń i objektów
@@ -776,16 +776,16 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	this->pSplitter->Height = 6;
 	this->pSplitter->Beveled = true;
 	//---
-  this->_pVersDisplayText = new TLabel(this); //Wyświetlenie wybranego wersetu
+	this->_pVersDisplayText = new TLabel(this); //Wyświetlenie wybranego wersetu
 	if(!this->_pVersDisplayText) throw(Exception("Błąd inicjalizacji objektu TLabel"));
 	this->_pVersDisplayText->Parent = this;
 	this->_pVersDisplayText->Align = alBottom;
-  this->_pVersDisplayText->Color = clCream;
+	this->_pVersDisplayText->Color = clCream;
 	this->_pVersDisplayText->AutoSize = true;
 	this->_pVersDisplayText->WordWrap = true;
 	this->_pVersDisplayText->Font->Color = clGreen;
 	this->_pVersDisplayText->Font->Style = TFontStyles() << fsBold;
-  this->_pVersDisplayText->Font->Size = 11;
+	this->_pVersDisplayText->Font->Size = 11;
 	this->_pVersDisplayText->Caption = "Tu bedzie sie pojawiał tekst objektu z wersetem biblijnym";
 	//---
 	this->pGsEditorClass = new GsEditorClass(this);
@@ -803,7 +803,7 @@ void __fastcall GsMasterBibleScheme::DestroyWnd()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Własny kod.
+	//Własny kod.
 	TCustomPanel::DestroyWnd();
 }
 

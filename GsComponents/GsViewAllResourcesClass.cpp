@@ -62,7 +62,7 @@ __fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) :
 	if(!this->_pImages) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
 	//---
 	this->Font->Quality = TFontQuality::fqClearType;
-	this->_pImages->ColorDepth = cd32Bit;     //Głębia kolorów przyszłych obrazków
+	this->_pImages->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	this->_pImages->DrawingStyle = dsTransparent;
 	this->_InitAllImage();
 	//---
@@ -72,8 +72,8 @@ __fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) :
 	this->ReadOnly = true;
 	this->RowSelect = true;
 	this->ViewStyle = vsReport;
-	this->SmallImages  = this->_pImages;
-  //this->StyleElements = TStyleElements();
+	this->SmallImages	 = this->_pImages;
+	//this->StyleElements = TStyleElements();
 	for(int iGroup=0; iGroup<enGroup_Count; iGroup++)
 	{
 		TListGroup *group = this->Groups->Add();
@@ -85,7 +85,7 @@ __fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) :
 		}
 	}
 	this->GroupView = true;
-  //---
+	//---
 	this->_CreateAllColumns();
 }
 //---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void __fastcall GsViewAllResourcesClass::Delete(TListItem* Item)
 		{
 			delete pDataItemResources; pDataItemResources = nullptr;
 		}
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsViewAllResourcesClass::CreateWnd()
@@ -171,30 +171,30 @@ void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System:
 			iChap = ustrItem.SubString(4, 3).ToInt();
 			iVers = ustrItem.SubString(7, 3).ToInt();
 			this->Canvas->Font->Style = TFontStyles() << fsBold;
-      this->Canvas->Font->Color = clRed;
+			this->Canvas->Font->Color = clRed;
 			ustrItem = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
 		}
 		break;
 		case enGroup_FavVers:
 		{
-      this->Canvas->Brush->Color = clWebBlanchedAlmond;
+			this->Canvas->Brush->Color = clWebBlanchedAlmond;
 			this->Canvas->Font->Style = TFontStyles() << fsBold;
 			this->Canvas->Font->Color = clPurple;
 			if(pDataItemResources)
 			{
 				ustrItem = pDataItemResources->ustrInfoResource;
 			}
-    }
+		}
 		break;
 	}
 
 	if(State.Contains(odSelected)) {this->Canvas->Brush->Color = clWebGreenYellow;}
-  this->Canvas->FillRect(Rect);
+	this->Canvas->FillRect(Rect);
 
 	this->_pImages->Draw(this->Canvas, 0, (RectIcon.Top + (RectIcon.Height() / 2)) - (this->_pImages->Height / 2), Item->ImageIndex);
 	DrawText(this->Canvas->Handle, ustrItem.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	this->Canvas->Font->Style = TFontStyles();
-  this->Canvas->Font->Color = this->Font->Color;
+	this->Canvas->Font->Color = this->Font->Color;
 	for(int iColumn=1; iColumn<this->Columns->Count; iColumn++)
 	{
 		 //Wymiary następnej kolumny
@@ -214,8 +214,8 @@ void __fastcall GsViewAllResourcesClass::DoSelectItem(TListItem* Item, bool Sele
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  if((this->ItemIndex == -1) || (!Selected)) return;	//Kliknąłeś poza pozycje listy
-  //Jeśli istnieje zewnętrzna metoda OnDblClick() to ją wywołaj
+	if((this->ItemIndex == -1) || (!Selected)) return;	//Kliknąłeś poza pozycje listy
+	//Jeśli istnieje zewnętrzna metoda OnDblClick() to ją wywołaj
 	if(this->FOnSelectItem) this->FOnSelectItem(this, Item, Selected);
 }
 //---------------------------------------------------------------------------
@@ -227,7 +227,7 @@ void __fastcall GsViewAllResourcesClass::_CreateAllColumns()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TListColumn  *NewColumn;
+	TListColumn	 *NewColumn;
 
 	//Dodawanie kolumn
 	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(cstrColumnNames); iColumns++)
@@ -267,9 +267,9 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	{
 		ustrExt = TPath::GetExtension(SDirList[i]);
 
-		if((ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) &&     //Pełne tłumaczenie
-			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) &&  //Grecki oryginał
-			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)      //Hebrajski oryginał
+		if((ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) &&			//Pełne tłumaczenie
+			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) &&	//Grecki oryginał
+			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)			//Hebrajski oryginał
 			) continue;
 		//---
 		NewItem = this->Items->Add();
@@ -290,9 +290,9 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 			else if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg) NewItem->SubItems->Add("Oryginalne hebrajskie tłumaczenie");
 			else NewItem->SubItems->Add("---");
 			//
-			if((ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) ||     //Pełne tłumaczenie
-				 (ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) ||  //Grecki oryginał
-				 (ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)      //Hebrajski oryginał
+			if((ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) ||			//Pełne tłumaczenie
+				 (ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) ||	//Grecki oryginał
+				 (ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)			//Hebrajski oryginał
 				) NewItem->SubItems->Add("Tłumaczenie tekstu biblijnego"); else NewItem->SubItems->Add("---");
 			//
 			pFileStream = TFile::OpenRead(SDirList[i]);
@@ -306,7 +306,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	//Lista grafik
 	for(int iSelectDir=0; iSelectDir<SListTemp->Count; iSelectDir++)
 	{
-    if(SListTemp->Strings[iSelectDir].IsEmpty()) continue;
+		if(SListTemp->Strings[iSelectDir].IsEmpty()) continue;
 		SDirMultiMList = TDirectory::GetFiles(SListTemp->Strings[iSelectDir]);
 		for(int i=0; i<SDirMultiMList.Length; i++)
 		{
@@ -348,7 +348,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 			pDataItemResources = new DataItemResources(NewItem->Caption);
 			if(!pDataItemResources) throw(Exception("Błąd inicjalizacji objektu, klasy DataItemResources"));
 
-      NewItem->Data = pDataItemResources;
+			NewItem->Data = pDataItemResources;
 
 			NewItem->SubItems->Add("Plik z komentarzami");
 			NewItem->SubItems->Add("Plik z komentarzem, do wybranych wersetów");
@@ -359,7 +359,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 			}
 			NewItem->SubItems->Add(TPath::GetDirectoryName(SDCommentFile[i]));
 		}
-  }
+	}
 	//Lista ulubionych wersetów
 	if(TFile::Exists(GlobalVar::Global_custrPathFileFavoriteVers))
 	{
@@ -384,9 +384,9 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 			NewItem->SubItems->Add("Ulubione werset, wybrany przez użytkownika");
 			NewItem->SubItems->Add(Format("%u", ARRAYOFCONST((SListTemp->Text.Length()+3))));
 			NewItem->SubItems->Add(TPath::GetDirectoryName(GlobalVar::Global_custrPathFileFavoriteVers));
-    }
+		}
 	}
-  //---
+	//---
 	if(SListTemp) {delete SListTemp; SListTemp = nullptr;}
 	this->Items->EndUpdate();
 }
@@ -399,10 +399,10 @@ void __fastcall GsViewAllResourcesClass::_InitAllImage()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TIcon *pIcon=0;
+	TIcon *pIcon=0;
 	TMemoryStream *pMemoryStr=0;
 
-  try
+	try
 	{
 		pIcon = new TIcon();
 		if(!pIcon) throw(Exception("Błąd metody TIcon"));
@@ -410,30 +410,30 @@ void __fastcall GsViewAllResourcesClass::_InitAllImage()
 		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
 		//--- 0.Ikona - Tłumaczenie
 		pMemoryStr->WriteBuffer(IMAGE_TRANSLATION, ARRAYSIZE(IMAGE_TRANSLATION)); //Zapis do strumienia danych
-		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
-		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
-		this->_pImages->AddIcon(pIcon);                				//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Position = 0;															//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);										//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->_pImages->AddIcon(pIcon);												//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 1.Ikona - Grafika
-    pMemoryStr->WriteBuffer(IMAGE_PICTURES, ARRAYSIZE(IMAGE_PICTURES)); //Zapis do strumienia danych
-		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
-		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
-		this->_pImages->AddIcon(pIcon);                				//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->WriteBuffer(IMAGE_PICTURES, ARRAYSIZE(IMAGE_PICTURES)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;															//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);										//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->_pImages->AddIcon(pIcon);												//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 2.Ikona - Komentarze
-    pMemoryStr->WriteBuffer(IMAGE_COMMENTS, ARRAYSIZE(IMAGE_COMMENTS)); //Zapis do strumienia danych
-		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
-		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
-		this->_pImages->AddIcon(pIcon);                				//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->WriteBuffer(IMAGE_COMMENTS, ARRAYSIZE(IMAGE_COMMENTS)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;															//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);										//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->_pImages->AddIcon(pIcon);												//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 		//--- 3.Ikona - Ulubione wersety
-    pMemoryStr->WriteBuffer(IMAGE_FAVVERS, ARRAYSIZE(IMAGE_FAVVERS)); //Zapis do strumienia danych
-		pMemoryStr->Position = 0;                             //Ustawienia wskażnika strumienia na początek
-		pIcon->LoadFromStream(pMemoryStr);                    //Wczytanie danych ze strumienia do objektu, klasy TIcon
-		this->_pImages->AddIcon(pIcon);                				//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->WriteBuffer(IMAGE_FAVVERS, ARRAYSIZE(IMAGE_FAVVERS)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;															//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);										//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		this->_pImages->AddIcon(pIcon);												//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 	}
-  __finally
+	__finally
 	{
 		//--- Zwolnienie objektu, klasy TIcon i TMemoryStream
 		if(pIcon) {delete pIcon; pIcon = nullptr;}

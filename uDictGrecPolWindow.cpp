@@ -41,7 +41,7 @@ void __fastcall TDictGrecPolWindow::FormCreate(TObject *Sender)
 	if(!this->_pGsLViewDictionaryClass) throw(Exception("B³¹d funkcji GsLViewDictionaryClass"));
 	this->_pGsLViewDictionaryClass->Parent = this;
 	this->_pGsLViewDictionaryClass->Align = alLeft;
-  this->_pGsLViewDictionaryClass->Width = 480;
+	this->_pGsLViewDictionaryClass->Width = 480;
 }
 //---------------------------------------------------------------------------
 void __fastcall TDictGrecPolWindow::FormDestroy(TObject *Sender)
@@ -52,7 +52,7 @@ void __fastcall TDictGrecPolWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  ///
+	///
 }
 //---------------------------------------------------------------------------
 

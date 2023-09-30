@@ -42,7 +42,7 @@ __fastcall TChapterEditWindow::TChapterEditWindow(TComponent* Owner, TTabSheet *
 	this->_iGetTranslate = this->_pGsTabSheetClass->GetTabSet()->TabIndex; //Numer aktualnie wyświetlanego tłumaczenia w zakładce z tekstem
 
 	this->Constraints->MinWidth = this->Width;
-  this->Constraints->MinHeight = this->Height;
+	this->Constraints->MinHeight = this->Height;
 }
 //---------------------------------------------------------------------------
 void __fastcall TChapterEditWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -53,7 +53,7 @@ void __fastcall TChapterEditWindow::FormClose(TObject *Sender, TCloseAction &Act
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  Action = caFree;
+	Action = caFree;
 }
 //---------------------------------------------------------------------------
 void __fastcall TChapterEditWindow::FormCreate(TObject *Sender)
@@ -92,7 +92,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 	TList *pListTr = GsReadBibleTextData::GetListAllTrChap(); //Lista wszystkich tekstów z wybranego rozdziału
 	if(!pListTr) return;
 	//---
-  TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
+	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 	//---
 	unsigned char uiTranslatesIndex, iIndexVers=0;
@@ -138,7 +138,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s %s" ,ARRAYOFCONST((GlobalAdressVersRtf, GsReadBibleTextData::GsInfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
 								this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
 								GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, GlobalSizeFontText))));
-              }
+							}
 						}
 					//}
 					//else uiTranslatesIndex--;
@@ -152,20 +152,20 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 
 			iIndexVers++;
 			if(this->_iGetTranslate == 0)
-      //Jeśli wybrane konkretne tłumaczenie to nie wstawiać  przerw pustej lini
+			//Jeśli wybrane konkretne tłumaczenie to nie wstawiać	 przerw pustej lini
 			{
 				if(uiTranslatesIndex > 0) pStringStream->WriteString("\\line");
 			}
 			if(uiTranslatesIndex >= cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 		}while(uiTranslatesIndex > 0);
-    pStringStream->WriteString("}");
+		pStringStream->WriteString("}");
 		pStringStream->Position = 0;
 		this->_pGsEditorClass->LoadEditorFromStream(pStringStream);
 	}
 	__finally
 	{
 		if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
-  }
+	}
 	pTRichEdit->Lines->EndUpdate();
 	return;
 }

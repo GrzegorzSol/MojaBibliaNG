@@ -42,7 +42,7 @@ __published:	// IDE-managed Components
 	void __fastcall ActCreateFileFromSchemeExecute(TObject *Sender);
 	void __fastcall ActViewEditorExecute(TObject *Sender);
 private:	// User declarations
-  GsMasterBibleScheme *pGsMasterBibleScheme;
+	GsMasterBibleScheme *pGsMasterBibleScheme;
 public:		// User declarations
 	__fastcall TSchemeVersWindow(TComponent* Owner);
 };

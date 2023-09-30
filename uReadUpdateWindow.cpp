@@ -41,7 +41,7 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 	this->ButtonNo->Tag = enTagUp_UpNo;
 	this->bIsConnected = false;
 
-  this->LabeledEdCurrentVersion->Text = GlobalVar::Global_ustrVerAplicMain;
+	this->LabeledEdCurrentVersion->Text = GlobalVar::Global_ustrVerAplicMain;
 	//--- Sprawdzenie połączenia z internetem
 	UnicodeString ustrReturnConect;
 	GsTypeConnected(ustrReturnConect);
@@ -54,8 +54,8 @@ __fastcall TReadUpdateWindow::TReadUpdateWindow(TComponent* Owner)
 	else
 	{
 		this->STextInfos->Caption = "Nie można połączyć się z siecią. Zamknij okienko, sprawdź połączenie i spróbuj powtórnie!";
-    this->LabeledEdDownLoadversion->Text = "Nie można odczytać wersji";
-    GlobalVar::iReturnUpdate = -1;
+		this->LabeledEdDownLoadversion->Text = "Nie można odczytać wersji";
+		GlobalVar::iReturnUpdate = -1;
 	}
 }
 //---------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Uzyskanie ścieżki dostepu do katalogu Temp
+	//Uzyskanie ścieżki dostepu do katalogu Temp
 	TCHAR pathTemp[MAX_PATH];
 	GetTempPath(MAX_PATH, pathTemp);
 
@@ -123,7 +123,7 @@ void __fastcall TReadUpdateWindow::_GetIsUpdateVerify()
 		this->STextInfos->Caption = "Jest dostępna nowsza wersja na serwerze aktualizacyjnym, czy zaktualizować aplikację? Spowoduje to zaknięcie aplikacji, by pobrać i zainstalować poprawkę.";
 		GlobalVar::iReturnUpdate = 1;
 		this->PanelButtons->Visible = true;
-    //Pobranie nowszej wersji
+		//Pobranie nowszej wersji
 		//bRetDownload = this->_DownLoadFileFTP(GlobalVar::Global_custrLocalApplicFile, GlobalVar::Global_custrFTPSourceApplicFile);
 		bRetDownload = this->_DownLoadFileFTPGet(GlobalVar::Global_custrLocalApplicFile, GlobalVar::Global_custrFTPSourceApplicFile);
 		if(!bRetDownload) this->Caption = "Błąd procesu aktualizacji!";
@@ -145,12 +145,12 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTPGet(const UnicodeString _dest
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  HINTERNET hInternetConnectHandle=NULL; 	//Wynik funkcji InternetConnect()
+	HINTERNET hInternetConnectHandle=NULL;	//Wynik funkcji InternetConnect()
 	HINTERNET hInternetOpenHandle=NULL;	//Wynik funkcji InternetOpen()
 
 	bool bRet=true;
 
-  hInternetOpenHandle = InternetOpen(0, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_PASSIVE);
+	hInternetOpenHandle = InternetOpen(0, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_PASSIVE);
 	if(!hInternetOpenHandle) return false;
 
 	try
@@ -168,7 +168,7 @@ bool __fastcall TReadUpdateWindow::_DownLoadFileFTPGet(const UnicodeString _dest
 	}
 	__finally
 	{
-    if(hInternetConnectHandle) InternetCloseHandle(hInternetConnectHandle);
+		if(hInternetConnectHandle) InternetCloseHandle(hInternetConnectHandle);
 		if(hInternetOpenHandle) InternetCloseHandle(hInternetOpenHandle);
 	}
 	return bRet;
@@ -186,9 +186,9 @@ void __fastcall TReadUpdateWindow::GsTypeConnected(UnicodeString &_ustrInfoTypeC
 	if(InternetGetConnectedState(&State, 0))
 	{
 		UnicodeString ustrTypeConect;
-		if(State & INTERNET_CONNECTION_MODEM)      ustrTypeConect = "Połączenie prze modem";
-		if(State & INTERNET_CONNECTION_LAN)        ustrTypeConect = "Połączenie przez LAN";
-		if(State & INTERNET_CONNECTION_PROXY)      ustrTypeConect = "Połączenie przez PROXY";
+		if(State & INTERNET_CONNECTION_MODEM)			 ustrTypeConect = "Połączenie prze modem";
+		if(State & INTERNET_CONNECTION_LAN)				 ustrTypeConect = "Połączenie przez LAN";
+		if(State & INTERNET_CONNECTION_PROXY)			 ustrTypeConect = "Połączenie przez PROXY";
 		if(State & INTERNET_CONNECTION_MODEM_BUSY) ustrTypeConect = "Modem zajęty";
 
 		_ustrInfoTypeConnected = "Typ połączenia: " + ustrTypeConect;
@@ -223,7 +223,7 @@ void __fastcall TReadUpdateWindow::ButtAllClick(TObject *Sender)
 			GlobalVar::iReturnUpdate = -1;
 
 		break;
-    //---
+		//---
 	}
 
 	this->Close();
