@@ -279,7 +279,7 @@ class GsReadBibleTextClass : public TObject
 		void __fastcall GlobalTextDragDrop(TObject *Sender, TObject *Source, int X, int Y); //Publiczny ze względu na umożliwienie dostępu z głównego okna
 };
 /****************************************************************************
- *												Klasalasa GsTreeNodeClass													*
+ *												Klasa GsTreeNodeClass															*
  ****************************************************************************/
 enum {enTypeNode_Root = 0, //Odpowiada polu Level
 			enTypeNode_Group,
@@ -298,9 +298,9 @@ class GsTreeNodeClass : public TTreeNode //Klasa całkowicie PRYWATNA!
 	__fastcall GsTreeNodeClass(TTreeNodes* Owner);
 	__fastcall virtual ~GsTreeNodeClass();
 	//---
-	enTypeRoot eTypeRoot;
-	unsigned char ucIndexBook,			 //Numer księgi
-								ucCountChapt;			 //Ilość rozdziałów
+	enTypeRoot eTypeRoot=enTypeRoot_NoRoot;
+	unsigned char ucIndexBook=0,			 //Numer księgi
+								ucCountChapt=0;			 //Ilość rozdziałów
 };
 /****************************************************************************
  *												Klasalasa GsTreeBibleClass												*
@@ -633,7 +633,7 @@ class GsLViewDictionaryClass : public TCustomListView
 		int _iLViewStartIndex;
 		int _iLViewEndIndex;
 		TWebBrowser *_pWBrowseResult;	//Wyświetlanie wyników, dla wybranego słowa
-		TList *_pListWordGrec; //Lista objektów, klasy DataGrecWordDictClass
+		TList *_pListWordGrec=nullptr; //Lista objektów, klasy DataGrecWordDictClass
 		void __fastcall _CreateAllColumns(); //Tworzenie kolumn
 };
 /***************************************************************************************

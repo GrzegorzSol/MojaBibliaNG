@@ -778,7 +778,7 @@ unsigned char __fastcall GsReadBibleTextData::GetConvertIdToTreeView(const unsig
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	unsigned char ucResult;
+	unsigned char ucResult=0;
 	if((cucID >= GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_Old].ucStartRange) && //0
 		 (cucID <= GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_Old].ucStopRange)) ucResult = cucID + 2; //38
 	else if((cucID >= GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStartRange) && //39
@@ -824,7 +824,7 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 */
 {
 	int iBook;
-	if((_iBook < 1) && (_iBook > 73)) return;
+	if((_iBook < 1) || (_iBook > 73)) return;
 //	#if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug("Debug: 002");
 //	#endif

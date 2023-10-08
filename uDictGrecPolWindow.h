@@ -1,4 +1,4 @@
-#ifndef uDictGrecPolWindowH
+﻿#ifndef uDictGrecPolWindowH
 #define uDictGrecPolWindowH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
@@ -15,7 +15,7 @@ __published:	// IDE-managed Components
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 private:	// User declarations
-	GsLViewDictionaryClass *_pGsLViewDictionaryClass;
+	GsLViewDictionaryClass *_pGsLViewDictionaryClass=nullptr;
 public:		// User declarations
 	__fastcall TDictGrecPolWindow(TComponent* Owner);
 };

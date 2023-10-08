@@ -28,11 +28,11 @@ class GsCoreBibleScheme : public TCustomPanel
 		__fastcall virtual ~GsCoreBibleScheme();
 	//---
 	protected:
-		TList *ListChildren; //Lista potomków
-		int IDChild,
-				GetStartX, GetStartY;	//Współrzêdne kliknięcia na objekt klasy
-		unsigned char Level; //Poziom
-		bool StartMove;	//Rozpoczıcie przesuwania
+		TList *ListChildren=nullptr; //Lista potomków
+		int IDChild=-1,
+				GetStartX=-1, GetStartY=-1;	//Współrzędne kliknięcia na objekt klasy
+		unsigned char Level=0; //Poziom
+		bool StartMove=false;	//Rozpoczıcie przesuwania
 };
 /****************************************************************************
 *					 Klasa całkowicie PRYWATNA GsChildBibleScheme,										*

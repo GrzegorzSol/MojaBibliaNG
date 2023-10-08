@@ -37,6 +37,7 @@ object SearchTextWindow: TSearchTextWindow
     TabOrder = 0
     OnChanging = STW_PControlChanging
     OnDrawTab = STW_PControlViewsTextDrawTab
+    ExplicitWidth = 1184
     object STW_TabSheetInputText: TTabSheet
       Caption = 'Szukany tekst'
       ImageIndex = 8
@@ -497,6 +498,8 @@ object SearchTextWindow: TSearchTextWindow
       StyleElements = []
       OnChanging = STW_PControlChanging
       OnDrawTab = STW_PControlViewsTextDrawTab
+      ExplicitWidth = 1180
+      ExplicitHeight = 366
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9

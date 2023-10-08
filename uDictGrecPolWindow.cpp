@@ -1,4 +1,4 @@
-#include <vcl.h>
+ï»¿#include <vcl.h>
 #pragma hdrstop
 
 #include "uDictGrecPolWindow.h"
@@ -38,7 +38,7 @@ void __fastcall TDictGrecPolWindow::FormCreate(TObject *Sender)
 */
 {
 	this->_pGsLViewDictionaryClass = new GsLViewDictionaryClass(this);
-	if(!this->_pGsLViewDictionaryClass) throw(Exception("B³¹d funkcji GsLViewDictionaryClass"));
+	if(!this->_pGsLViewDictionaryClass) throw(Exception("BÅ‚ad funkcji GsLViewDictionaryClass"));
 	this->_pGsLViewDictionaryClass->Parent = this;
 	this->_pGsLViewDictionaryClass->Align = alLeft;
 	this->_pGsLViewDictionaryClass->Width = 480;

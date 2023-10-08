@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 
 #ifndef uViewAllResourcesWindowH
 #define uViewAllResourcesWindowH
@@ -26,12 +26,12 @@ __published:	// IDE-managed Components
 	void __fastcall PanelDisplayResize(TObject *Sender);
 	void __fastcall ImageDisplayResourceDblClick(TObject *Sender);
 private:	// User declarations
-	float fFactorProp;
+	float fFactorProp=0;
 	TForm *_pDisplayWindow=nullptr;
 	TImage *_pImageScr=nullptr;
 
 	void __fastcall _OnKeyPress(TObject *Sender, System::WideChar &Key);
-	GsViewAllResourcesClass *_pGsViewAllResourcesClass;
+	GsViewAllResourcesClass *_pGsViewAllResourcesClass=nullptr;
 	void __fastcall _OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected);
 	void __fastcall _DisplaySelectVersAllTrans(const DataItemResources *pDataItemResources);
 	void __fastcall _DisplayImage(const UnicodeString _pathImages);

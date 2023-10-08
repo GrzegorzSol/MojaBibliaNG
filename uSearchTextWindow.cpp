@@ -325,14 +325,14 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 			iIndexTable;//=0;	 //Numer księgi liczony od 0.
 	const int ciSizeCutString=512; //Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
 	UnicodeString ustrTemp;
-	const UnicodeString custrStyleF = "<span class=styleFound>";
+	const UnicodeString custrStyleF = "<span class=\"styleFound\">";
 	//---
 	TRegExOptions regOptions;
 	if(this->STW_ChBoxSizeTextSearch->Checked) //Uwzględniana wielkość liter przy używaniu wyrażeń regularnych
 		{regOptions = TRegExOptions() << roSingleLine;}
 	else {regOptions = TRegExOptions() << roSingleLine << roIgnoreCase;}
 	//---
-	signed char scTempStart, scTempStop;
+	signed char scTempStart=0, scTempStop=0;
 	PStatisticFindView MyDataStatistic=nullptr;
 	//---
 	if(this->STW_CBoxHistorySearchText->Text.IsEmpty()) return; //Jeśli pole tekstu do wyszukanie jest puste, opuść metodę
@@ -415,7 +415,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 						//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia
 						ustrTemp = pBookListText->Strings[i].Insert(custrStyleF, iPositionSearch); //Wstawienie początku stylu, przed słowem szukanym
 						//Wstawienie zakończenia stylu po szukanym słowie, plus wcześniej wstawionym stylu.
-						ustrTemp = ustrTemp.Insert("</span>", iPositionSearch + this->STW_CBoxHistorySearchText->Text.Length() + custrStyleF.Length());
+						ustrTemp = ustrTemp.Insert("\n</span>\n", iPositionSearch + this->STW_CBoxHistorySearchText->Text.Length() + custrStyleF.Length());
 
 						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
@@ -958,42 +958,42 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 	//---
-	const UnicodeString ustrDisplayHeaderHTMLSearchAll = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
-		"<html><head>" +
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-		"<title>Wyniki wyszukiwania</title>" +
-		"<style type=\"text/css\">" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:10pt;font-family:Times New Roman;}" +
+	const UnicodeString ustrDisplayHeaderHTMLSearchAll = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+		"<html>\n<head>\n" +
+		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+		"<title>Wyniki wyszukiwania</title>\n" +
+		"<style type=\"text/css\">\n" +
+		".styleColorAdressTranslates {color: #FF0000; font-size:10pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
 		".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
-		".styleFound {background-color: #FFFF00;}" +
+		".styleFound {background-color: #FFFF00;}\n" +
 		"body {background-color:" + RGBToWebColorStr(this->STW_ColorBoxBackGroundSearchList->Selected) +
-			";font-size:12pt;font-family:Times New Roman;}" +
-		"</style></head><body>",
-	ustrDisplayHeaderHTMLSearchBook = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
-		"<html><head>" +
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-		"<title>Wyniki wyszukiwania</title>" +
-		"<style type=\"text/css\">" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:10pt;font-family:Times New Roman;}" +
+			";font-size:12pt;font-family:Times New Roman;}\n" +
+		"</style>\n</head>\n<body>\n",
+	ustrDisplayHeaderHTMLSearchBook = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+		"<html>\n<head>\n" +
+		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+		"<title>Wyniki wyszukiwania</title>\n" +
+		"<style type=\"text/css\">\n" +
+		".styleColorAdressTranslates {color: #FF0000; font-size:10pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
 		".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
-		".styleFound {background-color: #FFFF00;}" +
+		".styleFound {background-color: #FFFF00;}\n" +
 		"body {background-color:" + RGBToWebColorStr(this->STW_ColorBoxBackGroundStatisticList->Selected) +
-			";font-size:12pt;font-family:Times New Roman;}" +
-		"</style></head><body>",
-	ustrDisplayHeaderHTMLSelectSearchVers = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">") +
-		"<html><head>" +
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-		"<title>Wyniki wyszukiwania</title>" +
-		"<style type=\"text/css\">" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:24pt;font-family:Times New Roman;}" +
+			";font-size:12pt;font-family:Times New Roman;}\n" +
+		"</style>\n</head>\n<body>\n",
+	ustrDisplayHeaderHTMLSelectSearchVers = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+		"<html>\n<head>\n" +
+		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+		"<title>Wyniki wyszukiwania</title>\n" +
+		"<style type=\"text/css\">\n" +
+		".styleColorAdressTranslates {color: #FF0000; font-size:24pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
 		".styleText {color: #000000;font-size:24pt;font-family:Times New Roman;}\n" +
-		".styleFound {background-color: #FFFF00;}" +
+		".styleFound {background-color: #FFFF00;}\n" +
 		"body {background-color:" + RGBToWebColorStr(this->STW_ColorBoxBackGroundSelectVers->Selected) +
-			";font-size:16pt;font-family:Times New Roman;}" +
-		"</style></head><body>";
+			";font-size:16pt;font-family:Times New Roman;}\n" +
+		"</style>\n</head>\n<body>\n";
 	UnicodeString ustrDefineDisplayHTML;
 	//---
 	switch(_TypeDisplayHTML)
@@ -1020,10 +1020,13 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 			pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
 			//Dodawanie kolejnego wersetu
-			pStringStream->WriteString(Format("<span class=\"styleColorAdressTranslates\">%s</span> <span class=\"styleText\">%s</span>", ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i]))));
-			pStringStream->WriteString("<br>");
+			pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+				"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
+				ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i]))));
+			//pStringStream->WriteString("<br>");
+			pStringStream->WriteString("</p>\n\n");
 		}
-		pStringStream->WriteString("</body></html>");
+		pStringStream->WriteString("</body>\n</html>\n");
 		//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
 		pStringStream->Position = 0;
 		//---

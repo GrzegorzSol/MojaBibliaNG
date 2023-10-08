@@ -18,7 +18,7 @@ __published:	// IDE-managed Components
 	void __fastcall FormActivate(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
-	GsPanelSelectVers *_pGsPanelSelectVers;
+	GsPanelSelectVers *_pGsPanelSelectVers=nullptr;
 	const unsigned char _InputCucStartBook,
 											_InputCucStartChapt,
 											_InputCucStarVers;

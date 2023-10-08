@@ -246,7 +246,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TListItem *NewItem;
+	TListItem *NewItem=nullptr;
 	TStringDynArray SDirList, SDirMultiMList, SDCommentFile;
 	UnicodeString ustrExt, ustrTempLowerName, ustrMbinFile;
 

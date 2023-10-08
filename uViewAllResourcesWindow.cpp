@@ -1,4 +1,4 @@
-#include <vcl.h>
+ï»¿#include <vcl.h>
 #pragma hdrstop
 
 #include "uViewAllResourcesWindow.h"
@@ -20,7 +20,7 @@ __fastcall TViewAllResourcesWindow::TViewAllResourcesWindow(TComponent* Owner)
 	: TForm(Owner)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -35,7 +35,7 @@ __fastcall TViewAllResourcesWindow::TViewAllResourcesWindow(TComponent* Owner)
 void __fastcall TViewAllResourcesWindow::FormClose(TObject *Sender, TCloseAction &Action)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -46,20 +46,20 @@ void __fastcall TViewAllResourcesWindow::FormClose(TObject *Sender, TCloseAction
 void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
 	this->_pGsViewAllResourcesClass = new GsViewAllResourcesClass(this);
-	if(!this->_pGsViewAllResourcesClass) throw(Exception("B³¹d inicjalizacji objektu, klasy GsViewAllResourcesClass"));
+	if(!this->_pGsViewAllResourcesClass) throw(Exception("BÅ‚Ä…d inicjalizacji objektu, klasy GsViewAllResourcesClass"));
 	this->_pGsViewAllResourcesClass->Parent = this;
 	this->_pGsViewAllResourcesClass->Align = alClient;
 	//---
 	this->_pGsViewAllResourcesClass->OnSelectItem = this->_OnSelectItem;
 
 	this->_pDisplayWindow = new TForm(this);
-	if(!this->_pDisplayWindow) throw(Exception("B³¹d inicjalizacji objektu TForm"));
+	if(!this->_pDisplayWindow) throw(Exception("BÅ‚Ä…d inicjalizacji objektu TForm"));
 
 	this->_pDisplayWindow->Width = Screen->Width;
 	this->_pDisplayWindow->Height = Screen->Height;
@@ -71,7 +71,7 @@ void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
 	this->_pDisplayWindow->Color = clBlack;
 
 	this->_pImageScr = new TImage(this->_pDisplayWindow);
-	if(!this->_pImageScr) throw(Exception("B³¹d inicjalizacji objektu TImage"));
+	if(!this->_pImageScr) throw(Exception("BÅ‚Ä…d inicjalizacji objektu TImage"));
 	this->_pImageScr->Parent = this->_pDisplayWindow;
 	this->_pImageScr->Stretch = true;
 }
@@ -79,7 +79,7 @@ void __fastcall TViewAllResourcesWindow::FormCreate(TObject *Sender)
 void __fastcall TViewAllResourcesWindow::FormDestroy(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -89,8 +89,8 @@ void __fastcall TViewAllResourcesWindow::FormDestroy(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, TListItem* Item, bool Selected)
 /**
-	OPIS METOD(FUNKCJI): Wybrana zosta³a pozycja z listy
-	OPIS ARGUMENTÓW:
+	OPIS METOD(FUNKCJI): Wybrana zostaÅ‚a pozycja z listy
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -101,7 +101,7 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 	try
 	{
 		if(Item->GroupID == enGroup_Translate)
-		//T³umaczenia
+		//TÅ‚umaczenia
 		{
 			ustrSelectItem = TPath::ChangeExtension(Item->Caption, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
 			if(TFile::Exists(ustrSelectItem))
@@ -110,7 +110,7 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 			}
 		}
 		else if(Item->GroupID == enGroup_Graphics)
-		//Podgl¹d grafiki
+		//PodglÄ…d grafiki
 		{
 			this->_DisplayImage(Item->Caption);
 		}
@@ -122,14 +122,14 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 	}
 	catch(...)
 	{
-		MessageBox(NULL, TEXT("B³¹d podczas wczytywania zasobów"), TEXT("B³¹d aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		MessageBox(NULL, TEXT("BÅ‚Ä…d podczas wczytywania zasobÃ³w"), TEXT("BÅ‚Ä…d aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -146,7 +146,7 @@ void __fastcall TViewAllResourcesWindow::PanelDisplayResize(TObject *Sender)
 void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataItemResources *pDataItemResources)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -155,14 +155,14 @@ void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataIt
 											GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
 																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;\\red200\\green0\\blue200;}" +
 																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
-																		 "\\pard\\sa200\\sl276\\slmult1\\cf4\\fs45\\b Podgl¹d wersetu z listy ulubionych, lub wersetu, który posiada komentarz\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",// + GlobalSizeFontText,
+																		 "\\pard\\sa200\\sl276\\slmult1\\cf4\\fs45\\b PodglÄ…d wersetu z listy ulubionych, lub wersetu, ktÃ³ry posiada komentarz\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",// + GlobalSizeFontText,
 											GlobalAdressVersRtf = "\\f1\\cf2\\b",
 											GlobalVersRtf = "\\cf1\\b0\\f0",
 											GlobalNameTransRtf = "\\cf5\\f1",
 											GlobalSizeNameTransRtf = "\\fs26";
 
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
-	if(!pStringStream) throw(Exception("B³¹d inicjalizacji objektu TStringStream"));
+	if(!pStringStream) throw(Exception("BÅ‚Ä…d inicjalizacji objektu TStringStream"));
 
 	pStringStream->WriteString(GlobalHeaderRtf);
 
@@ -188,7 +188,7 @@ void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataIt
 void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _pathImages)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -199,14 +199,14 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 	try
 	{
 		pWICImage = new TWICImage();
-		if(!pWICImage) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+		if(!pWICImage) throw(Exception("BÅ‚Ä…d inicjalizacji objektu TWICImage"));
 		//---
 		pWICImage->LoadFromFile(_pathImages);
 		this->fFactorProp = (float)pWICImage->Width / (float)pWICImage->Height;
 		this->ImageDisplayResource->Picture->Assign(pWICImage);
 		this->PanelDisplay->OnResize(this->PanelDisplay);
 
-		ustrSelectItem = Format("Œcie¿ka dostêpu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
+		ustrSelectItem = Format("ÅšcieÅ¼ka dostÄ™pu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
 		this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
 	}
 	__finally
@@ -217,14 +217,14 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 //---------------------------------------------------------------------------
 /////////////////////////////////////////////////////////////////////////////
 //																																				 //
-//							OTWARCIE PE£NOEKRANOWEGO PODGLADU WYBRANEJ									//
+//							OTWARCIE PEÅNOEKRANOWEGO PODGLADU WYBRANEJ									//
 //										GRAFIKI I JEGO PRYWATNE METODY											 //
 //																																				 //
 /////////////////////////////////////////////////////////////////////////////
 void __fastcall TViewAllResourcesWindow::ImageDisplayResourceDblClick(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI): Wyœwietlenie w formie pe³no ekranowej wybranej grafiki
-	OPIS ARGUMENTÓW:
+	OPIS METOD(FUNKCJI): WyÅ›wietlenie w formie peÅ‚no ekranowej wybranej grafiki
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -239,18 +239,18 @@ void __fastcall TViewAllResourcesWindow::ImageDisplayResourceDblClick(TObject *S
 	try
 	{
 		pWICImg = new TWICImage();
-		if(!pWICImg) throw(Exception("B³¹d inicjalizacji objektu TWICImage"));
+		if(!pWICImg) throw(Exception("BÅ‚Ä…d inicjalizacji objektu TWICImage"));
 
 		pWICImg->LoadFromFile(_ustrCurrentPathImage);
-		float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokoœci do wysokoœci, wczytanej grafiki
-					fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokoœci do szerokoœci, wczytanej grafiki
-		//--- Sprawdzanie wysokoœci grafiki
+		float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokoÅ›ci do wysokoÅ›ci, wczytanej grafiki
+					fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokoÅ›ci do szerokoÅ›ci, wczytanej grafiki
+		//--- Sprawdzanie wysokoÅ›ci grafiki
 		if(pWICImg->Height > this->_pDisplayWindow->ClientHeight)
 			{this->_pImageScr->Height = this->_pDisplayWindow->ClientHeight;}
 		else
 			{this->_pImageScr->Height = pWICImg->Height;}
 		this->_pImageScr->Width = fSizeFactorWH * this->_pImageScr->Height;
-		//--- Sprawdzanie szerokoœci grafiki
+		//--- Sprawdzanie szerokoÅ›ci grafiki
 //		if(pWICImg->Width > this->_pDisplayWindow->ClientWidth)
 //			{this->_pImageScr->Width = this->_pDisplayWindow->ClientWidth;}
 //		else
@@ -272,8 +272,8 @@ void __fastcall TViewAllResourcesWindow::ImageDisplayResourceDblClick(TObject *S
 //---------------------------------------------------------------------------
 void __fastcall TViewAllResourcesWindow::_OnKeyPress(TObject *Sender, System::WideChar &Key)
 /**
-	OPIS METOD(FUNKCJI): Naciœniêto jaki kolwiek klawisz w oknie do podgl¹du wybranej grafiki, w formie pe³no ekranowej
-	OPIS ARGUMENTÓW:
+	OPIS METOD(FUNKCJI): NaciÅ›niÄ™to jaki kolwiek klawisz w oknie do podglÄ…du wybranej grafiki, w formie peÅ‚no ekranowej
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -289,7 +289,7 @@ void __fastcall TViewAllResourcesWindow::_OnKeyPress(TObject *Sender, System::Wi
 			pForm->Hide(); //Schowanie okna
 		break;
 		//---
-		case vkSpace: //Nastêpna grafika
+		case vkSpace: //NastÄ™pna grafika
 			if(this->_pGsViewAllResourcesClass->ItemIndex < this->_pGsViewAllResourcesClass->Items->Count)
 			{
 				this->_pGsViewAllResourcesClass->ItemIndex++;
