@@ -6,10 +6,10 @@
 //---------------------------------------------------------------------------
 #include <Vcl.Styles.hpp>
 #include <Vcl.Themes.hpp>
-USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uMainWindow.cpp", MainBibleWindow);
-USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
+USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
+USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);

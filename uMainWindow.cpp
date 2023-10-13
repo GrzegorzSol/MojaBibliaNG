@@ -89,14 +89,16 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage16_Coments,							 //2.komentarze
 			enImage16_InfoTaskBarButton,		 //3.Obraz dla przycisku informacji na taskbarze, o aktualnie wczytanym rozdziele
 			enImage16_InfoApplicationTaskBarButton,//4.Obraz dla przycisku informacji o aplikacji
+			enImage16_FavSearchResults,       //5.Obraz dla zakładki z ulubionymi wynikami wyszukiwań //[11-10-2023]
 			enImage16_Count,								 //Ilość małych ikon
 			//Numer paneli na objekcie klasy TStatusBar
 			enPanelMain_InfoText=0, enPanelMain_InfoEx, //Numery paneli
 			//menu Tray
 			enPMenuTray=0, //Początkowa pozycja w menu Tray
 			//Panele objektu MBW_PControlTools, klasy TPageControl
-			enPageTools_Books=0, //Zakładka z drzewem ksiąg biblijnych
-			enPageTools_CommentsVers, //Zakładka ze wszystkimi komentarzami
+			enPageTools_Books=0, //0.Zakładka z drzewem ksiąg biblijnych
+			enPageTools_CommentsVers, //1.Zakładka ze wszystkimi komentarzami
+			enPageTools_FavSearchResults, //2.Zakładka z ulubionymi wynikami wyszukiwań //[11-10-2023]
 			//Tagi dla kontrolek
 			enTagCloseSheet=100,	//100.Zamknięcie aktywnej zakładki
 			enTagSaveChaptToHTML, //101.Zapis rozdziału z bierzącej zakładki, jako pliku html
@@ -260,6 +262,11 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->pGsListBoxFavoritiesClass->Parent = this->TabSheetAllCommentsVers;
 	this->pGsListBoxFavoritiesClass->Align = alClient;
 	this->pGsListBoxFavoritiesClass->OnDblClick = this->_OnDblClick_ListFavorities;
+	//--- Tworzenie listy ulubionych wyników wyszukiwania //[12-10-2023]
+	this->pGsSearchFavFilesClass = new GsSearchFavFilesClass(this->TabSheetFavResultSearch);
+	if(!this->pGsSearchFavFilesClass) throw(Exception("Błąd inicjalizacji objektu, klasy GsViewAllResourcesClass"));
+	this->pGsSearchFavFilesClass->Parent = this->TabSheetFavResultSearch;
+	this->pGsSearchFavFilesClass->Align = alClient;
 	//---
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
 		//Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
@@ -488,9 +495,9 @@ bool __fastcall TMainBibleWindow::_AppHelp(System::Word Command, NativeInt Data,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%d - %d", ARRAYOFCONST((Command, Data))));
-	#endif
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("%d - %d", ARRAYOFCONST((Command, Data))));
+//	#endif
 	Application->HelpFile = GlobalVar::Global_custrPathGlobalHelp;
 	CallHelp = true;
 	return true;
@@ -592,9 +599,9 @@ bool __fastcall TMainBibleWindow::_IsWordInstalled()
 	pRegistry->RootKey = HKEY_LOCAL_MACHINE;
 	if(pRegistry->KeyExists(custrReg))
 	{
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("MS Word jest zainstalowany");
-		#endif
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug("MS Word jest zainstalowany");
+//		#endif
 		pRegistry->CloseKey();
 		bIsInstalled = true;
 	}
@@ -947,9 +954,9 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 	if(pFileSaveDialog->Execute())
 	{
 		ustrSelect = pFileSaveDialog->FileName;
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
-		#endif
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
+//		#endif
 		GsReadBibleTextData::WriteCurrentSheetText(ustrSelect);
 	}
 	else
@@ -974,7 +981,8 @@ void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
 	//---
 	TSearchTextWindow *pTSearchTextWindow = new TSearchTextWindow(this);
 	if(!pTSearchTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSearchTextWindow"));
-	pTSearchTextWindow->Show();
+	pTSearchTextWindow->ShowModal();
+  this->pGsSearchFavFilesClass->ReadDirectoryFavSearch();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)

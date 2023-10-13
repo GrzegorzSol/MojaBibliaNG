@@ -1,5 +1,5 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\MyBibleLibrary\GsReadBibleTextData.cpp',0,1,1,1,1046,0,0,{{11,77}
+File_0=TSourceModule,'F:\DevelopGS\MojaBibliaNG_Git\GsComponents\GsSearchFavFilesClass.cpp',0,1,1,1,1,0,0,,
 
 [Modules]
 Module0=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
@@ -43,11 +43,11 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
-CursorX=75
-CursorY=1311
-TopLine=1022
+CursorX=1
+CursorY=64
+TopLine=40
 LeftCol=1
-Elisions={{130,65},{187,0},{'...'}}{{189,49},{204,0},{'...'}}{{206,62},{304,0},{'...'}}{{306,64},{358,0},{'...'}}{{360,82},{390,0},{'...'}}{{392,83},{428,0},{'...'}}{{430,63},{439,0},{'...'}}{{441,62},{452,0},{'...'}}{{454,91},{468,0},{'...'}}{{470,88},{481,0},{'...'}}{{483,97},{497,0},{'...'}}{{499,62},{511,0},{'...'}}{{513,74},{522,0},{'...'}}{{524,55},{580,0},{'...'}}{{582,53},{607,0},{'...'}}{{609,76},{621,0},{'...'}}{{623,57},{645,0},{'...'}}{{647,144},{658,0},{'...'}}{{660,66},{675,0},{'...'}}{{677,77},{702,0},{'...'}}{{704,135},{756,0},{'...'}}{{758,76},{797,0},{'...'}}{{799,120},{820,0},{'...'}}{{822,78},{834,0},{'...'}}{{836,83},{854,0},{'...'}}{{856,86},{876,0},{'...'}}{{878,79},{926,0},{'...'}}{{928,78},{977,0},{'...'}}{{979,78},{999,0},{'...'}}{{1001,75},{1021,0},{'...'}}{{1023,73},{1051,0},{'...'}}{{1053,88},{1073,0},{'...'}}{{1075,80},{1094,0},{'...'}}{{1096,74},{1121,0},{'...'}}{{1123,79},{1143,0},{'...'}}{{1145,73},{1161,0},{'...'}}{{1163,85},{1186,0},{'...'}}{{1188,71},{1206,0},{'...'}}{{1208,69},{1232,0},{'...'}}{{1234,74},{1262,0},{'...'}}{{1264,72},{1287,0},{'...'}}{{1289,75},{1309,0},{'...'}}{{1311,74},{1337,0},{'...'}}{{1339,78},{1361,0},{'...'}}{{1363,73},{1446,0},{'...'}}
+Elisions={{64,8},{130,3},{'...'}}{{132,65},{189,0},{'...'}}{{191,49},{206,0},{'...'}}{{208,62},{311,0},{'...'}}{{313,64},{365,0},{'...'}}{{367,82},{397,0},{'...'}}{{399,83},{435,0},{'...'}}{{437,63},{446,0},{'...'}}{{448,62},{459,0},{'...'}}{{461,91},{475,0},{'...'}}{{477,88},{488,0},{'...'}}{{490,97},{504,0},{'...'}}{{506,62},{518,0},{'...'}}{{520,74},{529,0},{'...'}}{{531,55},{583,0},{'...'}}{{585,53},{610,0},{'...'}}{{612,76},{624,0},{'...'}}{{626,57},{648,0},{'...'}}{{650,144},{661,0},{'...'}}{{663,66},{678,0},{'...'}}{{680,77},{705,0},{'...'}}{{707,135},{759,0},{'...'}}{{761,76},{800,0},{'...'}}{{802,120},{823,0},{'...'}}{{825,78},{837,0},{'...'}}{{839,83},{857,0},{'...'}}{{859,86},{879,0},{'...'}}{{881,79},{923,0},{'...'}}{{925,78},{969,0},{'...'}}{{971,78},{985,0},{'...'}}{{987,75},{1001,0},{'...'}}{{1003,73},{1025,0},{'...'}}{{1027,88},{1041,0},{'...'}}{{1043,80},{1057,0},{'...'}}{{1059,74},{1078,0},{'...'}}{{1080,79},{1094,0},{'...'}}{{1096,73},{1112,0},{'...'}}{{1114,85},{1137,0},{'...'}}{{1139,71},{1151,0},{'...'}}{{1153,69},{1171,0},{'...'}}{{1173,74},{1195,0},{'...'}}{{1197,72},{1214,0},{'...'}}{{1216,75},{1230,0},{'...'}}{{1232,74},{1252,0},{'...'}}{{1254,78},{1270,0},{'...'}}{{1272,73},{1349,0},{'...'}}
 Bookmarks=
 EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
 
@@ -152,11 +152,11 @@ State=0
 Left=0
 Top=0
 Width=1750
-Height=4472
+Height=4046
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1750
-ClientHeight=4472
+ClientHeight=4046
 TBDockHeight=7157
 LRDockWidth=2000
 Dockable=1
@@ -170,17 +170,17 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1896
-Height=4046
+Width=1750
+Height=4472
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1896
-ClientHeight=4046
+ClientWidth=1750
+ClientHeight=4472
 TBDockHeight=9009
 LRDockWidth=1750
 Dockable=1
 StayOnTop=0
-SplitPos=121
+SplitPos=112
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -190,12 +190,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1917
-Height=5889
+Width=1750
+Height=8352
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1917
-ClientHeight=5889
+ClientWidth=1750
+ClientHeight=8352
 TBDockHeight=5963
 LRDockWidth=2510
 Dockable=1
@@ -208,7 +208,7 @@ Visible=0
 Docked=1
 State=0
 Left=-16
-Top=-255
+Top=-212
 Width=276
 Height=361
 MaxLeft=-1
@@ -412,8 +412,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=48
-Top=206
+Left=32
+Top=128
 Width=1849
 Height=3139
 MaxLeft=-1
@@ -600,7 +600,7 @@ Dockable=1
 StayOnTop=0
 TabPosition=2
 ActiveTabID=ProjectManager
-TabDockClients=StructureView,ProjectManager,ClassBrowserTool,DataExplorerContainer,frmDesignPreview
+TabDockClients=StructureView,ProjectManager,ClassBrowserTool,frmDesignPreview,DataExplorerContainer
 
 [DockSite3]
 HostDockSite=DockLeftPanel
@@ -623,6 +623,6 @@ LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 TabPosition=2
-ActiveTabID=ToolForm
+ActiveTabID=PropertyInspector
 TabDockClients=PropertyInspector,ToolForm,TemplateView
 

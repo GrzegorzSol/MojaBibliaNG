@@ -103,6 +103,9 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 		if(Item->GroupID == enGroup_Translate)
 		//Tłumaczenia
 		{
+			this->ImageDisplayResource->Picture->Assign(nullptr);
+			this->ImageDisplayResource->Visible = false;
+
 			ustrSelectItem = TPath::ChangeExtension(Item->Caption, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
 			if(TFile::Exists(ustrSelectItem))
 			{
@@ -112,11 +115,14 @@ void __fastcall TViewAllResourcesWindow::_OnSelectItem(System::TObject* Sender, 
 		else if(Item->GroupID == enGroup_Graphics)
 		//Podgląd grafiki
 		{
+      this->ImageDisplayResource->Visible = true;
 			this->_DisplayImage(Item->Caption);
 		}
 		else if(Item->GroupID == enGroup_CoomentFiles || Item->GroupID == enGroup_FavVers)
 		//Ulubione wersety i wersety z komentarzem
 		{
+			this->ImageDisplayResource->Picture->Assign(nullptr);
+			this->ImageDisplayResource->Visible = false;
 			this->_DisplaySelectVersAllTrans(pDataItemResources);
 		}
 	}

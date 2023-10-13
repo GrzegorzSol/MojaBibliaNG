@@ -75,6 +75,7 @@ __published:	// IDE-managed Components
 	TGroupBox *STW_GrBoxSetupsSelectVer;
 	TCheckBox *STW_ChBoxSizeTextSearch;
 	TCheckBox *STW_ChBoxMemoSetupsSearch;
+	TButton *STW_ButtonSaveSearch;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);
 	void __fastcall CBoxCloseUp(TObject *Sender);
@@ -103,9 +104,11 @@ __published:	// IDE-managed Components
 	void __fastcall STW_ColorBoxGetColors(TCustomColorBox *Sender,
 					TStrings *Items);
 	void __fastcall STW_ColorBoxChange(TObject *Sender);
+	void __fastcall STW_ButtonSaveSearchClick(TObject *Sender);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety
+	UnicodeString _ustrResultSearchHTML; //[10-10-2023]
 	int _iStart_index;	//Początkowy index dla TListView
 	int _iEnd_index;		//Końcowy index dla TListView
 	void __fastcall _DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers,

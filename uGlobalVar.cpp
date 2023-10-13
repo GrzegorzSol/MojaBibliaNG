@@ -14,5 +14,5 @@ UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja bibli
 							//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
 							GlobalVar::Global_custrLocalVersionFile = "", //Ścieżka dostępu lokalna, do pobranego pliku wersji
 							GlobalVar::Global_custrLocalApplicFile = ""; //Ścieżka dostępu lokalna, do pobranej aplikacji
-const unsigned char GlobalVar::cuchABlendValue = 200; //Współczynnik przezroczystości okna, gdy jest nieaktywne
+
 

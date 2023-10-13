@@ -48,6 +48,8 @@ struct GlobalVar
 																		#endif
 																		Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 																		Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	//Ścieżka dostępu do katalogu z planami czytania biblii
+																		Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), //Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
+																		Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";
 																		Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				//Ścieżka do pliku konfiguracyjnego
 																		Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 																		Global_custrPathGlobalHelp=TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"),			//Ścieżka dostępu do pliku pomocy
@@ -136,7 +138,7 @@ struct GlobalVar
 																				GlobalIni_SetRate="SetRateSpeakText",								//Szybkość czytania tekstu
 																				GlobalIni_SetVolume="SetVolumeSpeakText",						//Głośność czytania
 																				GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 //Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
-																		Global_ustrFileReadingPlanExtend=".rpf";	 //Rozszerzenie plików planów czytania = "*.rpf";
+																		Global_ustrFileReadingPlanExtend=".rpf";	 //Zmienić na stałą!? Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
 	static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
 											 Global_ustrVerAplicMain,							//Wersja głównej biblioteki

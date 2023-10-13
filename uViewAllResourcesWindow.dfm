@@ -39,8 +39,8 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
     Align = alBottom
     ShowCaption = False
     TabOrder = 0
-    ExplicitTop = 484
-    ExplicitWidth = 1184
+    ExplicitTop = 487
+    ExplicitWidth = 1382
     object SplitterDisplay: TSplitter
       Left = 1
       Top = 221
@@ -72,6 +72,7 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
+      ExplicitWidth = 1380
     end
     object PanelDisplay: TPanel
       Left = 1
@@ -85,7 +86,7 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       TabOrder = 1
       StyleElements = [seFont, seBorder]
       OnResize = PanelDisplayResize
-      ExplicitWidth = 1182
+      ExplicitWidth = 1380
       object ImageDisplayResource: TImage
         Left = 484
         Top = 20

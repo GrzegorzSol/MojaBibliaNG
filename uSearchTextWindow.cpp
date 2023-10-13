@@ -46,6 +46,7 @@ enum {	//Numery zakładek w ustawieniach wyszukiwania
 				enImageSearch_ResultListHTML,			 //9.Zakładka wyników wyszukiwania w formie html
 				enImageSearch_ResultListSelect,		 //10.Zakładka wyników wyszukiwania z możliwością wyboru
 				enImageSearch_Setups,							 //11.Ustawienia dodakowe dla wyszukiwania
+        enImageSearch_SaveResult,          //12.Zapisywanie rezultatów wyszukiwania
 				enImageSearch_Count,
 				//Stałe numerów kolumn dla listy statystyki
 				enColumn_NameBook=0, enColumn_CountFind, enColumn_Progres, enColumn_Count,
@@ -141,7 +142,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	this->STW_CBoxStopSelectRange->Hint = Format("Końcowa księga w wyszukiwaniu|Początkowa księga w zakresie wyszukiwania, zdefiniowanym przez użytkownika|%u", ARRAYOFCONST((enImageSearch_StopSelect)));
 	this->STW_CBoxSelectTranslates->Hint = Format("Wybór tłumaczenia|Wybór tłumaczenia do przeszukania|%u", ARRAYOFCONST((enImageSearch_Translates)));
 	this->STW_ButtonSearchStart->Hint = Format("Rozpoczęcie wyszukiwania|Rozpoczęcie wyszukiwania według ustawionych parametrów|%u", ARRAYOFCONST((this->STW_ButtonSearchStart->ImageIndex)));
-
+	this->STW_ButtonSaveSearch->Hint = Format("Zapis wyników wyszukiwania|Zapisanie ulubionych wyników wyszukiwania|%u", ARRAYOFCONST((this->STW_ButtonSaveSearch->ImageIndex)));
 	//Logo wyszukiwania
 	if(TFile::Exists(GlobalVar::Global_custrPathSearchLogo))
 	{
@@ -237,6 +238,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 		this->STW_CBoxSelectTranslates->ItemIndex = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_Translate, 0);
 		this->STW_CBoxHistorySearchText->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_TextSearch, "");
 		this->STW_ButtonSearchStart->Enabled = !this->STW_CBoxHistorySearchText->Text.IsEmpty(); //Aktywacja przycisku wyszukiwania zależna od istnienia tekstu szukanego
+		//this->STW_ButtonSaveSearch->Enabled = this->STW_ButtonSearchStart->Enabled;
 		this->STW_CBoxSelectRangeSearch->ItemIndex = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main, GlobalVar::GlobalIni_SetupRangeBooks, en_GrSearch_FullAll);
 		if(this->STW_CBoxSelectRangeSearch->ItemIndex > en_GrSearch_Apocr)
 		//Jeśli zakres jest ustawiony na własny, lub pojedyńczą księge
@@ -438,6 +440,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	this->STW_LViewResultSearch->Items->EndUpdate();
 	this->STW_WBrowserResultSearch->SetFocus();
 	this->STW_StBarInfos->SimpleText = Format("Znaleziono %u pozycji", ARRAYOFCONST((this->_pHSListSearchResult->Count)));
+	this->STW_ButtonSaveSearch->Enabled = (this->_pHSListSearchResult->Count > 0);  //[10-10-2023]
 	//Dodawanie do objekstu, klasy TComboBox sów wyszukiwanych 15-04-2021
 	bool bIsDuplicate=false; //Zmienna oznaczająca że jest(true), lub nie (false) duplicat w słowie szukanym
 	const int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
@@ -536,6 +539,7 @@ void __fastcall TSearchTextWindow::STW_LEditSearchTextChange(TObject *Sender)
 	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->STW_CBoxSelectTranslates->ItemIndex);
 	if(!pGsReadBibleTextItem) return;
 	this->STW_ButtonSearchStart->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !pLEdit->Text.IsEmpty());
+  //this->STW_ButtonSaveSearch->Enabled = this->STW_ButtonSearchStart->Enabled;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_ChBoxIsRegExClick(TObject *Sender)
@@ -868,7 +872,7 @@ void __fastcall TSearchTextWindow::FormDeactivate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->AlphaBlendValue = GlobalVar::cuchABlendValue; //16-02-2020
+	///
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::FormActivate(TObject *Sender)
@@ -879,7 +883,7 @@ void __fastcall TSearchTextWindow::FormActivate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->AlphaBlendValue = 255; //16-02-2020
+	///
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_CBoxHistorySearchTextChange(TObject *Sender)
@@ -897,6 +901,7 @@ void __fastcall TSearchTextWindow::STW_CBoxHistorySearchTextChange(TObject *Send
 	//if(!pGsReadBibleTextItem) return;
 	//this->STW_ButtonSearchStart->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !pCBox->Text.IsEmpty());
 	this->STW_ButtonSearchStart->Enabled = (!pCBox->Text.IsEmpty());
+	//this->STW_ButtonSaveSearch->Enabled = this->STW_ButtonSearchStart->Enabled;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_PControlViewsTextDrawTab(TCustomTabControl *Control,
@@ -957,13 +962,15 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	MyObjectVers *pMyOjectVers=nullptr;
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+
+	UnicodeString ustrTemp;
 	//---
 	const UnicodeString ustrDisplayHeaderHTMLSearchAll = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 		"<html>\n<head>\n" +
 		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
 		"<title>Wyniki wyszukiwania</title>\n" +
 		"<style type=\"text/css\">\n" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:10pt;font-family:Times New Roman;}\n" +
+		".styleColorAdressTranslates {color: #FF0000; font-size:12pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
 		".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
 		".styleFound {background-color: #FFFF00;}\n" +
@@ -975,7 +982,7 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
 		"<title>Wyniki wyszukiwania</title>\n" +
 		"<style type=\"text/css\">\n" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:10pt;font-family:Times New Roman;}\n" +
+		".styleColorAdressTranslates {color: #FF0000; font-size:12pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
 		".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
 		".styleFound {background-color: #FFFF00;}\n" +
@@ -1000,14 +1007,23 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	{
 		case enTypeDisplay_ResultsearchAll:				 //Wyświetlanie wszystkich znalezionych wersetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSearchAll;
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("Wyświetlanie wszystkich znalezionych wersetów");
+			#endif
 		break;
 		//---
 		case enTypeDisplay_ResultSearchSelectBook: //Wyświetlanie znelozionych wersetów dla konkretnej księgi
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSearchBook;
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("Wyświetlanie znelozionych wersetów dla konkretnej księgi");
+			#endif
 		break;
 		//---
 		case enTypeDisplay_ResultSelectVers:			 //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSelectSearchVers;
+      #if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów");
+			#endif
 		break;
 	}
 	pStringStream->WriteString(ustrDefineDisplayHTML);
@@ -1020,15 +1036,25 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 			pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
 			//Dodawanie kolejnego wersetu
-			pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+			ustrTemp = Format(UnicodeString("<p>\n") +
 				"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
-				ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i]))));
+				ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i])));
+			pStringStream->WriteString(ustrTemp);
 			//pStringStream->WriteString("<br>");
 			pStringStream->WriteString("</p>\n\n");
 		}
 		pStringStream->WriteString("</body>\n</html>\n");
 		//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
 		pStringStream->Position = 0;
+    //--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
+		if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
+		{
+			this->_ustrResultSearchHTML = ""; //[10-10-2023]
+			this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
+      #if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("this->_ustrResultSearchHTML length: %d", ARRAYOFCONST(( this->_ustrResultSearchHTML.Length() ))));
+			#endif
+		}
 		//---
 		IPersistStreamInit *psi;
 		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
@@ -1117,6 +1143,26 @@ void __fastcall TSearchTextWindow::STW_ColorBoxChange(TObject *Sender)
 	}
 	//Odświerzać listy znalezionych wersetów nie trzeba gdyż wywołana metoda this->STW_ButtonSearchStartClick(this->STW_ButtonSearchStart),
 	//powoduje wyczyszczenie wszystkich statystyk
+}
+//---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::STW_ButtonSaveSearchClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):	//[10-10-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButton *pButton = dynamic_cast<TButton *>(Sender);
+	if(!pButton) return;
+	//---
+	if(this->_ustrResultSearchHTML.IsEmpty()) return;
+	//---
+	UnicodeString ustrPatToSave = TPath::ChangeExtension(TPath::Combine(GlobalVar::Global_custrPathSearchFavorities, STW_CBoxHistorySearchText->Text), GlobalVar::Global_custrFileSearchFavExtend);
+	TFile::WriteAllText(ustrPatToSave, this->_ustrResultSearchHTML, TEncoding::UTF8);
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("this->_ustrResultSearchHTML length: %d", ARRAYOFCONST(( this->_ustrResultSearchHTML.Length() ))));
+	#endif
 }
 //---------------------------------------------------------------------------
 

@@ -2,6 +2,7 @@
 #define uMainWindowH
 //---------------------------------------------------------------------------
 #include "MyBibleLibrary\MyBibleLibrary.h" //Główna klasa do pracy z tekstem biblijnym
+#include "GsComponents\GsSearchFavFilesClass.h"
 #include <System.Actions.hpp>
 #include <System.Classes.hpp>
 #include <System.ImageList.hpp>
@@ -66,6 +67,7 @@ __published:	// IDE-managed Components
 	TAction *Act_ReadingPlan;
 	TAction *Act_HistoryChapters;
 	TAction *Act_OpenInWord;
+	TTabSheet *TabSheetFavResultSearch;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -102,8 +104,9 @@ __published:	// IDE-managed Components
 	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall Act_OpenInWordExecute(TObject *Sender);
 private:	// User declarations
-	GsLViewCommentsAllClass *pGsLViewCommentsAllClass;
-	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass;
+	GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr;
+	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr;
+	GsSearchFavFilesClass *pGsSearchFavFilesClass=nullptr; //[12-10-2023]
 	void __fastcall _AppException(TObject *Sender, Exception *pException);	//Obsługa błędów całej aplikacji
 	bool __fastcall _AppHelp(System::Word Command, NativeInt Data, bool &CallHelp);
 	void __fastcall _AppOnHint(TObject *Sender);
