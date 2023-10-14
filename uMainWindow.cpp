@@ -126,7 +126,9 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			//Numery dla przycisków na taskbarze
 			enNumTaskBar_InfoReadChapt = 0,	 //Informacja o aktualnie wczytanym rozdziale
 			enNumTaskBar_InfoAplic,					 //Informacja o aplikacji
-			enNumTaskBar_NumberButtons			 //Ilość przycisków na taskbarze
+			enNumTaskBar_NumberButtons,			 //Ilość przycisków na taskbarze
+			//Nagi dla zakładki plików ulubionych, wyszukiwania
+			enTagSearchFav_DeleteFile = 200 //200.Przycisk kasowania zaznaczonego pliku w zakładce ulubionych plików wyszukiwania
 		 };
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
@@ -308,6 +310,11 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->ActionToolBarMain->Width = this->Width / 2;
 
 	this->ImageBackgroundWindow->OnDragDrop = GsReadBibleTextData::pGsReadBibleTextClass->GlobalTextDragDrop;
+	//--- Ustawienia zakładki ulubionych plików wyszukiwań //[14-10-2023]
+	this->ToolBarSearcheFiles->Images = this->pGsSearchFavFilesClass->GetImageList();
+		//Stałe indeksu TImageList pochodzi z GsComponents\GsSearchFavFilesClass.h //[14-10-2023]
+	this->ToolButtDeleteFile->ImageIndex = enIndexImage16_Delete;
+	this->ToolButtDeleteFile->Tag = enTagSearchFav_DeleteFile;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
@@ -1347,6 +1354,25 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 
 	if(pHSListGetText) {delete pHSListGetText; pHSListGetText = nullptr;}
 	if(pPBar) {delete pPBar; pPBar = nullptr;}
+}
+//-----------------------ZDARZENIA ZWIAZANE Z KONTROLKAMI--------------------
+void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Zdarzenie zwiazane z przyciskiem na karcie ulubionych wyszukiwań
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TToolButton *pTButton = dynamic_cast<TToolButton *>(Sender);
+	if(!pTButton) return;
+	//---
+	switch(pTButton->Tag)
+	{
+		case enTagSearchFav_DeleteFile: //200.Przycisk kasowania zaznaczonego pliku w zakładce ulubionych plików wyszukiwania
+      this->pGsSearchFavFilesClass->DeleteSelectFile();
+		break;
+  }
 }
 //---------------------------------------------------------------------------
 

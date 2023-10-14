@@ -234,6 +234,22 @@ object MainBibleWindow: TMainBibleWindow
       object TabSheetFavResultSearch: TTabSheet
         Caption = 'Ulubione wyniki wyszukiwa'#324
         ImageIndex = 5
+        object ToolBarSearcheFiles: TToolBar
+          Left = 0
+          Top = 0
+          Width = 270
+          Height = 22
+          AutoSize = True
+          Caption = 'ToolBarSearcheFiles'
+          TabOrder = 0
+          object ToolButtDeleteFile: TToolButton
+            Left = 0
+            Top = 0
+            Caption = 'ToolButtDeleteFile'
+            ImageIndex = 0
+            OnClick = ToolButtSearchFavClick
+          end
+        end
       end
     end
   end

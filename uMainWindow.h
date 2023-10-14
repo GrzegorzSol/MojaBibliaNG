@@ -68,6 +68,8 @@ __published:	// IDE-managed Components
 	TAction *Act_HistoryChapters;
 	TAction *Act_OpenInWord;
 	TTabSheet *TabSheetFavResultSearch;
+	TToolBar *ToolBarSearcheFiles;
+	TToolButton *ToolButtDeleteFile;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -103,6 +105,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_HistoryChaptersExecute(TObject *Sender);
 	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall Act_OpenInWordExecute(TObject *Sender);
+	void __fastcall ToolButtSearchFavClick(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr;
