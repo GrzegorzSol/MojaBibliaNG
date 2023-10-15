@@ -239,16 +239,31 @@ object MainBibleWindow: TMainBibleWindow
           Top = 0
           Width = 270
           Height = 22
+          CustomHint = BalloonHintMain
           AutoSize = True
           Caption = 'ToolBarSearcheFiles'
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 0
           object ToolButtDeleteFile: TToolButton
             Left = 0
             Top = 0
+            CustomHint = BalloonHintMain
             Caption = 'ToolButtDeleteFile'
             ImageIndex = 0
             OnClick = ToolButtSearchFavClick
           end
+        end
+        object MemoInfosSearchFile: TMemo
+          Left = 0
+          Top = 690
+          Width = 270
+          Height = 120
+          Align = alBottom
+          Color = clCream
+          ReadOnly = True
+          TabOrder = 1
+          StyleElements = [seFont, seBorder]
         end
       end
     end

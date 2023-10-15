@@ -551,8 +551,6 @@ object SearchTextWindow: TSearchTextWindow
           Height = 217
           Align = alClient
           TabOrder = 1
-          ExplicitWidth = 1172
-          ExplicitHeight = 216
           ControlData = {
             4C0000008B7900006D1600000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800

@@ -70,6 +70,7 @@ __published:	// IDE-managed Components
 	TTabSheet *TabSheetFavResultSearch;
 	TToolBar *ToolBarSearcheFiles;
 	TToolButton *ToolButtDeleteFile;
+	TMemo *MemoInfosSearchFile;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -121,6 +122,7 @@ private:	// User declarations
 	void __fastcall _OnDblClick_ListFavorities(System::TObject* Sender);
 	void __fastcall _DisplayHelp(TAction *_pAction);
 	bool __fastcall _IsWordInstalled();
+	void __fastcall _OnSelectItemSearchFile(System::TObject* Sender, TListItem* Item, bool Selected);
 	bool _bIsWordInstalled=false;
 	//---
 public:		// User declarations

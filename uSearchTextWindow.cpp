@@ -1158,11 +1158,21 @@ void __fastcall TSearchTextWindow::STW_ButtonSaveSearchClick(TObject *Sender)
 	//---
 	if(this->_ustrResultSearchHTML.IsEmpty()) return;
 	//---
-	UnicodeString ustrPatToSave = TPath::ChangeExtension(TPath::Combine(GlobalVar::Global_custrPathSearchFavorities, STW_CBoxHistorySearchText->Text), GlobalVar::Global_custrFileSearchFavExtend);
-	TFile::WriteAllText(ustrPatToSave, this->_ustrResultSearchHTML, TEncoding::UTF8);
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("this->_ustrResultSearchHTML length: %d", ARRAYOFCONST(( this->_ustrResultSearchHTML.Length() ))));
-	#endif
+	UnicodeString ustrPathToSave = TPath::ChangeExtension(TPath::Combine(GlobalVar::Global_custrPathSearchFavorities, STW_CBoxHistorySearchText->Text), GlobalVar::Global_custrFileSearchFavExtend),
+								ustrPathInfos = TPath::ChangeExtension(ustrPathToSave, GlobalVar::Global_custrFileSearchInfoExtand);
+	TFile::WriteAllText(ustrPathToSave, this->_ustrResultSearchHTML, TEncoding::UTF8);
+	TMemIniFile *pIni = new TMemIniFile(ustrPathInfos, TEncoding::UTF8);
+	if(!pIni) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
+
+	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, this->STW_CBoxHistorySearchText->Text);
+	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, this->STW_CBoxSelectTranslates->Text);
+	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_RangeName, this->STW_CBoxSelectRangeSearch->Text);
+	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Range, this->STW_CBoxStartSelectRange->Text + "-" + this->STW_CBoxStopSelectRange->Text);
+	pIni->WriteInteger(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Count, this->_pHSListSearchResult->Count);
+
+  //Zrzucenie zawartości objektu, klasy TMemIni, do pliku
+	pIni->UpdateFile();
+	if(pIni) {delete pIni; pIni = nullptr;}
 }
 //---------------------------------------------------------------------------
 

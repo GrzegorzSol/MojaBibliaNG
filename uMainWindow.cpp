@@ -269,6 +269,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	if(!this->pGsSearchFavFilesClass) throw(Exception("Błąd inicjalizacji objektu, klasy GsViewAllResourcesClass"));
 	this->pGsSearchFavFilesClass->Parent = this->TabSheetFavResultSearch;
 	this->pGsSearchFavFilesClass->Align = alClient;
+	this->pGsSearchFavFilesClass->OnSelectItem = this->_OnSelectItemSearchFile; //[15-10-2023]
 	//---
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
 		//Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
@@ -582,11 +583,11 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	else
 		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
+
+	this->ToolButtDeleteFile->Hint = "Usunięcie zaznaczonego pliku z ulubionym wyszukiwaniem"; //[14-10-2023]
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;						//Zakładka z narzędziami
-
-	//this->MBW_HdrControlBooks->Hint = "Nagłówek drzewa ksiąg biblijnych|Nagłówek drzewa ksiąg biblijnych, pokazujący nazwy poszczególnych informacji o księgach biblijnych";
 }
 //---------------------------------------------------------------------------
 bool __fastcall TMainBibleWindow::_IsWordInstalled()
@@ -1373,6 +1374,36 @@ void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
       this->pGsSearchFavFilesClass->DeleteSelectFile();
 		break;
   }
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sender, TListItem* Item, bool Selected)
+/**
+	OPIS METOD(FUNKCJI): //[15-10-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GsSearchFavFilesClass *pSelect = dynamic_cast<GsSearchFavFilesClass *>(Sender);
+	if(!pSelect) return;
+	//---
+	if(Selected)
+	{
+		UnicodeString ustrTemp = TPath::ChangeExtension(pSelect->SelectFile, GlobalVar::Global_custrFileSearchInfoExtand);
+
+		TMemIniFile *pIni = new TMemIniFile(ustrTemp, TEncoding::UTF8);
+		if(!pIni) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
+
+		this->MemoInfosSearchFile->Lines->BeginUpdate();
+		this->MemoInfosSearchFile->Lines->Add(Format("Szukane słowo: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, "Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format("Tłumaczenie: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, "Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format("Nazwa zakresu wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_RangeName, "Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format("Dokładny zakres wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Range, "Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format("Ilość wystąpień szukanego wyrażenia: %d", ARRAYOFCONST(( pIni->ReadInteger(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Count, 0) ))));
+		this->MemoInfosSearchFile->Lines->EndUpdate();
+
+		if(pIni) {delete pIni; pIni = nullptr;}
+	}
 }
 //---------------------------------------------------------------------------
 
