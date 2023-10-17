@@ -1395,6 +1395,7 @@ void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sende
 		if(!pIni) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
 
 		this->MemoInfosSearchFile->Lines->BeginUpdate();
+    this->MemoInfosSearchFile->Clear(); //[17-10-2023]
 		this->MemoInfosSearchFile->Lines->Add(Format("Szukane słowo: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, "Brak") ))));
 		this->MemoInfosSearchFile->Lines->Add(Format("Tłumaczenie: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, "Brak") ))));
 		this->MemoInfosSearchFile->Lines->Add(Format("Nazwa zakresu wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_RangeName, "Brak") ))));
