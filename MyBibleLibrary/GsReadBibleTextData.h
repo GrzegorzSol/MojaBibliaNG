@@ -43,7 +43,7 @@ class GsReadBibleTextData : public TObject
 		//---
 		static inline TImageList *_GsImgListData=nullptr; //Globalna lista grafik
 		static inline TImageList *_GsImgListDataDisable=nullptr; //Globalna lista grafik nieaktywnych
-		static inline TPageControl *_GsPageControl=nullptr; //Wskaźnik na objekt, klasy TPageControl, na którym będą umieszczane zakładki z narzędziami
+		static inline TPageControl *_GsPageControl=nullptr; //Wskaźnik na objekt klasy TPageControl z zakładkami do wyświetlania tekstów biblinych
 		static inline TTaskbar *_GsTaskBar=nullptr;	//Wskaźnik na objekt, klasy TTaskBar
 		static inline TBalloonHint *_GsBalloonHint=nullptr; //Globalna klasa podpowiedzi, zdefiniowana w konstruktorze klasy GsTreeBibleClass
 		//---	 Wskaźniki na niektóre klasy
@@ -171,9 +171,9 @@ class GsReadBibleTextData : public TObject
 		inline static TImageList *__fastcall GetImageListData() {if(GsReadBibleTextData::IsInitLibrary)	 return GsReadBibleTextData::_GsImgListData; else return 0;}
 		static UnicodeString __fastcall GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 		static void __fastcall InitMyBible(TForm *MainWindow); //Inicjalizacja pracy z biblioteką do analizy Pisma Świętego
-		static void __fastcall SetupVariables(); //Ustawienie zmiennych dla klasy
 		static void __fastcall CloseMyBible();	//Zamknięcie bilioteki do analizy Pisma Świętego
 		static void __fastcall CreateTreeBooks(TWinControl* _OwnerParent, TPageControl *_PageControl, int _iWidth=260); //Stworzenie drzewa ksiąg i innych objektów biblioteki
+		static void __fastcall SetupVariables(); //Ustawienie zmiennych dla klasy
 		static unsigned char __fastcall CountTranslates();	//Metoda zwraca ilość tłumaczeń
 		static void __fastcall GetInfoNameTranslate(const unsigned char i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
 		static void __fastcall WriteCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki

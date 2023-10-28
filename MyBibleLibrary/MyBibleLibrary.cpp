@@ -1536,6 +1536,9 @@ void __fastcall GsListBoxSelectedVersClass::Click()
 	{
 		GsReadBibleTextData::pGsListBoxFavoritiesClass->ReLoadFavList();
 	}
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
+	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListBoxSelectedVersClass::MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -1802,7 +1805,7 @@ void __fastcall GsTabSheetClass::_InitToolBarAllButtons(TPanel *pPanelParent)
 	this->pToolButtonEdit->AllowAllUp = true;
 	this->pToolButtonEdit->Style = tbsCheck;
 	this->pToolButtonEdit->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	this->pToolButtonEdit->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego wersetu, lub rozdziału|%u", ARRAYOFCONST((this->pToolButtonEdit->ImageIndex)));
+	this->pToolButtonEdit->Hint = Format("Otwarcie edytora|Otwarcie edytora i rozpoczęcie redagowania komentarza do wybranego rozdziału|%u", ARRAYOFCONST((this->pToolButtonEdit->ImageIndex)));
 		//Przewijanie rozdziałów
 	for(int i=enImageIndex_ToPrevBook; i>=enImageIndex_ToNextBook; i--)
 	{
@@ -2354,7 +2357,8 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
  ****************************************************************************/
 //Tagi dla objektów, klasy TPopupMenu i TToolButton
 enum {enPopupMenu_Books=10, enPopupMenu_Chapters, enPopupMenu_Vers, enPopupMenu_Translates,
-			enButton_Books=100, enButton_Chapter, enButton_Vers, enButton_Translates, enButton_NextVers, enButton_PrevVers, enButton_CopyToSheet, enButton_Save,
+			enButton_Books=100, enButton_Chapter, enButton_Vers, enButton_Translates, enButton_NextVers, enButton_PrevVers,
+			enButton_CopyToSheet, enButton_Save, enButtonFav, //[24-10-2023]
 			enButton_Delete
 			};
 const UnicodeString NAMEPANELSELECTVERS = "GsPanelSelectVers";
@@ -2369,7 +2373,7 @@ __fastcall GsBarSelectVers::GsBarSelectVers(TComponent* Owner, const unsigned ch
 */
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
-	//this->_bIsNextStart = false; //Pierwsze uruchomienie (true, póżniej false)
+
 	this->_pHSListSelectVers = new THashedStringList(); //THashedStringLista wszystkich tłumaczeń wybranego wersetu
 	if(!this->_pHSListSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	this->_bFirstResize = true;
@@ -2415,6 +2419,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	//Własny kod.
 	this->DoubleBuffered = true;
 	this->AutoSize = true;
+	this->Wrapable = true;
 	this->List = true;
 	TToolBar::CreateWnd();
 	//---
@@ -2426,9 +2431,10 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	if(!this->_pSelectFavCBox) throw(Exception("Błąd funkcji TToolButton"));
 	this->_pSelectFavCBox->Parent = this;
 	this->_pSelectFavCBox->AutoSize = true;
-	this->_pSelectFavCBox->Visible = false;
+	this->_pSelectFavCBox->Visible = true; //false;
 	this->_pSelectFavCBox->ImageIndex = enImageIndex_SelectFavVerset;
 	this->_pSelectFavCBox->Caption = "Ulubiony werset";
+	this->_pSelectFavCBox->OnClick = this->_OnClickFavVers; //[24-10-2023]
 	this->_pSelectFavCBox->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pSelectFavCBox->ShowHint = true;
 	this->_pSelectFavCBox->Style = tbsCheck;
@@ -2453,7 +2459,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pDeleteNoteVers->ImageIndex = enImageIndex_Delete;
 	this->_pDeleteNoteVers->Caption = "Skasuj komentarz";
 	this->_pDeleteNoteVers->OnClick = this->_OnClickDeleteComment;
-	this->_pDeleteNoteVers->Visible = this->_FbBarSelectComment;//false;
+	this->_pDeleteNoteVers->Visible = true;//this->_FbBarSelectComment;//false;
 	this->_pDeleteNoteVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pDeleteNoteVers->ShowHint = true;
 	this->_pDeleteNoteVers->Hint = Format("Skasuj komentarz|Kasuje komentarz do aktualnie wyświetlanego wersetu.|%u", ARRAYOFCONST((this->_pDeleteNoteVers->ImageIndex)));
@@ -2465,7 +2471,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pSaveNoteToVers->ImageIndex = enImageIndex_Save;
 	this->_pSaveNoteToVers->Caption = "Zapisz komentarz";
 	this->_pSaveNoteToVers->OnClick = this->_OnClickSaveComment;
-	this->_pSaveNoteToVers->Visible = this->_FbBarSelectComment;//false;
+	this->_pSaveNoteToVers->Visible = true;//this->_FbBarSelectComment;//false;
 	this->_pSaveNoteToVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pSaveNoteToVers->ShowHint = true;
 	this->_pSaveNoteToVers->Hint = Format("Zapisz komentarz|Zapisuje komentarz do aktualnie wyświetlanego wersetu.|%u", ARRAYOFCONST((this->_pSaveNoteToVers->ImageIndex)));
@@ -2481,8 +2487,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButPrevVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pButPrevVers->ShowHint = true;
 	this->_pButPrevVers->Hint = Format("Przewija do poprzedniego wersetu|Przewija do poprzedniego wersetu|%u", ARRAYOFCONST((this->_pButPrevVers->ImageIndex)));
-	this->_pButPrevVers->Visible = !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
-																														 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
+	this->_pButPrevVers->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,																													 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//Następny werset
 	this->_pButNextVers = new TToolButton(this);
 	if(!this->_pButNextVers) throw(Exception("Błąd funkcji TToolButton"));
@@ -2494,7 +2499,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButNextVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pButNextVers->ShowHint = true;
 	this->_pButNextVers->Hint = Format("Przewija do następnego wersetu|Przewija do nstępnego wersetu|%u", ARRAYOFCONST((this->_pButNextVers->ImageIndex)));
-	this->_pButNextVers->Visible = !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+	this->_pButNextVers->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																														 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//Wybrany werset
 	this->_pSTextSelect = new TStaticText(this);
@@ -2551,7 +2556,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pButVers->ShowHint = true;
 	this->_pButVers->Hint = Format("Wybór wersetu|Pozwala na wybór wersetu z wybranejgo rozdziału i księgi|%u", ARRAYOFCONST((this->_pButVers->ImageIndex)));
-	this->_pButVers->Visible = !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+	this->_pButVers->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																												 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//Wybór rozdziału
 	this->_pButChapt = new TToolButton(this);
@@ -2564,7 +2569,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButChapt->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pButChapt->ShowHint = true;
 	this->_pButChapt->Hint = Format("Wybór rozdziału|Pozwala na wybór rozdziału z wybranej księgi|%u", ARRAYOFCONST((this->_pButChapt->ImageIndex)));
-	this->_pButChapt->Visible = !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+	this->_pButChapt->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																													//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//Wybór księgi
 	this->_pButBooks = new TToolButton(this);
@@ -2577,9 +2582,10 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButBooks->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pButBooks->ShowHint = true;
 	this->_pButBooks->Hint = Format("Wybór księgi|Pozwala na wybór księgi z wybranego tłumaczenia|%u", ARRAYOFCONST((this->_pButBooks->ImageIndex)));
-	this->_pButBooks->Visible = !this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
+	this->_pButBooks->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																													//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//
+	this->_pSelectFavCBox->Tag = enButtonFav; //[24-10-2023]
 	this->_pButTranslates->Tag = enButton_Translates;
 	this->_pButVers->Tag = enButton_Vers;
 	this->_pButChapt->Tag = enButton_Chapter;
@@ -2591,6 +2597,9 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pDeleteNoteVers->Tag = enButton_Delete;
 	//Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
 	this->_CreatePMenuBooks();
+	//Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych i czy posiada komentarz. Jeśli jest
+	//przycisk _pSelectFavCBox jest wciśniety //[24-10-2023]
+  this->_VerifyVarset();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::DestroyWnd()
@@ -2692,6 +2701,67 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 	this->_pButVers->Caption = Format("Werset %u", ARRAYOFCONST((this->_FucSelectVers)));
 }
 //---------------------------------------------------------------------------
+void __fastcall GsBarSelectVers::_VerifyVarset()
+/**
+	OPIS METOD(FUNKCJI): Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych i czy posiada komentarz. Jeśli jest
+											 przycisk _pSelectFavCBox jest wciśniety //[24-10-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	UnicodeString ustrCreateName;
+	ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers);
+	//Sprawdzanie czy werset jest ulubionym
+	int iIndex = GlobalVar::Global_HSListAllFavoritiesVers->IndexOf(ustrCreateName);
+	this->_pSelectFavCBox->Down = (iIndex > -1);
+	//Sprawdzanie czy istnieje komentarz do wersetu //[27-10-2023]
+	ustrCreateName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName + GlobalVar::Global_custrExtendCommentsFiles);
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("_VerifyVarset->ustrCreateName: %s", ARRAYOFCONST(( ustrCreateName ))));
+//	#endif
+	this->_pDeleteNoteVers->Enabled = TFile::Exists(ustrCreateName); //[27-10-2023]
+}
+//---------------------------------------------------------------------------
+void __fastcall GsBarSelectVers::_OnClickFavVers(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI): Aktualny werset staje się ulubionym, lub nie [24-10-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TToolButton *pToolButton = dynamic_cast<TToolButton *>(Sender);
+	if(!pToolButton) return;
+	//---
+	UnicodeString ustrCreateName;
+	ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("Length: %d", ARRAYOFCONST(( GlobalVar::Global_HSListAllFavoritiesVers->Count ))));
+//	#endif
+	int iIndex = GlobalVar::Global_HSListAllFavoritiesVers->IndexOf(ustrCreateName);
+	if(iIndex > -1) GlobalVar::Global_HSListAllFavoritiesVers->Delete(iIndex);
+	else if(iIndex == -1)GlobalVar::Global_HSListAllFavoritiesVers->Add(ustrCreateName);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("iIndex: %d", ARRAYOFCONST(( iIndex ))));
+//	#endif
+  //Wyłuskanie wskaźnika na aktualną zakładke z tekstem
+	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
+	if(pGsTabSheetClass)
+	//Jeśli jest aktywna zakładka z wczytanym rozdziałem, trzeba uaktualnić liste ulubionych wersetów w birzącym, wczytanym rozdziele
+	{
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("pGsTabSheetClass: %s", ARRAYOFCONST(( pGsTabSheetClass->Caption ))));
+		#endif
+		#if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("pGsTabSheetClass->pLBoxSelectText->Items->Strings[]: %s",
+				ARRAYOFCONST(( pGsTabSheetClass->pLBoxSelectText->Items->Strings[0] ))));
+		#endif
+	}
+	//Zapis pliku z ulubionymi werseta ???
+	//GlobalVar::Global_HSListAllFavoritiesVers->SaveToFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);
+}
+//---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::_OnClickSaveComment(System::TObject* Sender)
 /**
 	OPIS METOD(FUNKCJI): Zapis komentarza do aktualnie wyświetlanego wersetu
@@ -2730,6 +2800,27 @@ void __fastcall GsBarSelectVers::_OnClickDeleteComment(System::TObject* Sender)
 	//int iIndexVers=-1;
 	UnicodeString ustrCreateName;
 	ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers);
+  //Sprawdzanie czy istnieje komentarz do wersetu //[27-10-2023]
+	ustrCreateName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName + GlobalVar::Global_custrExtendCommentsFiles);
+	if(TFile::Exists(ustrCreateName)) //[27-10-2023]
+	{
+		UnicodeString ustrMessage = "Czy jesteś pewny, że chcesz skasować istniejący komentarz? Nie będzie można cofnąć operacji!";
+		int iResult = MessageBox(NULL, ustrMessage.c_str(), //[23-08-2023]
+			TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
+		if(iResult == IDYES)
+		{
+			TFile::Delete(ustrCreateName);
+			//Wyczyszczenie edycji
+				//Wyłuskanie wskaźnika na klasę GsEditorClass
+			GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent);
+			if(pGsPanelSelectVers)
+			{
+				GsEditorClass *pGsEditorClass = pGsPanelSelectVers->_pEditComment;
+				pGsEditorClass->ClearEditor();
+        pToolButton->Enabled = false; //[27-10-2023]
+      }
+    }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::_OnClickNavigateVers(System::TObject* Sender)
@@ -2850,7 +2941,7 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 	{
 		for(int i=0; i<this->_pHSListSelectVers->Count; i++)
 		{
-			//Stworzenie kody html, dla listy każdego, dostępnego tłumaczenie, dla wybranego wersetu
+			//Stworzenie kodu html, dla listy każdego, dostępnego tłumaczenie, dla wybranego wersetu
 			pMyOjectVers = static_cast<MyObjectVers *>(this->_pHSListSelectVers->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
 			//---
@@ -2878,7 +2969,7 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 		ustrCreateFullPathName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName);
 		ustrCreateFullPathName = TPath::ChangeExtension(ustrCreateFullPathName, GlobalVar::Global_custrExtendCommentsFiles);
 		//---
-		GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent); //03-07-2019 -> Usunięty błąd
+		//GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent); //03-07-2019 -> Usunięty błąd
 		if(pGsPanelSelectVers && pGsPanelSelectVers->_pEditComment->Visible)
 		{
 			if(TFile::Exists(ustrCreateFullPathName))
@@ -2961,7 +3052,6 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	//if(!this->_bIsNextStart) {this->_bIsNextStart = true; return;}
 	TMenuItem *pMItem = dynamic_cast<TMenuItem *>(Sender);
 	if(!pMItem) return;
 	//---
@@ -2969,16 +3059,18 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	if(!pPMenu) return;
 	//---
 
-	if(this->_FbBarSelectComment)
+	//if(this->_FbBarSelectComment)
+	if(this->_bIsFirstStart && this->_FbBarSelectComment)
 	//Kliknąleś na pozycje listy komentzry w oknie głównym, więc odrazu wiadomo jaki jest pełny adres wersetu.
 	//Parametr jest przekazywany najpierw w metodzie TMainBibleWindow::_OnDblClick_ListComment(), jako true, do konstruktora okna TSelectVersWindow(),
 	//Potem w tym oknie, do konstruktora klasy GsPanelSelectVers(), następnie do aktalnego konstruktora klasy GsBarSelectVers(),
 	//w metodzie GsPanelSelectVers::CreateWnd(), klasy GsPanelSelectVers.
 	//TMainBibleWindow::_OnDblClick_ListComment() -> TSelectVersWindow(,,,true) -> GsPanelSelectVers(,,,true) -> GsBarSelectVers(,,,true)
 	{
+    this->_bIsFirstStart = false; //[25-10-2023]
 		this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 		if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie
-		return;
+		return;  //Gdy wczytano rozdział to nie wyświetla
 	}
 	//---
 	switch(pPMenu->Tag)
@@ -3065,7 +3157,16 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	}
 	//
 	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
-	//if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie
+  //Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych. Jeśli jest
+	//przycisk _pSelectFavCBox jest wciśniety //[24-10-2023]
+  this->_VerifyVarset();
+	//UnicodeString ustrNewCommentFile = TPath::Combine(GlobalVar::Global_custrPathDirComments
+	//GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent);
+	//if(pGsPanelSelectVers)
+	//{
+	//  pGsPanelSelectVers->_pEditComment->EditorFileName
+	//  pGsPanelSelectVers->_pEditComment->ClearEditor();
+	//}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::Resize()
@@ -3086,8 +3187,7 @@ void __fastcall GsBarSelectVers::Resize()
 /****************************************************************************
  *													KLASA GsPanelSelectVers													*
  ****************************************************************************/
-enum{enRow_StrongNumber, enRow_GreckWord, enRow_PolWord, enRow_Count, //Numery rzędów w objekcie TStringGrid w widoku interlinearnym
-		 enTagCBoxIsEdit=100, enTagCBoxIsTranslates, enTagCBoxIsAccessories
+enum{enRow_StrongNumber, enRow_GreckWord, enRow_PolWord, enRow_Count //Numery rzędów w objekcie TStringGrid w widoku interlinearnym
 		};
 __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigned char _cucBook, const unsigned char _cucChapt,
 																								const unsigned char _cucVers, bool bSelectComment)
@@ -3102,12 +3202,12 @@ __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigne
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	this->Font->Quality = TFontQuality::fqClearType;
-	this->FIsPanelText = true; //Domyślnie wyświetlany panel z tekstem i jednocześnie panel z interlinearnym widokiem grecko-polskim
+	//this->FIsPanelText = true; //Domyślnie wyświetlany panel z tekstem i jednocześnie panel z interlinearnym widokiem grecko-polskim
 	//Ustawienie domyślne flag typu __property
-	this->FIsVisibleSetTranslate = false; //Domyślnie wybieranie tłumaczenia aktywne
-	this->FIsEditComments = false;	 //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
-	this->FIsVisibleAccessories = false; //Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
-	this->FVisibleIONoteEditors = false; //Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
+	//this->FIsVisibleSetTranslate = false; //Domyślnie wybieranie tłumaczenia aktywne
+	//this->FIsEditComments = false;	 //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
+	//this->FIsVisibleAccessories = false; //Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
+	//this->FVisibleIONoteEditors = false; //Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
 }
 //---------------------------------------------------------------------------
 __fastcall GsPanelSelectVers::~GsPanelSelectVers()
@@ -3144,56 +3244,6 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 		iWCBoxIsTr = pTempForm->Canvas->TextWidth(_strCBoxIsTrans) + 32;
 		iWCBoxIsAcc = pTempForm->Canvas->TextWidth(_strCBoxIsAccess) + 32;
 	}
-	//---Panel przełączników
-	this->_pPanelCBoxes = new TPanel(this);
-	if(!this->_pPanelCBoxes) throw(Exception("Błąd inicjalizacji klasy TPanel"));
-	this->_pPanelCBoxes->Parent = this;
-	this->_pPanelCBoxes->Align = alTop;
-	this->_pPanelCBoxes->Height = 26;
-	this->_pPanelCBoxes->AlignWithMargins = true;
-	this->_pPanelCBoxes->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
-																												 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
-		//---Czy ma być wyświetlany i edytowany komentarz
-	this->_pCBoxIsEditComment = new TCheckBox(this->_pPanelCBoxes);
-	if(!this->_pCBoxIsEditComment) throw(Exception("Błąd inicjalizacji klasy TCheckBox"));
-	this->_pCBoxIsEditComment->Parent = this->_pPanelCBoxes;
-	this->_pCBoxIsEditComment->Align = alLeft;
-	this->_pCBoxIsEditComment->Caption = _strCBoxIsEditCap;
-	this->_pCBoxIsEditComment->Width = iWCBoxIsEdit;
-	this->_pCBoxIsEditComment->OnClick = this->_OnClickCBoxes;
-	this->_pCBoxIsEditComment->ShowHint = true;
-	this->_pCBoxIsEditComment->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	this->_pCBoxIsEditComment->Hint = Format("Wyświetlać komentarz?|Czy ma być wyświetlany edytor komentarza, do wybranego wersetu?|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
-	this->_pCBoxIsEditComment->Checked = true;
-	//this->_pCBoxIsEditComment->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
-	//																														//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
-		//---Czy ma być wyświetlana możliwość wyboru tłumaczenia
-	this->_pCBoxIsDisplayTranslates = new TCheckBox(this->_pPanelCBoxes);
-	if(!this->_pCBoxIsDisplayTranslates) throw(Exception("Błąd inicjalizacji klasy TCheckBox"));
-	this->_pCBoxIsDisplayTranslates->Parent = this->_pPanelCBoxes;
-	this->_pCBoxIsDisplayTranslates->Align = alLeft;
-	this->_pCBoxIsDisplayTranslates->Caption = _strCBoxIsTrans;
-	this->_pCBoxIsDisplayTranslates->Width = iWCBoxIsTr;
-	this->_pCBoxIsDisplayTranslates->OnClick = this->_OnClickCBoxes;
-	this->_pCBoxIsDisplayTranslates->ShowHint = true;
-	this->_pCBoxIsDisplayTranslates->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	this->_pCBoxIsDisplayTranslates->Hint = Format("Wyświetlać wybór tłumaczeń?|Czy ma być wyświetlona możliwość wyboru tłumaczenia|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
-	//this->_pCBoxIsDisplayTranslates->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
-	//																																	 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
-		//---Czy mają być wyśfietlane akcesoria
-	this->_pCBoxIsAccess = new TCheckBox(this->_pPanelCBoxes);
-	if(!this->_pCBoxIsAccess) throw(Exception("Błąd inicjalizacji klasy TCheckBox"));
-	this->_pCBoxIsAccess->Parent = this->_pPanelCBoxes;
-	this->_pCBoxIsAccess->Align = alLeft;
-	this->_pCBoxIsAccess->Caption = _strCBoxIsAccess;
-	this->_pCBoxIsAccess->Width = iWCBoxIsAcc;
-	this->_pCBoxIsAccess->OnClick = this->_OnClickCBoxes;
-	this->_pCBoxIsAccess->ShowHint = true;
-	this->_pCBoxIsAccess->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	this->_pCBoxIsAccess->Hint = Format("Wyświetlać dodatkowe przyciski?|Czy ma być wyświetlona dodatkowe przyciski?|%u", ARRAYOFCONST((enImageIndex_InfoHelp)));
-	//this->IsEditComments = true;
-	this->_pCBoxIsAccess->Visible = !this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
-	//																												//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
 	//---Przyciski główne
 	this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers, this->FbSelectComment);
 	if(!this->_pGsBarSelectVers)
@@ -3234,12 +3284,6 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pEditComment->Align = alBottom;
 	this->_pEditComment->Height = 240;
 	//Wystarczy by jeden parametr miał wartość true
-	//this->_pEditComment->Visible = this->FIsEditComments || this->FbSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
-																																								 //lub flaga wyświetlania edytora komontarzy ma wartość true, edytor komentarza jest widoczny.
-	//---Tagi
-	this->_pCBoxIsEditComment->Tag = enTagCBoxIsEdit;
-	this->_pCBoxIsDisplayTranslates->Tag = enTagCBoxIsTranslates;
-	this->_pCBoxIsAccess->Tag = enTagCBoxIsAccessories;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::DestroyWnd()
@@ -3252,47 +3296,6 @@ void __fastcall GsPanelSelectVers::DestroyWnd()
 {
 	//Własny kod.
 	TCustomPanel::DestroyWnd();
-}
-//---------------------------------------------------------------------------
-void __fastcall GsPanelSelectVers::_OnClickCBoxes(System::TObject* Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TCheckBox *pCBox = dynamic_cast<TCheckBox *>(Sender);
-	if(!pCBox) return;
-	//---
-	switch(pCBox->Tag)
-	{
-		case enTagCBoxIsEdit: //TUTAJ
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("enTagCBoxIsEdit");
-			#endif
-			this->IsEditComments = pCBox->Checked;
-			if(this->IsEditComments) //Wyświetlanie edytora komentarzy
-			{
-				this->_pEditComment->IsVisibleAllIOButton = false; //Wyłączenie przycisków w komponencie, dopiero po jego wyświetleniu
-				if(!this->_pEditComment->EditorFileName.IsEmpty())
-				{
-					this->_pEditComment->LoadEditorFromFile(this->_pEditComment->EditorFileName);
-				}
-			}
-			this->_pGsBarSelectVers->_pSaveNoteToVers->Visible = pCBox->Checked;
-			this->_pGsBarSelectVers->_pDeleteNoteVers->Visible = pCBox->Checked;
-			if(pCBox->Checked) this->_pEditComment->SetFocus(); //Aktywacja TMemo komentarza
-		break;
-		//---
-		case enTagCBoxIsTranslates:
-			this->IsVisibleSetTranslate = pCBox->Checked;
-		break;
-		//---
-		case enTagCBoxIsAccessories:
-			this->IsVisibleAccessories = pCBox->Checked;
-		break;
-	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_SetDisplayTranslate(bool bIsDisplay)

@@ -20,7 +20,7 @@ class GsEditorClass : public TCustomPanel
 		void __fastcall LoadEditorFromFile(const UnicodeString _ustrInFilePath);
 		void __fastcall LoadEditorFromStream(TStream* Stream);
 		void __fastcall SaveEditorToFile(const UnicodeString _ustrInFilePath);
-		inline void __fastcall ClearEditor() {this->pTRichEdit->Clear();};
+		void __fastcall ClearEditor();
 		bool inline __fastcall IsModified() {return this->pTRichEdit->Modified;}
 		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsEditorClass\" v%s", ARRAYOFCONST((sustrVersionGsEditorClass)));};	//Metoda inline zwracająca wersje klasy
 		inline TRichEdit *__fastcall GetRichEditObject() {return this->pTRichEdit;};
@@ -33,18 +33,21 @@ class GsEditorClass : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-		TRichEdit *pTRichEdit;
-		TImageList *pTImageListActive,
-							 *pTImageListInActive;
-		TToolBar *pToolBar;
-		TToolButton *pTButtBold, *pTButtItalic, *pTButtUnderline, *pTButtStrikeOut,
-								*pTButtLeft, *pTButtCenter, *pTButtRight, *pTButtSave, *pTButtSaveAs, *pTButtLoad, *pTButtPrint,
-								*pTButtInsert, *pTButtUndo, *pTButtRedo, *pTButtParagraf;
-		TComboBox *pCBoxSelectFontName,
-							*pCBoxSelectFontSize;
-		TColorBox *pColBoxFont,
-							*pColBoxBackground;
-		TStatusBar *pSBar;
+    TBalloonHint *pBalloonHint=nullptr;
+		TRichEdit *pTRichEdit=nullptr;
+		TImageList *pTImageListActive=nullptr,
+							 *pTImageListInActive=nullptr;
+		TToolBar *pToolBar=nullptr;
+		TToolButton *pTButtBold=nullptr, *pTButtItalic=nullptr, *pTButtUnderline=nullptr, *pTButtStrikeOut=nullptr,
+								*pTButtLeft=nullptr, *pTButtCenter=nullptr, *pTButtRight=nullptr, *pTButtSave=nullptr,
+								*pTButtSaveAs=nullptr,*pTButtLoad=nullptr, *pTButtPrint=nullptr, *pTButtInsert=nullptr,
+								*pTButtUndo=nullptr, *pTButtRedo=nullptr, *pTButtParagraf=nullptr,
+								*pTButtClear=nullptr; //[27-10-2023]
+		TComboBox *pCBoxSelectFontName=nullptr,
+							*pCBoxSelectFontSize=nullptr;
+		TColorBox *pColBoxFont=nullptr,
+							*pColBoxBackground=nullptr;
+		TStatusBar *pSBar=nullptr;
 		void __fastcall _InitInterface();
 		void __fastcall _OnClickTButt(System::TObject* Sender);
 		void __fastcall _OnSelectionChangeEdit(System::TObject *Sender);
@@ -56,7 +59,7 @@ class GsEditorClass : public TCustomPanel
 		void __fastcall _PrintEditor(); //Drukowanie zawartości edytora
 		//---
 		UnicodeString FEditorFileName;
-		bool FIsVisibleAllIOButtons; //Prywatny wskażnik modyfikacji
+		bool FIsVisibleAllIOButtons=true; //Prywatny wskażnik modyfikacji
 		void __fastcall FSetupVisibleAllIOButtons(bool _IsVisibleIOButtons);
 		void __fastcall FSetupDisplaySelectIOButtons(const DisplaySelectIOButtons _SetDisplayButtons);
 		DisplaySelectIOButtons FDisplaySelectIOButtons;

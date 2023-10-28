@@ -86,6 +86,10 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTImageListInActive->DrawingStyle = dsTransparent;
 	this->_InitImageList();
 	//---
+  this->pBalloonHint = new TBalloonHint(this);
+	if(!this->pBalloonHint) throw(Exception("Nie dokonano inicjalizacji objektu TBalloonHint"));
+	this->pBalloonHint->Images = this->pTImageListActive;
+	//---
 	this->pSBar = new TStatusBar(this);
 	if(!this->pSBar) throw(Exception("Nie dokonano inicjalizacji objektu TStatusBar"));
 	this->pSBar->Parent = this;
@@ -108,7 +112,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTRichEdit->OnChange = this->_OnChangeEdit;
 	//Wartości domyślne prywatnych danych
 	this->FEditorFileName = "";
-	this->FIsVisibleAllIOButtons = true;
+	//this->FIsVisibleAllIOButtons = true;
 	//Dostosowanie flg przycisków, do flagi widoczności przyciskó IO
 	this->FDisplaySelectIOButtons = DisplaySelectIOButtons();
 	if(this->FIsVisibleAllIOButtons) this->FDisplaySelectIOButtons = DisplaySelectIOButtons() << enSetButton_Save << enSetButton_SaveAs << enSetButton_Open;
@@ -155,6 +159,23 @@ void __fastcall GsEditorClass::DestroyWnd()
 	TCustomPanel::DestroyWnd();
 }
 //---------------------------------------------------------------------------
+void __fastcall GsEditorClass::ClearEditor()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->pTRichEdit->Clear();
+	//Ustawienia innych przycisków w stan nieaktywny
+	this->pTRichEdit->Modified = false;
+	this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
+	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+	this->pTButtSave->Enabled = false;
+	this->pTButtInsert->Enabled = false;
+}
+//---------------------------------------------------------------------------
 void __fastcall GsEditorClass::_InitInterface()
 /**
 	OPIS METOD(FUNKCJI):
@@ -177,6 +198,7 @@ void __fastcall GsEditorClass::_InitInterface()
 	this->pToolBar->Images = this->pTImageListActive;
 	this->pToolBar->DisabledImages = this->pTImageListInActive;
 	this->pToolBar->ShowHint = true;
+	this->pToolBar->CustomHint = this->pBalloonHint;
 	//Dodawanie przycisków na toolbar
 	int cor=11; //Ilość separatorów i objektów, klasy innej niż TToolButton
 	for(int i=EnImage_Count-1; i>=0; i--)
@@ -265,6 +287,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			if(!this->pColBoxBackground) throw(Exception("Błąd inicjalizacji klasy TColorBox"));
 			this->pColBoxBackground->Parent = this->pToolBar;
 			this->pColBoxBackground->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames;
+      //this->pColBoxBackground->CustomHint = this->pBalloonHint;
 			this->pColBoxBackground->Hint = ustrHintButtons[EnImage_FontBackgroundColour];
 			this->pColBoxBackground->Tag = i;
 			this->pColBoxBackground->OnChange = this->_OnChangeColor;
@@ -314,48 +337,94 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pTButtSave = pToolButton; //Zapis pod tą samą nazwą
 			this->pTButtSave->Enabled = false;
 			this->pTButtSave->Visible = this->IsVisibleAllIOButton && this->FDisplaySelectIOButtons.Contains(enSetButton_Save);
+			this->pTButtSave->Hint = Format("Zapis pod tą samą nazwą|Zapis zawartości edytora pod nazwą, pod którą została wczytana.|%u", ARRAYOFCONST((this->pTButtSave->ImageIndex)));
 		}
 		if(i == EnImage_SaveAs)
 		{
 			this->pTButtSaveAs = pToolButton;	 //Zapis pod zmienioną nazwą
 			this->pTButtSaveAs->Visible = this->IsVisibleAllIOButton && this->FDisplaySelectIOButtons.Contains(enSetButton_SaveAs);
+			this->pTButtSaveAs->Hint = Format("Zapis pod tą wybraną nazwą|Zapis zawartości edytora pod nową nazwą, którą można wybrać.|%u", ARRAYOFCONST((this->pTButtSaveAs->ImageIndex)));
 		}
 		if(i == EnImage_Open)
 		{
 			this->pTButtLoad = pToolButton;		 //Otwórz
 			this->pTButtLoad->Visible = this->IsVisibleAllIOButton && this->FDisplaySelectIOButtons.Contains(enSetButton_Open);
+			this->pTButtLoad->Hint = Format("Wczytanie danych z pliku|Wczytanie zawartości wybranego pliku.|%u", ARRAYOFCONST((this->pTButtLoad->ImageIndex)));
 		}
+		if(i == EnImage_Print) pToolButton->Hint = Format("Wydrukuj|Wydrukowanie całego tekstu w edytorze.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 		//---
+		if(i == EnImage_Copy)	pToolButton->Hint = Format("Skopiuj|Skopiowanie zaznaczonego tekstu.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_Cut) pToolButton->Hint = Format("Wytnij|Wycięcie zaznaczonego tekstu.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 		if(i == EnImage_Insert)
 		{
 			this->pTButtInsert = pToolButton; //Tryb wstawiania na początku wyłączony
 			this->pTButtInsert->Enabled = false;
+			this->pTButtInsert->Hint = Format("Wstaw tekst|Wstawienie poprzednio skopiowanego tekstu w miejsce kursora.|%u", ARRAYOFCONST((this->pTButtInsert->ImageIndex)));
 		}
+		if(i == EnImage_Find) pToolButton->Hint = Format("Wyszukaj|Wyszukiwanie wybranej frazy, we wczytanym tekscie.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_FindReplace) pToolButton->Hint = Format("Wyszukaj i podmień|Wyszukiwanie i zamiana wybranej frazy, na nową fraze, we wczytanym tekscie.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 		//Przyciski Undo, Redo
 		if(i == EnImage_Undo)
 		{
 			this->pTButtUndo = pToolButton; //Cofnij
 			this->pTButtUndo->Enabled = false;
+			this->pTButtUndo->Hint = Format("Cofnij|Cofanie do ostatniej zawartości edytora.|%u", ARRAYOFCONST((this->pTButtUndo->ImageIndex)));
 		}
 		if(i == EnImage_Redo) //Wróć
 		{
 			this->pTButtRedo = pToolButton;
 			this->pTButtRedo->Enabled = false;
+			this->pTButtRedo->Hint = Format("Wróć|Rezygnacja z operacji wycofania.|%u", ARRAYOFCONST((this->pTButtRedo->ImageIndex)));
 		}
 		//Przyciski atrybutów tekstu
-		if(i == EnImage_Bold) this->pTButtBold = pToolButton; //Pogrubienie
-		if(i == EnImage_Italic) this->pTButtItalic = pToolButton;		//Pochylona
-		if(i == EnImage_Underline) this->pTButtUnderline = pToolButton;//Podkreślona
-		if(i == EnImage_StrikeOut) this->pTButtStrikeOut = pToolButton;//Przekreślona
+		if(i == EnImage_Bold)
+		{
+			this->pTButtBold = pToolButton; //Pogrubienie
+			this->pTButtBold->Hint = Format("Pogrubienie|Pogrubienie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtBold->ImageIndex)));
+		}
+		if(i == EnImage_Italic)
+		{
+			this->pTButtItalic = pToolButton;		//Pochylona
+			this->pTButtItalic->Hint = Format("Pochylenie|Pochylenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtItalic->ImageIndex)));
+		}
+		if(i == EnImage_Underline)
+		{
+			this->pTButtUnderline = pToolButton;//Podkreślona
+			this->pTButtUnderline->Hint = Format("Podkreślenie|Podkreślenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtUnderline->ImageIndex)));
+		}
+		if(i == EnImage_StrikeOut)
+		{
+			this->pTButtStrikeOut = pToolButton;//Przekreślona
+			this->pTButtStrikeOut->Hint = Format("Przekreślenie|Przekreślenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtStrikeOut->ImageIndex)));
+		}
 		//Przyciski formatowania tekstu
-		if(i == EnImage_LeftAl) this->pTButtLeft = pToolButton; //Dosunięcie tekstu do lewego marginesu
-		if(i == EnImage_CentreAl) this->pTButtCenter = pToolButton; //Dosunięcie tekstu d centrum
-		if(i == EnImage_RightAl) this->pTButtRight = pToolButton;	 //Dosunięcie tekstu do prawego marginesu
+		if(i == EnImage_LeftAl)
+		{
+			this->pTButtLeft = pToolButton; //Dosunięcie tekstu do lewego marginesu
+			this->pTButtLeft->Hint = Format("Do lewego marginesu|Dosunięcie tekstu do lewego marginesu.|%u", ARRAYOFCONST((this->pTButtLeft->ImageIndex)));
+		}
+		if(i == EnImage_CentreAl)
+		{
+			this->pTButtCenter = pToolButton; //Dosunięcie tekstu do centrum
+			this->pTButtCenter->Hint = Format("Do środka|Dosunięcie tekstu do środka.|%u", ARRAYOFCONST((this->pTButtCenter->ImageIndex)));
+		}
+		if(i == EnImage_RightAl)
+		{
+			this->pTButtRight = pToolButton;	 //Dosunięcie tekstu do prawego marginesu
+			this->pTButtRight->Hint = Format("Do prawego marginesu|Dosunięcie tekstu do prawego marginesu.|%u", ARRAYOFCONST((this->pTButtRight->ImageIndex)));
+		}
 		//Paragraf
 		if(i == EnImage_Paragraph)
 		{
 			this->pTButtParagraf = pToolButton; //Paragraf
 			pToolButton->Style = tbsCheck;
+			this->pTButtParagraf->Hint = Format("Wypunktowanie|Wstawienie wypunktowania tekstu.|%u", ARRAYOFCONST((this->pTButtParagraf->ImageIndex)));
+		}
+		//Skasowanie zawartości //[27-10-2023]
+		if(i == EnImage_Clear)
+		{
+			this->pTButtClear = pToolButton;
+			this->pTButtClear->Hint = Format("Skasuj|Skasowanie zawartości edytora.|%u", ARRAYOFCONST((this->pTButtClear->ImageIndex)));
 		}
 	}
 	//Panele
@@ -578,13 +647,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		//---
 		case EnImage_Clear:		 //Wyczyść
 		{
-			this->pTRichEdit->Clear();
-			//Ustawienia innych przycisków w stan nieaktywny
-			this->pTRichEdit->Modified = false;
-			this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-			this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
-			this->pTButtSave->Enabled = false;
-			this->pTButtInsert->Enabled = false;
+			this->ClearEditor();
 		}
 		break;
 		//---
