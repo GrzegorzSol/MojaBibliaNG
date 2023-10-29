@@ -2725,38 +2725,39 @@ void __fastcall GsBarSelectVers::_VerifyVarset()
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::_OnClickFavVers(System::TObject* Sender)
 /**
-	OPIS METOD(FUNKCJI): Aktualny werset staje się ulubionym, lub nie [24-10-2023]
+	OPIS METOD(FUNKCJI): Aktualny werset staje się ulubionym, lub nie [24-10-2023][29-10-2023]
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TToolButton *pToolButton = dynamic_cast<TToolButton *>(Sender);
+	TToolButton *pToolButton = dynamic_cast<TToolButton *>(Sender);
 	if(!pToolButton) return;
 	//---
 	UnicodeString ustrCreateName;
 	ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers);
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("Length: %d", ARRAYOFCONST(( GlobalVar::Global_HSListAllFavoritiesVers->Count ))));
-//	#endif
-	int iIndex = GlobalVar::Global_HSListAllFavoritiesVers->IndexOf(ustrCreateName);
-	if(iIndex > -1) GlobalVar::Global_HSListAllFavoritiesVers->Delete(iIndex);
-	else if(iIndex == -1)GlobalVar::Global_HSListAllFavoritiesVers->Add(ustrCreateName);
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("iIndex: %d", ARRAYOFCONST(( iIndex ))));
-//	#endif
-  //Wyłuskanie wskaźnika na aktualną zakładke z tekstem
+
+	//Wyłuskanie wskaźnika na aktualną zakładke z tekstem
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
-	if(pGsTabSheetClass)
-	//Jeśli jest aktywna zakładka z wczytanym rozdziałem, trzeba uaktualnić liste ulubionych wersetów w birzącym, wczytanym rozdziele
+
+	if(pGsTabSheetClass) //Jeśli jest aktywna zakładka z wczytanym rozdziałem, trzeba uaktualnić liste ulubionych wersetów w birzącym, wczytanym rozdziele
 	{
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("pGsTabSheetClass: %s", ARRAYOFCONST(( pGsTabSheetClass->Caption ))));
-		#endif
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("pGsTabSheetClass->pLBoxSelectText->Items->Strings[]: %s",
-				ARRAYOFCONST(( pGsTabSheetClass->pLBoxSelectText->Items->Strings[0] ))));
-		#endif
+		//[29-10-2023]
+		GsListBoxSelectedVersClass *pLBoxFav = pGsTabSheetClass->pLBoxSelectText;
+		if(pLBoxFav)
+		{
+			pLBoxFav->ItemIndex = this->_FucSelectVers - 1;
+			pLBoxFav->Selected[this->_FucSelectVers - 1] = pToolButton->Down;
+      pLBoxFav->Click();
+		}
+	}
+	else //Brak zakładki w głównym oknie z wczytanym rozdziałem //[29-10-2023]
+	{
+		int iIndex = GlobalVar::Global_HSListAllFavoritiesVers->IndexOf(ustrCreateName);
+		//Jeśli aktualny werset jest na liście ulubionych to go skasuj
+		if(iIndex > -1 && !pToolButton->Down) GlobalVar::Global_HSListAllFavoritiesVers->Delete(iIndex);
+		//Jeśli nie jest, to go dodaj
+		else if(iIndex == -1 && pToolButton->Down) GlobalVar::Global_HSListAllFavoritiesVers->Add(ustrCreateName);
 	}
 	//Zapis pliku z ulubionymi werseta ???
 	//GlobalVar::Global_HSListAllFavoritiesVers->SaveToFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);
@@ -2972,11 +2973,13 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 		//GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent); //03-07-2019 -> Usunięty błąd
 		if(pGsPanelSelectVers && pGsPanelSelectVers->_pEditComment->Visible)
 		{
-			if(TFile::Exists(ustrCreateFullPathName))
-			{
-				pGsPanelSelectVers->_pEditComment->LoadEditorFromFile(ustrCreateFullPathName);
-			}
-			else pGsPanelSelectVers->_pEditComment->ClearEditor();
+//			if(TFile::Exists(ustrCreateFullPathName))
+//			{
+//				pGsPanelSelectVers->_pEditComment->LoadEditorFromFile(ustrCreateFullPathName);
+//			}
+//			else pGsPanelSelectVers->_pEditComment->ClearEditor();
+			pGsPanelSelectVers->_pEditComment->ClearEditor(); //[28-10-2023]
+			pGsPanelSelectVers->_pEditComment->LoadEditorFromFile(ustrCreateFullPathName);
 		}
 	}
 	__finally
@@ -3309,7 +3312,7 @@ void __fastcall GsPanelSelectVers::_SetDisplayTranslate(bool bIsDisplay)
 	this->FIsVisibleSetTranslate = bIsDisplay; //Czy ma być przycisk i menu wyboru tłumaczenia widoczny
 	this->_pGsBarSelectVers->_pButTranslates->Visible = this->FIsVisibleSetTranslate; //Wywołanie GsBarSelectVers::_SetupDisplayTranslate()
 	this->_pSGridInterlinearVers->Visible = !this->FIsVisibleSetTranslate; //Interlinearny widok tylko przy wyswietlaniu wszystkich tłumaczeń!
-	this->_pGsBarSelectVers->_OnClick_PMenu(this->_pGsBarSelectVers->_pPMenuTranslates->Items->Items[0]); //Tutaj błąd
+	this->_pGsBarSelectVers->_OnClick_PMenu(this->_pGsBarSelectVers->_pPMenuTranslates->Items->Items[0]);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_SetDisplayText(bool bIsDisplay)

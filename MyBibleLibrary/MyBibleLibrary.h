@@ -347,6 +347,7 @@ class GsTreeBibleClass : public TCustomTreeView //Klasa cała jest prywatna
 class GsListBoxSelectedVersClass : public TCustomListBox
 {
 	friend class GsTabSheetClass;
+  friend class GsBarSelectVers;
 	public:
 		__fastcall GsListBoxSelectedVersClass(TComponent* Owner);
 		__fastcall virtual ~GsListBoxSelectedVersClass();
