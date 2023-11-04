@@ -1,6 +1,4 @@
-﻿//---------------------------------------------------------------------------
-
-#pragma hdrstop
+﻿#pragma hdrstop
 
 #include "GsEditorClass.h"
 #include <Vcl.Dialogs.hpp>
@@ -86,7 +84,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTImageListInActive->DrawingStyle = dsTransparent;
 	this->_InitImageList();
 	//---
-  this->pBalloonHint = new TBalloonHint(this);
+	this->pBalloonHint = new TBalloonHint(this);
 	if(!this->pBalloonHint) throw(Exception("Nie dokonano inicjalizacji objektu TBalloonHint"));
 	this->pBalloonHint->Images = this->pTImageListActive;
 	//---
@@ -287,7 +285,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			if(!this->pColBoxBackground) throw(Exception("Błąd inicjalizacji klasy TColorBox"));
 			this->pColBoxBackground->Parent = this->pToolBar;
 			this->pColBoxBackground->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames;
-      //this->pColBoxBackground->CustomHint = this->pBalloonHint;
+			//this->pColBoxBackground->CustomHint = this->pBalloonHint;
 			this->pColBoxBackground->Hint = ustrHintButtons[EnImage_FontBackgroundColour];
 			this->pColBoxBackground->Tag = i;
 			this->pColBoxBackground->OnChange = this->_OnChangeColor;

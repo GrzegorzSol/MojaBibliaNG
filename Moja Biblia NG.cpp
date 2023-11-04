@@ -9,7 +9,6 @@
 USEFORM("uMainWindow.cpp", MainBibleWindow);
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
-USEFORM("uImageAndTextWindow.cpp", ImageAndTextWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
@@ -17,8 +16,8 @@ USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
+USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------

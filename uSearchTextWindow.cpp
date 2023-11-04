@@ -46,7 +46,7 @@ enum {	//Numery zakładek w ustawieniach wyszukiwania
 				enImageSearch_ResultListHTML,			 //9.Zakładka wyników wyszukiwania w formie html
 				enImageSearch_ResultListSelect,		 //10.Zakładka wyników wyszukiwania z możliwością wyboru
 				enImageSearch_Setups,							 //11.Ustawienia dodakowe dla wyszukiwania
-        enImageSearch_SaveResult,          //12.Zapisywanie rezultatów wyszukiwania
+				enImageSearch_SaveResult,					 //12.Zapisywanie rezultatów wyszukiwania
 				enImageSearch_Count,
 				//Stałe numerów kolumn dla listy statystyki
 				enColumn_NameBook=0, enColumn_CountFind, enColumn_Progres, enColumn_Count,
@@ -440,7 +440,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	this->STW_LViewResultSearch->Items->EndUpdate();
 	this->STW_WBrowserResultSearch->SetFocus();
 	this->STW_StBarInfos->SimpleText = Format("Znaleziono %u pozycji", ARRAYOFCONST((this->_pHSListSearchResult->Count)));
-	this->STW_ButtonSaveSearch->Enabled = (this->_pHSListSearchResult->Count > 0);  //[10-10-2023]
+	this->STW_ButtonSaveSearch->Enabled = (this->_pHSListSearchResult->Count > 0);	//[10-10-2023]
 	//Dodawanie do objekstu, klasy TComboBox sów wyszukiwanych 15-04-2021
 	bool bIsDuplicate=false; //Zmienna oznaczająca że jest(true), lub nie (false) duplicat w słowie szukanym
 	const int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
@@ -539,7 +539,7 @@ void __fastcall TSearchTextWindow::STW_LEditSearchTextChange(TObject *Sender)
 	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->STW_CBoxSelectTranslates->ItemIndex);
 	if(!pGsReadBibleTextItem) return;
 	this->STW_ButtonSearchStart->Enabled = (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full && !pLEdit->Text.IsEmpty());
-  //this->STW_ButtonSaveSearch->Enabled = this->STW_ButtonSearchStart->Enabled;
+	//this->STW_ButtonSaveSearch->Enabled = this->STW_ButtonSearchStart->Enabled;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::STW_ChBoxIsRegExClick(TObject *Sender)
@@ -1021,7 +1021,7 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 		//---
 		case enTypeDisplay_ResultSelectVers:			 //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSelectSearchVers;
-      #if defined(_DEBUGINFO_)
+			#if defined(_DEBUGINFO_)
 				GsDebugClass::WriteDebug("Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów");
 			#endif
 		break;
@@ -1046,12 +1046,12 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 		pStringStream->WriteString("</body>\n</html>\n");
 		//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
 		pStringStream->Position = 0;
-    //--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
+		//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
 		if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
 		{
 			this->_ustrResultSearchHTML = ""; //[10-10-2023]
 			this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
-      #if defined(_DEBUGINFO_)
+			#if defined(_DEBUGINFO_)
 				GsDebugClass::WriteDebug(Format("this->_ustrResultSearchHTML length: %d", ARRAYOFCONST(( this->_ustrResultSearchHTML.Length() ))));
 			#endif
 		}
@@ -1170,7 +1170,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSaveSearchClick(TObject *Sender)
 	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Range, this->STW_CBoxStartSelectRange->Text + "-" + this->STW_CBoxStopSelectRange->Text);
 	pIni->WriteInteger(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Count, this->_pHSListSearchResult->Count);
 
-  //Zrzucenie zawartości objektu, klasy TMemIni, do pliku
+	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	pIni->UpdateFile();
 	if(pIni) {delete pIni; pIni = nullptr;}
 }

@@ -150,8 +150,8 @@
     <VerInfo_MajorVer>0</VerInfo_MajorVer>
     <VerInfo_MinorVer>9</VerInfo_MinorVer>
     <VerInfo_Release>9738</VerInfo_Release>
-    <VerInfo_Build>1985</VerInfo_Build>
-    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=0.9.9738.1985;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+    <VerInfo_Build>1988</VerInfo_Build>
+    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=0.9.9738.1988;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
     <DynamicRTL>false</DynamicRTL>
     <UsePackages>false</UsePackages>
     <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
@@ -170,19 +170,15 @@
     <VerInfo_MajorVer>0</VerInfo_MajorVer>
     <VerInfo_MinorVer>9</VerInfo_MinorVer>
     <VerInfo_Release>9738</VerInfo_Release>
-    <VerInfo_Build>1985</VerInfo_Build>
+    <VerInfo_Build>1988</VerInfo_Build>
     <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=0.9.9738.1985;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=0.9.9738.1988;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
     <Icon_MainIcon>Moja Biblia NG_Icon2.ico</Icon_MainIcon>
     <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
     <BCC_EnableLSPIndexing>false</BCC_EnableLSPIndexing>
     <VerInfo_PreRelease>true</VerInfo_PreRelease>
   </PropertyGroup>
   <ItemGroup>
-    <CppCompile Include="GsComponents\GsDirect2DClass.cpp">
-      <DependentOn>GsComponents\GsDirect2DClass.h</DependentOn>
-      <BuildOrder>22</BuildOrder>
-    </CppCompile>
     <CppCompile Include="GsComponents\GsEditorClass.cpp">
       <DependentOn>GsComponents\GsEditorClass.h</DependentOn>
       <BuildOrder>11</BuildOrder>
@@ -246,12 +242,6 @@
       <DependentOn>uHistoryChaptersOpen.h</DependentOn>
       <BuildOrder>27</BuildOrder>
     </CppCompile>
-    <CppCompile Include="uImageAndTextWindow.cpp">
-      <Form>ImageAndTextWindow</Form>
-      <FormType>dfm</FormType>
-      <DependentOn>uImageAndTextWindow.h</DependentOn>
-      <BuildOrder>23</BuildOrder>
-    </CppCompile>
     <CppCompile Include="uInformationsAppWindow.cpp">
       <Form>InformationsAppWindow</Form>
       <FormType>dfm</FormType>
@@ -267,10 +257,6 @@
       <FormType>dfm</FormType>
       <DependentOn>uMainWindow.h</DependentOn>
       <BuildOrder>2</BuildOrder>
-    </CppCompile>
-    <CppCompile Include="uMyBibleNGLibrary.cpp">
-      <DependentOn>uMyBibleNGLibrary.h</DependentOn>
-      <BuildOrder>6</BuildOrder>
     </CppCompile>
     <CppCompile Include="uReadingPlanWindow.cpp">
       <Form>ReadingPlanWindow</Form>
@@ -317,7 +303,6 @@
     <FormResources Include="uMainWindow.dfm" />
     <FormResources Include="uInformationsAppWindow.dfm" />
     <FormResources Include="uHistoryChaptersOpen.dfm" />
-    <FormResources Include="uImageAndTextWindow.dfm" />
     <FormResources Include="uSendingMailWindow.dfm" />
     <FormResources Include="uSetupsWindow.dfm" />
     <FormResources Include="uViewAllResourcesWindow.dfm" />

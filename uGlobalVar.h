@@ -49,8 +49,8 @@ struct GlobalVar
 																		Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 																		Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	//Ścieżka dostępu do katalogu z planami czytania biblii
 																		Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), //Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
-																		Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";
-                                    Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
+																		Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania	= "*.fsv";
+																		Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
 																		Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				//Ścieżka do pliku konfiguracyjnego
 																		Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 																		Global_custrPathGlobalHelp=TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"),			//Ścieżka dostępu do pliku pomocy
@@ -72,14 +72,14 @@ struct GlobalVar
 																		//----- Syle
 																		Global_DefaultStyleName="Windows", //Domyślny styl
 																		/*****************************************************************************
-																		*       Stałe dla pliku informacyjnego dla zapisu ulubionego wyszukiwania    *
+																		*				Stałe dla pliku informacyjnego dla zapisu ulubionego wyszukiwania		 *
 																		******************************************************************************/
 																		GlobalInfoSearch_Header="INFOFILESEARCH", //Nagłówek
 																			GlobalInfoSearch_Name="Name", //Wyrażenie do wyszukiwania
 																			GlobalInfoSearch_Translate="Translate", //Tłumaczenie brane pod uwagę podczas wyszukiwania
 																			GlobalInfoSearch_RangeName="RangeName", //Nazwa zakresu wyszukiwania
 																			GlobalInfoSearch_Range="Range", //Dokładny zakres wyszukiwania
-                                      GlobalInfoSearch_Count="Count", //Ilość wystąpień
+																			GlobalInfoSearch_Count="Count", //Ilość wystąpień
 																		/*****************************************************************************
 																		 *							 Stałe dla pliku konfiguracyjnego typu ini									 *
 																		 *****************************************************************************/

@@ -4,7 +4,7 @@
 #include <Vcl.ComCtrls.hpp>
 #include <System.IniFiles.hpp>
 //---------------------------------------------------------------------------
-enum 	{
+enum	{
 				enIndexImage16_Delete = 0,
 				enImageImage16_Count
 			};
@@ -20,7 +20,7 @@ class GsSearchFavFilesClass : public TCustomListView
 		inline TImageList *__fastcall GetImageList() {return this->_pImages16;};
 		//---
 		__property TLVSelectItemEvent OnSelectItem = {read = _FOnSelectItem, write = _FOnSelectItem};
-    __property TNotifyEvent OnDblClick = {read=_FOnDblClick, write=_FOnDblClick};
+		__property TNotifyEvent OnDblClick = {read=_FOnDblClick, write=_FOnDblClick};
 		__property UnicodeString SelectFile = {read = _FustrSelectFile};
 	protected:
 		virtual void __fastcall CreateWnd();
@@ -33,7 +33,7 @@ class GsSearchFavFilesClass : public TCustomListView
 		TImageList *_pImages=nullptr,
 							 *_pImages16=nullptr;
 		THashedStringList *_pHSListSelect=nullptr;
-    TPopupMenu *_pPopupM=nullptr;
+		TPopupMenu *_pPopupM=nullptr;
 		UnicodeString _FustrSelectFile;
 
 		void __fastcall _InitAllImage();

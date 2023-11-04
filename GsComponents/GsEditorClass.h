@@ -33,7 +33,7 @@ class GsEditorClass : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-    TBalloonHint *pBalloonHint=nullptr;
+		TBalloonHint *pBalloonHint=nullptr;
 		TRichEdit *pTRichEdit=nullptr;
 		TImageList *pTImageListActive=nullptr,
 							 *pTImageListInActive=nullptr;

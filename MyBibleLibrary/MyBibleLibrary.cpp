@@ -81,11 +81,7 @@ __fastcall MyObjectVers::~MyObjectVers()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-//	#if defined(_DEBUGINFO_)
-//		static int ciMyLicz;
-//		GsDebugClass::WriteDebug(Format("MyObjectVers::~MyObjectVers()->Usunięto - ciMyLicz: %d", ARRAYOFCONST(( ciMyLicz ))));
-//		ciMyLicz++;
-//	#endif
+	//
 }
 /****************************************************************************
  *													Klasa GsReadBibletextItem												*
@@ -123,11 +119,7 @@ void __fastcall GsHashedStringListItem::Clear()
 */
 {
 	MyObjectVers *_pMyOjectVers=nullptr;
-//	#if defined(_DEBUGINFO_)
-//		static int ciLicz;
-//		GsDebugClass::WriteDebug(Format("GsHashedStringListItem::Clear()->Usunięto - %d - Wersetow: %d", ARRAYOFCONST(( ciLicz, this->Count ))));
-//		ciLicz++;
-//	#endif
+
 	for(int i=0; i<this->Count; i++)
 	{
 		_pMyOjectVers = dynamic_cast<MyObjectVers *>(this->Objects[i]);
@@ -209,9 +201,6 @@ GsReadBibleTextItem::~GsReadBibleTextItem()
 		//Zwolnienie całej GsHashedStringListItem(y) z całą księgą (wszystkimi wersetami)
 		if(_pGsHSList) {delete _pGsHSList; _pGsHSList = nullptr;}
 	}
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("GsReadBibleTextItem::~GsReadBibleTextItem()->Usunięto: %s", ARRAYOFCONST((this->NameTranslate))));
-//	#endif
 }
 //---------------------------------------------------------------------------
 GsHashedStringListItem *__fastcall GsReadBibleTextItem::GetSelectBooks(const unsigned char uiSelectBook)
@@ -277,22 +266,13 @@ void __fastcall GsListItemTranslates::Notify(void * Ptr, TListNotification Actio
 	//---
 	if(Action == lnDeleted)
 	{
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug(Format("\"%s\"-Notify->this->Count-%d", ARRAYOFCONST(( pGsReadBibleTextItem->NameTranslate, this->Count ))));
-//		#endif
 		if(pGsReadBibleTextItem) {delete pGsReadBibleTextItem; pGsReadBibleTextItem = nullptr;}
 	}
 	else if(Action == lnAdded)
 	{
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug(Format("Dodano: \"%s\"", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
-//		#endif
 	}
 	else if(Action == lnExtracted)
 	{
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug(Format("Usunięto: \"%s\"", ARRAYOFCONST((pGsReadBibleTextItem->NameTranslate))));
-//		#endif
 	}
 
 	TList::Notify(Ptr, Action);
@@ -605,9 +585,7 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	THashedStringList *_pHListChapt=nullptr;
 	//---
 	this->_ClearListAllTrChap();	//Wyczyszczenie TYLKO zawartości listy!!!
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 006");
-//	#endif
+
 	for(int i=0; i<this->_GsListItemsTranslates->Count; i++)
 	{
 		THashedStringList *_pTempHSList =	 this->GetSelectBookTranslate(i, iGetBook); //String lista wybranej księgi kolejnego tłumaczenia
@@ -625,17 +603,12 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 			}
 		}
 	}
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 007");
-//	#endif
+
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie powiodło się wyłuskanie wskaźnika na aktualną zakładkę"));
 	pGsTabSheetClass->Caption = Format("%s: %u rozdział", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iGetBook].FullNameBook, iGetChap+1)));
 	//Metoda dodajaca informacje o otwartym rozdziale do listy historii
 	GsReadBibleTextData::AddItemHistoryList(pGsTabSheetClass->Caption); //TUTAJ JEST BŁĄD!!!
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 010");
-//	#endif
 	//Informacja w strukturze zakładki o numerze księgi i rozdziału
 	pGsTabSheetClass->_ShucIndexBook = iGetBook;
 	pGsTabSheetClass->_ShucIndexChapt = iGetChap;
@@ -1096,14 +1069,9 @@ void __fastcall GsTreeBibleClass::DblClick()
 {
 	GsTreeNodeClass *pSelectNode = dynamic_cast<GsTreeNodeClass *>(this->Selected);
 	if((pSelectNode == 0) || (pSelectNode->Level < 2)) return;
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 001");
-//	#endif
+
 	//---
 	GsReadBibleTextData::OpenSelectBookAndChapter(pSelectNode->ucIndexBook+1, 1);
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 011");
-//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::GetImageIndex(TTreeNode* Node)
@@ -1536,7 +1504,7 @@ void __fastcall GsListBoxSelectedVersClass::Click()
 	{
 		GsReadBibleTextData::pGsListBoxFavoritiesClass->ReLoadFavList();
 	}
-  #if defined(_DEBUGINFO_)
+	#if defined(_DEBUGINFO_)
 		GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
 	#endif
 }
@@ -2599,7 +2567,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_CreatePMenuBooks();
 	//Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych i czy posiada komentarz. Jeśli jest
 	//przycisk _pSelectFavCBox jest wciśniety //[24-10-2023]
-  this->_VerifyVarset();
+	this->_VerifyVarset();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::DestroyWnd()
@@ -2717,9 +2685,6 @@ void __fastcall GsBarSelectVers::_VerifyVarset()
 	this->_pSelectFavCBox->Down = (iIndex > -1);
 	//Sprawdzanie czy istnieje komentarz do wersetu //[27-10-2023]
 	ustrCreateName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName + GlobalVar::Global_custrExtendCommentsFiles);
-//  #if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("_VerifyVarset->ustrCreateName: %s", ARRAYOFCONST(( ustrCreateName ))));
-//	#endif
 	this->_pDeleteNoteVers->Enabled = TFile::Exists(ustrCreateName); //[27-10-2023]
 }
 //---------------------------------------------------------------------------
@@ -2748,7 +2713,7 @@ void __fastcall GsBarSelectVers::_OnClickFavVers(System::TObject* Sender)
 		{
 			pLBoxFav->ItemIndex = this->_FucSelectVers - 1;
 			pLBoxFav->Selected[this->_FucSelectVers - 1] = pToolButton->Down;
-      pLBoxFav->Click();
+			pLBoxFav->Click();
 		}
 	}
 	else //Brak zakładki w głównym oknie z wczytanym rozdziałem //[29-10-2023]
@@ -2801,7 +2766,7 @@ void __fastcall GsBarSelectVers::_OnClickDeleteComment(System::TObject* Sender)
 	//int iIndexVers=-1;
 	UnicodeString ustrCreateName;
 	ustrCreateName.sprintf(L"%03u%03u%03u", this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers);
-  //Sprawdzanie czy istnieje komentarz do wersetu //[27-10-2023]
+	//Sprawdzanie czy istnieje komentarz do wersetu //[27-10-2023]
 	ustrCreateName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName + GlobalVar::Global_custrExtendCommentsFiles);
 	if(TFile::Exists(ustrCreateName)) //[27-10-2023]
 	{
@@ -2818,9 +2783,9 @@ void __fastcall GsBarSelectVers::_OnClickDeleteComment(System::TObject* Sender)
 			{
 				GsEditorClass *pGsEditorClass = pGsPanelSelectVers->_pEditComment;
 				pGsEditorClass->ClearEditor();
-        pToolButton->Enabled = false; //[27-10-2023]
-      }
-    }
+				pToolButton->Enabled = false; //[27-10-2023]
+			}
+		}
 	}
 }
 //---------------------------------------------------------------------------
@@ -3070,10 +3035,10 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	//w metodzie GsPanelSelectVers::CreateWnd(), klasy GsPanelSelectVers.
 	//TMainBibleWindow::_OnDblClick_ListComment() -> TSelectVersWindow(,,,true) -> GsPanelSelectVers(,,,true) -> GsBarSelectVers(,,,true)
 	{
-    this->_bIsFirstStart = false; //[25-10-2023]
+		this->_bIsFirstStart = false; //[25-10-2023]
 		this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 		if(this->Parent->ClassNameIs(NAMEPANELSELECTVERS)) this->_DisplayVers(); //Zabezpieczenie
-		return;  //Gdy wczytano rozdział to nie wyświetla
+		return;	 //Gdy wczytano rozdział to nie wyświetla
 	}
 	//---
 	switch(pPMenu->Tag)
@@ -3160,15 +3125,15 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	}
 	//
 	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
-  //Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych. Jeśli jest
+	//Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych. Jeśli jest
 	//przycisk _pSelectFavCBox jest wciśniety //[24-10-2023]
-  this->_VerifyVarset();
+	this->_VerifyVarset();
 	//UnicodeString ustrNewCommentFile = TPath::Combine(GlobalVar::Global_custrPathDirComments
 	//GsPanelSelectVers *pGsPanelSelectVers = dynamic_cast<GsPanelSelectVers *>(this->Parent);
 	//if(pGsPanelSelectVers)
 	//{
-	//  pGsPanelSelectVers->_pEditComment->EditorFileName
-	//  pGsPanelSelectVers->_pEditComment->ClearEditor();
+	//	pGsPanelSelectVers->_pEditComment->EditorFileName
+	//	pGsPanelSelectVers->_pEditComment->ClearEditor();
 	//}
 }
 //---------------------------------------------------------------------------

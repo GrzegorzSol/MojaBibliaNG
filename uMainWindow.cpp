@@ -41,7 +41,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uInformationsAppWindow.h"
 #include "uChapterEditWindow.h"
 #include "uSendingMailWindow.h"
-#include "uImageAndTextWindow.h"
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
@@ -76,7 +75,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImageLogoApplication,					 //12.Ikona z główną grafiką aplikacji
 			enImageEditChapter,							 //13.Edycja rozdziału
 			enImage_MailChapt,							 //14.Wyśli emailem rozdział
-			enImage_ImageAndText,						 //15.Tworzenie grafiki z tekstem
+			//enImage_ImageAndText,						 //15.Tworzenie grafiki z tekstem
 			enImage_Help,										 //16.Pomocnik
 			enImage_Tips,										 //17.Nawigator podpowiedzi
 			enImage_ReadingPlan,						 //18.Plan czytania bibli
@@ -89,7 +88,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage16_Coments,							 //2.komentarze
 			enImage16_InfoTaskBarButton,		 //3.Obraz dla przycisku informacji na taskbarze, o aktualnie wczytanym rozdziele
 			enImage16_InfoApplicationTaskBarButton,//4.Obraz dla przycisku informacji o aplikacji
-			enImage16_FavSearchResults,       //5.Obraz dla zakładki z ulubionymi wynikami wyszukiwań //[11-10-2023]
+			enImage16_FavSearchResults,				//5.Obraz dla zakładki z ulubionymi wynikami wyszukiwań //[11-10-2023]
 			enImage16_Count,								 //Ilość małych ikon
 			//Numer paneli na objekcie klasy TStatusBar
 			enPanelMain_InfoText=0, enPanelMain_InfoEx, //Numery paneli
@@ -114,7 +113,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagUpdate,					//111.Sprawdzanie aktualizacji i ewentualny aktualizacje
 			enTagEditChapter,			//112.Edycja rozdziału
 			enTagMailChapt,				//113.Wyśli emailem rozdział
-			enTagImageAndText,		//114.Tworzenie grafiki z tekstem
+			//enTagImageAndText,		//114.Tworzenie grafiki z tekstem
 			enTagImageHelp,				//115.Pomocnik
 			enTagImage_Tips,			//116.Nawigator podpowiedzi
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
@@ -572,8 +571,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_EditChapter->Hint = Format("Otwarcie okna do edycji rozdziału|Otwarcie okna, do edycji aktalnie aktywnego razdziału.|%u", ARRAYOFCONST((this->Act_EditChapter->ImageIndex)));
 	this->Act_MailChapt->Tag = enTagMailChapt;
 	this->Act_MailChapt->Hint = Format("Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
-	this->Act_ImageAndText->Tag = enTagImageAndText;
-	this->Act_ImageAndText->Hint = Format("Tworzenie grafiki z tekstem biblijnym, lub innym|Moduł do tworzenia grafiki w formie podkładu i dowolnego tekstu.|%u", ARRAYOFCONST((this->Act_ImageAndText->ImageIndex)));
+	//this->Act_ImageAndText->Tag = enTagImageAndText;
+	//this->Act_ImageAndText->Hint = Format("Tworzenie grafiki z tekstem biblijnym, lub innym|Moduł do tworzenia grafiki w formie podkładu i dowolnego tekstu.|%u", ARRAYOFCONST((this->Act_ImageAndText->ImageIndex)));
 	this->Act_ReadingPlan->Tag = enTagImage_ReadingPlan;
 	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
 	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
@@ -990,7 +989,7 @@ void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
 	TSearchTextWindow *pTSearchTextWindow = new TSearchTextWindow(this);
 	if(!pTSearchTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSearchTextWindow"));
 	pTSearchTextWindow->ShowModal();
-  this->pGsSearchFavFilesClass->ReadDirectoryFavSearch();
+	this->pGsSearchFavFilesClass->ReadDirectoryFavSearch();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
@@ -1222,22 +1221,6 @@ void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
 	pTSendingMailWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::Act_ImageAndTextExecute(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TAction *pAction = dynamic_cast<TAction *>(Sender);
-	if(!pAction) return;
-	//---
-	TImageAndTextWindow *pTImageAndTextWindow = new TImageAndTextWindow(this);
-	if(!pTImageAndTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TImageAndTextWindow"));
-	pTImageAndTextWindow->ShowModal();
-}
-//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI): Plan czytania bibli
@@ -1371,9 +1354,9 @@ void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
 	switch(pTButton->Tag)
 	{
 		case enTagSearchFav_DeleteFile: //200.Przycisk kasowania zaznaczonego pliku w zakładce ulubionych plików wyszukiwania
-      this->pGsSearchFavFilesClass->DeleteSelectFile();
+			this->pGsSearchFavFilesClass->DeleteSelectFile();
 		break;
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sender, TListItem* Item, bool Selected)
@@ -1395,7 +1378,7 @@ void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sende
 		if(!pIni) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
 
 		this->MemoInfosSearchFile->Lines->BeginUpdate();
-    this->MemoInfosSearchFile->Clear(); //[17-10-2023]
+		this->MemoInfosSearchFile->Clear(); //[17-10-2023]
 		this->MemoInfosSearchFile->Lines->Add(Format("Szukane słowo: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, "Brak") ))));
 		this->MemoInfosSearchFile->Lines->Add(Format("Tłumaczenie: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, "Brak") ))));
 		this->MemoInfosSearchFile->Lines->Add(Format("Nazwa zakresu wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_RangeName, "Brak") ))));

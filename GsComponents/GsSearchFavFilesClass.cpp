@@ -12,7 +12,7 @@
 #pragma package(smart_init)
 
 const UnicodeString custrPMenu[] = {"Sakasuj plik wyszukiwania"};
-enum 	{
+enum	{
 				enSelectPopup_Delete = 100,
 			};
 //---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ __fastcall GsSearchFavFilesClass::GsSearchFavFilesClass(TComponent* Owner) : TCu
 	this->_pImages16->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	this->_pImages16->DrawingStyle = dsTransparent;
 
-	this->_InitAllImage();  //Inicjalizacja danych dla listy obrazków
+	this->_InitAllImage();	//Inicjalizacja danych dla listy obrazków
 
 	this->ViewStyle = TViewStyle::vsIcon;
 	this->Font->Quality = TFontQuality::fqClearType;
@@ -83,12 +83,12 @@ void __fastcall GsSearchFavFilesClass::_InitAllImage()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TIcon *pIcon=nullptr;
+	TIcon *pIcon=nullptr;
 	TMemoryStream *pMemoryStr=nullptr;
 
 	try
 	{
-    pIcon = new TIcon();
+		pIcon = new TIcon();
 		if(!pIcon) throw(Exception("Błąd metody TIcon"));
 		pMemoryStr = new TMemoryStream();
 		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
@@ -106,7 +106,7 @@ void __fastcall GsSearchFavFilesClass::_InitAllImage()
 		pMemoryStr->Clear();
 
 	}
-  __finally
+	__finally
 	{
 		//--- Zwolnienie objektu, klasy TIcon i TMemoryStream
 		if(pIcon) {delete pIcon; pIcon = nullptr;}
@@ -149,7 +149,7 @@ void __fastcall GsSearchFavFilesClass::DoSelectItem(TListItem* Item, bool Select
 {
 	if(!Item) return;
 	//---
-  if(Selected)
+	if(Selected)
 	{
 		this->_FustrSelectFile = TPath::Combine(GlobalVar::Global_custrPathSearchFavorities, Item->Caption);
 	}
@@ -175,16 +175,16 @@ void __fastcall GsSearchFavFilesClass::DblClick()
 			pWindowTextSearch->Caption = TPath::GetFileNameWithoutExtension(this->SelectFile);
 
 			TWebBrowser* pWebBrowser = new TWebBrowser(pWindowTextSearch);
-      if(!pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+			if(!pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
 			pWebBrowser->TOleControl::Parent = pWindowTextSearch;
 			pWebBrowser->Align = alClient;
 			pWebBrowser->Offline = true;
 			//pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
 			pWebBrowser->Navigate(wstrSelectFileToWeb.c_bstr());
 
-      pWindowTextSearch->Show();
-    }
-  }
+			pWindowTextSearch->Show();
+		}
+	}
 	//Jeśli istnieje zewnętrzna metoda OnDblClick() to ją wywołaj
 	if(this->_FOnDblClick) this->_FOnDblClick(this);
 }
@@ -217,7 +217,7 @@ void __fastcall GsSearchFavFilesClass::_CreateListSelect()
 
 	this->_pHSListSelect->Clear();
 	this->_pHSListSelect->BeginUpdate();
-  while(pListItem)
+	while(pListItem)
 	{
 		this->_pHSListSelect->Add(TPath::Combine(GlobalVar::Global_custrPathSearchFavorities, pListItem->Caption));
 		#if defined(_DEBUGINFO_)
@@ -247,7 +247,7 @@ void __fastcall GsSearchFavFilesClass::_OnClick_PMenu(System::TObject* Sender)
 		}
 		break;
 		//---
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsSearchFavFilesClass::ReadDirectoryFavSearch()
@@ -261,7 +261,7 @@ void __fastcall GsSearchFavFilesClass::ReadDirectoryFavSearch()
 	TListItem *NewItem=nullptr;
 	this->Clear();
 
-  this->_SDirSearchFilesFav = TDirectory::GetFiles(GlobalVar::Global_custrPathSearchFavorities, "*" + GlobalVar::Global_custrFileSearchFavExtend, 0);
+	this->_SDirSearchFilesFav = TDirectory::GetFiles(GlobalVar::Global_custrPathSearchFavorities, "*" + GlobalVar::Global_custrFileSearchFavExtend, 0);
 	this->Items->BeginUpdate();
 	for(int i=0; i<this->_SDirSearchFilesFav.Length; i++)
 	{
@@ -271,7 +271,7 @@ void __fastcall GsSearchFavFilesClass::ReadDirectoryFavSearch()
 			NewItem->Caption = TPath::GetFileName(this->_SDirSearchFilesFav[i]);
 		}
 	}
-  this->Items->EndUpdate();
+	this->Items->EndUpdate();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsSearchFavFilesClass::DeleteSelectFile()
@@ -283,7 +283,7 @@ void __fastcall GsSearchFavFilesClass::DeleteSelectFile()
 */
 {
 	if(this->_FustrSelectFile.IsEmpty()) return;
-  //---
+	//---
 	UnicodeString ustrTemp = Format("Czy rzeczywiście chcesz skasować plik: \"%s\"?", ARRAYOFCONST(( this->_FustrSelectFile )));
 	int iResult = MessageBox(NULL, ustrTemp.c_str(), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL | MB_DEFBUTTON2);
 	if(iResult == IDNO) return;

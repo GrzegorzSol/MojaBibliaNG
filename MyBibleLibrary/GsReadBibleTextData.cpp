@@ -526,9 +526,6 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	if(GlobalVar::Global_HListHistoryChapterOpen)
 	{
 		delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("delete GlobalVar::Global_HListHistoryChapterOpen");
-		#endif
 	}
 	//--- Zamykanie głownej klasy
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
@@ -825,9 +822,6 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 {
 	int iBook;
 	if((_iBook < 1) || (_iBook > 73)) return;
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 002");
-//	#endif
 
 	if((_iBook >= 0) && (_iBook < 40)) iBook = _iBook + 1;
 	if((_iBook >= 40) && (_iBook < 67)) iBook = _iBook + 2;
@@ -839,18 +833,9 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA. NUMER ROZDZIAŁU LICZYMY OD ZERA !!!
 	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 003");
-//	#endif
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(_iBook-1, _iChapt-1);
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 004");
-//	#endif
 	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
 	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 005");
-//	#endif
 }
 //---------------------------------------------------------------------------
 TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
@@ -966,9 +951,6 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 				{
 					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
 					pHSListText->AddObject(pSelectBook->Strings[i].SubString(11, 500), pSelectBook->Objects[i]);
-//					#if defined(_DEBUGINFO_)
-//						GsDebugClass::WriteDebug(Format("Adres: %s", ARRAYOFCONST((pMyObjectVers->BookChaptVers))));
-//					#endif
 				}
 
 			} //if(pGsReadBibleTextItem)
@@ -1025,9 +1007,6 @@ void GsReadBibleTextData::InitHistoryList()
 	{
 		GlobalVar::Global_HListHistoryChapterOpen->LoadFromFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
 	}
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("InitHistoryList: %s", ARRAYOFCONST(( GlobalVar::Global_custrPathHistory ))));
-	#endif
 }
 //---------------------------------------------------------------------------
 void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
@@ -1040,13 +1019,7 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
 {
 	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Nie zainicjowana lista histori (THashedStringList)"));
 	UnicodeString ustrbDateNow = FormatDateTime("yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 008");
-//	#endif
 	GlobalVar::Global_HListHistoryChapterOpen->Insert(0, Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("Debug: 009");
-//	#endif
 }
 //---------------------------------------------------------------------------
 void GsReadBibleTextData::GetCurentText(UnicodeString &_ustrText)
