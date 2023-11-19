@@ -3,6 +3,7 @@
 
 #include <Vcl.ExtCtrls.hpp>
 #include "MyBibleLibrary\MyBibleLibrary.h"
+
 //---------------------------------------------------------------------------
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
 const int SIZE_ADDR_VERS = 16;
@@ -52,17 +53,15 @@ class GsChildBibleScheme : public GsCoreBibleScheme
 	unsigned char ucBook, ucChapt, ucVers, ucTrans;
 	GsChildBibleScheme *ParentObjectScheme; //Wskaźnik na przodka
 	//---
-	GsDrawPanelBibleScheme *DrawPanelScheme; //Objekt klasy GsDrawPanelBibleScheme, na którym objekt jest rysowany
-	GsScrollBibleScheme *pGsScrollBibleScheme; //Objekt, klasy GsScrollBibleScheme
-	GsMasterBibleScheme *pGsMasterBibleScheme; //Główny objekt klasy GsMasterBibleScheme
+	GsDrawPanelBibleScheme *DrawPanelScheme=nullptr; //Objekt klasy GsDrawPanelBibleScheme, na którym objekt jest rysowany
+	GsScrollBibleScheme *pGsScrollBibleScheme=nullptr; //Objekt, klasy GsScrollBibleScheme
+	GsMasterBibleScheme *pGsMasterBibleScheme=nullptr; //Główny objekt klasy GsMasterBibleScheme
 	//---
-	UnicodeString ustrVers; //Adres werset, objektu
-	THashedStringList *SListVers; //Lista wersetów ze wszystkich tłumaczeń
+	THashedStringList *SListVers=nullptr; //Lista wersetów ze wszystkich tłumaczeń
 	void __fastcall ViewSelectObject(); //Wyświetlenie wersetu wybranego objektu
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
-		virtual void __fastcall Paint();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		DYNAMIC void __fastcall MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		DYNAMIC void __fastcall MouseMove(System::Classes::TShiftState Shift, int X, int Y);
@@ -84,10 +83,10 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall Paint();
 	private:
-		GsChildBibleScheme *_pSelectObject,	//Aktualnie aktywny objekt
-											 *_pRootObject;		//Okno głównego korzenia
+		GsChildBibleScheme *_pSelectObject=nullptr,	//Aktualnie aktywny objekt
+											 *_pRootObject=nullptr;		//Okno głównego korzenia
 		UnicodeString _ustrSelectNameProject; //Nazwa aktualnego projektu
-		TList *_GsChildBibleSchemeList;
+		TList *_GsChildBibleSchemeList=nullptr;
 		//---
 		void __fastcall _AddNewObject();
 		void __fastcall _DeleteObject();
@@ -108,7 +107,7 @@ class GsScrollBibleScheme : public TScrollBox
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme;
+		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme=nullptr;
 };
 /****************************************************************************
 *								 Główna klasa GsMasterBibleScheme,													*
@@ -134,12 +133,12 @@ class GsMasterBibleScheme : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-		GsScrollBibleScheme *_pGsScrollBibleScheme; //Wskaźnik na scrolling i panel do rysowania
-		GsBarSelectVers *_pGsBarSelectVers;
-		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme;
-		GsEditorClass *pGsEditorClass;
-		TSplitter *pSplitter;
-		TLabel *_pVersDisplayText; //Wyświetlenie wybranego wersetu
+		GsScrollBibleScheme *_pGsScrollBibleScheme=nullptr; //Wskaźnik na scrolling i panel do rysowania
+		GsBarSelectVers *_pGsBarSelectVers=nullptr;
+		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme=nullptr;
+		GsEditorClass *pGsEditorClass=nullptr;
+		TSplitter *pSplitter=nullptr;
+		TLabel *_pVersDisplayText=nullptr; //Wyświetlenie wybranego wersetu
 };
 
 //---------------------------------------------------------------------------

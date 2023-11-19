@@ -56,8 +56,8 @@ object MainBibleWindow: TMainBibleWindow
     OnChange = MBW_PageControlAllChange
     OnDrawTab = MBW_PageControlsAllDrawTab
     OnEnter = PageControlBibleTextEnter
-    ExplicitWidth = 886
-    ExplicitHeight = 816
+    ExplicitWidth = 884
+    ExplicitHeight = 819
   end
   object StatusBarMain: TStatusBar
     Left = 0
@@ -76,8 +76,8 @@ object MainBibleWindow: TMainBibleWindow
     ParentShowHint = False
     ShowHint = True
     OnDrawPanel = StatusBarMainDrawPanel
-    ExplicitTop = 862
-    ExplicitWidth = 1186
+    ExplicitTop = 865
+    ExplicitWidth = 1184
   end
   object CoolBarMain: TCoolBar
     Left = 0
@@ -103,7 +103,7 @@ object MainBibleWindow: TMainBibleWindow
     ParentShowHint = False
     ShowHint = True
     ShowText = False
-    ExplicitWidth = 1186
+    ExplicitWidth = 1184
     object ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
@@ -155,7 +155,7 @@ object MainBibleWindow: TMainBibleWindow
     Align = alLeft
     Caption = 'PanelTools'
     TabOrder = 3
-    ExplicitHeight = 816
+    ExplicitHeight = 819
     object PageControlTools: TPageControl
       Left = 1
       Top = 1
@@ -179,7 +179,7 @@ object MainBibleWindow: TMainBibleWindow
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
       OnDrawTab = MBW_PageControlsAllDrawTab
-      ExplicitHeight = 814
+      ExplicitHeight = 817
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
@@ -264,7 +264,7 @@ object MainBibleWindow: TMainBibleWindow
           ReadOnly = True
           TabOrder = 1
           StyleElements = [seFont, seBorder]
-          ExplicitTop = 686
+          ExplicitTop = 689
         end
       end
     end
@@ -467,18 +467,18 @@ object MainBibleWindow: TMainBibleWindow
     end
     object Act_ReadingPlan: TAction
       Caption = 'Otwarcie planu czytania Biblii...'
-      ImageIndex = 17
+      ImageIndex = 18
       OnExecute = Act_ReadingPlanExecute
     end
     object Act_HistoryChapters: TAction
       Caption = 'Historia otwieranych rozdzia'#322#243'w'
-      ImageIndex = 18
+      ImageIndex = 19
       OnExecute = Act_HistoryChaptersExecute
     end
     object Act_OpenInWord: TAction
       Caption = 'Otwarcie wybranego rozdzia'#322'u w MS Wordzie'
       Enabled = False
-      ImageIndex = 19
+      ImageIndex = 20
       OnExecute = Act_OpenInWordExecute
     end
   end

@@ -2,8 +2,8 @@ object SchemeVersWindow: TSchemeVersWindow
   Left = 0
   Top = 0
   Caption = 'SchemeVersWindow'
-  ClientHeight = 971
-  ClientWidth = 1090
+  ClientHeight = 862
+  ClientWidth = 1388
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object SchemeVersWindow: TSchemeVersWindow
   object ActToolBarScheme: TActionToolBar
     Left = 0
     Top = 0
-    Width = 1090
+    Width = 1388
     Height = 43
     CustomHint = BalloonHintScheme
     ActionManager = ActionManagerScheme
@@ -40,6 +40,7 @@ object SchemeVersWindow: TSchemeVersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
+    ExplicitWidth = 1184
   end
   object ImgListScheme: TImageList
     ColorDepth = cd32Bit

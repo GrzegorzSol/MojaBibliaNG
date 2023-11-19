@@ -6,12 +6,22 @@
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <Strsafe.h>
 #pragma package(smart_init)
+
 //---------------------------------------------------------------------------
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 #endif
 */
+/*
+	Repaint() 	Zgodnie z implementacją w TWinControl, Repaint wywołuje metodę Invalidate,
+							a następnie metodę Update, aby ponownie zamalować kontrolkę.
+	Update() 		Aktualizacja powoduje tylko ponowne malowanie obszarów kontrolki, które zostały uznane za nieaktualne.
+							Aby wymusić natychmiastowe ponowne malowanie całej kontrolki, wywołaj metodę Repaint.
+							Aby powiadomić kontrolkę, że jest nieaktualna (bez wymuszania natychmiastowego ponownego malowania),
+							wywołaj metodę Invalidate.
+*/
+
 enum {
 			//--- Numery identyfikacyjne kolorów
 			enColorNum_Active = 0,
@@ -74,6 +84,7 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	this->Ctl3D = false;
 	this->ParentObjectScheme = nullptr; //Wskaźnik na przodka, domyślnie to korzeń
 	this->ShowHint = true;
+	this->StyleElements = TStyleElements();
 	if(_PReadWriteDataObject) this->IDChild = _PReadWriteDataObject->RW_ID; else this->IDChild = Random(INT_MAX);
 	//this->ID64Child = (__int64)this->IDChild * (__int64)Random(INT_MAX);
 	this->Level = 0; //Poziom
@@ -119,7 +130,6 @@ void __fastcall GsChildBibleScheme::CreateWnd()
 {
 	GsCoreBibleScheme::CreateWnd();
 	//Własny kod.
-	//UnicodeString _ustrVers;
 	//Wyłuskanie wskaźnika na objekt do rysowania
 	this->DrawPanelScheme = dynamic_cast<GsDrawPanelBibleScheme *>(this->Parent);
 	if(!this->DrawPanelScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsDrawPanelBibleScheme"));
@@ -130,14 +140,14 @@ void __fastcall GsChildBibleScheme::CreateWnd()
 	this->pGsMasterBibleScheme = dynamic_cast<GsMasterBibleScheme *>(this->pGsScrollBibleScheme->Parent);
 	if(!this->pGsMasterBibleScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsMasterBibleScheme"));
 	//---
-	this->ustrVers = this->pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
+	this->Caption = this->pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
+  this->Width = this->Canvas->TextWidth(this->Caption) + 4;
+	this->Height = this->Canvas->TextHeight(this->Caption) + 4;
 	this->pGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(this->SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
 	//Wypelnianie pól adresu wersetu
 	this->pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(this->ucBook, this->ucChapt, this->ucVers, this->ucTrans);
 	//Podpowiedź w formie zawartości wersetucodeString
-	//GsReadBibleTextData::GetTextVersOfAdres(this->ucBook, this->ucChapt+1, this->ucVers, this->ucTrans, _ustrVers);
-	//_ustrVers = this->SListVers->Strings[this->ucTrans];
-	this->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((this->ustrVers, this->SListVers->Strings[this->ucTrans])));
+	this->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((this->Caption, this->SListVers->Strings[this->ucTrans])));
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::DestroyWnd()
@@ -187,7 +197,7 @@ void __fastcall GsChildBibleScheme::ViewSelectObject()
 {
 	UnicodeString _ustrVers;
 	GsReadBibleTextData::GetTextVersOfAdress(this->ucBook, this->ucChapt+1, this->ucVers, this->ucTrans, _ustrVers);
-	this->pGsMasterBibleScheme->_pVersDisplayText->Caption = Format("%s \"%s\"", ARRAYOFCONST((this->ustrVers, _ustrVers))); //Wybrany werset
+	this->pGsMasterBibleScheme->_pVersDisplayText->Caption = Format("%s \"%s\"", ARRAYOFCONST((this->Caption, _ustrVers))); //Wybrany werset
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -213,45 +223,19 @@ void __fastcall GsChildBibleScheme::MouseMove(System::Classes::TShiftState Shift
 	if(this->StartMove)
 	{
 		//Pilnowanie odpowiedniego położenia objektu, wzglądem wymiarów obszaru roboczego
-		if(((this->Left + (X - this->GetStartX)) < 0) || //Nie przesuwaj poza obszar roboczy od lewej strony
-			 //Nie przesuwaj poza okno od prawej, więcej niż szerokość ponad 32 od szerokości oknobszaru roboczego
-			 ((this->Left + (X - this->GetStartX) + this->Width - 32) > (this->Parent->Parent->Width)) ||
-			 //Nie przesuwaj ponad objekt przodka, od lini na 8 pikseli poniżej jego dolnego rogu
-			 ((this->Top + (Y - this->GetStartY - 8) < (this->ParentObjectScheme->Top + this->ParentObjectScheme->Height))) ||
-			 //Nie przesuwaj poniżej poza dolne obszar roboczy więcej
-			 (((this->Top + (Y - this->GetStartY) + this->Height - 4) > (this->Parent->Parent->Height)))) return;
+//		if(((this->Left + (X - this->GetStartX)) < 0) || //Nie przesuwaj poza obszar roboczy od lewej strony
+//			 //Nie przesuwaj poza okno od prawej, więcej niż szerokość ponad 32 od szerokości oknobszaru roboczego
+//			 ((this->Left + (X - this->GetStartX) + this->Width - 32) > (this->Parent->Parent->Width)) ||
+//			 //Nie przesuwaj ponad objekt przodka, od lini na 8 pikseli poniżej jego dolnego rogu
+//			 ((this->Top + (Y - this->GetStartY - 8) < (this->ParentObjectScheme->Top + this->ParentObjectScheme->Height))) ||
+//			 //Nie przesuwaj poniżej poza dolne obszar roboczy więcej
+//			 (((this->Top + (Y - this->GetStartY) + this->Height - 4) > (this->Parent->Parent->Height)))) return;
 
 		this->Left += (X - this->GetStartX);
 		this->Top += (Y - this->GetStartY);
 		//--- Odświerzenie głównego okna, w celu odrysowania wszystkich objektów
 		//this->DrawPanelScheme->Repaint();
 		this->DrawPanelScheme->Invalidate();
-	}
-}
-//---------------------------------------------------------------------------
-void __fastcall GsChildBibleScheme::Paint()
-/**
-	OPIS METOD(FUNKCJI): Wirtualna metoda odrysowywania klasy
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	GsCoreBibleScheme::Paint();
-	//Własny kod
-	this->Canvas->Font->Color = clRed;
-	this->Canvas->Font->Style = TFontStyles() << fsBold;
-	this->Canvas->TextOut(1, 0, this->ustrVers);
-	this->Width = this->Canvas->TextWidth(this->ustrVers) + 4;
-	this->Height = this->Canvas->TextHeight(this->ustrVers) + 4;
-	//--- Odrysowanie objektu i połączen
-	if((this->ParentObjectScheme) && (this->DrawPanelScheme))
-	{
-		//Rysowanie połączenia z przodkiem
-		this->DrawPanelScheme->Canvas->Pen->Width = 2;
-		this->DrawPanelScheme->Canvas->Pen->Color = clBlue;
-		this->DrawPanelScheme->Canvas->MoveTo(this->Left + (this->Width / 2), this->Top);
-		this->DrawPanelScheme->Canvas->LineTo(this->ParentObjectScheme->Left + (this->ParentObjectScheme->Width / 2), this->ParentObjectScheme->Top + this->ParentObjectScheme->Height);
 	}
 }
 //---------------------------------------------------------------------------
@@ -268,13 +252,12 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
 */
 {
 	this->Font->Quality = TFontQuality::fqClearType;
-	//this->StyleElements = TStyleElements();
 	this->DoubleBuffered = true;
+	this->StyleElements = TStyleElements();
 	this->AutoSize = true;
 	this->BevelOuter = bvNone;
 	this->_GsChildBibleSchemeList = new TList();
 	if(!this->_GsChildBibleSchemeList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
-	//---
 }
 //---------------------------------------------------------------------------
 __fastcall GsDrawPanelBibleScheme::~GsDrawPanelBibleScheme()
@@ -333,7 +316,16 @@ void __fastcall GsDrawPanelBibleScheme::Paint()
 	{
 		pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 		if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
-		pGsChildBibleScheme->Repaint();
+		//--- Odrysowanie objektu i połączen
+		if((pGsChildBibleScheme->ParentObjectScheme) && (pGsChildBibleScheme->DrawPanelScheme))
+		{
+      //Rysowanie połączenia z przodkiem
+			this->Canvas->Pen->Width = 2;
+			this->Canvas->Pen->Color = clBlue;
+			this->Canvas->MoveTo(pGsChildBibleScheme->Left + (pGsChildBibleScheme->Width / 2), pGsChildBibleScheme->Top);
+			this->Canvas->LineTo(pGsChildBibleScheme->ParentObjectScheme->Left + (pGsChildBibleScheme->ParentObjectScheme->Width / 2),
+				pGsChildBibleScheme->ParentObjectScheme->Top + pGsChildBibleScheme->ParentObjectScheme->Height);
+		}
 	}
 }
 //---------------------------------------------------------------------------
@@ -497,7 +489,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 					}
 					//---
 					pGsChildBibleScheme->Top = pDataToOpen->RW_Top; pGsChildBibleScheme->Left = pDataToOpen->RW_Left;
-					pGsChildBibleScheme->ustrVers = pDataToOpen->RW_AdressVers; //Werset
+					pGsChildBibleScheme->Caption = pDataToOpen->RW_AdressVers; //Werset
 					//Składniki adresu
 					pGsChildBibleScheme->ucBook = pDataToOpen->RW_Book;
 					pGsChildBibleScheme->ucChapt = pDataToOpen->RW_Chapt;
@@ -505,7 +497,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 					pGsChildBibleScheme->ucTrans = pDataToOpen->RW_Trans;
 					//Podpowiedź w formie zawartości wersetu codeString
 					GsReadBibleTextData::GetTextVersOfAdress(pGsChildBibleScheme->ucBook, pGsChildBibleScheme->ucChapt+1, pGsChildBibleScheme->ucVers, pGsChildBibleScheme->ucTrans, _ustrVers);
-					pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->ustrVers, _ustrVers)));
+					pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->Caption, _ustrVers)));
 
 					if(this->_pSelectObject) {this->_pSelectObject->Color = ColorObject[enColorNum_InActive];} //Kolor nieaktywny dlapoprzedniego objektu
 					this->_pSelectObject = pGsChildBibleScheme;	//Aktualnie aktywny nowo dodany objekt
@@ -584,7 +576,7 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 								//Indeks przodka w głównej liście
 								pDataToSave->RW_IDListParent = this->_GsChildBibleSchemeList->IndexOf(pChild->ParentObjectScheme);
 							}
-							StringCchCopy(pDataToSave->RW_AdressVers, SIZE_ADDR_VERS-1, pChild->ustrVers.c_str()); //Skopiowanie adresu wersetu, objektu
+							StringCchCopy(pDataToSave->RW_AdressVers, SIZE_ADDR_VERS-1, pChild->Caption.c_str()); //Skopiowanie adresu wersetu, objektu
 							//Składniki adresu
 							pDataToSave->RW_Book = pChild->ucBook;
 							pDataToSave->RW_Chapt = pChild->ucChapt;
@@ -641,7 +633,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 			if(pChild)
 			{
 				GsReadBibleTextData::GetTextVersOfAdress(pChild->ucBook, pChild->ucChapt+1, pChild->ucVers, pChild->ucTrans, _ustrVers);
-				pStringStream->WriteString(Format("%s %s %s \"%s\" %s" ,ARRAYOFCONST((custrAdressVersRtf, pChild->ustrVers, custrVersRtf, _ustrVers, custrEndVersRtf))));
+				pStringStream->WriteString(Format("%s %s %s \"%s\" %s" ,ARRAYOFCONST((custrAdressVersRtf, pChild->Caption, custrVersRtf, _ustrVers, custrEndVersRtf))));
 			}
 		}
 		pStringStream->WriteString("}");
@@ -679,6 +671,7 @@ __fastcall GsScrollBibleScheme::GsScrollBibleScheme(TComponent* Owner) : TScroll
 	this->_pGsDrawPanelBibleScheme = new GsDrawPanelBibleScheme(this);
 	if(!this->_pGsDrawPanelBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsDrawPanelBibleScheme"));
 	this->_pGsDrawPanelBibleScheme->Parent = this;
+	this->StyleElements = TStyleElements();
 }
 //---------------------------------------------------------------------------
 __fastcall GsScrollBibleScheme::~GsScrollBibleScheme()
@@ -731,7 +724,7 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
 	//---
 	this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
-	//this->StyleElements = TStyleElements();
+	this->StyleElements = TStyleElements();
 }
 //---------------------------------------------------------------------------
 __fastcall GsMasterBibleScheme::~GsMasterBibleScheme()
