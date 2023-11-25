@@ -24,13 +24,17 @@ enum {enImgScheme_AddLink,
 			enImgScheme_Open,
 			enImgScheme_CreateRtf,
 			enImgScheme_Vieweditor,
+			enImgScheme_RenameObject,
+			enImgScheme_Setup,
 			//--- Tagi
 			enTagScheme_AddLink=100,
 			enTagScheme_DeleteLink,
 			enTagScheme_Save,
 			enTagScheme_Open,
 			enTagScheme_CreateRtf,
-			enTagScheme_ViewEditor
+			enTagScheme_ViewEditor,
+			enTagScheme_RenameObject,
+			enTagScheme_Setup
 };
 //---------------------------------------------------------------------------
 __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
@@ -60,6 +64,10 @@ __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
 	this->ActCreateFileFromScheme->Hint = Format("%s|Utworzenie widoku projektu, w formie dokumentu|%u", ARRAYOFCONST((this->ActCreateFileFromScheme->Caption, this->ActCreateFileFromScheme->ImageIndex)));
 	this->ActViewEditor->Tag = enTagScheme_ViewEditor;
 	this->ActViewEditor->Hint = Format("%s|Utworzenie widoku projektu, w formie dokumentu|%u", ARRAYOFCONST((this->ActViewEditor->Caption, this->ActViewEditor->ImageIndex)));
+	this->ActRenameObject->Hint = Format("%s|Zmiana nazwy aktywnego objektu, na wybraną wcześniej z menu wybory wersetu|%u", ARRAYOFCONST((this->ActRenameObject->Caption, this->ActRenameObject->ImageIndex)));
+	this->ActRenameObject->Tag = enTagScheme_RenameObject;
+	this->ActSetupScheme->Hint = Format("%s|Ustawienia dotyczące modułu do tworzenia analizy logicznej tekstu|%u", ARRAYOFCONST((this->ActSetupScheme->Caption, this->ActSetupScheme->ImageIndex)));
+	this->ActSetupScheme->Tag = enTagScheme_Setup;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -81,7 +89,21 @@ void __fastcall TSchemeVersWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	///
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("Count: %d", ARRAYOFCONST(( this->ActToolBarScheme->ControlCount ))));
+	#endif
+	for(int i=0; i<this->ActToolBarScheme->ControlCount; i++)
+	{
+		TControl *pControl = this->ActToolBarScheme->Controls[i];
+		if(pControl->Action == this->ActSetupScheme)
+		{
+			this->pGsMasterBibleScheme->OpenSetupsScheme(this, this->ActSetupScheme, pControl->Left + this->ActToolBarScheme->Left,
+				this->ActToolBarScheme->Top + this->ActToolBarScheme->Height);
+      #if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug("FormCreate");
+			#endif
+		}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::FormDestroy(TObject *Sender)
@@ -199,6 +221,34 @@ void __fastcall TSchemeVersWindow::ActViewEditorExecute(TObject *Sender)
 	{
 		pGsEditorClass->Visible = pAction->Checked;
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TSchemeVersWindow::ActRenameObjectExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//--
+  this->pGsMasterBibleScheme->SetObjectName();
+}
+//---------------------------------------------------------------------------
+void __fastcall TSchemeVersWindow::ActSetupSchemeExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	this->pGsMasterBibleScheme->VisibleSetupsScheme(pAction->Checked);
 }
 //---------------------------------------------------------------------------
 

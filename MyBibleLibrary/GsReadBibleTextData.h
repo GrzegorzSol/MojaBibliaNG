@@ -172,6 +172,7 @@ class GsReadBibleTextData : public TObject
 		static UnicodeString __fastcall GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 		static void __fastcall InitMyBible(TForm *MainWindow); //Inicjalizacja pracy z biblioteką do analizy Pisma Świętego
 		static void __fastcall CloseMyBible();	//Zamknięcie bilioteki do analizy Pisma Świętego
+		static void __fastcall InitListColors();//Inicjalizacja listy kolorów
 		static void __fastcall CreateTreeBooks(TWinControl* _OwnerParent, TPageControl *_PageControl, int _iWidth=260); //Stworzenie drzewa ksiąg i innych objektów biblioteki
 		static void __fastcall SetupVariables(); //Ustawienie zmiennych dla klasy
 		static unsigned char __fastcall CountTranslates();	//Metoda zwraca ilość tłumaczeń

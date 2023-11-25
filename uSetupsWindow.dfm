@@ -25,7 +25,7 @@ object SetupsWindow: TSetupsWindow
     Width = 1007
     Height = 680
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetLajout
+    ActivePage = SW_OthersSetups
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -59,7 +59,6 @@ object SetupsWindow: TSetupsWindow
         Layout = tlCenter
         WordWrap = True
         StyleElements = [seClient, seBorder]
-        ExplicitTop = 363
         ExplicitWidth = 985
       end
       object GrBoxSetColors: TGroupBox
@@ -72,6 +71,7 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Ustawienia kolor'#243'w aplikacji'
         TabOrder = 0
+        ExplicitWidth = 989
         object GrBoxSetupsFullTr: TGroupBox
           AlignWithMargins = True
           Left = 5
@@ -236,7 +236,7 @@ object SetupsWindow: TSetupsWindow
           Align = alClient
           Caption = 'Kolory dla przek'#322'ad'#243'w niekompletnych, lub oryginalnych'
           TabOrder = 2
-          ExplicitHeight = 111
+          ExplicitWidth = 979
           object LabelColorAdressOryg: TLabel
             Left = 170
             Top = 50
@@ -329,9 +329,8 @@ object SetupsWindow: TSetupsWindow
         CustomHint = SW_BalloonHint
         Align = alClient
         TabOrder = 1
-        ExplicitTop = 398
         ExplicitWidth = 995
-        ExplicitHeight = 252
+        ExplicitHeight = 224
         ControlData = {
           4C00000040670000411700000100000001020000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -805,8 +804,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 373
-            Height = 73
+            Width = 4
+            Height = 16
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -818,8 +817,6 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
-            ExplicitWidth = 4
-            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -991,7 +988,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 590
+          Width = 232
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1008,7 +1005,6 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = False
           Layout = tlCenter
-          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           AlignWithMargins = True

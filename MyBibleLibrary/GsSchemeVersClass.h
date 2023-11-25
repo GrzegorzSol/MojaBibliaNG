@@ -3,7 +3,7 @@
 
 #include <Vcl.ExtCtrls.hpp>
 #include "MyBibleLibrary\MyBibleLibrary.h"
-
+#include <Vcl.Samples.Spin.hpp>
 //---------------------------------------------------------------------------
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
 const int SIZE_ADDR_VERS = 16;
@@ -91,6 +91,7 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 	private:
 		GsChildBibleScheme *_pSelectObject=nullptr,	//Aktualnie aktywny objekt
 											 *_pRootObject=nullptr;		//Okno głównego korzenia
+		GsMasterBibleScheme *_pGsMasterBibleScheme=nullptr; //Wskaźnik na klasę główną
 		GsTreeBibleScheme *_pGsTreeBibleScheme=nullptr; //Wskaźnika na drzewo zależnosci
 		UnicodeString _ustrSelectNameProject; //Nazwa aktualnego projektu
 		TList *_GsChildBibleSchemeList=nullptr;
@@ -100,6 +101,7 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		bool __fastcall _OpenProjectObject();
 		void __fastcall _SaveProjectObjectToFile();
 		void __fastcall _ViewProjectDocument();
+		void __fastcall _SetObjectName(); //Zmiana wersety przypoządkowanego do objektu
 };
 /****************************************************************************
 *								 Główna klasa GsScrollBibleScheme,													*
@@ -117,6 +119,7 @@ class GsScrollBibleScheme : public TScrollBox
 		virtual void __fastcall DestroyWnd();
 	private:
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme=nullptr;
+		GsMasterBibleScheme *_pGsMasterBibleScheme=nullptr; //Wskaźnik na klasę główną
 };
 /****************************************************************************
 *								 Główna klasa GsMasterBibleScheme,													*
@@ -137,12 +140,19 @@ class GsMasterBibleScheme : public TCustomPanel
 		inline void __fastcall SaveProjectObjectSchemeToFile() {this->_pGsDrawPanelBibleScheme->_SaveProjectObjectToFile();}
 		inline void __fastcall ViewProjectDocument() {this->_pGsDrawPanelBibleScheme->_ViewProjectDocument();}
 		inline int __fastcall GetCountObjectScheme() {return this->_pGsDrawPanelBibleScheme->_GsChildBibleSchemeList->Count;}
-		inline GsEditorClass *__fastcall GetEditorClass() {return pGsEditorClass;}
+		inline GsEditorClass *__fastcall GetEditorClass() {return this->pGsEditorClass;}
 		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsMasterBibleScheme\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
+		inline void SetObjectName() {this->_pGsDrawPanelBibleScheme->_SetObjectName();}
+		void __fastcall OpenSetupsScheme(TWinControl *pWinControl, TAction *pAction, int iLeft, int iTop);
+		void __fastcall VisibleSetupsScheme(bool bVisible);
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
+		void __fastcall _OnAccept(System::TObject* Sender);
+		void __fastcall _OnNoAccept(System::TObject* Sender);
+		void __fastcall _ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);
+
 		GsTreeBibleScheme *_pGsTreeBibleScheme=nullptr; //Wskaźnika na drzewo zależnosci
 		GsScrollBibleScheme *_pGsScrollBibleScheme=nullptr; //Wskaźnik na scrolling i panel do rysowania
 		GsBarSelectVers *_pGsBarSelectVers=nullptr; //Panel sterowania i wyboru wersetów dla drzewa
@@ -150,6 +160,12 @@ class GsMasterBibleScheme : public TCustomPanel
 		GsEditorClass *pGsEditorClass=nullptr; //Edytor stworzonej zawartości wersetów, które wchodzą w skład drzewa zależności
 		TSplitter *pSplitter=nullptr;
 		TLabel *_pVersDisplayText=nullptr; //Wyświetlenie wybranego wersetu
+		//Ustawienia
+		TPanel *_pPanelSetups=nullptr; //Kontrolka ustawień
+		TAction *_pAction=nullptr; //Akcja, przekazana z okna głównego, która uruchomiła ustawienia
+		TColorBox *pCBSelect=nullptr, *pCBRoot=nullptr, *pCBLine=nullptr;
+		TStringList *_SListOldConfig=nullptr;
+    TSpinEdit *_pSpinEdit=nullptr;
 };
 /****************************************************************************
 *													Klasa GsTreeBibleScheme,													*
@@ -168,7 +184,6 @@ class GsTreeBibleScheme : public TCustomTreeView
 		DYNAMIC void __fastcall Click();
 		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczarólnym gałęziom
 	private:
-		GsDrawPanelBibleScheme *__fastcall _GetChildSchemeFromNode();
 		TImageList *_pImageList=nullptr;
 };
 //***************************************************************************

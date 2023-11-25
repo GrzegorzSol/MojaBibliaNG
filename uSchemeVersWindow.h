@@ -32,6 +32,8 @@ __published:	// IDE-managed Components
 	TBalloonHint *BalloonHintScheme;
 	TAction *ActCreateFileFromScheme;
 	TAction *ActViewEditor;
+	TAction *ActRenameObject;
+	TAction *ActSetupScheme;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -41,6 +43,8 @@ __published:	// IDE-managed Components
 	void __fastcall ActOpenProjectExecute(TObject *Sender);
 	void __fastcall ActCreateFileFromSchemeExecute(TObject *Sender);
 	void __fastcall ActViewEditorExecute(TObject *Sender);
+	void __fastcall ActRenameObjectExecute(TObject *Sender);
+	void __fastcall ActSetupSchemeExecute(TObject *Sender);
 private:	// User declarations
 	GsMasterBibleScheme *pGsMasterBibleScheme;
 public:		// User declarations

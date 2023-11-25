@@ -370,6 +370,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	GsReadBibleTextData::InitListColors(); //Inicjalizacja listy kolorów
 	GsReadBibleTextData::InitHistoryList(); //Metoda inicjuje zmienne dotyczące historii [30-07-2023]
 	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy
 	//---
@@ -401,6 +402,51 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	else throw(Exception("Brak komponentu klasy TTaskbar"));
 	//parametr inicjalizacji biblioteki
 	GsReadBibleTextData::IsInitLibrary = true; //Czy została zainicjowana bibliteka (moduł)
+}
+//---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::InitListColors()
+/**
+	OPIS METOD(FUNKCJI): Inicjalizacja listy kolorów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GlobalVar::Global_ItemsColor = new TStringList(); //Inicjalizacja listy kolorów do wyboru
+	if(!GlobalVar::Global_ItemsColor) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+
+	GlobalVar::Global_ItemsColor->AddObject("clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
+	GlobalVar::Global_ItemsColor->AddObject("clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
+	GlobalVar::Global_ItemsColor->AddObject("clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
+	GlobalVar::Global_ItemsColor->AddObject("clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkOrange", reinterpret_cast<TObject*>(clWebDarkOrange));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkRed", reinterpret_cast<TObject*>(clWebDarkRed));
+	GlobalVar::Global_ItemsColor->AddObject("clWebCoral", reinterpret_cast<TObject*>(clWebCoral));
+	GlobalVar::Global_ItemsColor->AddObject("clWebGold", reinterpret_cast<TObject*>(clWebGold));
+	GlobalVar::Global_ItemsColor->AddObject("clWebRosyBrown", reinterpret_cast<TObject*>(clWebRosyBrown));
+	GlobalVar::Global_ItemsColor->AddObject("clWebForestGreen", reinterpret_cast<TObject*>(clWebForestGreen));
+	GlobalVar::Global_ItemsColor->AddObject("clWebChartreuse", reinterpret_cast<TObject*>(clWebChartreuse));
+	GlobalVar::Global_ItemsColor->AddObject("clWebSeaGreen", reinterpret_cast<TObject*>(clWebSeaGreen));
+	GlobalVar::Global_ItemsColor->AddObject("clWebMediumAquamarine", reinterpret_cast<TObject*>(clWebMediumAquamarine));
+	GlobalVar::Global_ItemsColor->AddObject("clWebLightCyan", reinterpret_cast<TObject*>(clWebLightCyan));
+	GlobalVar::Global_ItemsColor->AddObject("clWebCornFlowerBlue", reinterpret_cast<TObject*>(clWebCornFlowerBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebIndigo", reinterpret_cast<TObject*>(clWebIndigo));
+	GlobalVar::Global_ItemsColor->AddObject("clWebRed", reinterpret_cast<TObject*>(clWebRed));
+	GlobalVar::Global_ItemsColor->AddObject("clWebLightSkyBlue", reinterpret_cast<TObject*>(clWebLightSkyBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkBlue", reinterpret_cast<TObject*>(clWebDarkBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebCyan", reinterpret_cast<TObject*>(clWebCyan));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkTurquoise", reinterpret_cast<TObject*>(clWebDarkTurquoise));
+	GlobalVar::Global_ItemsColor->AddObject("clWebMediumVioletRed", reinterpret_cast<TObject*>(clWebMediumVioletRed));
+	GlobalVar::Global_ItemsColor->AddObject("clWebAqua", reinterpret_cast<TObject*>(clWebAqua));
+	GlobalVar::Global_ItemsColor->AddObject("clWebRoyalBlue", reinterpret_cast<TObject*>(clWebRoyalBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebMidnightBlue", reinterpret_cast<TObject*>(clWebMidnightBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkViolet", reinterpret_cast<TObject*>(clWebDarkViolet));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkMagenta", reinterpret_cast<TObject*>(clWebDarkMagenta));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDeepPink", reinterpret_cast<TObject*>(clWebDeepPink));
+	GlobalVar::Global_ItemsColor->AddObject("clWebMediumSlateBlue", reinterpret_cast<TObject*>(clWebMediumSlateBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebSteelBlue", reinterpret_cast<TObject*>(clWebSteelBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebSlateBlue", reinterpret_cast<TObject*>(clWebSlateBlue));
+	GlobalVar::Global_ItemsColor->AddObject("clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::SetupVariables()
@@ -515,6 +561,9 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	//--- Zamykanie listy z kolorami
+	if(GlobalVar::Global_ItemsColor)
+		{delete GlobalVar::Global_ItemsColor; GlobalVar::Global_ItemsColor = nullptr;}
 	//--- Zamykanie string listy z ulubionymi wersetami
 	if(GlobalVar::Global_HSListAllFavoritiesVers)
 	{
@@ -524,9 +573,7 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	//Zapis zaktualizowanego pliku historii, oraz usuwanie THashedStringListy z historią [30-07-2023]
 	GlobalVar::Global_HListHistoryChapterOpen->SaveToFile(GlobalVar::Global_custrPathHistory, TEncoding::UTF8);
 	if(GlobalVar::Global_HListHistoryChapterOpen)
-	{
-		delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;
-	}
+		{delete GlobalVar::Global_HListHistoryChapterOpen; GlobalVar::Global_HListHistoryChapterOpen = nullptr;}
 	//--- Zamykanie głownej klasy
 	if(GsReadBibleTextData::pGsReadBibleTextClass)
 	{

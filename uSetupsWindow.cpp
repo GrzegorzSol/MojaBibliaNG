@@ -1024,32 +1024,7 @@ void __fastcall TSetupsWindow::SW_ColorBoxGetColors(TCustomColorBox *Sender,
 	TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
 	if(!pColorBox) return;
 	//---
-	Items->AddObject("clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
-	Items->AddObject("clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
-	Items->AddObject("clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
-	Items->AddObject("clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
-	Items->AddObject("clWebDarkOrange", reinterpret_cast<TObject*>(clWebDarkOrange));
-	Items->AddObject("clWebDarkRed", reinterpret_cast<TObject*>(clWebDarkRed));
-	Items->AddObject("clWebCoral", reinterpret_cast<TObject*>(clWebCoral));
-	Items->AddObject("clWebGold", reinterpret_cast<TObject*>(clWebGold));
-	Items->AddObject("clWebRosyBrown", reinterpret_cast<TObject*>(clWebRosyBrown));
-	Items->AddObject("clWebForestGreen", reinterpret_cast<TObject*>(clWebForestGreen));
-	Items->AddObject("clWebChartreuse", reinterpret_cast<TObject*>(clWebChartreuse));
-	Items->AddObject("clWebSeaGreen", reinterpret_cast<TObject*>(clWebSeaGreen));
-	Items->AddObject("clWebMediumAquamarine", reinterpret_cast<TObject*>(clWebMediumAquamarine));
-	Items->AddObject("clWebLightCyan", reinterpret_cast<TObject*>(clWebLightCyan));
-	Items->AddObject("clWebCornFlowerBlue", reinterpret_cast<TObject*>(clWebCornFlowerBlue));
-	Items->AddObject("clWebIndigo", reinterpret_cast<TObject*>(clWebIndigo));
-	Items->AddObject("clWebAqua", reinterpret_cast<TObject*>(clWebAqua));
-	Items->AddObject("clWebRoyalBlue", reinterpret_cast<TObject*>(clWebRoyalBlue));
-	Items->AddObject("clWebMidnightBlue", reinterpret_cast<TObject*>(clWebMidnightBlue));
-	Items->AddObject("clWebDarkViolet", reinterpret_cast<TObject*>(clWebDarkViolet));
-	Items->AddObject("clWebDarkMagenta", reinterpret_cast<TObject*>(clWebDarkMagenta));
-	Items->AddObject("clWebDeepPink", reinterpret_cast<TObject*>(clWebDeepPink));
-	Items->AddObject("clWebMediumSlateBlue", reinterpret_cast<TObject*>(clWebMediumSlateBlue));
-	Items->AddObject("clWebSteelBlue", reinterpret_cast<TObject*>(clWebSteelBlue));
-	Items->AddObject("clWebSlateBlue", reinterpret_cast<TObject*>(clWebSlateBlue));
-	Items->AddObject("clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
+	Items->AddStrings(GlobalVar::Global_ItemsColor);
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::SW_ColorAllChange(TObject *Sender)
