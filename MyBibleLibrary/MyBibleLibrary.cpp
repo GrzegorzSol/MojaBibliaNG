@@ -2382,6 +2382,13 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	TToolBar::CreateWnd();
+	//Własny kod
+	TWinControl *pParentControl = this->Parent;
+	if(pParentControl)
+	{
+		this->_FbExtendentButt = pParentControl->ClassNameIs("GsPanelSelectVers");
+	}
 	this->EdgeBorders = TEdgeBorders() << ebBottom << ebTop << ebLeft << ebRight;
 	this->ShowCaptions = true;
 	//Własny kod.
@@ -2399,7 +2406,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	if(!this->_pSelectFavCBox) throw(Exception("Błąd funkcji TToolButton"));
 	this->_pSelectFavCBox->Parent = this;
 	this->_pSelectFavCBox->AutoSize = true;
-	this->_pSelectFavCBox->Visible = true; //false;
+	this->_pSelectFavCBox->Visible = this->_FbExtendentButt;//true; //false;
 	this->_pSelectFavCBox->ImageIndex = enImageIndex_SelectFavVerset;
 	this->_pSelectFavCBox->Caption = "Ulubiony werset";
 	this->_pSelectFavCBox->OnClick = this->_OnClickFavVers; //[24-10-2023]
@@ -2427,7 +2434,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pDeleteNoteVers->ImageIndex = enImageIndex_Delete;
 	this->_pDeleteNoteVers->Caption = "Skasuj komentarz";
 	this->_pDeleteNoteVers->OnClick = this->_OnClickDeleteComment;
-	this->_pDeleteNoteVers->Visible = true;//this->_FbBarSelectComment;//false;
+	this->_pDeleteNoteVers->Visible = this->_FbExtendentButt;//true;//this->_FbBarSelectComment;//false;
 	this->_pDeleteNoteVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pDeleteNoteVers->ShowHint = true;
 	this->_pDeleteNoteVers->Hint = Format("Skasuj komentarz|Kasuje komentarz do aktualnie wyświetlanego wersetu.|%u", ARRAYOFCONST((this->_pDeleteNoteVers->ImageIndex)));
@@ -2439,7 +2446,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pSaveNoteToVers->ImageIndex = enImageIndex_Save;
 	this->_pSaveNoteToVers->Caption = "Zapisz komentarz";
 	this->_pSaveNoteToVers->OnClick = this->_OnClickSaveComment;
-	this->_pSaveNoteToVers->Visible = true;//this->_FbBarSelectComment;//false;
+	this->_pSaveNoteToVers->Visible = this->_FbExtendentButt;//true;//this->_FbBarSelectComment;//false;
 	this->_pSaveNoteToVers->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 	this->_pSaveNoteToVers->ShowHint = true;
 	this->_pSaveNoteToVers->Hint = Format("Zapisz komentarz|Zapisuje komentarz do aktualnie wyświetlanego wersetu.|%u", ARRAYOFCONST((this->_pSaveNoteToVers->ImageIndex)));

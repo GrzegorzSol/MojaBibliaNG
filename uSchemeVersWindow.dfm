@@ -40,7 +40,6 @@ object SchemeVersWindow: TSchemeVersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
-    ExplicitLeft = 8
   end
   object ImgListScheme: TImageList
     ColorDepth = cd32Bit

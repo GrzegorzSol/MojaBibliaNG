@@ -88,6 +88,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall Paint();
+		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
+
 	private:
 		GsChildBibleScheme *_pSelectObject=nullptr,	//Aktualnie aktywny objekt
 											 *_pRootObject=nullptr;		//Okno głównego korzenia
@@ -117,6 +119,7 @@ class GsScrollBibleScheme : public TScrollBox
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
+		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 	private:
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme=nullptr;
 		GsMasterBibleScheme *_pGsMasterBibleScheme=nullptr; //Wskaźnik na klasę główną
@@ -129,7 +132,8 @@ class GsMasterBibleScheme : public TCustomPanel
 {
 	friend class GsChildBibleScheme;
 	friend class GsDrawPanelBibleScheme;
-  friend class GsTreeBibleScheme;
+	friend class GsTreeBibleScheme;
+  friend class GsScrollBibleScheme;
 	//---
 	public:
 		__fastcall GsMasterBibleScheme(TComponent* Owner);
@@ -182,6 +186,7 @@ class GsTreeBibleScheme : public TCustomTreeView
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		DYNAMIC void __fastcall Click();
+		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczarólnym gałęziom
 	private:
 		TImageList *_pImageList=nullptr;

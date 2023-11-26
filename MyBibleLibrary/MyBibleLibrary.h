@@ -458,52 +458,53 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
 		inline int __fastcall GetSelectTranslate() {return this->_FucSelectTranslate;} //Metoda zwraca numer wybranego tłumaczenia
 		void __fastcall GetSelectAdress(unsigned char &_usBook, unsigned char &_usChapt, unsigned char &_usVers, unsigned char &_ucTranslate); //Informacja o adresie wersetu
 	private:
-	bool _bFirstResize,	//Startowe skalowanie (true)
-			 _FbBarSelectComment, //Wybrałeś komentarz w liście komentarzy w głównym oknie
-			 _bIsFirstStart=true; //Pierwsze uruchomienie (true, póżniej false) //[25-10-2023]
-	TToolButton *_pButBooks=nullptr,			//Wybór księgi
-							*_pButChapt=nullptr,			//Wybór rozdziału
-							*_pButVers=nullptr,				//Wybór wersetu
-							*_pButTranslates=nullptr, //Wybór tłumaczenia
-							*_pButDisplay=nullptr,		//Pokaż wybrany werset
-							*_pButNextVers=nullptr,		//Następny werset
-							*_pButPrevVers=nullptr,		//Poprzedni werset
-							*_pButCopyToSheet=nullptr,//Przeniesienie tekstu na zakładkę
-							*_pSelectFavCBox=nullptr,//Czy werset należy do ulubionych
-							*_pSaveNoteToVers=nullptr,//Zapis komentarza do aktualnego wersetu
-							*_pDeleteNoteVers=nullptr;//Kasowanie komentarza do aktualnego wersetu
-	//---
-	TPopupMenu *_pPMenuBooks=nullptr;			//Popup menu z listą ksiąg biblijnych
-	TPopupMenu *_pPMenuChapt=nullptr;			//Popup menu z listą rozdziałów
-	TPopupMenu *_pPMenuVers=nullptr;			//Popup menu z listą wersetów
-	TPopupMenu *_pPMenuTranslates=nullptr;//Popup menu z listą tłumaczeń
-	TStaticText *_pSTextSelect=nullptr;	//Wybrany werset
-	//TBalloonHint *_pBalloonHint;
-	//--- Wybrane pozycje z TPopupMenu
-	unsigned char _FucSelectBook,							//Wybrana księga
-								_FucSelectChapt,						//Wybrany rozdział
-								_FucSelectVers,							//Wybrany werset
-								_FucSelectTranslate;				//Wybrane tłumaczenie
+  	bool _bFirstResize,	//Startowe skalowanie (true)
+				 _FbBarSelectComment, //Wybrałeś komentarz w liście komentarzy w głównym oknie
+         _FbExtendentButt=true, //Wyświetlanie dodatkowych przycisków
+  			 _bIsFirstStart=true; //Pierwsze uruchomienie (true, póżniej false) //[25-10-2023]
+  	TToolButton *_pButBooks=nullptr,			//Wybór księgi
+								*_pButChapt=nullptr,			//Wybór rozdziału
+  							*_pButVers=nullptr,				//Wybór wersetu
+  							*_pButTranslates=nullptr, //Wybór tłumaczenia
+  							*_pButDisplay=nullptr,		//Pokaż wybrany werset
+  							*_pButNextVers=nullptr,		//Następny werset
+  							*_pButPrevVers=nullptr,		//Poprzedni werset
+  							*_pButCopyToSheet=nullptr,//Przeniesienie tekstu na zakładkę
+  							*_pSelectFavCBox=nullptr,//Czy werset należy do ulubionych
+  							*_pSaveNoteToVers=nullptr,//Zapis komentarza do aktualnego wersetu
+  							*_pDeleteNoteVers=nullptr;//Kasowanie komentarza do aktualnego wersetu
+  	//---
+  	TPopupMenu *_pPMenuBooks=nullptr;			//Popup menu z listą ksiąg biblijnych
+  	TPopupMenu *_pPMenuChapt=nullptr;			//Popup menu z listą rozdziałów
+  	TPopupMenu *_pPMenuVers=nullptr;			//Popup menu z listą wersetów
+  	TPopupMenu *_pPMenuTranslates=nullptr;//Popup menu z listą tłumaczeń
+  	TStaticText *_pSTextSelect=nullptr;	//Wybrany werset
+  	//TBalloonHint *_pBalloonHint;
+  	//--- Wybrane pozycje z TPopupMenu
+  	unsigned char _FucSelectBook,							//Wybrana księga
+  								_FucSelectChapt,						//Wybrany rozdział
+  								_FucSelectVers,							//Wybrany werset
+  								_FucSelectTranslate;				//Wybrane tłumaczenie
 
-	THashedStringList *_pHSListSelectVers; //THashedStringLista wszystkich tłumaczeń wybranego wersetu
-	GsPanelSelectVers *_pGsPanelSelectVers; //Wskaźnik na rodzica
-	//---
-	void __fastcall _CreatePMenuBooks(); //Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
-	void __fastcall _OnClick_PMenu(System::TObject* Sender);
-	void __fastcall _OnClickDisplay(System::TObject* Sender);
-	void __fastcall _OnClickButtonSelect(System::TObject* Sender);
-	void __fastcall _OnClickNavigateVers(System::TObject* Sender);
-	void __fastcall _OnClickCopyToSheet(System::TObject* Sender);
-	void __fastcall _OnClickSaveComment(System::TObject* Sender);
-	void __fastcall _OnClickDeleteComment(System::TObject* Sender);
-	void __fastcall _OnClickFavVers(System::TObject* Sender);
-	void __fastcall _DisplayVers(); //Wyświetlenie wybranego tekstu
-	void __fastcall _VerifyVarset(); //Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych i czy posiada komentarz. Jeśli jest
-																	 //przycisk _pSelectFavCBox jest wciśniety
-	protected:
-		virtual void __fastcall CreateWnd();
-		virtual void __fastcall DestroyWnd();
-		DYNAMIC void __fastcall Resize();
+  	THashedStringList *_pHSListSelectVers; //THashedStringLista wszystkich tłumaczeń wybranego wersetu
+  	GsPanelSelectVers *_pGsPanelSelectVers; //Wskaźnik na rodzica
+  	//---
+  	void __fastcall _CreatePMenuBooks(); //Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
+  	void __fastcall _OnClick_PMenu(System::TObject* Sender);
+  	void __fastcall _OnClickDisplay(System::TObject* Sender);
+  	void __fastcall _OnClickButtonSelect(System::TObject* Sender);
+  	void __fastcall _OnClickNavigateVers(System::TObject* Sender);
+  	void __fastcall _OnClickCopyToSheet(System::TObject* Sender);
+  	void __fastcall _OnClickSaveComment(System::TObject* Sender);
+  	void __fastcall _OnClickDeleteComment(System::TObject* Sender);
+  	void __fastcall _OnClickFavVers(System::TObject* Sender);
+  	void __fastcall _DisplayVers(); //Wyświetlenie wybranego tekstu
+  	void __fastcall _VerifyVarset(); //Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych i czy posiada komentarz. Jeśli jest
+  																	 //przycisk _pSelectFavCBox jest wciśniety
+  	protected:
+  		virtual void __fastcall CreateWnd();
+  		virtual void __fastcall DestroyWnd();
+			DYNAMIC void __fastcall Resize();
 };
 /****************************************************************************
  *													KLASA GsPanelSelectVers													*

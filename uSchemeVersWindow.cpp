@@ -89,9 +89,6 @@ void __fastcall TSchemeVersWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("Count: %d", ARRAYOFCONST(( this->ActToolBarScheme->ControlCount ))));
-	#endif
 	for(int i=0; i<this->ActToolBarScheme->ControlCount; i++)
 	{
 		TControl *pControl = this->ActToolBarScheme->Controls[i];
@@ -99,9 +96,6 @@ void __fastcall TSchemeVersWindow::FormCreate(TObject *Sender)
 		{
 			this->pGsMasterBibleScheme->OpenSetupsScheme(this, this->ActSetupScheme, pControl->Left + this->ActToolBarScheme->Left,
 				this->ActToolBarScheme->Top + this->ActToolBarScheme->Height);
-      #if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("FormCreate");
-			#endif
 		}
 	}
 }
