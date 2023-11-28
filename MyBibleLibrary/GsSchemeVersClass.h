@@ -29,11 +29,11 @@ class GsCoreBibleScheme : public TCustomPanel
 		__fastcall virtual ~GsCoreBibleScheme();
 	//---
 	protected:
-		TList *ListChildren=nullptr; //Lista potomków
-		int IDChild=-1,
-				GetStartX=-1, GetStartY=-1;	//Współrzędne kliknięcia na objekt klasy
-		unsigned char Level=0; //Poziom
-		bool StartMove=false;	//Rozpoczıcie przesuwania
+		TList *_ListChildren=nullptr; //Lista potomków
+		int _IDChild=-1,
+				_GetStartX=-1, _GetStartY=-1;	//Współrzędne kliknięcia na objekt klasy
+		unsigned char _Level=0; //Poziom
+		bool _StartMove=false;	//Rozpoczıcie przesuwania
 };
 /****************************************************************************
 *					 Klasa całkowicie PRYWATNA GsChildBibleScheme,										*
@@ -53,17 +53,18 @@ class GsChildBibleScheme : public GsCoreBibleScheme
 	__fastcall GsChildBibleScheme(TComponent* Owner, PReadWriteDataObject _PReadWriteDataObject=0);
 	__fastcall virtual ~GsChildBibleScheme();
 	//---
-	unsigned char ucBook, ucChapt, ucVers, ucTrans;
-	GsChildBibleScheme *ParentObjectScheme; //Wskaźnik na przodka
+	unsigned char _ucBook, _ucChapt, _ucVers, _ucTrans;
+	GsChildBibleScheme *_PrevObjectScheme=nullptr, //Wskaźnik na przodka
+										 *_NextObjectScheme=nullptr; //Wskaźnik na następny objekt
 	//---
-	GsDrawPanelBibleScheme *DrawPanelScheme=nullptr; //Objekt klasy GsDrawPanelBibleScheme, na którym objekt jest rysowany
-	GsScrollBibleScheme *pGsScrollBibleScheme=nullptr; //Objekt, klasy GsScrollBibleScheme
-	GsMasterBibleScheme *pGsMasterBibleScheme=nullptr; //Główny objekt klasy GsMasterBibleScheme
-  TTreeNode *_node=nullptr;
+	GsDrawPanelBibleScheme *_DrawPanelScheme=nullptr; //Objekt klasy GsDrawPanelBibleScheme, na którym objekt jest rysowany
+	GsScrollBibleScheme *_pGsScrollBibleScheme=nullptr; //Objekt, klasy GsScrollBibleScheme
+	GsMasterBibleScheme *_pGsMasterBibleScheme=nullptr; //Główny objekt klasy GsMasterBibleScheme
+  TTreeNode *_NodeObjectScheme=nullptr;
 	//---
-	THashedStringList *SListVers=nullptr; //Lista wersetów ze wszystkich tłumaczeń
-	void __fastcall ViewSelectObject(); //Wyświetlenie wersetu wybranego objektu
-  void __fastcall SelectTreeObject();
+	THashedStringList *_SListVers=nullptr; //Lista wersetów ze wszystkich tłumaczeń
+	void __fastcall _ViewSelectObject(); //Wyświetlenie wersetu wybranego objektu
+  void __fastcall _SelectTreeObject();
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
@@ -85,6 +86,10 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 	__fastcall GsDrawPanelBibleScheme(TComponent* Owner);
 	__fastcall virtual ~GsDrawPanelBibleScheme();
 	protected:
+    BEGIN_MESSAGE_MAP
+			VCL_MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, _WMErasebackground);
+		END_MESSAGE_MAP(TCustomPanel);
+    void __fastcall _WMErasebackground(TWMEraseBkgnd &Message);
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall Paint();
@@ -144,7 +149,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		inline void __fastcall SaveProjectObjectSchemeToFile() {this->_pGsDrawPanelBibleScheme->_SaveProjectObjectToFile();}
 		inline void __fastcall ViewProjectDocument() {this->_pGsDrawPanelBibleScheme->_ViewProjectDocument();}
 		inline int __fastcall GetCountObjectScheme() {return this->_pGsDrawPanelBibleScheme->_GsChildBibleSchemeList->Count;}
-		inline GsEditorClass *__fastcall GetEditorClass() {return this->pGsEditorClass;}
+		inline GsEditorClass *__fastcall GetEditorClass() {return this->_pGsEditorClass;}
 		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsMasterBibleScheme\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
 		inline void SetObjectName() {this->_pGsDrawPanelBibleScheme->_SetObjectName();}
 		void __fastcall OpenSetupsScheme(TWinControl *pWinControl, TAction *pAction, int iLeft, int iTop);
@@ -161,13 +166,13 @@ class GsMasterBibleScheme : public TCustomPanel
 		GsScrollBibleScheme *_pGsScrollBibleScheme=nullptr; //Wskaźnik na scrolling i panel do rysowania
 		GsBarSelectVers *_pGsBarSelectVers=nullptr; //Panel sterowania i wyboru wersetów dla drzewa
 		GsDrawPanelBibleScheme *_pGsDrawPanelBibleScheme=nullptr; //Objekt na którym jest rysowane drzewo zależności
-		GsEditorClass *pGsEditorClass=nullptr; //Edytor stworzonej zawartości wersetów, które wchodzą w skład drzewa zależności
-		TSplitter *pSplitter=nullptr;
+		GsEditorClass *_pGsEditorClass=nullptr; //Edytor stworzonej zawartości wersetów, które wchodzą w skład drzewa zależności
+		TSplitter *_pSplitter=nullptr;
 		TLabel *_pVersDisplayText=nullptr; //Wyświetlenie wybranego wersetu
 		//Ustawienia
 		TPanel *_pPanelSetups=nullptr; //Kontrolka ustawień
 		TAction *_pAction=nullptr; //Akcja, przekazana z okna głównego, która uruchomiła ustawienia
-		TColorBox *pCBSelect=nullptr, *pCBRoot=nullptr, *pCBLine=nullptr;
+		TColorBox *_pCBSelect=nullptr, *_pCBRoot=nullptr, *_pCBLine=nullptr;
 		TStringList *_SListOldConfig=nullptr;
     TSpinEdit *_pSpinEdit=nullptr;
 };

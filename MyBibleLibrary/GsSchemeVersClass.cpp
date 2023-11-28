@@ -71,13 +71,13 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 */
 {
 	//Inicjalizacja listy potomków
-	this->ListChildren = new TList();
-	if(!this->ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	this->_ListChildren = new TList();
+	if(!this->_ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->StyleElements = TStyleElements();
-	this->SListVers = new THashedStringList(); //Lista wersetów ze wszystkich tłumaczeñ
-	if(!this->SListVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
+	this->_SListVers = new THashedStringList(); //Lista wersetów ze wszystkich tłumaczeñ
+	if(!this->_SListVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	//---
 	this->DoubleBuffered = true;
 	this->ParentColor = false;
@@ -87,12 +87,11 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	this->BorderStyle = bsSingle;
 	this->Color = ColorObject[enColorNum_Active];
 	this->Ctl3D = false;
-	this->ParentObjectScheme = nullptr; //Wskaźnik na przodka, domyślnie to korzeń
 	this->ShowHint = true;
 	this->StyleElements = TStyleElements();
-	if(_PReadWriteDataObject) this->IDChild = _PReadWriteDataObject->RW_ID; else this->IDChild = Random(INT_MAX);
-	//this->ID64Child = (__int64)this->IDChild * (__int64)Random(INT_MAX);
-	this->Level = 0; //Poziom
+	if(_PReadWriteDataObject) this->_IDChild = _PReadWriteDataObject->RW_ID; else this->_IDChild = Random(INT_MAX);
+	//this->ID64Child = (__int64)this->_IDChild * (__int64)Random(INT_MAX);
+	this->_Level = 0; //Poziom
 }
 //---------------------------------------------------------------------------
 __fastcall	GsChildBibleScheme::~GsChildBibleScheme()
@@ -104,26 +103,26 @@ __fastcall	GsChildBibleScheme::~GsChildBibleScheme()
 */
 {
 	int iIndex;
-	for(int i=0; i<this->ListChildren->Count; i++)
+	for(int i=0; i<this->_ListChildren->Count; i++)
 	//Kasowanie wszystkich potomków
 	{
-		GsChildBibleScheme *pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->ListChildren->Items[i]);
+		GsChildBibleScheme *pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_ListChildren->Items[i]);
 		//if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
 		if(pGsChildBibleScheme)
 		{
 			//Kasowanie potomka z listy głównej
-			iIndex = this->DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(pGsChildBibleScheme);
-			if(iIndex > -1) this->DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
+			iIndex = this->_DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(pGsChildBibleScheme);
+			if(iIndex > -1) this->_DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
 			//Wlaściwe kasowanie potomka
 			delete pGsChildBibleScheme; pGsChildBibleScheme = nullptr;
 		}
 	}
-	delete this->ListChildren; this->ListChildren = nullptr; //Kasowanie listy potomków, po ich usunięciu
+	delete this->_ListChildren; this->_ListChildren = nullptr; //Kasowanie listy potomków, po ich usunięciu
 	//Kasowanie objektu z listy głównej
-	iIndex = this->DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(this);
-	if(iIndex > -1) this->DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
+	iIndex = this->_DrawPanelScheme->_GsChildBibleSchemeList->IndexOf(this);
+	if(iIndex > -1) this->_DrawPanelScheme->_GsChildBibleSchemeList->Delete(iIndex);
 
-	if(this->SListVers) {delete this->SListVers; this->SListVers = nullptr;} //Lista wersetów ze wszystkich tłumaczeñ
+	if(this->_SListVers) {delete this->_SListVers; this->_SListVers = nullptr;} //Lista wersetów ze wszystkich tłumaczeñ
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::CreateWnd()
@@ -137,23 +136,23 @@ void __fastcall GsChildBibleScheme::CreateWnd()
 	GsCoreBibleScheme::CreateWnd();
 	//Własny kod.
 	//Wyłuskanie wskaźnika na objekt do rysowania
-	this->DrawPanelScheme = dynamic_cast<GsDrawPanelBibleScheme *>(this->Parent);
-	if(!this->DrawPanelScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsDrawPanelBibleScheme"));
+	this->_DrawPanelScheme = dynamic_cast<GsDrawPanelBibleScheme *>(this->Parent);
+	if(!this->_DrawPanelScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsDrawPanelBibleScheme"));
 	//Wyłuskanie na objekt, klasy TScrollBox
-	this->pGsScrollBibleScheme = dynamic_cast<GsScrollBibleScheme *>(this->DrawPanelScheme->Parent);
-	if(!this->pGsScrollBibleScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsScrollBibleScheme"));
+	this->_pGsScrollBibleScheme = dynamic_cast<GsScrollBibleScheme *>(this->_DrawPanelScheme->Parent);
+	if(!this->_pGsScrollBibleScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsScrollBibleScheme"));
 	//Wyłuskanie wskaźnika na główny objekt, klasy
-	this->pGsMasterBibleScheme = dynamic_cast<GsMasterBibleScheme *>(this->pGsScrollBibleScheme->Parent);
-	if(!this->pGsMasterBibleScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsMasterBibleScheme"));
+	this->_pGsMasterBibleScheme = dynamic_cast<GsMasterBibleScheme *>(this->_pGsScrollBibleScheme->Parent);
+	if(!this->_pGsMasterBibleScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsMasterBibleScheme"));
 	//---
-	this->Caption = this->pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
-	this->Width = this->Canvas->TextWidth(this->Caption) + 4;
-	this->Height = this->Canvas->TextHeight(this->Caption) + 4;
-	this->pGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(this->SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
+	this->Caption = this->_pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
+	this->Width = this->Canvas->TextWidth(this->Caption) + 24;
+	this->Height = this->Canvas->TextHeight(this->Caption) + 24;
+	this->_pGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(this->_SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
 	//Wypelnianie pól adresu wersetu
-	this->pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(this->ucBook, this->ucChapt, this->ucVers, this->ucTrans);
+	this->_pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(this->_ucBook, this->_ucChapt, this->_ucVers, this->_ucTrans);
 	//Podpowiedź w formie zawartości wersetucodeString
-	this->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((this->Caption, this->SListVers->Strings[this->ucTrans])));
+	this->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((this->Caption, this->_SListVers->Strings[this->_ucTrans])));
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::DestroyWnd()
@@ -178,24 +177,24 @@ void __fastcall GsChildBibleScheme::MouseDown(System::Uitypes::TMouseButton Butt
 {
 	if((Button == mbLeft) || (Button == mbRight))
 	{
-		this->GetStartX = X;
-		this->GetStartY = Y;
-		this->StartMove = true;
-		if(this->DrawPanelScheme->_pSelectObject != this)
+		this->_GetStartX = X;
+		this->_GetStartY = Y;
+		this->_StartMove = true;
+		if(this->_DrawPanelScheme->_pSelectObject != this)
 		{
-			this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_InActive]; //Dezaktywacja poprzedniego objektu
-			this->DrawPanelScheme->_pSelectObject = this;						//Objekt kliknięty, staje się aktualny
-			if(this->DrawPanelScheme->_pRootObject == this)
-				this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Rot];	 //Zmiana koloru tła aktualnego objektu
-			else this->DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Active];	 //Zmiana koloru tła , aktualnego objektu
+			this->_DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_InActive]; //Dezaktywacja poprzedniego objektu
+			this->_DrawPanelScheme->_pSelectObject = this;						//Objekt kliknięty, staje się aktualny
+			if(this->_DrawPanelScheme->_pRootObject == this)
+				this->_DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Rot];	 //Zmiana koloru tła aktualnego objektu
+			else this->_DrawPanelScheme->_pSelectObject->Color = ColorObject[enColorNum_Active];	 //Zmiana koloru tła , aktualnego objektu
 		}
-		this->DrawPanelScheme->_pRootObject->Color = ColorObject[enColorNum_Rot];
-		this->ViewSelectObject();
-	 	this->SelectTreeObject();
+		this->_DrawPanelScheme->_pRootObject->Color = ColorObject[enColorNum_Rot];
+		this->_ViewSelectObject();
+		this->_SelectTreeObject();
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall GsChildBibleScheme::ViewSelectObject()
+void __fastcall GsChildBibleScheme::_ViewSelectObject()
 /**
 	OPIS METOD(FUNKCJI): Wyświetlenie wersetu wybranego objektu
 	OPIS ARGUMENTÓW:
@@ -204,11 +203,11 @@ void __fastcall GsChildBibleScheme::ViewSelectObject()
 */
 {
 	UnicodeString _ustrVers;
-	GsReadBibleTextData::GetTextVersOfAdress(this->ucBook, this->ucChapt+1, this->ucVers, this->ucTrans, _ustrVers);
-	this->pGsMasterBibleScheme->_pVersDisplayText->Caption = Format("%s \"%s\"", ARRAYOFCONST((this->Caption, _ustrVers))); //Wybrany werset
+	GsReadBibleTextData::GetTextVersOfAdress(this->_ucBook, this->_ucChapt+1, this->_ucVers, this->_ucTrans, _ustrVers);
+	this->_pGsMasterBibleScheme->_pVersDisplayText->Caption = Format("%s \"%s\"", ARRAYOFCONST((this->Caption, _ustrVers))); //Wybrany werset
 }
 //---------------------------------------------------------------------------
-void __fastcall GsChildBibleScheme::SelectTreeObject()
+void __fastcall GsChildBibleScheme::_SelectTreeObject()
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -216,9 +215,9 @@ void __fastcall GsChildBibleScheme::SelectTreeObject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	GsTreeBibleScheme *pGsTreeBibleScheme = dynamic_cast<GsTreeBibleScheme *>(this->_node->TreeView);
+	GsTreeBibleScheme *pGsTreeBibleScheme = dynamic_cast<GsTreeBibleScheme *>(this->_NodeObjectScheme->TreeView);
 	if(!pGsTreeBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsTreeBibleScheme"));
-	this->_node->Selected = true;
+	this->_NodeObjectScheme->Selected = true;
   pGsTreeBibleScheme->SetFocus();
 }
 //---------------------------------------------------------------------------
@@ -230,7 +229,7 @@ void __fastcall GsChildBibleScheme::MouseUp(System::Uitypes::TMouseButton Button
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->StartMove = false; //Koniec przesuwania
+	this->_StartMove = false; //Koniec przesuwania
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::MouseMove(System::Classes::TShiftState Shift, int X, int Y)
@@ -241,14 +240,14 @@ void __fastcall GsChildBibleScheme::MouseMove(System::Classes::TShiftState Shift
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!this->ParentObjectScheme) return; //Nie przesuwaj korzenia
-	if(this->StartMove)
+	if(!this->_PrevObjectScheme) return; //Nie przesuwaj korzenia
+	if(this->_StartMove)
 	{
-		this->Left += (X - this->GetStartX);
-		this->Top += (Y - this->GetStartY);
+		this->Left += (X - this->_GetStartX);
+		this->Top += (Y - this->_GetStartY);
 		//--- Odświerzenie głównego okna, w celu odrysowania wszystkich objektów
-		//this->DrawPanelScheme->Repaint();
-		this->DrawPanelScheme->Invalidate();
+		//this->_DrawPanelScheme->Repaint();
+		this->_DrawPanelScheme->Invalidate();
 	}
 }
 //---------------------------------------------------------------------------
@@ -300,6 +299,11 @@ void __fastcall GsDrawPanelBibleScheme::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
+//	TWinControl *pParentWControl = dynamic_cast<TWinControl *>(this->Parent);
+//	if(pParentWControl)
+//	{
+//		this->Left = (pParentWControl->Width / 2) - (this->Width / 2);
+//	}
 	GsMasterBibleScheme *pGsMasterBibleScheme = static_cast<GsMasterBibleScheme *>(this->Parent->Parent);
 	//if(!pGsMasterBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsMasterBibleScheme"));
 	if(pGsMasterBibleScheme)
@@ -331,23 +335,34 @@ void __fastcall GsDrawPanelBibleScheme::Paint()
 {
 	TCustomPanel::Paint();
 	//Własny kod
-	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *pParentGsChildBibleScheme=nullptr;
+	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *pPrevObjectScheme=nullptr;
 	for(int i=0; i<this->_GsChildBibleSchemeList->Count; i++)
 	{
 		pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 		if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
-		pParentGsChildBibleScheme = pGsChildBibleScheme->ParentObjectScheme;
+		pPrevObjectScheme = pGsChildBibleScheme->_PrevObjectScheme;
 		//--- Odrysowanie objektu i połączen
-		if(pParentGsChildBibleScheme && pGsChildBibleScheme->DrawPanelScheme)
+		if(pPrevObjectScheme && pGsChildBibleScheme->_DrawPanelScheme)
 		{
       //Rysowanie połączenia z przodkiem
 			this->Canvas->Pen->Width = iWidthLine;
 			this->Canvas->Pen->Color = ColorObject[enColorNum_Line];
 			this->Canvas->MoveTo(pGsChildBibleScheme->Left + (pGsChildBibleScheme->Width / 2), pGsChildBibleScheme->Top);
-			this->Canvas->LineTo(pParentGsChildBibleScheme->Left + (pParentGsChildBibleScheme->Width / 2),
-				pParentGsChildBibleScheme->Top + pParentGsChildBibleScheme->Height);
+			this->Canvas->LineTo(pPrevObjectScheme->Left + (pPrevObjectScheme->Width / 2),
+				pPrevObjectScheme->Top + pPrevObjectScheme->Height);
 		}
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsDrawPanelBibleScheme::_WMErasebackground(TWMEraseBkgnd &Message)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  Message.Result = 1;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -369,7 +384,7 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	int left=0, top=100;
+	int _left=0, _top=100;
 
 	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *prevGsChildBibleScheme=nullptr; //Domyślnie to korzeń
 
@@ -382,14 +397,15 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 		//if(this->_pRootObject) this->_pRootObject->Color = ColorObject[enColorNum_Rot];
 		prevGsChildBibleScheme = this->_pSelectObject;
 		//Ustawienie pól na poprzedni objekt
-		pGsChildBibleScheme->ParentObjectScheme = prevGsChildBibleScheme;
-		prevGsChildBibleScheme->ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
-		pGsChildBibleScheme->Level = prevGsChildBibleScheme->Level + 1;
+		pGsChildBibleScheme->_PrevObjectScheme = prevGsChildBibleScheme; //Poprzedni objekt, to objekt wybrany
+		prevGsChildBibleScheme->_NextObjectScheme = pGsChildBibleScheme; //Następny objekt
+		prevGsChildBibleScheme->_ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
+		pGsChildBibleScheme->_Level = prevGsChildBibleScheme->_Level + 1;
 
-		left = prevGsChildBibleScheme->Left + 10; top = prevGsChildBibleScheme->Top + prevGsChildBibleScheme->Height + 16;
+		_left += prevGsChildBibleScheme->Left + 10; _top = prevGsChildBibleScheme->Top + prevGsChildBibleScheme->Height + 24;
 		//Tworzenie potomków w drzewie
-		TTreeNode *childNode = this->_pGsTreeBibleScheme->Items->AddChildObject(prevGsChildBibleScheme->_node, pGsChildBibleScheme->Caption, nullptr);
-		pGsChildBibleScheme->_node = childNode;
+		TTreeNode *childNode = this->_pGsTreeBibleScheme->Items->AddChildObject(prevGsChildBibleScheme->_NodeObjectScheme, pGsChildBibleScheme->Caption, nullptr);
+		pGsChildBibleScheme->_NodeObjectScheme = childNode;
 	}
 	else //Dodawanie korzenia
 	{
@@ -398,21 +414,22 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 		//Tworzenie korzenia drzewa
 		TTreeNode *nodeMainRoot = this->_pGsTreeBibleScheme->Items->AddObject(NULL, pGsChildBibleScheme->Caption, nullptr);
 		if(!nodeMainRoot) throw(Exception("Błąd inicjalizacji klasy AddObject"));
-		pGsChildBibleScheme->_node = nodeMainRoot;
+		pGsChildBibleScheme->_NodeObjectScheme = nodeMainRoot;
 	}
 	//
 	this->_pGsTreeBibleScheme->FullExpand(); //Całkowicie rozwiniete drzewo
 	this->_pGsTreeBibleScheme->Items->GetFirstNode()->MakeVisible();
 
-	pGsChildBibleScheme->Top = top; pGsChildBibleScheme->Left = left;
+	pGsChildBibleScheme->Top = _top; pGsChildBibleScheme->Left = _left;
+
 	if(this->_pSelectObject) {this->_pSelectObject->Color = ColorObject[enColorNum_InActive];} //Kolor nieaktywny dla poprzedniego objektu
 	this->_pSelectObject = pGsChildBibleScheme;	//Aktualnie aktywny nowo dodany objekt
-  pGsChildBibleScheme->ViewSelectObject();
+	pGsChildBibleScheme->_ViewSelectObject();
 
 	this->_GsChildBibleSchemeList->Add(pGsChildBibleScheme); //Dodanie do głównej listy objektów
-	//this->Caption = Format("%s. Ilość objektów: %u", ARRAYOFCONST((ustrCaptionWindow, this->_GsChildBibleSchemeList->Count)));
-	//this->ActDeleteLink->Enabled = true;
+
 	this->Invalidate(); //Całe odświerzenie
+
   this->_pRootObject->Color = ColorObject[enColorNum_Rot];
 }
 //---------------------------------------------------------------------------
@@ -429,20 +446,20 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 		int iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz skasować objekt razem ze wszystkimi jego pochodnymi?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 		if(iResult == IDNO) return;
 
-		TTreeNode *_pNode = this->_pSelectObject->_node;
+		TTreeNode *_pNode = this->_pSelectObject->_NodeObjectScheme;
 		GsTreeBibleScheme *pTrView = static_cast<GsTreeBibleScheme *>(_pNode->TreeView);
 
 		if(this->_pSelectObject!=this->_pRootObject)
 		//Nie jest korzeniem i posiada przodków
 		{
-			GsChildBibleScheme *pParent = this->_pSelectObject->ParentObjectScheme;
+			GsChildBibleScheme *pParent = this->_pSelectObject->_PrevObjectScheme;
 			if(pParent)
 			{
-				int iIndexParent = pParent->ListChildren->IndexOf(this->_pSelectObject);
+				int iIndexParent = pParent->_ListChildren->IndexOf(this->_pSelectObject);
 				if(iIndexParent > -1)
 				{
 					//Kasowanie objektu z listy przodka
-					pParent->ListChildren->Delete(iIndexParent);
+					pParent->_ListChildren->Delete(iIndexParent);
 				}
 			}
 			delete this->_pSelectObject; this->_pSelectObject = nullptr;
@@ -529,7 +546,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
             //Tworzenie korzenia drzewa
 						TTreeNode *nodeMainRoot = this->_pGsTreeBibleScheme->Items->AddObject(NULL, pGsChildBibleScheme->Caption, nullptr);
 						if(!nodeMainRoot) throw(Exception("Błąd inicjalizacji klasy AddObject"));
-						pGsChildBibleScheme->_node = nodeMainRoot;
+						pGsChildBibleScheme->_NodeObjectScheme = nodeMainRoot;
 					}
 					else if(pDataToOpen->RW_IDListParent > -1)//Potomstwo
 					{
@@ -538,11 +555,11 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 						if(prevGsChildBibleScheme)
 						{
 							//Ustawienie pól na poprzedni objekt
-							pGsChildBibleScheme->ParentObjectScheme = prevGsChildBibleScheme;
-							prevGsChildBibleScheme->ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
+							pGsChildBibleScheme->_PrevObjectScheme = prevGsChildBibleScheme;
+							prevGsChildBibleScheme->_ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
               //Tworzenie potomków w drzewie
-							TTreeNode *childNode = this->_pGsTreeBibleScheme->Items->AddChildObject(prevGsChildBibleScheme->_node, pGsChildBibleScheme->Caption, nullptr);
-							pGsChildBibleScheme->_node = childNode;
+							TTreeNode *childNode = this->_pGsTreeBibleScheme->Items->AddChildObject(prevGsChildBibleScheme->_NodeObjectScheme, pGsChildBibleScheme->Caption, nullptr);
+							pGsChildBibleScheme->_NodeObjectScheme = childNode;
 						}
 					}
 					this->_pGsTreeBibleScheme->FullExpand(); //Całkowicie rozwiniete drzewo
@@ -550,14 +567,14 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 					//---
 					pGsChildBibleScheme->Top = pDataToOpen->RW_Top; pGsChildBibleScheme->Left = pDataToOpen->RW_Left;
 					pGsChildBibleScheme->Caption = pDataToOpen->RW_AdressVers; //Werset
-					pGsChildBibleScheme->_node->Text = pGsChildBibleScheme->Caption;
+					pGsChildBibleScheme->_NodeObjectScheme->Text = pGsChildBibleScheme->Caption;
 					//Składniki adresu
-					pGsChildBibleScheme->ucBook = pDataToOpen->RW_Book;
-					pGsChildBibleScheme->ucChapt = pDataToOpen->RW_Chapt;
-					pGsChildBibleScheme->ucVers = pDataToOpen->RW_Vers;
-					pGsChildBibleScheme->ucTrans = pDataToOpen->RW_Trans;
+					pGsChildBibleScheme->_ucBook = pDataToOpen->RW_Book;
+					pGsChildBibleScheme->_ucChapt = pDataToOpen->RW_Chapt;
+					pGsChildBibleScheme->_ucVers = pDataToOpen->RW_Vers;
+					pGsChildBibleScheme->_ucTrans = pDataToOpen->RW_Trans;
 					//Podpowiedź w formie zawartości wersetu codeString
-					GsReadBibleTextData::GetTextVersOfAdress(pGsChildBibleScheme->ucBook, pGsChildBibleScheme->ucChapt+1, pGsChildBibleScheme->ucVers, pGsChildBibleScheme->ucTrans, _ustrVers);
+					GsReadBibleTextData::GetTextVersOfAdress(pGsChildBibleScheme->_ucBook, pGsChildBibleScheme->_ucChapt+1, pGsChildBibleScheme->_ucVers, pGsChildBibleScheme->_ucTrans, _ustrVers);
 					pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->Caption, _ustrVers)));
 
 					if(this->_pSelectObject) {this->_pSelectObject->Color = ColorObject[enColorNum_InActive];} //Kolor nieaktywny dlapoprzedniego objektu
@@ -628,21 +645,21 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 						{
 							ZeroMemory(pDataToSave, iSizeStructData); //Wyczyszczenie struktury ReadWriteDataObject, do zapisu i odczytu objektów
 							//Wypełnienie struktury danych do zapisu
-							pDataToSave->RW_ID = pChild->IDChild; //Numer identyfikacyjny
+							pDataToSave->RW_ID = pChild->_IDChild; //Numer identyfikacyjny
 							pDataToSave->RW_IDList = i;						//Pozycja w globalnej liście objektu _GsChildBibleSchemeList, klasy TList
 							pDataToSave->RW_Left = pChild->Left; pDataToSave->RW_Top = pChild->Top; //Wspólrzędne objektu
 							pDataToSave->RW_IDListParent = -1;		//Domyślnie objekt nie ma przodka, więc jest korzeniem
-							if(pChild->ParentObjectScheme) //Jeśli objekt posiada przodka, czyli nie jest korzeniem
+							if(pChild->_PrevObjectScheme) //Jeśli objekt posiada przodka, czyli nie jest korzeniem
 							{
 								//Indeks przodka w głównej liście
-								pDataToSave->RW_IDListParent = this->_GsChildBibleSchemeList->IndexOf(pChild->ParentObjectScheme);
+								pDataToSave->RW_IDListParent = this->_GsChildBibleSchemeList->IndexOf(pChild->_PrevObjectScheme);
 							}
 							StringCchCopy(pDataToSave->RW_AdressVers, SIZE_ADDR_VERS-1, pChild->Caption.c_str()); //Skopiowanie adresu wersetu, objektu
 							//Składniki adresu
-							pDataToSave->RW_Book = pChild->ucBook;
-							pDataToSave->RW_Chapt = pChild->ucChapt;
-							pDataToSave->RW_Vers = pChild->ucVers;
-							pDataToSave->RW_Trans = pChild->ucTrans;
+							pDataToSave->RW_Book = pChild->_ucBook;
+							pDataToSave->RW_Chapt = pChild->_ucChapt;
+							pDataToSave->RW_Vers = pChild->_ucVers;
+							pDataToSave->RW_Trans = pChild->_ucTrans;
 							pSaveFile->WriteBuffer(pDataToSave, sizeof(ReadWriteDataObject)); //Główny zapis struktury pomocniczej objektu
 						}
 					}
@@ -693,7 +710,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 			GsChildBibleScheme *pChild = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 			if(pChild)
 			{
-				GsReadBibleTextData::GetTextVersOfAdress(pChild->ucBook, pChild->ucChapt+1, pChild->ucVers, pChild->ucTrans, _ustrVers);
+				GsReadBibleTextData::GetTextVersOfAdress(pChild->_ucBook, pChild->_ucChapt+1, pChild->_ucVers, pChild->_ucTrans, _ustrVers);
 				pStringStream->WriteString(Format("%s %s %s \"%s\" %s" ,ARRAYOFCONST((custrAdressVersRtf, pChild->Caption, custrVersRtf, _ustrVers, custrEndVersRtf))));
 			}
 		}
@@ -705,7 +722,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 		if(pGsMasterBibleScheme)
 		{
 			//Wczytanie z objektu TStringStream, do objektu, klasy pGsEditorClass
-			pGsMasterBibleScheme->pGsEditorClass->LoadEditorFromStream(pStringStream);
+			pGsMasterBibleScheme->_pGsEditorClass->LoadEditorFromStream(pStringStream);
 		}
 	}
 	__finally
@@ -735,16 +752,16 @@ void __fastcall GsDrawPanelBibleScheme::_SetObjectName()
 		if(pGsChildBibleScheme)
 		{
 			pGsChildBibleScheme->Caption = pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
-			pGsChildBibleScheme->_node->Text = pGsChildBibleScheme->Caption;
-			pGsChildBibleScheme->SListVers->Clear(); //Lista wersetów ze wszystkich tłumaczeń
+			pGsChildBibleScheme->_NodeObjectScheme->Text = pGsChildBibleScheme->Caption;
+			pGsChildBibleScheme->_SListVers->Clear(); //Lista wersetów ze wszystkich tłumaczeń
 
-			pGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(pGsChildBibleScheme->SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
+			pGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(pGsChildBibleScheme->_SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
 			//Wypelnianie pól adresu wersetu
-			pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(pGsChildBibleScheme->ucBook, pGsChildBibleScheme->ucChapt, pGsChildBibleScheme->ucVers, pGsChildBibleScheme->ucTrans);
-      //Podpowiedź w formie zawartości wersetucodeString
-			pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->Caption, pGsChildBibleScheme->SListVers->Strings[pGsChildBibleScheme->ucTrans])));
+			pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(pGsChildBibleScheme->_ucBook, pGsChildBibleScheme->_ucChapt, pGsChildBibleScheme->_ucVers, pGsChildBibleScheme->_ucTrans);
+			//Podpowiedź w formie zawartości wersetucodeString
+			pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->Caption, pGsChildBibleScheme->_SListVers->Strings[pGsChildBibleScheme->_ucTrans])));
 
-			pGsChildBibleScheme->ViewSelectObject();
+			pGsChildBibleScheme->_ViewSelectObject();
 		}
 	}
 }
@@ -868,7 +885,7 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod
-	this->_pGsBarSelectVers = new GsBarSelectVers(this, 0, 0, 1, true);
+	this->_pGsBarSelectVers = new GsBarSelectVers(this);
 	if(!this->_pGsBarSelectVers) throw(Exception("Błąd inicjalizacji objektu GsBarSelectVers"));
 	this->_pGsBarSelectVers->Parent = this;
 	this->_pGsBarSelectVers->Align = alTop;
@@ -881,13 +898,13 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	//---
 	this->_pGsDrawPanelBibleScheme = this->_pGsScrollBibleScheme->_pGsDrawPanelBibleScheme;
 	//---
-	this->pSplitter = new TSplitter(this);
-	if(!this->pSplitter) throw(Exception("Błąd inicjalizacji objektu TSplitter"));
-	this->pSplitter->Parent = this;
-	this->pSplitter->Align = alBottom;
-	this->pSplitter->Color = clCream;
-	this->pSplitter->Height = 6;
-	this->pSplitter->Beveled = true;
+	this->_pSplitter = new TSplitter(this);
+	if(!this->_pSplitter) throw(Exception("Błąd inicjalizacji objektu TSplitter"));
+	this->_pSplitter->Parent = this;
+	this->_pSplitter->Align = alBottom;
+	this->_pSplitter->Color = clCream;
+	this->_pSplitter->Height = 6;
+	this->_pSplitter->Beveled = true;
 	//---
 	this->_pVersDisplayText = new TLabel(this); //Wyświetlenie wybranego wersetu
 	if(!this->_pVersDisplayText) throw(Exception("Błąd inicjalizacji objektu TLabel"));
@@ -901,11 +918,11 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	this->_pVersDisplayText->Font->Size = 11;
 	this->_pVersDisplayText->Caption = "Tu bedzie sie pojawiał tekst objektu z wersetem biblijnym";
 	//---
-	this->pGsEditorClass = new GsEditorClass(this);
-	if(!this->pGsEditorClass) throw(Exception("Błąd inicjalizacji objektu GsEditorClass"));
-	this->pGsEditorClass->Parent = this;
-	this->pGsEditorClass->Align = alBottom;
-	this->pGsEditorClass->Height = this->Parent->Height / 4;
+	this->_pGsEditorClass = new GsEditorClass(this);
+	if(!this->_pGsEditorClass) throw(Exception("Błąd inicjalizacji objektu GsEditorClass"));
+	this->_pGsEditorClass->Parent = this;
+	this->_pGsEditorClass->Align = alBottom;
+	this->_pGsEditorClass->Height = this->Parent->Height / 4;
 	//Wskaźnika na drzewo zależnosci
 	this->_pGsTreeBibleScheme = new GsTreeBibleScheme(this);
 	if(!this->_pGsTreeBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsTreeBibleScheme"));
@@ -989,13 +1006,13 @@ void __fastcall GsMasterBibleScheme::OpenSetupsScheme(TWinControl *pWinControl, 
 		pLabel->AlignWithMargins = true;
 		pLabel->Caption = "Kolor zaznaczonego wersetu";
 
-		this->pCBSelect = new TColorBox(pPanel);
-		if(!this->pCBSelect) throw(Exception("Błąd inicjalizacji objektu TColorBox"));
-		this->pCBSelect->Parent = pPanel;
-		this->pCBSelect->Align = alTop;
-		this->pCBSelect->AlignWithMargins = true;
-		this->pCBSelect->OnGetColors = this->_ColorBoxGetColors;
-		this->pCBSelect->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames << cbCustomColors;
+		this->_pCBSelect = new TColorBox(pPanel);
+		if(!this->_pCBSelect) throw(Exception("Błąd inicjalizacji objektu TColorBox"));
+		this->_pCBSelect->Parent = pPanel;
+		this->_pCBSelect->Align = alTop;
+		this->_pCBSelect->AlignWithMargins = true;
+		this->_pCBSelect->OnGetColors = this->_ColorBoxGetColors;
+		this->_pCBSelect->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames << cbCustomColors;
 
 		//Kontrolki koloru głównego wersetu
 		pPanel = new TPanel(this->_pPanelSetups);
@@ -1012,13 +1029,13 @@ void __fastcall GsMasterBibleScheme::OpenSetupsScheme(TWinControl *pWinControl, 
 		pLabel->AlignWithMargins = true;
 		pLabel->Caption = "Kolor głownego wersetu";
 
-		this->pCBRoot = new TColorBox(pPanel);
-		if(!this->pCBRoot) throw(Exception("Błąd inicjalizacji objektu TColorBox"));
-		this->pCBRoot->Parent = pPanel;
-		this->pCBRoot->Align = alTop;
-		this->pCBRoot->AlignWithMargins = true;
-		this->pCBRoot->OnGetColors = this->_ColorBoxGetColors;
-		this->pCBRoot->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames << cbCustomColors;
+		this->_pCBRoot = new TColorBox(pPanel);
+		if(!this->_pCBRoot) throw(Exception("Błąd inicjalizacji objektu TColorBox"));
+		this->_pCBRoot->Parent = pPanel;
+		this->_pCBRoot->Align = alTop;
+		this->_pCBRoot->AlignWithMargins = true;
+		this->_pCBRoot->OnGetColors = this->_ColorBoxGetColors;
+		this->_pCBRoot->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames << cbCustomColors;
 		//Kontrolki koloru lini
 		pPanel = new TPanel(this->_pPanelSetups);
 		if(!pPanel) throw(Exception("Błąd inicjalizacji objektu TPanel"));
@@ -1034,13 +1051,13 @@ void __fastcall GsMasterBibleScheme::OpenSetupsScheme(TWinControl *pWinControl, 
 		pLabel->AlignWithMargins = true;
 		pLabel->Caption = "Kolor lini na wykresie";
 
-		this->pCBLine = new TColorBox(pPanel);
-		if(!this->pCBLine) throw(Exception("Błąd inicjalizacji objektu TColorBox"));
-		this->pCBLine->Parent = pPanel;
-		this->pCBLine->Align = alTop;
-		this->pCBLine->AlignWithMargins = true;
-    this->pCBLine->OnGetColors = this->_ColorBoxGetColors;
-		this->pCBLine->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames << cbCustomColors;
+		this->_pCBLine = new TColorBox(pPanel);
+		if(!this->_pCBLine) throw(Exception("Błąd inicjalizacji objektu TColorBox"));
+		this->_pCBLine->Parent = pPanel;
+		this->_pCBLine->Align = alTop;
+		this->_pCBLine->AlignWithMargins = true;
+		this->_pCBLine->OnGetColors = this->_ColorBoxGetColors;
+		this->_pCBLine->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames << cbCustomColors;
 		//Kontrolki ustwiania szerokości lini
     pPanel = new TPanel(this->_pPanelSetups);
 		if(!pPanel) throw(Exception("Błąd inicjalizacji objektu TPanel"));
@@ -1065,9 +1082,9 @@ void __fastcall GsMasterBibleScheme::OpenSetupsScheme(TWinControl *pWinControl, 
     this->_pSpinEdit->MaxValue = 6;
 
 		//Odczyt konfiguracji
-		this->pCBLine->Selected = ColorObject[enColorNum_Line];
-		this->pCBRoot->Selected = ColorObject[enColorNum_Rot];
-		this->pCBSelect->Selected = ColorObject[enColorNum_Active];
+		this->_pCBLine->Selected = ColorObject[enColorNum_Line];
+		this->_pCBRoot->Selected = ColorObject[enColorNum_Rot];
+		this->_pCBSelect->Selected = ColorObject[enColorNum_Active];
 		this->_pSpinEdit->Value = iWidthLine;
 	}
 }
@@ -1092,14 +1109,14 @@ void __fastcall GsMasterBibleScheme::_OnAccept(System::TObject* Sender)
 */
 {
 	//Zapis konfiguracji
-	ColorObject[enColorNum_Line] = this->pCBLine->Selected;
-	ColorObject[enColorNum_Active] = this->pCBSelect->Selected;
-	ColorObject[enColorNum_Rot] = this->pCBRoot->Selected;
+	ColorObject[enColorNum_Line] = this->_pCBLine->Selected;
+	ColorObject[enColorNum_Active] = this->_pCBSelect->Selected;
+	ColorObject[enColorNum_Rot] = this->_pCBRoot->Selected;
 	iWidthLine = this->_pSpinEdit->Value;
 
-	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeColorLine, this->pCBLine->Selected);
-	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeColorRot, this->pCBRoot->Selected);
-	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeColorSelect, this->pCBSelect->Selected);
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeColorLine, this->_pCBLine->Selected);
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeColorRot, this->_pCBRoot->Selected);
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeColorSelect, this->_pCBSelect->Selected);
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeWidthLine, this->_pSpinEdit->Value);
 
 	this->_pAction->Checked = false;
@@ -1247,12 +1264,12 @@ void __fastcall GsTreeBibleScheme::Click()
 				else pGsChildBibleScheme->Color = ColorObject[enColorNum_InActive];
 
 				//Wyłuskanie zaznaczonej pozycji z drzewa
-				if(pGsChildBibleScheme->_node == pNode)
+				if(pGsChildBibleScheme->_NodeObjectScheme == pNode)
 				{
 					pGsDrawPanelBibleScheme->_pSelectObject = pGsChildBibleScheme; //Ustawienie aktualnego objektu
 					pGsChildBibleScheme->Color = ColorObject[enColorNum_Active]; //Aktywizacja objektu
 					//Wyświetlenie zawartości wersetu zaznaczonego w drzewie
-					pGsChildBibleScheme->ViewSelectObject();
+					pGsChildBibleScheme->_ViewSelectObject();
 				}
       }
 		}
