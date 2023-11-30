@@ -3,7 +3,7 @@ object SchemeVersWindow: TSchemeVersWindow
   Top = 0
   Caption = 'SchemeVersWindow'
   ClientHeight = 862
-  ClientWidth = 1188
+  ClientWidth = 1044
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -12,15 +12,17 @@ object SchemeVersWindow: TSchemeVersWindow
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
+  KeyPreview = True
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   TextHeight = 13
   object ActToolBarScheme: TActionToolBar
     Left = 0
     Top = 0
-    Width = 1188
+    Width = 1044
     Height = 43
     CustomHint = BalloonHintScheme
     ActionManager = ActionManagerScheme
@@ -40,6 +42,7 @@ object SchemeVersWindow: TSchemeVersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
+    ExplicitWidth = 1184
   end
   object ImgListScheme: TImageList
     ColorDepth = cd32Bit
@@ -2809,6 +2812,7 @@ object SchemeVersWindow: TSchemeVersWindow
     end
     object ActRenameObject: TAction
       Caption = 'Zmiana nazwy zaznaczonego objektu'
+      Enabled = False
       ImageIndex = 6
       OnExecute = ActRenameObjectExecute
     end

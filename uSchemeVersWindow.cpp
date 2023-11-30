@@ -46,6 +46,9 @@ __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->Width = Application->MainForm->Width - 12;
+	this->Height = Application->MainForm->Height - 12;
+
 	this->pGsMasterBibleScheme = new GsMasterBibleScheme(this);
 	if(!this->pGsMasterBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsMasterBibleScheme"));
 	this->pGsMasterBibleScheme->Parent = this;
@@ -125,6 +128,7 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 	this->pGsMasterBibleScheme->AddNewObjectScheme();
 	this->ActCreateFileFromScheme->Enabled = true;
 	this->ActDeleteLink->Enabled = true;
+	this->ActRenameObject->Enabled = true;
 	if(!this->ActViewEditor->Checked)
 	//28-03-2021 - Jeśli został dodany element do schematu, automatycznie wyświetlany jest edytor, by nie spowodować błędu fokusa
 	//w wypadku próby wyświetlenia w edytorze dokumentu, przy równoczesnym jego ukryciu.
@@ -182,6 +186,7 @@ void __fastcall TSchemeVersWindow::ActOpenProjectExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->ActDeleteLink->Enabled = this->pGsMasterBibleScheme->OpenProjectObjectScheme();
+  this->ActRenameObject->Enabled = true;
 	this->ActCreateFileFromScheme->Enabled = true;
 }
 //---------------------------------------------------------------------------
@@ -243,6 +248,34 @@ void __fastcall TSchemeVersWindow::ActSetupSchemeExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->pGsMasterBibleScheme->VisibleSetupsScheme(pAction->Checked);
+}
+//---------------------------------------------------------------------------
+void __fastcall TSchemeVersWindow::FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TWinControl *pSelectObject = this->pGsMasterBibleScheme->SelectObject;
+	TWinControl *pGetDrawPanelScheme = this->pGsMasterBibleScheme->GetDrawPanelScheme;
+
+	if(Shift.Contains(ssCtrl))
+	{
+  	if(pSelectObject)
+  	{
+  		switch(Key)
+  		{
+				case vkDown: pSelectObject->Top +=1; break;
+  			case vkUp: pSelectObject->Top -=1; break;
+  			case vkLeft: pSelectObject->Left -=1; break;
+  			case vkRight: pSelectObject->Left +=1; break;
+        default: break;
+			}
+			pGetDrawPanelScheme->Invalidate();
+		}
+	}
 }
 //---------------------------------------------------------------------------
 

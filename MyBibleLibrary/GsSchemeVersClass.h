@@ -94,6 +94,7 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall Paint();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
+		DYNAMIC void __fastcall KeyUp(System::Word &Key, System::Classes::TShiftState Shift);
 
 	private:
 		GsChildBibleScheme *_pSelectObject=nullptr,	//Aktualnie aktywny objekt
@@ -102,6 +103,7 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		GsTreeBibleScheme *_pGsTreeBibleScheme=nullptr; //Wskaźnika na drzewo zależnosci
 		UnicodeString _ustrSelectNameProject; //Nazwa aktualnego projektu
 		TList *_GsChildBibleSchemeList=nullptr;
+    //bool bIsAllRefresh=true;
 		//---
 		void __fastcall _AddNewObject(); //Dodanie objektu, klasy GsChildBibleScheme
 		void __fastcall _DeleteObject();
@@ -143,6 +145,11 @@ class GsMasterBibleScheme : public TCustomPanel
 	public:
 		__fastcall GsMasterBibleScheme(TComponent* Owner);
 		__fastcall virtual ~GsMasterBibleScheme();
+
+		__property TWinControl *SelectObject {read = FGetSelectObject, default = 0};
+		__property TWinControl *GetDrawPanelScheme {read = _pGsDrawPanelBibleScheme, default = 0};
+		__property TWinControl *GetTreeBibleScheme {read = _pGsTreeBibleScheme, default = 0};
+
 		inline void __fastcall AddNewObjectScheme() {this->_pGsDrawPanelBibleScheme->_AddNewObject();}
 		inline void __fastcall DeleteObjectScheme() {this->_pGsDrawPanelBibleScheme->_DeleteObject();}
 		inline bool __fastcall OpenProjectObjectScheme() {return this->_pGsDrawPanelBibleScheme->_OpenProjectObject();}
@@ -155,9 +162,12 @@ class GsMasterBibleScheme : public TCustomPanel
 		void __fastcall OpenSetupsScheme(TWinControl *pWinControl, TAction *pAction, int iLeft, int iTop);
 		void __fastcall VisibleSetupsScheme(bool bVisible);
 	protected:
+
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
+
+		TWinControl * __fastcall FGetSelectObject();
 		void __fastcall _OnAccept(System::TObject* Sender);
 		void __fastcall _OnNoAccept(System::TObject* Sender);
 		void __fastcall _ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);
@@ -192,6 +202,7 @@ class GsTreeBibleScheme : public TCustomTreeView
 		virtual void __fastcall DestroyWnd();
 		DYNAMIC void __fastcall Click();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
+		DYNAMIC void __fastcall KeyUp(System::Word &Key, System::Classes::TShiftState Shift);
 		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczarólnym gałęziom
 	private:
 		TImageList *_pImageList=nullptr;

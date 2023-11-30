@@ -45,6 +45,8 @@ __published:	// IDE-managed Components
 	void __fastcall ActViewEditorExecute(TObject *Sender);
 	void __fastcall ActRenameObjectExecute(TObject *Sender);
 	void __fastcall ActSetupSchemeExecute(TObject *Sender);
+	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+
 private:	// User declarations
 	GsMasterBibleScheme *pGsMasterBibleScheme;
 public:		// User declarations

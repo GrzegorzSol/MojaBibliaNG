@@ -217,8 +217,9 @@ void __fastcall GsChildBibleScheme::_SelectTreeObject()
 {
 	GsTreeBibleScheme *pGsTreeBibleScheme = dynamic_cast<GsTreeBibleScheme *>(this->_NodeObjectScheme->TreeView);
 	if(!pGsTreeBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsTreeBibleScheme"));
+
 	this->_NodeObjectScheme->Selected = true;
-  pGsTreeBibleScheme->SetFocus();
+	pGsTreeBibleScheme->SetFocus();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -246,11 +247,11 @@ void __fastcall GsChildBibleScheme::MouseMove(System::Classes::TShiftState Shift
 		this->Left += (X - this->_GetStartX);
 		this->Top += (Y - this->_GetStartY);
 		//--- Odświerzenie głównego okna, w celu odrysowania wszystkich objektów
-		//this->_DrawPanelScheme->Repaint();
 		this->_DrawPanelScheme->Invalidate();
 	}
 }
 //---------------------------------------------------------------------------
+
 /****************************************************************************
 *					 Klasa całkowicie PRYWATNA GsDrawPanelBibleScheme,								*
 *										 pochodna TCustomPanel.																	*
@@ -299,11 +300,12 @@ void __fastcall GsDrawPanelBibleScheme::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
-//	TWinControl *pParentWControl = dynamic_cast<TWinControl *>(this->Parent);
-//	if(pParentWControl)
-//	{
-//		this->Left = (pParentWControl->Width / 2) - (this->Width / 2);
-//	}
+	TWinControl *pParentWControl = dynamic_cast<TWinControl *>(this->Parent);
+	if(pParentWControl)
+	{
+		this->Left = (pParentWControl->Width / 2) - (this->Width / 2);
+	}
+  this->Top = 24;
 	GsMasterBibleScheme *pGsMasterBibleScheme = static_cast<GsMasterBibleScheme *>(this->Parent->Parent);
 	//if(!pGsMasterBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsMasterBibleScheme"));
 	if(pGsMasterBibleScheme)
@@ -341,6 +343,7 @@ void __fastcall GsDrawPanelBibleScheme::Paint()
 		pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 		if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
 		pPrevObjectScheme = pGsChildBibleScheme->_PrevObjectScheme;
+		//if((this->_pSelectObject != pGsChildBibleScheme) && !this->bIsAllRefresh) continue;
 		//--- Odrysowanie objektu i połączen
 		if(pPrevObjectScheme && pGsChildBibleScheme->_DrawPanelScheme)
 		{
@@ -376,6 +379,19 @@ void __fastcall GsDrawPanelBibleScheme::MouseDown(System::Uitypes::TMouseButton 
 	this->_pGsMasterBibleScheme->_OnNoAccept(this->_pGsMasterBibleScheme);
 }
 //---------------------------------------------------------------------------
+void __fastcall GsDrawPanelBibleScheme::KeyUp(System::Word &Key, System::Classes::TShiftState Shift)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("KeyUp");
+	#endif
+}
+//---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 /**
 	OPIS METOD(FUNKCJI):
@@ -385,7 +401,7 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 */
 {
 	int _left=0, _top=100;
-
+	//this->bIsAllRefresh = true;
 	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *prevGsChildBibleScheme=nullptr; //Domyślnie to korzeń
 
 	pGsChildBibleScheme = new GsChildBibleScheme(this);
@@ -402,7 +418,8 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 		prevGsChildBibleScheme->_ListChildren->Add(pGsChildBibleScheme); //Dodanie aktualnego objektu, do list potomków, przodka
 		pGsChildBibleScheme->_Level = prevGsChildBibleScheme->_Level + 1;
 
-		_left += prevGsChildBibleScheme->Left + 10; _top = prevGsChildBibleScheme->Top + prevGsChildBibleScheme->Height + 24;
+		//_left += prevGsChildBibleScheme->Left + 10;
+		_top = prevGsChildBibleScheme->Top + prevGsChildBibleScheme->Height + 24;
 		//Tworzenie potomków w drzewie
 		TTreeNode *childNode = this->_pGsTreeBibleScheme->Items->AddChildObject(prevGsChildBibleScheme->_NodeObjectScheme, pGsChildBibleScheme->Caption, nullptr);
 		pGsChildBibleScheme->_NodeObjectScheme = childNode;
@@ -421,6 +438,7 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 	this->_pGsTreeBibleScheme->Items->GetFirstNode()->MakeVisible();
 
 	pGsChildBibleScheme->Top = _top; pGsChildBibleScheme->Left = _left;
+	//this->bIsAllRefresh = false;
 
 	if(this->_pSelectObject) {this->_pSelectObject->Color = ColorObject[enColorNum_InActive];} //Kolor nieaktywny dla poprzedniego objektu
 	this->_pSelectObject = pGsChildBibleScheme;	//Aktualnie aktywny nowo dodany objekt
@@ -430,7 +448,7 @@ void __fastcall GsDrawPanelBibleScheme::_AddNewObject()
 
 	this->Invalidate(); //Całe odświerzenie
 
-  this->_pRootObject->Color = ColorObject[enColorNum_Rot];
+	this->_pRootObject->Color = ColorObject[enColorNum_Rot];
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
@@ -518,7 +536,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 		{
 			if(pOpenDialog->Execute()) //Element został wybrany
 			{
-        this->_pGsTreeBibleScheme->Items->Clear();
+				this->_pGsTreeBibleScheme->Items->Clear();
 				//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
 				delete this->_pRootObject; this->_pRootObject = nullptr; //Niszczenie rozpoczyna siê od korzenia
 				this->_pSelectObject = nullptr;
@@ -597,7 +615,9 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	__finally
 	{
 		if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
-		//this->ActDeleteLink->Enabled = true;
+    //Automatycznie zaznaczony pierwszy element w drzewie
+		this->_pGsTreeBibleScheme->Selected = this->_pGsTreeBibleScheme->Items->GetFirstNode();
+    this->_pGsTreeBibleScheme->Click();
 	}
 	return bReturn;
 }
@@ -782,6 +802,7 @@ __fastcall GsScrollBibleScheme::GsScrollBibleScheme(TComponent* Owner) : TScroll
 	this->DoubleBuffered = true;
 	this->HorzScrollBar->Tracking = true;
 	this->VertScrollBar->Tracking = true;
+	//this->AutoScroll = true;
   //Stworzenie panelu do rysowania połączeń i objektów
 	this->_pGsDrawPanelBibleScheme = new GsDrawPanelBibleScheme(this);
 	if(!this->_pGsDrawPanelBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsDrawPanelBibleScheme"));
@@ -929,6 +950,8 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	this->_pGsTreeBibleScheme->Parent = this;
 	this->_pGsTreeBibleScheme->Align = alLeft;
 	this->_pGsTreeBibleScheme->Width = 200;
+
+	this->_pGsDrawPanelBibleScheme->SetFocus();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsMasterBibleScheme::DestroyWnd()
@@ -1138,7 +1161,20 @@ void __fastcall GsMasterBibleScheme::_OnNoAccept(System::TObject* Sender)
 	GlobalVar::Global_ConfigFile->SetStrings(this->_SListOldConfig);
 }
 //---------------------------------------------------------------------------
+TWinControl * __fastcall GsMasterBibleScheme::FGetSelectObject()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TWinControl *pRet = nullptr;
 
+	pRet = this->_pGsDrawPanelBibleScheme->_pSelectObject;
+
+	return pRet;
+}
 //---------------------------------------------------------------------------
 void __fastcall GsMasterBibleScheme::_ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items)
 /**
@@ -1287,6 +1323,21 @@ void __fastcall GsTreeBibleScheme::MouseDown(System::Uitypes::TMouseButton Butto
 	GsMasterBibleScheme *pGsMasterBibleScheme = static_cast<GsMasterBibleScheme *>(this->Parent);
 	if(pGsMasterBibleScheme)
 		{pGsMasterBibleScheme->_OnNoAccept(pGsMasterBibleScheme);}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTreeBibleScheme::KeyUp(System::Word &Key, System::Classes::TShiftState Shift)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTreeNode *pSelected = this->Selected;
+	if(pSelected)
+	{
+		this->Click();
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleScheme::GetImageIndex(TTreeNode* Node)
