@@ -129,6 +129,7 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 	this->ActCreateFileFromScheme->Enabled = true;
 	this->ActDeleteLink->Enabled = true;
 	this->ActRenameObject->Enabled = true;
+  this->ActSave->Enabled = true;
 	if(!this->ActViewEditor->Checked)
 	//28-03-2021 - Jeśli został dodany element do schematu, automatycznie wyświetlany jest edytor, by nie spowodować błędu fokusa
 	//w wypadku próby wyświetlenia w edytorze dokumentu, przy równoczesnym jego ukryciu.
@@ -172,6 +173,7 @@ void __fastcall TSchemeVersWindow::ActSaveExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->pGsMasterBibleScheme->SaveProjectObjectSchemeToFile();
+	this->LabelNameProject->Caption = Format("Nazwa projektu: %s", ARRAYOFCONST(( TPath::GetFileName(this->pGsMasterBibleScheme->ProjectName) )));
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActOpenProjectExecute(TObject *Sender)
@@ -188,6 +190,8 @@ void __fastcall TSchemeVersWindow::ActOpenProjectExecute(TObject *Sender)
 	this->ActDeleteLink->Enabled = this->pGsMasterBibleScheme->OpenProjectObjectScheme();
   this->ActRenameObject->Enabled = true;
 	this->ActCreateFileFromScheme->Enabled = true;
+  this->ActSave->Enabled = true;
+  this->LabelNameProject->Caption = Format("Nazwa projektu: %s", ARRAYOFCONST(( TPath::GetFileName(this->pGsMasterBibleScheme->ProjectName) )));
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActCreateFileFromSchemeExecute(TObject *Sender)

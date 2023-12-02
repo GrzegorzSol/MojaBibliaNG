@@ -39,11 +39,11 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		try
 		{
 			//----- Sprawdzenie wersji systemu, jeśli mniejsz niż Windows 7, to wyjdź,
-			if(!TOSVersion::Check(6, 1)) //Zmienić na minimum Windows 10
-			//if(!TOSVersion::Check(10, 0))
+			//if(!TOSVersion::Check(6, 1)) //Zmienić na minimum Windows 10
+			if(!TOSVersion::Check(10, 0))
 			{
-				throw(Exception("Aplikacja do uruchomienia wymaga systemu operacyjnego w wersji minimalnej 6.1 (Windows 7 sp.1)"));
-				//throw(Exception("Aplikacja do uruchomienia wymaga systemu operacyjnego w wersji minimalnej 10.0 (Windows 10)"));
+				//throw(Exception("Aplikacja do uruchomienia wymaga systemu operacyjnego w wersji minimalnej 6.1 (Windows 7 sp.1)"));
+				throw(Exception("Aplikacja do uruchomienia wymaga systemu operacyjnego w wersji minimalnej 10.0 (Windows 10)"));
 			}
 			//----- Sprawdzanie czy została uruchomiona druga kopia aplikacji, jesli tak
 			//			to zostanie automatycznie zamknięta

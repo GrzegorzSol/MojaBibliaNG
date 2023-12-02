@@ -242,6 +242,7 @@ void __fastcall GsChildBibleScheme::MouseMove(System::Classes::TShiftState Shift
 */
 {
 	if(!this->_PrevObjectScheme) return; //Nie przesuwaj korzenia
+
 	if(this->_StartMove)
 	{
 		this->Left += (X - this->_GetStartX);
@@ -505,7 +506,7 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 
 }
 //---------------------------------------------------------------------------
-bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
+bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject(UnicodeString &ustrGetProjectName)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -514,10 +515,10 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 */
 {
 	//int left=0, top=0;
-	GsChildBibleScheme *pGsChildBibleScheme, *prevGsChildBibleScheme;
+	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *prevGsChildBibleScheme=nullptr;
 	bool bReturn=false;
 	//---
-	TFileStream *pOpenFile;//=0;
+	TFileStream *pOpenFile=nullptr;//=0;
 	PReadWriteDataObject pDataToOpen;//=0;
 	UnicodeString _ustrVers;
 	//---
@@ -614,6 +615,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	}
 	__finally
 	{
+		ustrGetProjectName = pOpenDialog->FileName;
 		if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
     //Automatycznie zaznaczony pierwszy element w drzewie
 		this->_pGsTreeBibleScheme->Selected = this->_pGsTreeBibleScheme->Items->GetFirstNode();
@@ -622,7 +624,7 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject()
 	return bReturn;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
+bool __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile(UnicodeString &ustrGetProjectName)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -630,8 +632,9 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TFileStream *pSaveFile;//=0;
+	TFileStream *pSaveFile=nullptr;//=0;
 	PReadWriteDataObject pDataToSave;//=0;
+	bool bReturn=false;
 	//---
 	TSaveDialog *pSaveDialog = new TSaveDialog(this);
 	if(!pSaveDialog) throw(Exception("Błąd inicjalizacji objektu TSaveDialog"));
@@ -640,6 +643,7 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 	pSaveDialog->Options << ofOverwritePrompt << ofHideReadOnly;
 	pSaveDialog->InitialDir = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
 	pSaveDialog->DefaultExt = "svp";
+  pSaveDialog->FileName = "Bez nazwy";
 
 	//---
 	try
@@ -683,8 +687,10 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 							pSaveFile->WriteBuffer(pDataToSave, sizeof(ReadWriteDataObject)); //Główny zapis struktury pomocniczej objektu
 						}
 					}
+
 					if(pDataToSave) {delete pDataToSave; pDataToSave = nullptr;}
 					if(pSaveFile) {delete pSaveFile; pSaveFile = nullptr;}
+					bReturn = true;
 				}
 			}
 		}
@@ -695,8 +701,10 @@ void __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile()
 	}
 	__finally
 	{
+		ustrGetProjectName = pSaveDialog->FileName;
 		if(pSaveDialog) {delete pSaveDialog; pSaveDialog = nullptr;}
 	}
+  return bReturn;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
@@ -964,6 +972,32 @@ void __fastcall GsMasterBibleScheme::DestroyWnd()
 {
 	//Własny kod.
 	TCustomPanel::DestroyWnd();
+}
+//---------------------------------------------------------------------------
+bool __fastcall GsMasterBibleScheme::OpenProjectObjectScheme()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	bool bReturn =  this->_pGsDrawPanelBibleScheme->_OpenProjectObject(this->FProjectName);
+
+	return bReturn;
+}
+//---------------------------------------------------------------------------
+bool __fastcall GsMasterBibleScheme::SaveProjectObjectSchemeToFile()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	bool bReturn = this->_pGsDrawPanelBibleScheme->_SaveProjectObjectToFile(this->FProjectName);
+
+	return bReturn;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsMasterBibleScheme::OpenSetupsScheme(TWinControl *pWinControl, TAction *pAction, int iLeft, int iTop)

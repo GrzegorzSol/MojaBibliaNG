@@ -107,8 +107,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		//---
 		void __fastcall _AddNewObject(); //Dodanie objektu, klasy GsChildBibleScheme
 		void __fastcall _DeleteObject();
-		bool __fastcall _OpenProjectObject();
-		void __fastcall _SaveProjectObjectToFile();
+		bool __fastcall _OpenProjectObject(UnicodeString &ustrGetProjectName);
+		bool __fastcall _SaveProjectObjectToFile(UnicodeString &ustrGetProjectName);
 		void __fastcall _ViewProjectDocument();
 		void __fastcall _SetObjectName(); //Zmiana wersety przypoządkowanego do objektu
 };
@@ -149,11 +149,12 @@ class GsMasterBibleScheme : public TCustomPanel
 		__property TWinControl *SelectObject {read = FGetSelectObject, default = 0};
 		__property TWinControl *GetDrawPanelScheme {read = _pGsDrawPanelBibleScheme, default = 0};
 		__property TWinControl *GetTreeBibleScheme {read = _pGsTreeBibleScheme, default = 0};
+		__property UnicodeString ProjectName {read = FProjectName};
 
 		inline void __fastcall AddNewObjectScheme() {this->_pGsDrawPanelBibleScheme->_AddNewObject();}
 		inline void __fastcall DeleteObjectScheme() {this->_pGsDrawPanelBibleScheme->_DeleteObject();}
-		inline bool __fastcall OpenProjectObjectScheme() {return this->_pGsDrawPanelBibleScheme->_OpenProjectObject();}
-		inline void __fastcall SaveProjectObjectSchemeToFile() {this->_pGsDrawPanelBibleScheme->_SaveProjectObjectToFile();}
+		bool __fastcall OpenProjectObjectScheme();
+    bool __fastcall SaveProjectObjectSchemeToFile();
 		inline void __fastcall ViewProjectDocument() {this->_pGsDrawPanelBibleScheme->_ViewProjectDocument();}
 		inline int __fastcall GetCountObjectScheme() {return this->_pGsDrawPanelBibleScheme->_GsChildBibleSchemeList->Count;}
 		inline GsEditorClass *__fastcall GetEditorClass() {return this->_pGsEditorClass;}
@@ -171,6 +172,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		void __fastcall _OnAccept(System::TObject* Sender);
 		void __fastcall _OnNoAccept(System::TObject* Sender);
 		void __fastcall _ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);
+		UnicodeString FProjectName;
 
 		GsTreeBibleScheme *_pGsTreeBibleScheme=nullptr; //Wskaźnika na drzewo zależnosci
 		GsScrollBibleScheme *_pGsScrollBibleScheme=nullptr; //Wskaźnik na scrolling i panel do rysowania

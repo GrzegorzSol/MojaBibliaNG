@@ -19,6 +19,27 @@ object SchemeVersWindow: TSchemeVersWindow
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   TextHeight = 13
+  object LabelNameProject: TLabel
+    Left = 0
+    Top = 43
+    Width = 1044
+    Height = 19
+    Align = alTop
+    Caption = 'Nazwa projektu: Bez nazwy'
+    Color = clHighlight
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Font.Quality = fqClearType
+    ParentColor = False
+    ParentFont = False
+    Transparent = False
+    Layout = tlCenter
+    StyleElements = [seClient, seBorder]
+    ExplicitWidth = 194
+  end
   object ActToolBarScheme: TActionToolBar
     Left = 0
     Top = 0
@@ -42,7 +63,7 @@ object SchemeVersWindow: TSchemeVersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
-    ExplicitWidth = 1184
+    ExplicitWidth = 1040
   end
   object ImgListScheme: TImageList
     ColorDepth = cd32Bit
@@ -2789,6 +2810,7 @@ object SchemeVersWindow: TSchemeVersWindow
     end
     object ActSave: TAction
       Caption = 'Zapisz projekt...'
+      Enabled = False
       ImageIndex = 2
       OnExecute = ActSaveExecute
     end

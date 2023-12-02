@@ -1,6 +1,4 @@
-﻿//---------------------------------------------------------------------------
-
-#ifndef uSchemeVersWindowH
+﻿#ifndef uSchemeVersWindowH
 #define uSchemeVersWindowH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
@@ -34,6 +32,7 @@ __published:	// IDE-managed Components
 	TAction *ActViewEditor;
 	TAction *ActRenameObject;
 	TAction *ActSetupScheme;
+	TLabel *LabelNameProject;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
