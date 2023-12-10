@@ -103,7 +103,7 @@ __fastcall	GsChildBibleScheme::~GsChildBibleScheme()
 */
 {
 	int iIndex;
-	for(int i=0; i<this->_ListChildren->Count; i++)
+	for(int i=0; i<this->_ListChildren->Count; ++i)
 	//Kasowanie wszystkich potomków
 	{
 		GsChildBibleScheme *pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_ListChildren->Items[i]);
@@ -312,6 +312,7 @@ void __fastcall GsDrawPanelBibleScheme::CreateWnd()
 	if(pGsMasterBibleScheme)
 	{
 		this->_pGsMasterBibleScheme = pGsMasterBibleScheme;
+		this->Color = this->_pGsMasterBibleScheme->Color;
 		this->_pGsTreeBibleScheme = pGsMasterBibleScheme->_pGsTreeBibleScheme;
 	}
 }
@@ -339,7 +340,7 @@ void __fastcall GsDrawPanelBibleScheme::Paint()
 	TCustomPanel::Paint();
 	//Własny kod
 	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *pPrevObjectScheme=nullptr;
-	for(int i=0; i<this->_GsChildBibleSchemeList->Count; i++)
+	for(int i=0; i<this->_GsChildBibleSchemeList->Count; ++i)
 	{
 		pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 		if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
@@ -506,6 +507,21 @@ void __fastcall GsDrawPanelBibleScheme::_DeleteObject()
 
 }
 //---------------------------------------------------------------------------
+void __fastcall GsDrawPanelBibleScheme::_NewProject()
+/**
+	OPIS METOD(FUNKCJI): Wykasowanie całego projektu, by zacząć nowy
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->_pGsTreeBibleScheme->Items->Clear();
+	//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
+	delete this->_pRootObject; this->_pRootObject = nullptr; //Niszczenie rozpoczyna się od korzenia
+	this->_pSelectObject = nullptr;
+  this->Invalidate();
+}
+//----------------------------------------------------------------------------
 bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject(UnicodeString &ustrGetProjectName)
 /**
 	OPIS METOD(FUNKCJI):
@@ -514,7 +530,8 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject(UnicodeString &ustrGe
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	//int left=0, top=0;
+	const UnicodeString ustrFileTypes[] = {"Pliki projektu schematu", "*.svp",
+																				 "Każdy plik", "*.*"};
 	GsChildBibleScheme *pGsChildBibleScheme=nullptr, *prevGsChildBibleScheme=nullptr;
 	bool bReturn=false;
 	//---
@@ -522,26 +539,32 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject(UnicodeString &ustrGe
 	PReadWriteDataObject pDataToOpen;//=0;
 	UnicodeString _ustrVers;
 	//---
-	TOpenDialog *pOpenDialog = new TOpenDialog(this);
-	if(!pOpenDialog) throw(Exception("Błąd inicjalizacji objektu TOpenDialog"));
+	TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
+	if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
 
-	pOpenDialog->Title = "Podaj nazwę projektu do odczytu";
-	pOpenDialog->Filter =	 "Pliki projektu schematu(*.svp)|*.SVP|Każdy plik (*.*)|*.*"; //Może dać do globalnej zmiennej?
-	pOpenDialog->Options << ofHideReadOnly << ofPathMustExist << ofFileMustExist;
-	pOpenDialog->InitialDir = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
-	pOpenDialog->DefaultExt = "svp";
+	pFileOpenDialog->Title = "Podaj nazwę projektu do odczytu";
+	for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
+	{
+		TFileTypeItem *pTFileTypeItem = pFileOpenDialog->FileTypes->Add();
+		pTFileTypeItem->DisplayName = ustrFileTypes[i];
+		pTFileTypeItem->FileMask = ustrFileTypes[i+1];
+	}
+
+	pFileOpenDialog->Options = TFileDialogOptions() << fdoPathMustExist << fdoFileMustExist;
+	pFileOpenDialog->DefaultExtension = "svp";
+	pFileOpenDialog->DefaultFolder = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
 
 	try
 	{
 		try
 		{
-			if(pOpenDialog->Execute()) //Element został wybrany
+			if(pFileOpenDialog->Execute()) //Element został wybrany
 			{
 				this->_pGsTreeBibleScheme->Items->Clear();
 				//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
-				delete this->_pRootObject; this->_pRootObject = nullptr; //Niszczenie rozpoczyna siê od korzenia
+				delete this->_pRootObject; this->_pRootObject = nullptr; //Niszczenie rozpoczyna się od korzenia
 				this->_pSelectObject = nullptr;
-				pOpenFile = new TFileStream(pOpenDialog->FileName, fmOpenRead);
+				pOpenFile = new TFileStream(pFileOpenDialog->FileName, fmOpenRead);
 				if(!pOpenFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));
 				int iSizeFile = pOpenFile->Size, //Wielkość pliku
 						iSizeStructData = sizeof(ReadWriteDataObject); //Wielkość struktury
@@ -610,16 +633,16 @@ bool __fastcall GsDrawPanelBibleScheme::_OpenProjectObject(UnicodeString &ustrGe
 		}
 		catch(const Exception& e)
 		{
-			MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pFileOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
 	}
 	__finally
 	{
-		ustrGetProjectName = pOpenDialog->FileName;
-		if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
+		ustrGetProjectName = pFileOpenDialog->FileName;
+		if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
     //Automatycznie zaznaczony pierwszy element w drzewie
 		this->_pGsTreeBibleScheme->Selected = this->_pGsTreeBibleScheme->Items->GetFirstNode();
-    this->_pGsTreeBibleScheme->Click();
+		this->_pGsTreeBibleScheme->Click();
 	}
 	return bReturn;
 }
@@ -632,18 +655,25 @@ bool __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile(UnicodeString &
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  const UnicodeString ustrFileTypes[] = {"Pliki projektu schematu", "*.svp",
+																				 "Każdy plik", "*.*"};
 	TFileStream *pSaveFile=nullptr;//=0;
 	PReadWriteDataObject pDataToSave;//=0;
 	bool bReturn=false;
 	//---
-	TSaveDialog *pSaveDialog = new TSaveDialog(this);
-	if(!pSaveDialog) throw(Exception("Błąd inicjalizacji objektu TSaveDialog"));
-	pSaveDialog->Title = "Podaj nazwę projektu do zapisu";
-	pSaveDialog->Filter =	 "Pliki projektu schematu(*.svp)|*.SVP|Każdy plik (*.*)|*.*"; //Może daĉ do globalnej zmiennej?
-	pSaveDialog->Options << ofOverwritePrompt << ofHideReadOnly;
-	pSaveDialog->InitialDir = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
-	pSaveDialog->DefaultExt = "svp";
-  pSaveDialog->FileName = "Bez nazwy";
+	TFileSaveDialog *pFileSaveDialog = new TFileSaveDialog(this);
+	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog"));
+	pFileSaveDialog->Title = "Podaj nazwę projektu do zapisu";
+	for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
+	{
+		TFileTypeItem *pTFileTypeItem = pFileSaveDialog->FileTypes->Add();
+		pTFileTypeItem->DisplayName = ustrFileTypes[i];
+		pTFileTypeItem->FileMask = ustrFileTypes[i+1];
+	}
+	pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
+	pFileSaveDialog->DefaultFolder = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
+	pFileSaveDialog->DefaultExtension = "svp";
+	pFileSaveDialog->FileName = "Bez nazwy";
 
 	//---
 	try
@@ -653,16 +683,16 @@ bool __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile(UnicodeString &
 			if(this->_pRootObject)
 			//Jeśli istnieje główny korzeñ
 			{
-				if(pSaveDialog->Execute())
+				if(pFileSaveDialog->Execute())
 				{
-					pSaveFile = new TFileStream(pSaveDialog->FileName, fmCreate);
+					pSaveFile = new TFileStream(pFileSaveDialog->FileName, fmCreate);
 					if(!pSaveFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));
 					int iSizeStructData = sizeof(ReadWriteDataObject); //Wielkoĉ struktury
 					//Struktura pomocnicza pojedyñczego objektu
 					pDataToSave = new ReadWriteDataObject();
 					if(!pDataToSave) throw(Exception("Nie dokonano inicjalizacji objektu ReadWriteDataObject"));
 					//---
-					for(int i=0; i<this->_GsChildBibleSchemeList->Count; i++)
+					for(int i=0; i<this->_GsChildBibleSchemeList->Count; ++i)
 					{
 						GsChildBibleScheme *pChild = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 						if(pChild)
@@ -696,18 +726,18 @@ bool __fastcall GsDrawPanelBibleScheme::_SaveProjectObjectToFile(UnicodeString &
 		}
 		catch(const Exception& e)
 		{
-			MessageBox(NULL, Format("Błąd otwarcia pliku, do zapisu, o nazwie: %s", ARRAYOFCONST((pSaveDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			MessageBox(NULL, Format("Błąd otwarcia pliku, do zapisu, o nazwie: %s", ARRAYOFCONST((pFileSaveDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
 	}
 	__finally
 	{
-		ustrGetProjectName = pSaveDialog->FileName;
-		if(pSaveDialog) {delete pSaveDialog; pSaveDialog = nullptr;}
+		ustrGetProjectName = pFileSaveDialog->FileName;
+		if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
 	}
-  return bReturn;
+	return bReturn;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
+void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument(UnicodeString ustrProjectName)
 /**
 	OPIS METOD(FUNKCJI): Metoda zapisuje projekt jako plik dokumentu rtf
 	OPIS ARGUMENTÓW:
@@ -724,16 +754,16 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 	const UnicodeString GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
 																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red255\\green0\\blue255;}" +
 																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
-																		 "\\pard\\sa200\\sl276\\slmult1\\cf3\\fs32\\b Dokument projektu, schematu logicznego wersetów, wykonany w aplikacji Moja Biblia NG\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",
-											//---
-											custrAdressVersRtf = "\\f1\\line\\cf2\\b",
-											custrVersRtf = "\\cf1\\b0\\f0",
-											custrEndVersRtf = "\\cf2\\b\\f1";
+                                     Format("\\pard\\sa200\\sl276\\slmult1\\cf3\\fs32\\b Projekt o nazwie: \"%s\", wykonany w aplikacji Moja Biblia NG\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28", ARRAYOFCONST((ustrProjectName))),
+																		 //---
+																		 custrAdressVersRtf = "\\f1\\line\\cf2\\b",
+																		 custrVersRtf = "\\cf1\\b0\\f0",
+																		 custrEndVersRtf = "\\cf2\\b\\f1";
 
 	try
 	{
 		pStringStream->WriteString(GlobalHeaderRtf);
-		for(int i=0; i<this->_GsChildBibleSchemeList->Count; i++)
+		for(int i=0; i<this->_GsChildBibleSchemeList->Count; ++i)
 		{
 			GsChildBibleScheme *pChild = static_cast<GsChildBibleScheme *>(this->_GsChildBibleSchemeList->Items[i]);
 			if(pChild)
@@ -761,7 +791,7 @@ void __fastcall GsDrawPanelBibleScheme::_ViewProjectDocument()
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_SetObjectName()
 /**
-	OPIS METOD(FUNKCJI): Zmiana wersety przypoządkowanego do objektu
+	OPIS METOD(FUNKCJI): Zmiana wersetu przyporządkowanego do objektu
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -881,6 +911,7 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
 	this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->StyleElements = TStyleElements();
+	this->Color = clWebAzure;
   this->_SListOldConfig = new TStringList(); //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
 	if(!this->_SListOldConfig) throw(Exception("Błąd funkcji TStringList"));
   //--- Zachowanie pierwotnych ustawień z bufora pliku ini, do TStringListy
@@ -918,6 +949,8 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	if(!this->_pGsBarSelectVers) throw(Exception("Błąd inicjalizacji objektu GsBarSelectVers"));
 	this->_pGsBarSelectVers->Parent = this;
 	this->_pGsBarSelectVers->Align = alTop;
+	//this->_pGsBarSelectVers->ParentColor = false;
+  this->_pGsBarSelectVers->Color = clWebYellowGreen;//clWebDarkOrange;
 	//Utworzenie objektu, klasy do scrollowania i stworzenie panelu do rysowania połączeń i objektów, który
 	//znajduje sie na objekcie this->_pGsBarSelectVers
 	this->_pGsScrollBibleScheme = new GsScrollBibleScheme(this);
@@ -1325,7 +1358,7 @@ void __fastcall GsTreeBibleScheme::Click()
 		{
 			pList = pGsDrawPanelBibleScheme->_GsChildBibleSchemeList; //Lista wszystkich objektów, klasy GsChildBibleScheme
 
-			for(int i=0; i<pList->Count; i++)
+			for(int i=0; i<pList->Count; ++i)
 			{
 				pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(pList->Items[i]);
 

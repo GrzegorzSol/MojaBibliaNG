@@ -168,7 +168,7 @@ class GsReadBibleTextData : public TObject
 		static bool inline IsInitLibrary=false; //Czy została zainicjowana bibliteka (moduł)
 		//---
 		//Metoda zwraca wskaźnik na globalną listę grafik
-		inline static TImageList *__fastcall GetImageListData() {if(GsReadBibleTextData::IsInitLibrary)	 return GsReadBibleTextData::_GsImgListData; else return 0;}
+		//inline static TImageList *__fastcall GetImageListData() {if(GsReadBibleTextData::IsInitLibrary)	 return GsReadBibleTextData::_GsImgListData; else return 0;}
 		static UnicodeString __fastcall GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 		static void __fastcall InitMyBible(TForm *MainWindow); //Inicjalizacja pracy z biblioteką do analizy Pisma Świętego
 		static void __fastcall CloseMyBible();	//Zamknięcie bilioteki do analizy Pisma Świętego
@@ -177,6 +177,7 @@ class GsReadBibleTextData : public TObject
 		static void __fastcall SetupVariables(); //Ustawienie zmiennych dla klasy
 		static unsigned char __fastcall CountTranslates();	//Metoda zwraca ilość tłumaczeń
 		static void __fastcall GetInfoNameTranslate(const unsigned char i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
+		static void __fastcall GetNameIndependentTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023]
 		static void __fastcall WriteCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
 		static void __fastcall GetTextHTMLCurrentSheet(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 		static GsReadBibleTextItem *__fastcall GetTranslate(const unsigned char cucNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia

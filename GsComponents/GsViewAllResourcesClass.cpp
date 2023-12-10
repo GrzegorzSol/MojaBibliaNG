@@ -74,7 +74,7 @@ __fastcall GsViewAllResourcesClass::GsViewAllResourcesClass(TComponent* Owner) :
 	this->ViewStyle = vsReport;
 	this->SmallImages	 = this->_pImages;
 	//this->StyleElements = TStyleElements();
-	for(int iGroup=0; iGroup<enGroup_Count; iGroup++)
+	for(int iGroup=0; iGroup<enGroup_Count; ++iGroup)
 	{
 		TListGroup *group = this->Groups->Add();
 		if(group)
@@ -195,7 +195,7 @@ void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System:
 	DrawText(this->Canvas->Handle, ustrItem.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	this->Canvas->Font->Style = TFontStyles();
 	this->Canvas->Font->Color = this->Font->Color;
-	for(int iColumn=1; iColumn<this->Columns->Count; iColumn++)
+	for(int iColumn=1; iColumn<this->Columns->Count; ++iColumn)
 	{
 		 //Wymiary następnej kolumny
 		 RectSubItem.Left += this->Column[iColumn-1]->Width+1;
@@ -230,7 +230,7 @@ void __fastcall GsViewAllResourcesClass::_CreateAllColumns()
 	TListColumn	 *NewColumn;
 
 	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(cstrColumnNames); iColumns++)
+	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(cstrColumnNames); ++iColumns)
 	{
 		NewColumn = this->Columns->Add();
 		NewColumn->Caption = cstrColumnNames[iColumns];
@@ -263,7 +263,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	this->Items->BeginUpdate();
 	//Lista tłumaczeń
 	SDirList = TDirectory::GetFiles(GlobalVar::Global_custrGetDataDir);
-	for(int i=0; i<SDirList.Length; i++)
+	for(int i=0; i<SDirList.Length; ++i)
 	{
 		ustrExt = TPath::GetExtension(SDirList[i]);
 
@@ -308,7 +308,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	{
 		if(SListTemp->Strings[iSelectDir].IsEmpty()) continue;
 		SDirMultiMList = TDirectory::GetFiles(SListTemp->Strings[iSelectDir]);
-		for(int i=0; i<SDirMultiMList.Length; i++)
+		for(int i=0; i<SDirMultiMList.Length; ++i)
 		{
 			ustrTempLowerName = LowerCase(SDirMultiMList[i]);
 			if((TPath::GetExtension(ustrTempLowerName) != ".jpg") &&
@@ -336,7 +336,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 	}
 	//Lista komentarzy
 	SDCommentFile = TDirectory::GetFiles(GlobalVar::Global_custrPathDirComments);
-	for(int i=0; i<SDCommentFile.Length; i++)
+	for(int i=0; i<SDCommentFile.Length; ++i)
 	{
 		NewItem = this->Items->Add();
 		if(NewItem)
@@ -366,7 +366,7 @@ void __fastcall GsViewAllResourcesClass::_LoadAllResources()
 		SListTemp->Clear();
 		SListTemp->LoadFromFile(GlobalVar::Global_custrPathFileFavoriteVers);
 
-		for(int i=0; i<SListTemp->Count; i++)
+		for(int i=0; i<SListTemp->Count; ++i)
 		{
 			NewItem = this->Items->Add();
 			if(NewItem)

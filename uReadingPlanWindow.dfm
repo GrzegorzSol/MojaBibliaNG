@@ -56,19 +56,16 @@ object ReadingPlanWindow: TReadingPlanWindow
     object PanelButtons: TPanel
       Left = 1010
       Top = 1
-      Width = 207
+      Width = 211
       Height = 68
       Align = alClient
       BevelOuter = bvLowered
       ShowCaption = False
       TabOrder = 0
-      ExplicitLeft = 1080
-      ExplicitTop = 32
-      ExplicitWidth = 185
-      ExplicitHeight = 41
+      ExplicitWidth = 207
       object SButtonJournaling: TSpeedButton
         AlignWithMargins = True
-        Left = 6
+        Left = 10
         Top = 8
         Width = 55
         Height = 52
@@ -76,12 +73,15 @@ object ReadingPlanWindow: TReadingPlanWindow
         Margins.Top = 7
         Margins.Right = 7
         Margins.Bottom = 7
+        CustomHint = BalloonHintReadingPlan
         Align = alRight
         AllowAllUp = True
         GroupIndex = 2
         Down = True
         ImageIndex = 2
         Images = ImageListBigReadingPlan
+        ParentShowHint = False
+        ShowHint = True
         SelectedImageIndex = 3
         OnClick = SButtonJournalingClick
         ExplicitLeft = 1155
@@ -90,7 +90,7 @@ object ReadingPlanWindow: TReadingPlanWindow
       end
       object SButtonStartSpeak: TSpeedButton
         AlignWithMargins = True
-        Left = 75
+        Left = 79
         Top = 8
         Width = 55
         Height = 52
@@ -98,6 +98,7 @@ object ReadingPlanWindow: TReadingPlanWindow
         Margins.Top = 7
         Margins.Right = 7
         Margins.Bottom = 7
+        CustomHint = BalloonHintReadingPlan
         Align = alRight
         AllowAllUp = True
         GroupIndex = 1
@@ -113,7 +114,7 @@ object ReadingPlanWindow: TReadingPlanWindow
       end
       object SButtonStopSpeak: TSpeedButton
         AlignWithMargins = True
-        Left = 144
+        Left = 148
         Top = 8
         Width = 55
         Height = 52
@@ -121,10 +122,13 @@ object ReadingPlanWindow: TReadingPlanWindow
         Margins.Top = 7
         Margins.Right = 7
         Margins.Bottom = 7
+        CustomHint = BalloonHintReadingPlan
         Align = alRight
         ImageIndex = 4
         Images = ImageListBigReadingPlan
+        ParentShowHint = False
         PressedImageIndex = 5
+        ShowHint = True
         OnClick = SButtonStopSpeakClick
         ExplicitLeft = 1017
         ExplicitTop = 9
@@ -141,6 +145,8 @@ object ReadingPlanWindow: TReadingPlanWindow
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 1
+    ExplicitWidth = 1228
+    ExplicitHeight = 846
     object SplitterSizeJournaling: TSplitter
       AlignWithMargins = True
       Left = 966
@@ -180,13 +186,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -200,13 +207,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -220,13 +228,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -240,13 +249,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -260,13 +270,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -280,13 +291,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -300,13 +312,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1004
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -320,13 +333,14 @@ object ReadingPlanWindow: TReadingPlanWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 943
-          Height = 823
+          Width = 947
+          Height = 824
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1204
+          ExplicitWidth = 943
+          ExplicitHeight = 823
           ControlData = {
-            4C000000766100000F5500000000000000000000000000000000000000000000
+            4C000000E06100002A5500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -348,7 +362,7 @@ object ReadingPlanWindow: TReadingPlanWindow
         Left = 3
         Top = 6
         Width = 244
-        Height = 833
+        Height = 834
         Cursor = crHandPoint
         Margins.Top = 6
         Margins.Bottom = 6
@@ -2907,5 +2921,10 @@ object ReadingPlanWindow: TReadingPlanWindow
       0000000000007FFF000000060000000000007E000000003E0000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object BalloonHintReadingPlan: TBalloonHint
+    Images = ImageListBigReadingPlan
+    Left = 151
+    Top = 477
   end
 end

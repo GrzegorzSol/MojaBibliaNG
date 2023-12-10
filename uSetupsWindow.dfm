@@ -25,15 +25,13 @@ object SetupsWindow: TSetupsWindow
     Width = 1007
     Height = 680
     CustomHint = SW_BalloonHint
-    ActivePage = SW_OthersSetups
+    ActivePage = SW_SheetTranslates
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitWidth = 1003
-    ExplicitHeight = 679
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -735,6 +733,8 @@ object SetupsWindow: TSetupsWindow
         SmallImages = SW_ImgListMainSmall
         TabOrder = 0
         ViewStyle = vsReport
+        ExplicitWidth = 971
+        ExplicitHeight = 603
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
@@ -749,6 +749,7 @@ object SetupsWindow: TSetupsWindow
         BorderStyle = sbsSunken
         Caption = 'Wyb'#243'r u'#380'ywanych t'#322'umacze'#324' w aplikacji - uwaga nr. 1 '
         TabOrder = 1
+        ExplicitWidth = 989
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -1150,8 +1151,6 @@ object SetupsWindow: TSetupsWindow
       end>
     ShowCaption = False
     TabOrder = 1
-    ExplicitTop = 730
-    ExplicitWidth = 1182
     DesignSize = (
       1186
       29)

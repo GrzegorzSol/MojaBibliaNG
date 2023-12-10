@@ -107,9 +107,10 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		//---
 		void __fastcall _AddNewObject(); //Dodanie objektu, klasy GsChildBibleScheme
 		void __fastcall _DeleteObject();
+		void __fastcall _NewProject();  //Wykasowanie całego projektu, by zacząć nowy
 		bool __fastcall _OpenProjectObject(UnicodeString &ustrGetProjectName);
 		bool __fastcall _SaveProjectObjectToFile(UnicodeString &ustrGetProjectName);
-		void __fastcall _ViewProjectDocument();
+		void __fastcall _ViewProjectDocument(UnicodeString ustrProjectName);
 		void __fastcall _SetObjectName(); //Zmiana wersety przypoządkowanego do objektu
 };
 /****************************************************************************
@@ -149,17 +150,19 @@ class GsMasterBibleScheme : public TCustomPanel
 		__property TWinControl *SelectObject {read = FGetSelectObject, default = 0};
 		__property TWinControl *GetDrawPanelScheme {read = _pGsDrawPanelBibleScheme, default = 0};
 		__property TWinControl *GetTreeBibleScheme {read = _pGsTreeBibleScheme, default = 0};
+		__property GsEditorClass *GetEditor {read = _pGsEditorClass, default = 0};
 		__property UnicodeString ProjectName {read = FProjectName};
 
 		inline void __fastcall AddNewObjectScheme() {this->_pGsDrawPanelBibleScheme->_AddNewObject();}
 		inline void __fastcall DeleteObjectScheme() {this->_pGsDrawPanelBibleScheme->_DeleteObject();}
+		inline void __fastcall NewProject() {this->_pGsDrawPanelBibleScheme->_NewProject();}
 		bool __fastcall OpenProjectObjectScheme();
     bool __fastcall SaveProjectObjectSchemeToFile();
-		inline void __fastcall ViewProjectDocument() {this->_pGsDrawPanelBibleScheme->_ViewProjectDocument();}
+		inline void __fastcall ViewProjectDocument(UnicodeString ustrProjectName)
+			{this->_pGsDrawPanelBibleScheme->_ViewProjectDocument(ustrProjectName);}
 		inline int __fastcall GetCountObjectScheme() {return this->_pGsDrawPanelBibleScheme->_GsChildBibleSchemeList->Count;}
-		inline GsEditorClass *__fastcall GetEditorClass() {return this->_pGsEditorClass;}
 		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsMasterBibleScheme\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
-		inline void SetObjectName() {this->_pGsDrawPanelBibleScheme->_SetObjectName();}
+		inline void SetObjectName() {this->_pGsDrawPanelBibleScheme->_SetObjectName();} //Zmiana wersetu przyporządkowanego do objektu
 		void __fastcall OpenSetupsScheme(TWinControl *pWinControl, TAction *pAction, int iLeft, int iTop);
 		void __fastcall VisibleSetupsScheme(bool bVisible);
 	protected:
@@ -168,7 +171,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 	private:
 
-		TWinControl * __fastcall FGetSelectObject();
+		TWinControl * __fastcall FGetSelectObject(); //Odczyt aktualnego objektu
 		void __fastcall _OnAccept(System::TObject* Sender);
 		void __fastcall _OnNoAccept(System::TObject* Sender);
 		void __fastcall _ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);

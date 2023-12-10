@@ -77,6 +77,13 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan6); this->WebBrowserReadingPlan6->Navigate(WideString("about:blank").c_bstr());
 	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan7); this->WebBrowserReadingPlan7->Navigate(WideString("about:blank").c_bstr());
 	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan8); this->WebBrowserReadingPlan8->Navigate(WideString("about:blank").c_bstr());
+	//Podpowiedzi
+	this->SButtonJournaling->Hint = Format("%s|Pokazuje wszystkie wersety w wybranym planie czytania.|%u",
+		ARRAYOFCONST(("Pokaż wersety plany", this->SButtonJournaling->ImageIndex)));
+	this->SButtonStartSpeak->Hint = Format("%s|Rozpoczyna czytanie aktualnego wersetu.|%u",
+		ARRAYOFCONST(("Czytanie wersetu", this->SButtonStartSpeak->ImageIndex)));
+	this->SButtonStopSpeak->Hint = Format("%s|Przerywa lub wznawia czytanie aktualnego wersetu.|%u",
+		ARRAYOFCONST(("Przyrywanie lub wznawianie czytania", this->SButtonStopSpeak->ImageIndex)));
 	//Właściwe wyświetlenie tłumaczenia, księgi i rozdziału
 	SecureZeroMemory(&Gl_SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
 	Gl_SetDataDisplay.strBackgroundColor = ColorToWebColorStr(Gl_TablePagesColors[0]);
@@ -113,7 +120,7 @@ void __fastcall TReadingPlanWindow::FormActivate(TObject *Sender)
 */
 {
 	//Odczytanie nieprzeczytanych tekstów z planu
-	for(int i=1; i<this->ChListBoxJournaling->Count; i++)
+	for(int i=1; i<this->ChListBoxJournaling->Count; ++i)
 	{
 		if((i<=(this->_iDayPlan + 1)) && (!this->ChListBoxJournaling->Checked[i]))
 		{
@@ -139,7 +146,7 @@ void __fastcall TReadingPlanWindow::_ReadSetupsJournal()
 	{
 		this->_pHSListJournaling->LoadFromFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
 		this->ChListBoxJournaling->Items->BeginUpdate();
-		for(int i=0; i<this->_pHSListJournaling->Count; i++)
+		for(int i=0; i<this->_pHSListJournaling->Count; ++i)
 		{
 			if(i==0) //Pierwsza pozycja to nazwa planu
 			{
@@ -185,7 +192,7 @@ void __fastcall TReadingPlanWindow::_ReadSelectPlan(const int iSetDayPlan)
 	{
 		UnicodeString ustrIDTPlan = ustrNameTraPlan.SubString(1, iPosName-1); //Sama nazwa tłumaczenia
 
-		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
+		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
 		{
 			if(ustrIDTPlan == TPath::GetFileName(GlobalVar::SDirTranslatesList[i])) //Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
 			{
@@ -225,12 +232,12 @@ void __fastcall TReadingPlanWindow::_ReadSelectPlan(const int iSetDayPlan)
 				//											1						2						3
 				//sda tablica par (para1 para1|para2 para2|para3 para3)
 				TStringDynArray sda = SplitString(pHSLFilePlan->Strings[iCurrentDayPlan+1], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
-				for(int i=0; i<sda.Length; i++)
+				for(int i=0; i<sda.Length; ++i)
 				{
 					iLengthPair = UnicodeString(sda[i]).Length(); //Długość pary
 					if(iLengthPair >= Gl_ciMaxLengthPair) {pHSList->AddObject(sda[i], 0);} //StringLista "pHSList" zawiera pary
 				}
-				for(int i=0; i<Gl_ciMaxShets; i++)
+				for(int i=0; i<Gl_ciMaxShets; ++i)
 				//Przegląd wszystkich możliwych zakładek
 				{
 					//Wyodrębnienie objektu klasy TWebBrowser

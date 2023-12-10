@@ -42,7 +42,7 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 	TListColumn *NewColumn;
 
 	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<enColumn_Count; iColumns++)
+	for(unsigned int iColumns=0; iColumns<enColumn_Count; ++iColumns)
 	{
 		NewColumn = this->LViewHistoryCh->Columns->Add();
 		NewColumn->Caption = custrNameColumns[iColumns];
@@ -55,6 +55,8 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 	this->LViewHistoryCh->Items->EndUpdate();
 
 	this->_pStartAction->Enabled = false;
+	//---
+  this->Act_DeleteSelectItemHistoryCh->Hint = Format("%s|Skasowanie z listy historii zaznaczonej pozycji, operacja jest nieodwracalna.|%u", ARRAYOFCONST((this->Act_DeleteSelectItemHistoryCh->Caption, this->Act_DeleteSelectItemHistoryCh->ImageIndex)));
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -107,7 +109,7 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 		return;
 	}
 
-	for(int i=0; i<pHSListSelected->Count; i++)
+	for(int i=0; i<pHSListSelected->Count; ++i)
 	{
 		iIndexOf = GlobalVar::Global_HListHistoryChapterOpen->IndexOf(pHSListSelected->Strings[i]);
 		if(iIndexOf == -1) continue;
@@ -211,7 +213,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListVi
 		RectIcon.Top + ((Rect.Height() - pLView->SmallImages->Height) / 2), enSmallImage_ChaptItem);
 
 	TRect RectSubItem	 = RectLabel;
-	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
+	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; ++iColumn)
 	{
 		//Wymiary następnej kolumny
 		RectSubItem.Left += pLView->Column[iColumn]->Width;
@@ -257,7 +259,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 //		GsDebugClass::WriteDebug(Format("iPosSpace: %d", ARRAYOFCONST((iPosSpace))));
 //		GsDebugClass::WriteDebug(Format("ustrChapt: %s - %d", ARRAYOFCONST((ustrChapt, iChapt))));
 //	#endif
-	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
+	for(int i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		pInfobook = const_cast<PInfoAllBooks>(&GsReadBibleTextData::GsInfoAllBooks[i]);
 		if(!pInfobook) return;

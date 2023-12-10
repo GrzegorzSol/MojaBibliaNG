@@ -210,7 +210,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pCBoxSelectFontName->Tag = i;
 			this->pCBoxSelectFontName->Style = csDropDownList;
 			this->pCBoxSelectFontName->OnChange = this->_OnChangeCBox;
-			for(unsigned int iLicz=0; iLicz<ARRAYSIZE(ustrNameFont); iLicz++)
+			for(unsigned int iLicz=0; iLicz<ARRAYSIZE(ustrNameFont); ++iLicz)
 			{
 				this->pCBoxSelectFontName->Items->Add(ustrNameFont[iLicz]);
 			}
@@ -239,7 +239,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pCBoxSelectFontSize->Tag = i;
 			this->pCBoxSelectFontSize->Style = csDropDownList;
 			this->pCBoxSelectFontSize->OnChange = this->_OnChangeCBox;
-			for(unsigned int iLicz=0; iLicz<ARRAYSIZE(ustrSizeFont); iLicz++)
+			for(unsigned int iLicz=0; iLicz<ARRAYSIZE(ustrSizeFont); ++iLicz)
 			{
 				this->pCBoxSelectFontSize->Items->Add(ustrSizeFont[iLicz]);
 			}
@@ -426,7 +426,7 @@ void __fastcall GsEditorClass::_InitInterface()
 		}
 	}
 	//Panele
-	for(int i=0; i<EnPanel_Count; i++)
+	for(int i=0; i<EnPanel_Count; ++i)
 	{
 		TStatusPanel *Panel = this->pSBar->Panels->Add();
 		if(i==EnPanel_FileInfo) Panel->Width = (float)this->Parent->Width * 0.66;
@@ -545,6 +545,8 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 {
 	TToolButton *pTButt = dynamic_cast<TToolButton *>(Sender);
 	if(!pTButt) return;
+	const UnicodeString ustrFileTypes[] = {"Pliki typy rtf", "*.rtf",
+																				 "Każdy plik", "*.*"};
 	//---
 	int iTag = pTButt->Tag / 10 - 1;
 	const UnicodeString ustrFileFilter = "Pliki typu rtf(*.rtf)|*.RTF|Każdy plik (*.*)|*.*";
@@ -566,20 +568,27 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		//---
 		case EnImage_SaveAs:	 //Zapis pod zmienioną nazwą
 		{
-			TSaveDialog *pSaveDialog = new TSaveDialog(this);
-			if(!pSaveDialog) throw(Exception("Błąd inicjalizacji objektu TSaveDialog"));
-			pSaveDialog->Title = "Podaj nazwę pliku do zapisu";
-			pSaveDialog->Filter =	 ustrFileFilter; //Może daĉ do globalnej zmiennej?
-			pSaveDialog->Options << ofOverwritePrompt << ofHideReadOnly;
-			pSaveDialog->DefaultExt = "rtf";
+			TFileSaveDialog  *pFileSaveDialog = new TFileSaveDialog (this);
+			if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
+			pFileSaveDialog->Title = "Podaj nazwę pliku do zapisu";
+			for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
+			{
+				TFileTypeItem *pTFileTypeItem = pFileSaveDialog->FileTypes->Add();
+				pTFileTypeItem->DisplayName = ustrFileTypes[i];
+				pTFileTypeItem->FileMask = ustrFileTypes[i+1];
+			}
+
+			pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
+			pFileSaveDialog->DefaultExtension  = "rtf";
+			pFileSaveDialog->FileName = "Bez nazwy";
 
 			try
 			{
 				try
 				{
-					if(pSaveDialog->Execute())
+					if(pFileSaveDialog->Execute())
 					{
-						this->pTRichEdit->Lines->SaveToFile(pSaveDialog->FileName);
+						this->pTRichEdit->Lines->SaveToFile(pFileSaveDialog->FileName);
 						this->pTButtSave->Enabled = false;
 						this->pTRichEdit->Modified = false;
 						this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
@@ -590,33 +599,39 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 				}
 				catch(const Exception& e)
 				{
-					MessageBox(NULL, Format("Błąd otwarcia pliku, do zapisu, o nazwie: %s", ARRAYOFCONST((pSaveDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+					MessageBox(NULL, Format("Błąd otwarcia pliku, do zapisu, o nazwie: %s", ARRAYOFCONST((pFileSaveDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 				}
 			}
 			__finally
 			{
-				if(pSaveDialog) {delete pSaveDialog; pSaveDialog = nullptr;}
+				if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
 			}
 		}
 		break;
 		//---
 		case EnImage_Open:		 //Otwórz
 		{
-			TOpenDialog *pOpenDialog = new TOpenDialog(this);
-			if(!pOpenDialog) throw(Exception("Błąd inicjalizacji objektu TOpenDialog"));
+			TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
+			if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
 
-			pOpenDialog->Title = "Podaj nazwę pliku do odczytu";
-			pOpenDialog->Filter =	 ustrFileFilter; //Może dać do globalnej zmiennej?
-			pOpenDialog->Options << ofHideReadOnly << ofPathMustExist << ofFileMustExist;
+			pFileOpenDialog->Title = "Podaj nazwę pliku do odczytu";
+			for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
+			{
+				TFileTypeItem *pTFileTypeItem = pFileOpenDialog->FileTypes->Add();
+				pTFileTypeItem->DisplayName = ustrFileTypes[i];
+				pTFileTypeItem->FileMask = ustrFileTypes[i+1];
+			}
+
+			pFileOpenDialog->Options = TFileDialogOptions() << fdoPathMustExist << fdoFileMustExist;
 
 			try
 			{
 				try
 				{
-					if(pOpenDialog->Execute()) //Element został wybrany
+					if(pFileOpenDialog->Execute()) //Element został wybrany
 					{
-						this->pTRichEdit->Lines->LoadFromFile(pOpenDialog->FileName);
-						this->FEditorFileName = pOpenDialog->FileName;
+						this->pTRichEdit->Lines->LoadFromFile(pFileOpenDialog->FileName);
+						this->FEditorFileName = pFileOpenDialog->FileName;
 						this->pSBar->Panels->Items[EnPanel_FileInfo]->Text = Format("Aktualny plik: \"%s\"", ARRAYOFCONST((this->FEditorFileName)));
 						this->pTRichEdit->Modified = false;
 						this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
@@ -626,12 +641,12 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 				}
 				catch(const Exception& e)
 				{
-					MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+					MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pFileOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 				}
 			}
 			__finally
 			{
-				if(pOpenDialog) {delete pOpenDialog; pOpenDialog = nullptr;}
+				if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
 			}
 
 		}

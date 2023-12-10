@@ -116,18 +116,18 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	this->STW_ChBoxMemoSetupsSearch->Tag = enTag_CBoxIsMemorySetupsSearch;	//Czy zapamiętać parametry wuszukiwania?
 	//Wstępne ustawienia zawartości komponentów
 		//Definiowanie komponentów wyboru ksiąg biblijnych
-	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
+	for(int i=0; i<GlobalVar::Global_NumberBooks; ++i)
 		{this->STW_CBoxStartSelectRange->Items->Add(GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook);}
 	this->STW_CBoxStopSelectRange->Items->Assign(this->STW_CBoxStartSelectRange->Items);
 		//Definiowanie komponentu zakresu wyszukiwania
-	for(unsigned int i=0; i<ARRAYSIZE(GsReadBibleTextData::GsNameAllRanges); i++)
+	for(unsigned int i=0; i<ARRAYSIZE(GsReadBibleTextData::GsNameAllRanges); ++i)
 		{this->STW_CBoxSelectRangeSearch->Items->Add(GsReadBibleTextData::GsNameAllRanges[i]);}
 	this->STW_CBoxSelectRangeSearch->ItemIndex = en_GrSearch_FullAll;
 		//Definiowanie listy tłumaczeń do wybrania
 	UnicodeString ustrNameTranslate;
 	if(GsReadBibleTextData::CountTranslates() > 0)
 	{
-		for(unsigned char i=0; i<GsReadBibleTextData::CountTranslates(); i++)
+		for(unsigned char i=0; i<GsReadBibleTextData::CountTranslates(); ++i)
 		{
 			GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTranslate);
 			this->STW_CBoxSelectTranslates->Items->Add(ustrNameTranslate);
@@ -167,11 +167,11 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 	enum {enLimit_OldTestament, enLimit_NewTestament, enLimit_Apocryfics=73};
 	//----- Ustawienia objektu, klasy TListView dla statystyki
 	TListColumn *NewColumn=nullptr;
-	TImageList *pImgList = GsReadBibleTextData::GetImageListData();
+	TImageList *pImgList = GsReadBibleTextData::GetImageList();
 	if(!pImgList) throw(Exception("Błąd wyłuskania objektu TImageList"));
 	this->STW_LViewStatistic->SmallImages = pImgList;
 	//this->STW_LViewStatistic->GroupHeaderImages = pImgList;
-	for(int i=0; i<GsReadBibleTextData::GsNumberGroups; i++)
+	for(int i=0; i<GsReadBibleTextData::GsNumberGroups; ++i)
 	{
 		TListGroup *NewGroup = this->STW_LViewStatistic->Groups->Add();
 		NewGroup->State = TListGroupStateSet() << lgsNormal << lgsCollapsible;
@@ -179,7 +179,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 		NewGroup->HeaderAlign = taCenter;
 	}
 	//Dodawanie kolumn do objektu, klasy TListView, statystyki
-	for(unsigned int iColumns=0; iColumns<enColumn_Count; iColumns++)
+	for(unsigned int iColumns=0; iColumns<enColumn_Count; ++iColumns)
 	{
 		NewColumn = this->STW_LViewStatistic->Columns->Add();
 		NewColumn->Caption = ustrNameColumn[iColumns];
@@ -203,7 +203,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 		NewColumn->ImageIndex = enImageIndex_Root;
 	}
 	this->STW_LViewStatistic->Items->BeginUpdate();
-	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; i++)
+	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TListItem *NewItem = this->STW_LViewStatistic->Items->Add();
 		NewItem->Caption = GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook;
@@ -263,7 +263,7 @@ void __fastcall TSearchTextWindow::FormDestroy(TObject *Sender)
 
 	this->STW_CBoxHistorySearchText->Items->SaveToFile(GlobalVar::Global_custrPathHistorySearch, TEncoding::UTF8);
 	//Zwalnianie prywatnych danych związanych z objektem TListitem, dla poszczególnych ksiąg
-	for(int i=0; i<GlobalVar::Global_NumberBooks; i++)
+	for(int i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[i];
 		if(MyItem)
@@ -360,7 +360,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	else return;
 	//---
 	this->_pHSListSearchResult->Clear();
-	for(signed char scIndex=scTempStart; scIndex<=scTempStop; scIndex++)
+	for(signed char scIndex=scTempStart; scIndex<=scTempStop; ++scIndex)
 	{
 		pBookListText = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, scIndex);
 		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[scIndex];
@@ -376,7 +376,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 		//---
 		if(pBookListText)
 		{
-			for(int i=0; i<pBookListText->Count; i++)
+			for(int i=0; i<pBookListText->Count; ++i)
 			{
 				iIndexTable = pBookListText->Strings[i].SubString(1, 3).ToInt() - 1; //Numer księgi liczony od 0.
 				//---
@@ -424,7 +424,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 						MyDataStatistic->uiCountFind++;
 					} //if(iPositionSearch > 0)
 				} //if(this->STW_ChBoxIsRegEx->Checked)
-			} //for(int i=0; i<pBookListText->Count; i++)
+			} //for(int i=0; i<pBookListText->Count; ++i)
 		} //if(pBookListText)
 	} //for(...)
 
@@ -446,7 +446,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	const int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
 																			 //Gdy zostanie ona przekroczona, zostanie usunięte najstarsze słowo, by dodać najnowsze
 
-	for(int i=0; i<this->STW_CBoxHistorySearchText->Items->Count; i++)
+	for(int i=0; i<this->STW_CBoxHistorySearchText->Items->Count; ++i)
 	{
 		if(STW_CBoxHistorySearchText->Text.LowerCase() == this->STW_CBoxHistorySearchText->Items->Strings[i].LowerCase())
 		{
@@ -475,7 +475,7 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 	if(!pCBox) return;
 	//Wyczyszczenie objekty klasy TWebBrowser, do przeglądania znalezionych wersetów w wybranek księdze
 	this->STW_WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
-	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; i++)
+	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[i];
 		if(MyItem)
@@ -654,7 +654,7 @@ void __fastcall TSearchTextWindow::STW_LViewAllSelectItem(TObject *Sender,
 					_tempHSLst = new THashedStringList();
 					if(!_tempHSLst) throw(Exception("Błąd tworzenia tymczasowego objektu THashedStringList"));
 					//Skopiowanie wersetów dla wybranej księgi, z lsty wszystkich znalezionych werstów
-					for(int i=0; i<this->_pHSListSearchResult->Count; i++)
+					for(int i=0; i<this->_pHSListSearchResult->Count; ++i)
 					{
 						//Wyłuskanie wskaźnika na objekt, przyporządkowany pozycji w objekcie klasy THashedStringList
 						MyObjectVers *pMyObjectVers = static_cast<MyObjectVers *>(this->_pHSListSearchResult->Objects[i]);
@@ -836,7 +836,7 @@ void __fastcall TSearchTextWindow::STW_LViewStatisticDrawItem(TCustomListView *S
 	DrawText(pLView->Canvas->Handle,	Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	//---
 	TRect RectSubItem = RectBounds;
-	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
+	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; ++iColumn)
 	{
 		//Wymiary następnej kolumny
 		RectSubItem.Left += pLView->Column[iColumn]->Width + 1;
@@ -1030,7 +1030,7 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 
 	try
 	{
-		for(int i=0; i<_pHListAnyVers->Count; i++)
+		for(int i=0; i<_pHListAnyVers->Count; ++i)
 		{
 			if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
 			pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);

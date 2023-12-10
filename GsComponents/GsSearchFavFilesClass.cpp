@@ -52,7 +52,7 @@ __fastcall GsSearchFavFilesClass::GsSearchFavFilesClass(TComponent* Owner) : TCu
 	this->_pPopupM->AutoHotkeys = maManual; //Brak podkreśleń
 	this->_pPopupM->AutoPopup = false;
 	this->_pPopupM->Images = this->_pImages16;
-	for(int i=0; i<ARRAYSIZE(custrPMenu); i++)
+	for(int i=0; i<ARRAYSIZE(custrPMenu); ++i)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->_pPopupM);
 		if(!NewItem) throw(Exception("Błąd funkcji TMenuItem"));
@@ -263,7 +263,7 @@ void __fastcall GsSearchFavFilesClass::ReadDirectoryFavSearch()
 
 	this->_SDirSearchFilesFav = TDirectory::GetFiles(GlobalVar::Global_custrPathSearchFavorities, "*" + GlobalVar::Global_custrFileSearchFavExtend, 0);
 	this->Items->BeginUpdate();
-	for(int i=0; i<this->_SDirSearchFilesFav.Length; i++)
+	for(int i=0; i<this->_SDirSearchFilesFav.Length; ++i)
 	{
 		NewItem = this->Items->Add();
 		if(NewItem)

@@ -26,6 +26,7 @@ enum {enImgScheme_AddLink,
 			enImgScheme_Vieweditor,
 			enImgScheme_RenameObject,
 			enImgScheme_Setup,
+			enImgScheme_NewProject,
 			//--- Tagi
 			enTagScheme_AddLink=100,
 			enTagScheme_DeleteLink,
@@ -34,7 +35,8 @@ enum {enImgScheme_AddLink,
 			enTagScheme_CreateRtf,
 			enTagScheme_ViewEditor,
 			enTagScheme_RenameObject,
-			enTagScheme_Setup
+			enTagScheme_Setup,
+      enTagScheme_NewProject
 };
 //---------------------------------------------------------------------------
 __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
@@ -46,7 +48,7 @@ __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->Width = Application->MainForm->Width - 12;
+	this->Width = Application->MainForm->Width - 120;
 	this->Height = Application->MainForm->Height - 12;
 
 	this->pGsMasterBibleScheme = new GsMasterBibleScheme(this);
@@ -71,6 +73,8 @@ __fastcall TSchemeVersWindow::TSchemeVersWindow(TComponent* Owner)
 	this->ActRenameObject->Tag = enTagScheme_RenameObject;
 	this->ActSetupScheme->Hint = Format("%s|Ustawienia dotyczące modułu do tworzenia analizy logicznej tekstu|%u", ARRAYOFCONST((this->ActSetupScheme->Caption, this->ActSetupScheme->ImageIndex)));
 	this->ActSetupScheme->Tag = enTagScheme_Setup;
+	this->ActNew->Hint = Format("%s|Zacznij nowy projekt|%u", ARRAYOFCONST((this->ActNew->Caption, this->ActNew->ImageIndex)));
+	this->ActNew->Tag = enTagScheme_NewProject;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -92,7 +96,7 @@ void __fastcall TSchemeVersWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	for(int i=0; i<this->ActToolBarScheme->ControlCount; i++)
+	for(int i=0; i<this->ActToolBarScheme->ControlCount; ++i)
 	{
 		TControl *pControl = this->ActToolBarScheme->Controls[i];
 		if(pControl->Action == this->ActSetupScheme)
@@ -129,7 +133,8 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 	this->ActCreateFileFromScheme->Enabled = true;
 	this->ActDeleteLink->Enabled = true;
 	this->ActRenameObject->Enabled = true;
-  this->ActSave->Enabled = true;
+	this->ActSave->Enabled = true;
+	this->ActNew->Enabled = true;
 	if(!this->ActViewEditor->Checked)
 	//28-03-2021 - Jeśli został dodany element do schematu, automatycznie wyświetlany jest edytor, by nie spowodować błędu fokusa
 	//w wypadku próby wyświetlenia w edytorze dokumentu, przy równoczesnym jego ukryciu.
@@ -140,7 +145,6 @@ void __fastcall TSchemeVersWindow::ActNewLinkExecute(TObject *Sender)
 		this->ActViewEditorExecute(this->ActViewEditor);
 	}
 	this->ActViewEditor->Enabled = false; //Zablokowanie wyłączania edytora - 28-03-2021
-
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActDeleteLinkExecute(TObject *Sender)
@@ -173,7 +177,7 @@ void __fastcall TSchemeVersWindow::ActSaveExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->pGsMasterBibleScheme->SaveProjectObjectSchemeToFile();
-	this->LabelNameProject->Caption = Format("Nazwa projektu: %s", ARRAYOFCONST(( TPath::GetFileName(this->pGsMasterBibleScheme->ProjectName) )));
+	this->LabelNameProject->Caption = Format("Nazwa projektu: %s", ARRAYOFCONST(( TPath::GetFileNameWithoutExtension(this->pGsMasterBibleScheme->ProjectName) )));
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActOpenProjectExecute(TObject *Sender)
@@ -188,10 +192,11 @@ void __fastcall TSchemeVersWindow::ActOpenProjectExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->ActDeleteLink->Enabled = this->pGsMasterBibleScheme->OpenProjectObjectScheme();
-  this->ActRenameObject->Enabled = true;
-	this->ActCreateFileFromScheme->Enabled = true;
-  this->ActSave->Enabled = true;
-  this->LabelNameProject->Caption = Format("Nazwa projektu: %s", ARRAYOFCONST(( TPath::GetFileName(this->pGsMasterBibleScheme->ProjectName) )));
+	this->ActRenameObject->Enabled = this->ActDeleteLink->Enabled;
+	this->ActCreateFileFromScheme->Enabled = this->ActDeleteLink->Enabled;
+	this->ActSave->Enabled = this->ActDeleteLink->Enabled;
+	this->ActNew->Enabled = true;
+	this->LabelNameProject->Caption = Format("Nazwa projektu: %s", ARRAYOFCONST(( TPath::GetFileNameWithoutExtension(this->pGsMasterBibleScheme->ProjectName) )));
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActCreateFileFromSchemeExecute(TObject *Sender)
@@ -205,7 +210,7 @@ void __fastcall TSchemeVersWindow::ActCreateFileFromSchemeExecute(TObject *Sende
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	this->pGsMasterBibleScheme->ViewProjectDocument();
+	this->pGsMasterBibleScheme->ViewProjectDocument(TPath::GetFileNameWithoutExtension(this->pGsMasterBibleScheme->ProjectName));
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::ActViewEditorExecute(TObject *Sender)
@@ -219,7 +224,7 @@ void __fastcall TSchemeVersWindow::ActViewEditorExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//Wyłuskanie edytora dokumentu, dla projektu
-	GsEditorClass *pGsEditorClass = this->pGsMasterBibleScheme->GetEditorClass();
+	GsEditorClass *pGsEditorClass = this->pGsMasterBibleScheme->GetEditor;
 	if(pGsEditorClass)
 	{
 		pGsEditorClass->Visible = pAction->Checked;
@@ -252,6 +257,30 @@ void __fastcall TSchemeVersWindow::ActSetupSchemeExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->pGsMasterBibleScheme->VisibleSetupsScheme(pAction->Checked);
+}
+//---------------------------------------------------------------------------
+void __fastcall TSchemeVersWindow::ActNewExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	int iResult = MessageBox(NULL, TEXT("Czy chcesz zapisać aktualny projekt, przed jego usunięciem?"),
+													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON1);
+	if(iResult == IDYES) this->ActSaveExecute(this->ActSave);
+
+	this->pGsMasterBibleScheme->NewProject();
+	this->LabelNameProject->Caption = "Nazwa projektu: Bez nazwy";
+
+  this->ActDeleteLink->Enabled = false;
+	this->ActRenameObject->Enabled = this->ActDeleteLink->Enabled;
+	this->ActCreateFileFromScheme->Enabled = this->ActDeleteLink->Enabled;
+	this->ActSave->Enabled = this->ActDeleteLink->Enabled;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSchemeVersWindow::FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)

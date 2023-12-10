@@ -391,7 +391,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	GsReadBibleTextData::GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 	//---
 	TComponent *Component=nullptr;
-	for(int i=0; i<MainWindow->ComponentCount; i++)
+	for(int i=0; i<MainWindow->ComponentCount; ++i)
 	{
 		Component = MainWindow->Components[i];
 		if(Component && Component->ClassNameIs("TTaskbar")) break;
@@ -635,6 +635,18 @@ void __fastcall GsReadBibleTextData::GetInfoNameTranslate(const unsigned char i,
 	GsReadBibleTextData::pGsReadBibleTextClass->_GetInfoNameTranslate(i, NameTranslate);
 }
 //---------------------------------------------------------------------------
+void __fastcall GsReadBibleTextData::GetNameIndependentTranslate(const int i, UnicodeString &NameTranslate)
+/**
+	OPIS METOD(FUNKCJI): Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	GsReadBibleTextData::pGsReadBibleTextClass->_GetNameIndependentTranslate(i, NameTranslate);
+}
+//---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::WriteCurrentSheetText(const UnicodeString custrPath)
 /**
 	OPIS METOD(FUNKCJI): Zapisuje zawartość aktualnej zakładki
@@ -704,7 +716,7 @@ unsigned int __fastcall GsReadBibleTextData::GetCountVer(const int iNumberTrans,
 	if(!pHashedStringList) throw(Exception("Błąd funkcji GsReadBibleTextData::GetSelectBoksInTranslate()")); //TUTAJ!!!
 	unsigned int uiVers=0;
 
-	for(int i=0; i<pHashedStringList->Count; i++)
+	for(int i=0; i<pHashedStringList->Count; ++i)
 	{
 		if(static_cast<unsigned char>(pHashedStringList->Strings[i].SubString(4, 3).ToInt()) == cucChapt+1)
 		{
@@ -731,7 +743,7 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 	unsigned char uiTranslates = GsReadBibleTextData::CountTranslates();
 	int iReadVers;
 	bool bVerifyvers=false;
-	for(unsigned char i=0; i<uiTranslates; i++)
+	for(unsigned char i=0; i<uiTranslates; ++i)
 	{
 		GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
 		if(pGsReadBibleTextItem)
@@ -740,7 +752,7 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 			//Błąd!!!
 			if(pHSListBook)
 			{
-				for(int i=0; i<pHSListBook->Count; i++)
+				for(int i=0; i<pHSListBook->Count; ++i)
 				{
 					if(pHSListBook->Strings[i].SubString(4, 3).ToInt() == cucChapt)
 					{
@@ -755,10 +767,10 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 							_HSListVers->AddObject(pHSListBook->Strings[i].SubString(11, GlobalVar::Global_MaxlengthVers), pHSListBook->Objects[i]);
 						}
 					} //if(pHSListBook->Strings[i].SubString(7, 3).ToInt() == cucVers)
-				} //for(int i=0; i<pHSListBook->Count; i++)
+				} //for(int i=0; i<pHSListBook->Count; ++i)
 			} //if(pHSListBook)
 		} //if(pGsReadBibleTextItem)
-	} //for(unsigned char i=0; i<uiTranslates; i++)
+	} //for(unsigned char i=0; i<uiTranslates; ++i)
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers,
@@ -781,7 +793,7 @@ void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cuc
 		THashedStringList *pHSListBook = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, cucBook);
 		if(pHSListBook)
 		{
-			for(int i=0; i<pHSListBook->Count; i++)
+			for(int i=0; i<pHSListBook->Count; ++i)
 			{
 				if((pHSListBook->Strings[i].SubString(4, 3).ToInt() == cucChapt) && (pHSListBook->Strings[i].SubString(7, 3).ToInt() == cucVers))
 				{
@@ -994,7 +1006,7 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 				}
 				iStop = iLicz + 1 + iLastOffsetVers; //Wskaźnik na ostatni werset regulowany zależnie od formatu zakresu wybranego tekst
 
-				for(int i=iStart; i<iStop; i++)
+				for(int i=iStart; i<iStop; ++i)
 				{
 					pMyObjectVers = dynamic_cast<MyObjectVers *>(pSelectBook->Objects[i]);
 					pHSListText->AddObject(pSelectBook->Strings[i].SubString(11, 500), pSelectBook->Objects[i]);
@@ -1002,8 +1014,8 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 
 			} //if(pGsReadBibleTextItem)
 			//---
-			for(int i=0; i<pHSListText->Count; i++) //Tworzenie stringu wyjściowego, czystego tekstu
-			//for(int i=0; i<2; i++) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
+			for(int i=0; i<pHSListText->Count; ++i) //Tworzenie stringu wyjściowego, czystego tekstu
+			//for(int i=0; i<2; ++i) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
 			{
 				ustrRet += pHSListText->Strings[i] + " ";
 			}

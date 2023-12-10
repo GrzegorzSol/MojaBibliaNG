@@ -33,6 +33,7 @@ __published:	// IDE-managed Components
 	TAction *ActRenameObject;
 	TAction *ActSetupScheme;
 	TLabel *LabelNameProject;
+	TAction *ActNew;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -45,9 +46,10 @@ __published:	// IDE-managed Components
 	void __fastcall ActRenameObjectExecute(TObject *Sender);
 	void __fastcall ActSetupSchemeExecute(TObject *Sender);
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall ActNewExecute(TObject *Sender);
 
 private:	// User declarations
-	GsMasterBibleScheme *pGsMasterBibleScheme;
+	GsMasterBibleScheme *pGsMasterBibleScheme=nullptr;
 public:		// User declarations
 	__fastcall TSchemeVersWindow(TComponent* Owner);
 };

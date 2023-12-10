@@ -44,6 +44,7 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     Top = 0
     Width = 982
     Height = 42
+    CustomHint = BalloonHintHistory
     ActionManager = ActionManagerHistoryCh
     Caption = 'ActionToolBarHistoryCh'
     Color = clMenuBar
@@ -79,7 +80,6 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     object Act_DeleteSelectItemHistoryCh: TAction
       Caption = 'Skasuj wybran'#261' pozycje...'
       Enabled = False
-      Hint = 'Kasowanie wybranej pozycji'
       ImageIndex = 0
       OnExecute = Act_DeleteSelectItemHistoryChExecute
     end
@@ -903,5 +903,10 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
       000100030000000000030003000700000003000300078000000300038007C000
       8007C003C007E001FC07FC07E00FF00700000000000000000000000000000000
       000000000000}
+  end
+  object BalloonHintHistory: TBalloonHint
+    Images = ImageListHistoryCh
+    Left = 104
+    Top = 576
   end
 end

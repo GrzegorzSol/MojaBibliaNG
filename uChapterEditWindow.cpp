@@ -107,7 +107,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 		do
 		{
 			uiTranslatesIndex = static_cast<unsigned char>(pListTr->Count);
-			for(int iTranslates=0; iTranslates<pListTr->Count; iTranslates++)
+			for(int iTranslates=0; iTranslates<pListTr->Count; ++iTranslates)
 			{
 				//Wyłuskanie wskaźnika na wybrane tłumaczenie
 				GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iTranslates);

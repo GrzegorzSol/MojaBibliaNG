@@ -48,6 +48,7 @@ __published:	// IDE-managed Components
 	TSplitter *SplitterSizeJournaling;
 	TSpeedButton *SButtonStopSpeak;
 	TPanel *PanelButtons;
+	TBalloonHint *BalloonHintReadingPlan;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

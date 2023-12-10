@@ -172,7 +172,7 @@ void __fastcall TViewAllResourcesWindow::_DisplaySelectVersAllTrans(const DataIt
 
 	pStringStream->WriteString(GlobalHeaderRtf);
 
-	for(int iLicz=0; iLicz<pDataItemResources->HSListGetAllTransVers->Count; iLicz++)
+	for(int iLicz=0; iLicz<pDataItemResources->HSListGetAllTransVers->Count; ++iLicz)
 	{
 		GsReadBibleTextItem *GsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iLicz);
 		if(!pDataItemResources->HSListGetAllTransVers->Strings[iLicz].IsEmpty())

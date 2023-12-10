@@ -26,6 +26,7 @@ __published:	// IDE-managed Components
 	TImageList *ImageListHistoryCh;
 	TAction *Act_DeleteSelectItemHistoryCh;
 	TImageList *ImageListSmallHistoryCh;
+	TBalloonHint *BalloonHintHistory;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall LViewHistoryChData(TObject *Sender, TListItem *Item);
 	void __fastcall LViewHistoryChDataFind(TObject *Sender, TItemFind Find, const UnicodeString FindString,

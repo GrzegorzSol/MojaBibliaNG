@@ -156,14 +156,14 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	//Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
 	//Dodawanie grup do objektu, typu TListView
-	for(int i=0; i<enGroup_Count; i++)
+	for(int i=0; i<enGroup_Count; ++i)
 	{
 		TListGroup *pLGroup = this->SW_ListViewAllTranslates->Groups->Add();
 		pLGroup->Header = ustrGroups[i];
 	}
 	//Dodawanie kolumn do objektu, typu TListView
 	TListColumn	 *NewColumn;//=0;
-	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumnLViewTranslates); iColumns++)
+	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumnLViewTranslates); ++iColumns)
 	{
 		NewColumn = this->SW_ListViewAllTranslates->Columns->Add();
 		NewColumn->Caption = ustrColumnLViewTranslates[iColumns];
@@ -282,7 +282,7 @@ void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
 {
 	TListColumn *NewColumn=nullptr;
 	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<enNameColumnDisplaySelectPlay_CountColumn; iColumns++)
+	for(unsigned int iColumns=0; iColumns<enNameColumnDisplaySelectPlay_CountColumn; ++iColumns)
 	{
 		NewColumn = this->LViewDisplayselectPlan->Columns->Add();
 		NewColumn->Caption = ustrNamesColumns[iColumns];
@@ -376,7 +376,7 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 
 	try
 	{
-		for(int i=0; i<_pTempHSListViewAllTr->Count; i++)
+		for(int i=0; i<_pTempHSListViewAllTr->Count; ++i)
 		{
 			pMyOjectVers = static_cast<MyObjectVers *>(_pTempHSListViewAllTr->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
@@ -476,13 +476,13 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 
 				if(!TFile::Exists(ustrPathFileReadingPlan)) throw(Exception("Brak pliku z wybranym planem czytania biblii"));
 				pHSList->LoadFromFile(ustrPathFileReadingPlan, TEncoding::UTF8);
-				for(int i=1; i<pHSList->Count; i++)
+				for(int i=1; i<pHSList->Count; ++i)
 				{
 					pItem = this->LViewDisplayselectPlan->Items->Add();
 					pItem->Caption = UnicodeString(i);
 
 					TStringDynArray sda = SplitString(pHSList->Strings[i], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
-					for(int si=0; si<sda.Length; si++)
+					for(int si=0; si<sda.Length; ++si)
 					{
 						ustrTemp = ReplaceText(UnicodeString(sda[si]), " ", ""); //Usunięcie wszystkich spacji
 						iLengthPair = ustrTemp.Length(); //Długość pary
@@ -601,7 +601,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	pSListExcludeTrans->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, "");
 	//Dodawanie ścieżek dostępu do wszystkich tłumaczeń
 	UnicodeString ustrNameTranslate;
-	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
+	//for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
+	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
 	{
 		TListItem *NewItem = this->SW_ListViewAllTranslates->Items->Add();
 		NewItem->Caption = TPath::GetFileName(GlobalVar::SDirTranslatesList[i]);
@@ -624,12 +625,15 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 			NewItem->SubItems->Add("Hebrajskie tłumaczenie");
 			NewItem->GroupID = enGroup_OrygTrans;
 		}
-		else
-			NewItem->SubItems->Add("");
+		else {NewItem->SubItems->Add("");}
 		NewItem->SubItemImages[enColumn_TypeTranslate] = enImage_TypeTranslate;
-		//--- Opis tłumaczenia	//Poprawić
-		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTranslate);
+		//--- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023]
+		GsReadBibleTextData::GetNameIndependentTranslate(i, ustrNameTranslate);
+
 		NewItem->SubItems->Add(ustrNameTranslate);
+//    #if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("ustrNameTranslate: %s", ARRAYOFCONST((ustrNameTranslate))));
+//		#endif
 		NewItem->SubItemImages[enColumn_DescryptionTranslate] = enImage_DescryptionTranslate;
 		//--- Tworzenie listy dostępnych tłumaczeń dla planu czytania biblii. Dostępne sa tylko polskie, pełne tłumaczenia.
 		if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
@@ -640,7 +644,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		//--- Odczyt planów
 	TStringDynArray SDirReadingPlanList = TDirectory::GetFiles(GlobalVar::Global_custrPathAllReadingPlan, "*" +GlobalVar::Global_ustrFileReadingPlanExtend, 0);
 	this->CBoxSelectPlan->Items->BeginUpdate();
-	for(int i=0; i<SDirReadingPlanList.Length; i++)
+	for(int i=0; i<SDirReadingPlanList.Length; ++i)
 	{
 		this->CBoxSelectPlan->AddItem(TPath::GetFileName(SDirReadingPlanList[i]), 0);
 	}
@@ -655,14 +659,14 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->_DisplaySelectPlan();
 		//--- Lista czcionek dla planu czytania biblii
 	this->CBoxSelectFontReadingPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
-	for(int i=0; i<ARRAYSIZE(ustrFontList); i++)
+	for(int i=0; i<ARRAYSIZE(ustrFontList); ++i)
 	{
 		this->CBoxSelectFontReadingPlan->AddItem(ustrFontList[i], 0);
 	}
 	this->CBoxSelectFontReadingPlan->ItemIndex = this->CBoxSelectFontReadingPlan->Items->IndexOf(this->CBoxSelectFontReadingPlan->Text);
 		//--- Wielkość czcionek
 	this->CBoxSelectSizeFontPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, "16");
-	for(int i=0; i<ARRAYSIZE(ustrSizeFontList); i++)
+	for(int i=0; i<ARRAYSIZE(ustrSizeFontList); ++i)
 	{
 		this->CBoxSelectSizeFontPlan->AddItem(ustrSizeFontList[i], 0);
 	}
@@ -768,7 +772,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	//TStringList *pSListIncludeTrans = new TStringList(); //Lista przekładów używanych
 	//if(!pSListIncludeTrans) throw(Exception("Błąd inicjalizacji objektu TStringList"));
 	//---
-	for(int i=0; i<this->SW_ListViewAllTranslates->Items->Count; i++)
+	for(int i=0; i<this->SW_ListViewAllTranslates->Items->Count; ++i)
 	{
 		if(!this->SW_ListViewAllTranslates->Items->Item[i]->Checked)
 		//Jeśli tłumaczenie nie jest zaznaczone, dodaj tłumaczenie do listy wykluczeń
@@ -791,7 +795,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	//----- Jest wybrane tłumaczenie z listy dla planu
 	{
 		intPosSpace = this->CBoxSelectTranslate->Text.Pos(" ");
-		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
+		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
 		{
 			ustrNameTransIDPlan = TPath::GetFileName(GlobalVar::SDirTranslatesList[i]);
 			if(this->CBoxSelectTranslate->Text.SubString(1, intPosSpace-1) == ustrNameTransIDPlan)
@@ -1186,7 +1190,7 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 			//Plik dziennika nie istnieje
 			{
 				pHSList->Add(this->CBoxSelectPlan->Text);
-				for(int i=0; i<this->LViewDisplayselectPlan->Items->Count; i++)
+				for(int i=0; i<this->LViewDisplayselectPlan->Items->Count; ++i)
 				{
 					pLItem = this->LViewDisplayselectPlan->Items->Item[i];
 					if(pLItem)
@@ -1262,7 +1266,7 @@ void __fastcall TSetupsWindow::LViewDisplayselectPlanDrawItem(TCustomListView *S
 	DrawText(pLView->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 
 	TRect RectSubItem	 = RectLabel;
-	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
+	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; ++iColumn)
 	{
 		//Wymiary następnej kolumny
 		RectSubItem.Left += pLView->Column[iColumn]->Width;

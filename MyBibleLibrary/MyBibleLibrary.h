@@ -259,7 +259,8 @@ class GsReadBibleTextClass : public TObject
 	inline TList *__fastcall GetListAllTranslates() {return this->_GsListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
 	inline unsigned int __fastcall GetCountTranslates() {return (unsigned int)this->_GsListItemsTranslates->Count;};
 	GsReadBibleTextItem *__fastcall GetTranslateClass(const int iNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
-	void __fastcall _GetInfoNameTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
+	void __fastcall _GetInfoNameTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia AKTYWNEGO  o numerze i.
+	void __fastcall _GetNameIndependentTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie)
 	THashedStringList *__fastcall GetSelectBookTranslate(const int iGetTranslate, const int iGetBook); //Metoda zwraca wskażnik THashedStringList na pozycje określonej księgi i tłumaczenia
 	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook, const EnTypeTranslate _EnTypeTranslate=enTypeTr_Greek); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
 	inline THashedStringList *GetListInterlinearGrec() {return this->_SListInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
@@ -270,7 +271,8 @@ class GsReadBibleTextClass : public TObject
 	void __fastcall _GlobalTextDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
 	void __fastcall _DeleteSelectTranslate(const int iNumberTrans); //Skasowanie wybranego tłumaczenia
 	//---
-	GsListItemTranslates *_GsListItemsTranslates=nullptr;	//Lista tłumaczeń. Klas GsReadBibleTextItem
+	GsListItemTranslates *_GsListItemsTranslates=nullptr;	//Lista tłumaczeń aktywnych. Klas GsReadBibleTextItem
+	TStringList *_pSListAllNamesTranslates=nullptr; //[09-12-2023]String lista opisów wszystkich tłumaczeń, niezależnie od aktywacji tłumaczenia
 	TList *_ListAllTrChap=nullptr; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 	THashedStringList *_SListInterLinear=nullptr; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	unsigned int uiCountPol, uiCountOryg; //Ilość polskich i oryginalnych tłumaczeń
@@ -452,6 +454,8 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
 															 const unsigned char _cucVers=1, bool bSelectComment=false);
 		__fastcall virtual ~GsBarSelectVers();
 		//---
+		__property bool IsExtendButton = {read = _FbExtendentButt, nodefault};
+		//---
 		inline UnicodeString __fastcall GetSelectVers() {return this->_pSTextSelect->Caption;};
 		THashedStringList *__fastcall GetSListVers(); //Wypełnienie string listy this->_pHSListSelectVers, wszystkich tłumaczeń, wybranym wersetem
 		void __fastcall SetSListVers(THashedStringList *pToFillSList); //Wypełnienie string listy zewnętrznej wybanym wersetem ze wszystkich tłumaczeń
@@ -460,7 +464,7 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
 	private:
   	bool _bFirstResize,	//Startowe skalowanie (true)
 				 _FbBarSelectComment, //Wybrałeś komentarz w liście komentarzy w głównym oknie
-         _FbExtendentButt=true, //Wyświetlanie dodatkowych przycisków
+				 _FbExtendentButt=true, //Wyświetlanie dodatkowych przycisków
   			 _bIsFirstStart=true; //Pierwsze uruchomienie (true, póżniej false) //[25-10-2023]
   	TToolButton *_pButBooks=nullptr,			//Wybór księgi
 								*_pButChapt=nullptr,			//Wybór rozdziału

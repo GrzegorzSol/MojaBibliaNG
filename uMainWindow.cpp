@@ -291,7 +291,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	//---
 	if((enNumTaskBar_NumberButtons == this->ActionManagerOther->ActionCount) && (enNumTaskBar_NumberButtons == ARRAYSIZE(ustrHintTBarButtons)))
 	{
-		for(int iButton=0; iButton<enNumTaskBar_NumberButtons; iButton++)
+		for(int iButton=0; iButton<enNumTaskBar_NumberButtons; ++iButton)
 		{
 			pNewThumbBarButton = this->TaskbarMain->TaskBarButtons->Add();
 			if(pNewThumbBarButton)
@@ -342,7 +342,7 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
 		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 		pHSListOpenBooksInExit->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, "");
-		for(int i=0; i<pHSListOpenBooksInExit->Count; i++)
+		for(int i=0; i<pHSListOpenBooksInExit->Count; ++i)
 		{
 			iBook = pHSListOpenBooksInExit->Strings[i].SubString(1, 3).ToIntDef(1);
 			iChapt = pHSListOpenBooksInExit->Strings[i].SubString(4, 3).ToIntDef(1);
@@ -420,7 +420,7 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
 		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 		UnicodeString ustrAdress;
-		for(int i=0; i<this->PageControlBibleText->PageCount; i++)
+		for(int i=0; i<this->PageControlBibleText->PageCount; ++i)
 		{
 			GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->Pages[i]);
 			if (pGsTabSheetClass)
@@ -642,7 +642,7 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 	if(!pImageList) throw(Exception("Błąd wyłuskania listy grafik"));
 	this->PMenuTray->Images = pImageList;
 	//---
-	for(unsigned int i=0; i<GlobalVar::Global_NumberBooks; i++)
+	for(unsigned int i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
 		if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));
@@ -1303,7 +1303,7 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	vWActiveDoc = vMApplication.OlePropertyGet("ActiveDocument");
 	vWWords = vWActiveDoc.OlePropertyGet("Words");
 
-	for(int i=0; i<iASize; i++)
+	for(int i=0; i<iASize; ++i)
 	{
 		pPBar->Position = i;
 		Application->ProcessMessages();
