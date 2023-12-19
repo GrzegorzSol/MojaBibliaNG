@@ -161,7 +161,7 @@ void __fastcall GsViewAllResourcesClass::DrawItem(TListItem* Item, const System:
 	//--- Kolory aktywnego stylu //[16-12-2023]
 	TColor cBackGround = TStyleManager::ActiveStyle->GetStyleColor(scListView);
 	TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
-	TColor cSelect = TStyleManager::ActiveStyle->GetSystemColor(clHighlight); //[19-12-2023]
+	TColor cSelect = TStyleManager::ActiveStyle->GetSystemColor(clActiveCaption);
 
 	this->Canvas->Brush->Color = cBackGround;
 	this->Canvas->Font->Color = cText;

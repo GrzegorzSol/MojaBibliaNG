@@ -33,11 +33,13 @@ __published:	// IDE-managed Components
 					const TPoint &FindPosition, Pointer FindData,
 					int StartIndex, TSearchDirection Direction, bool Wrap, int &Index);
 	void __fastcall LViewHistoryChDataHint(TObject *Sender, int StartIndex, int EndIndex);
-	void __fastcall LViewHistoryChDrawItem(TCustomListView *Sender, TListItem *Item,
-					TRect &Rect, TOwnerDrawState State);
 	void __fastcall Act_DeleteSelectItemHistoryChExecute(TObject *Sender);
 	void __fastcall LViewHistoryChDblClick(TObject *Sender);
 	void __fastcall LViewHistoryChChange(TObject *Sender, TListItem *Item, TItemChange Change);
+	void __fastcall LViewHistoryChGetImageIndex(TObject *Sender, TListItem *Item);
+	void __fastcall LViewHistoryChGetSubItemImage(TObject *Sender, TListItem *Item,
+          int SubItem, int &ImageIndex);
+
 
 
 private:	// User declarations

@@ -54,7 +54,6 @@ object MainBibleWindow: TMainBibleWindow
     TabOrder = 1
     Visible = False
     OnChange = MBW_PageControlAllChange
-    OnDrawTab = MBW_PageControlsAllDrawTab
     OnEnter = PageControlBibleTextEnter
     ExplicitWidth = 884
     ExplicitHeight = 819
@@ -160,7 +159,7 @@ object MainBibleWindow: TMainBibleWindow
       Top = 1
       Width = 298
       Height = 818
-      ActivePage = TabSheetFavResultSearch
+      ActivePage = TabSheetAllCommentsVers
       Align = alClient
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clWindowText
@@ -177,7 +176,6 @@ object MainBibleWindow: TMainBibleWindow
       TabOrder = 0
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
-      OnDrawTab = MBW_PageControlsAllDrawTab
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
@@ -261,8 +259,6 @@ object MainBibleWindow: TMainBibleWindow
           Color = clCream
           ReadOnly = True
           TabOrder = 1
-          StyleElements = [seFont, seBorder]
-          ExplicitTop = 689
         end
       end
     end

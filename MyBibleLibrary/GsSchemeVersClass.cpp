@@ -389,9 +389,7 @@ void __fastcall GsDrawPanelBibleScheme::KeyUp(System::Word &Key, System::Classes
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("KeyUp");
-	#endif
+	///
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawPanelBibleScheme::_AddNewObject()

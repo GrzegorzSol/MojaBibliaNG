@@ -52,8 +52,6 @@ __published:	// IDE-managed Components
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
-	void __fastcall PageControlReadingPlanesDrawTab(TCustomTabControl *Control,
-					int TabIndex, const TRect &Rect, bool Active);
 	void __fastcall SButtonStartSpeakClick(TObject *Sender);
 	void __fastcall SButtonJournalingClick(TObject *Sender);
 	void __fastcall ChListBoxJournalingClickCheck(TObject *Sender);

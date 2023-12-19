@@ -84,8 +84,6 @@ __published:	// IDE-managed Components
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 	void __fastcall MBW_PageControlAllChange(TObject *Sender);
 	void __fastcall Act_CorcordanceDictionaryGrecExecute(TObject *Sender);
-	void __fastcall MBW_PageControlsAllDrawTab(TCustomTabControl *Control, int TabIndex,
-					const TRect &Rect, bool Active);
 	void __fastcall Act_ProjectSchemeVersExecute(TObject *Sender);
 	void __fastcall Act_InfomationsExecute(TObject *Sender);
 	void __fastcall Act_ViewAllResourcesExecute(TObject *Sender);

@@ -33,6 +33,10 @@ __fastcall TSelectVersWindow::TSelectVersWindow(TComponent* Owner, const unsigne
 {
 	//Sprawdzenie i ewentualne stworzenie katalogu z plikami komentarzy
 	if(!TDirectory::Exists(GlobalVar::Global_custrPathDirComments)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathDirComments);
+	//Wielkość okna //[10-12-2023]
+	TForm *pMainWindow = Application->MainForm;
+	if(pMainWindow)
+		{this->Width = pMainWindow->Width - 40; this->Height = pMainWindow->Height - 20;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
@@ -48,10 +52,6 @@ void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
 	//if(_cucStartBook < 66) ucStartBook = _cucStartBook; else ucStartBook = 0;
 	if(this->_InputCucStartBook < 66) ucStartBook = _InputCucStartBook; else ucStartBook = 0;
 	//---
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("_InputCucStartBook: %d; _InputCucStartChapt: %d",
-			ARRAYOFCONST(( this->_InputCucStartBook, this->_InputCucStartChapt ))));
-	#endif
 	this->_pGsPanelSelectVers = new GsPanelSelectVers(this, ucStartBook, this->_InputCucStartChapt, this->_InputCucStarVers, this->_InputBSelectComment);
 	if(!this->_pGsPanelSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsPanelSelectVers"));
 	this->_pGsPanelSelectVers->Parent = this;

@@ -204,16 +204,23 @@ void __fastcall TViewAllResourcesWindow::_DisplayImage(const UnicodeString _path
 
 	try
 	{
-		pWICImage = new TWICImage();
-		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
-		//---
-		pWICImage->LoadFromFile(_pathImages);
-		this->fFactorProp = (float)pWICImage->Width / (float)pWICImage->Height;
-		this->ImageDisplayResource->Picture->Assign(pWICImage);
-		this->PanelDisplay->OnResize(this->PanelDisplay);
+		try
+		{
+  		pWICImage = new TWICImage();
+  		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+  		//---
+  		pWICImage->LoadFromFile(_pathImages);
+  		this->fFactorProp = (float)pWICImage->Width / (float)pWICImage->Height;
+  		this->ImageDisplayResource->Picture->Assign(pWICImage);
+  		this->PanelDisplay->OnResize(this->PanelDisplay);
 
-		ustrSelectItem = Format("Ścieżka dostępu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
-		this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
+  		ustrSelectItem = Format("Ścieżka dostępu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
+			this->REditInfoSelectItem->Lines->Text = ustrSelectItem;
+		}
+    catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
 	}
 	__finally
 	{
@@ -244,31 +251,32 @@ void __fastcall TViewAllResourcesWindow::ImageDisplayResourceDblClick(TObject *S
 	//---
 	try
 	{
-		pWICImg = new TWICImage();
-		if(!pWICImg) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+		try
+		{
+  		pWICImg = new TWICImage();
+  		if(!pWICImg) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
 
-		pWICImg->LoadFromFile(_ustrCurrentPathImage);
-		float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokości do wysokości, wczytanej grafiki
-					fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokości do szerokości, wczytanej grafiki
-		//--- Sprawdzanie wysokości grafiki
-		if(pWICImg->Height > this->_pDisplayWindow->ClientHeight)
-			{this->_pImageScr->Height = this->_pDisplayWindow->ClientHeight;}
-		else
-			{this->_pImageScr->Height = pWICImg->Height;}
-		this->_pImageScr->Width = fSizeFactorWH * this->_pImageScr->Height;
-		//--- Sprawdzanie szerokości grafiki
-//		if(pWICImg->Width > this->_pDisplayWindow->ClientWidth)
-//			{this->_pImageScr->Width = this->_pDisplayWindow->ClientWidth;}
-//		else
-//			{this->_pImageScr->Width = pWICImg->Width;}
-//		this->_pImageScr->Height = fSizeFactorHW * this->_pImageScr->Width;
-		//---
+  		pWICImg->LoadFromFile(_ustrCurrentPathImage);
+  		float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokości do wysokości, wczytanej grafiki
+  					fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokości do szerokości, wczytanej grafiki
+  		//--- Sprawdzanie wysokości grafiki
+  		if(pWICImg->Height > this->_pDisplayWindow->ClientHeight)
+  			{this->_pImageScr->Height = this->_pDisplayWindow->ClientHeight;}
+  		else
+  			{this->_pImageScr->Height = pWICImg->Height;}
+  		this->_pImageScr->Width = fSizeFactorWH * this->_pImageScr->Height;
+			//---
 
-		this->_pImageScr->Left = this->_pDisplayWindow->ClientWidth / 2 - (this->_pImageScr->Width / 2);
-		this->_pImageScr->Top = this->_pDisplayWindow->ClientHeight / 2 - (this->_pImageScr->Height / 2);
-		this->_pImageScr->Picture->Assign(pWICImg); //Skopiwanie bitmapy wczytanej grafiki do bitmapy objektu, klasy TImage
+  		this->_pImageScr->Left = this->_pDisplayWindow->ClientWidth / 2 - (this->_pImageScr->Width / 2);
+  		this->_pImageScr->Top = this->_pDisplayWindow->ClientHeight / 2 - (this->_pImageScr->Height / 2);
+  		this->_pImageScr->Picture->Assign(pWICImg); //Skopiwanie bitmapy wczytanej grafiki do bitmapy objektu, klasy TImage
 
-		this->_pDisplayWindow->Show();
+			this->_pDisplayWindow->Show();
+		}
+    catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
 	}
 	__finally
 	{
@@ -298,11 +306,11 @@ void __fastcall TViewAllResourcesWindow::_OnKeyPress(TObject *Sender, System::Wi
 		case vkSpace: //Następna grafika
 			if(this->_pGsViewAllResourcesClass->ItemIndex < this->_pGsViewAllResourcesClass->Items->Count)
 			{
-				this->_pGsViewAllResourcesClass->ItemIndex++;
+				++this->_pGsViewAllResourcesClass->ItemIndex;
 				TListItem* Item = this->_pGsViewAllResourcesClass->Items->Item[this->_pGsViewAllResourcesClass->ItemIndex];
 				if(Item->GroupID != enGroup_Graphics)
 				{
-					this->_pGsViewAllResourcesClass->ItemIndex--;
+					--this->_pGsViewAllResourcesClass->ItemIndex;
 					break;
 				}
 				this->ImageDisplayResourceDblClick(this->ImageDisplayResource);
@@ -312,11 +320,11 @@ void __fastcall TViewAllResourcesWindow::_OnKeyPress(TObject *Sender, System::Wi
 		case vkBack: //Poprzednia grafika
 			if(this->_pGsViewAllResourcesClass->ItemIndex > 0)
 			{
-				this->_pGsViewAllResourcesClass->ItemIndex--;
+				--this->_pGsViewAllResourcesClass->ItemIndex;
 				TListItem* Item = this->_pGsViewAllResourcesClass->Items->Item[this->_pGsViewAllResourcesClass->ItemIndex];
 				if(Item->GroupID != enGroup_Graphics)
 				{
-					this->_pGsViewAllResourcesClass->ItemIndex++;
+					++this->_pGsViewAllResourcesClass->ItemIndex;
 					break;
 				}
 				this->ImageDisplayResourceDblClick(this->ImageDisplayResource);

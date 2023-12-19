@@ -119,6 +119,8 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
 			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
 			enTagImage_OpenInWord,		//119.Otwarcie wybranego rozdziału w Ms Wordzie
+			//Tagi dla komponentów TImage
+			enTagPic_Backgound,       //120.Komponent typu TImage podkładu
 			//
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,						//Zakładka z narzędziami
@@ -215,15 +217,27 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 */
 {
 	//OleInitialize(NULL);
-	if(TFile::Exists(GlobalVar::Global_custrPathBackgroundWindow)) //29-04-2021
+	//Odczyt z konfiguracji grafiki podkładu pod główne okno //Nieskończone [11-12-2023]
+	UnicodeString ustrGraphicsBackground = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection,
+		GlobalVar::GlobalIni_GrahicsBackground, GlobalVar::Global_custrPathBackgroundWindow); //[11-12-2023]
+	TWICImage *pWICImage=nullptr;
+
+	if(TFile::Exists(ustrGraphicsBackground)) //29-04-2021 //[11-12-2023]
 	{
-		//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
-		TWICImage *pWICImage = new TWICImage();
-		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
-		try
+    try
 		{
-			pWICImage->LoadFromFile(GlobalVar::Global_custrPathBackgroundWindow);
-			this->ImageBackgroundWindow->Picture->Assign(pWICImage);
+			try //[12-12-2023]
+			{
+				//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
+				pWICImage = new TWICImage();
+				if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+				pWICImage->LoadFromFile(ustrGraphicsBackground);
+				this->ImageBackgroundWindow->Picture->Assign(pWICImage);
+			}
+			catch(Exception &e)
+			{
+				MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			}
 		}
 		__finally
 		{
@@ -361,14 +375,6 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	this->Act_ResizeWork->Enabled = (this->PageControlBibleText->PageCount > 0);
 	//Stan przycisku zapisu aktywnego rozdziału 07-04-2021
 	this->Act_SaveChaptToHTML->Enabled = (this->PageControlBibleText->PageCount > 0);
-	//---
-//	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true))
-//	//Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
-//	{
-//		TFastTipsWindow *pTFastTipsWindow = new TFastTipsWindow(this);
-//		if(!pTFastTipsWindow) throw(Exception("Błąd inicjalizacji okna TFastTipsWindow"));
-//		pTFastTipsWindow->ShowModal();
-//	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose)
@@ -502,9 +508,6 @@ bool __fastcall TMainBibleWindow::_AppHelp(System::Word Command, NativeInt Data,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("%d - %d", ARRAYOFCONST((Command, Data))));
-//	#endif
 	Application->HelpFile = GlobalVar::Global_custrPathGlobalHelp;
 	CallHelp = true;
 	return true;
@@ -543,6 +546,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->ImageBackgroundWindow->Tag = enTagPic_Backgound; //[12-12-2023]
+	//Podpowiedzi i tagi akcji
 	this->Act_CloseSheetActive->Tag = enTagCloseSheet;	//Zamknięcie aktywnej zakładki
 	this->Act_CloseSheetActive->Hint = Format("Zamknięcie zakładki|Zamknięcie aktualnie aktywnej zakładki z tekstem|%u", ARRAYOFCONST((this->Act_CloseSheetActive->ImageIndex)));
 	this->Act_SaveChaptToHTML->Tag = enTagSaveChaptToHTML; //Zapis rozdziału z bierzącej zakładki, jako pliku html
@@ -606,9 +611,6 @@ bool __fastcall TMainBibleWindow::_IsWordInstalled()
 	pRegistry->RootKey = HKEY_LOCAL_MACHINE;
 	if(pRegistry->KeyExists(custrReg))
 	{
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug("MS Word jest zainstalowany");
-//		#endif
 		pRegistry->CloseKey();
 		bIsInstalled = true;
 	}
@@ -709,60 +711,6 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 	this->Act_OpenInWord->Enabled = this->Act_EditChapter->Enabled && this->_bIsWordInstalled;
 	//Uaktywnienie przycisku wysyłania rozdziału mailem, gdy istnieje bierzący rozdział
 	this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_PageControlsAllDrawTab(TCustomTabControl *Control,
-					int TabIndex, const TRect &Rect, bool Active)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
-	if(!pPControl) return;
-	//-----
-	TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
-	if(!pActSheet) return;
-	//---
-	TRect MyRect(Rect);
-	switch(pPControl->Tag)
-	{
-		case enTagPageControlBibleText: //Zakładki z tekstem
-		{
-			if(Active)
-			{
-				pPControl->Canvas->Font->Color = clYellow;
-				pPControl->Canvas->Brush->Color = clBlue;
-			}
-			pPControl->Canvas->FillRect(Rect);
-			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2), pActSheet->ImageIndex);
-			//MyRect.Inflate(-pPControl->Images->Width - 4, 0);
-			MyRect.Left += (pPControl->Images->Width + 4);
-			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
-		}
-		break;
-		//---
-		case enTagPageControlTools:						 //Zakładka z narzędziami (wybór ksiąg, zasoby, wersety)
-		{
-			if(Active)
-			{
-				pPControl->Canvas->Font->Color = clBlack;
-				pPControl->Canvas->Brush->Color = clWebDarkOrange;
-				//Ustwienie szerokosci "ucha" aktywnej zakładki, do jakiej bedzie się zwijać objekt, klasy TPanel.
-				//if(this->PanelTools->Width == 24) this->PanelTools->Width = Rect.GetWidth();
-				Global_WidthTabTools = Rect.GetWidth();
-			}
-			pPControl->Canvas->FillRect(Rect);
-			pPControl->Canvas->Font->Orientation = 900;
-			MyRect.Inflate(-4, 0, 0, -10);
-			DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_BOTTOM | DT_SINGLELINE);
-			pPControl->Images->Draw(pPControl->Canvas, Rect.Left + ((Rect.Right - Rect.Left) / 2 - (pPControl->Images->Width / 2)),
-																								 Rect.Bottom - pPControl->Images->Height - 4, pActSheet->ImageIndex);
-		}
-		break;
-	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
@@ -916,7 +864,7 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 			this->Act_ResizeWork->Checked = false;
 			this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 		}
-		if(this->PageControlBibleText->PageCount == 0)
+		if(this->PageControlBibleText->PageCount == 0) //???
 		{
 			this->PageControlBibleText->Visible = false; //01-02-2020
 			// W wypadku zamkniecia ostatniej zakładki, wskaźnik na pasku zadań zostaje wyzerowany
@@ -961,9 +909,6 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 	if(pFileSaveDialog->Execute())
 	{
 		ustrSelect = pFileSaveDialog->FileName;
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
-//		#endif
 		GsReadBibleTextData::WriteCurrentSheetText(ustrSelect);
 	}
 	else

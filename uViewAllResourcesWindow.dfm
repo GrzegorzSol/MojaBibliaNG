@@ -2,8 +2,8 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   Left = 0
   Top = 0
   Caption = 'Przegl'#261'd wszystkich dost'#281'pnych zasob'#243'w aplikacji'
-  ClientHeight = 880
-  ClientWidth = 1386
+  ClientHeight = 879
+  ClientWidth = 1382
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,8 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   TextHeight = 13
   object SplitterViews: TSplitter
     Left = 0
-    Top = 485
-    Width = 1386
+    Top = 484
+    Width = 1382
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -33,14 +33,12 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
   end
   object PanelViews: TPanel
     Left = 0
-    Top = 488
-    Width = 1386
+    Top = 487
+    Width = 1382
     Height = 392
     Align = alBottom
     ShowCaption = False
     TabOrder = 0
-    ExplicitTop = 487
-    ExplicitWidth = 1382
     object SplitterDisplay: TSplitter
       Left = 1
       Top = 221
@@ -72,20 +70,20 @@ object ViewAllResourcesWindow: TViewAllResourcesWindow
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
+      StyleElements = [seFont, seBorder]
     end
     object PanelDisplay: TPanel
       Left = 1
       Top = 224
-      Width = 1384
+      Width = 1380
       Height = 167
       Align = alBottom
       Color = clGray
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
-      StyleElements = [seFont, seBorder]
       OnResize = PanelDisplayResize
-      ExplicitWidth = 1380
+      ExplicitWidth = 1384
       object ImageDisplayResource: TImage
         Left = 484
         Top = 20

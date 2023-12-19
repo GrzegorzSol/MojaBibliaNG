@@ -26,6 +26,7 @@
 #include "MyBibleLibrary.h"
 #include <System.IOUtils.hpp>
 #include <System.StrUtils.hpp>
+//#include <Vcl.Themes.hpp>
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include "MyBibleLibrary\MyBibleCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
 //#include <Mshtml.h> //[31-07-2023]
@@ -390,9 +391,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 		//Dodanie opisów tłumaczeń, niezależnie od ich aktyawacji
 		ustrNameTranslate = TPath::GetFileName(pSortedListFileTrans->Strings[i]); //[09-12-2023]
 		this->_pSListAllNamesTranslates->Add(ustrNameTranslate); //[09-12-2023]
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("%d - %s", ARRAYOFCONST((i,  ustrNameTranslate))));
-		#endif
+
 		//Nie wczytywanie tłumaczeń, które są na liście wykluczeń
 		if(pSListExcludeTrans->IndexOf(ustrNameTranslate) > -1) continue;
 		//Inicjowanie wszystkich dostępnych tłumaczeń, przez tworzenie objektów, klasy TranslateItemClassNG
@@ -401,7 +400,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 		else if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg)
 			{_enTypeTranslate = enTypeTr_Greek; ++this->uiCountOryg;}
 		else if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)
-			{_enTypeTranslate = enTypeTr_Hebrew; this->uiCountOryg++;}
+			{_enTypeTranslate = enTypeTr_Hebrew; ++this->uiCountOryg;}
 		//--- Dodawanie klasy(GsReadBibleTextItem) tłumaczenia, listy klas dostępnych tłumaczeń
 		GsReadBibleTextItem *pGsReadBibleTextItem = new GsReadBibleTextItem(pSortedListFileTrans->Strings[i], _enTypeTranslate, i);
 		if(!pGsReadBibleTextItem) throw(Exception("Błąd inicjalizacji objektu, klasy GsReadBibleTextItem"));
@@ -614,7 +613,7 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 		//W _pHListChapt, typu THashedStringList, KTÓRA JEST PÓSTA, zostanie umieszcony wybrany rozdział, kolejnego tłumaczenia
 		if(!_pHListChapt) throw(Exception("Brak zainicjowanego objektu THashedStringList w liście wybranego rozdziału"));
 		//Tworzenie string listy wybranej księgi i rozdziału
-		for(int iVers=0; iVers<_pTempHSList->Count; iVers++)
+		for(int iVers=0; iVers<_pTempHSList->Count; ++iVers)
 		{
 			iFindChapter = _pTempHSList->Strings[iVers].SubString(4, 3).ToInt(); //Odczyt rozdziału kolejnego wersetu
 			if(iFindChapter == (iGetChap + 1))
@@ -822,7 +821,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					uiTranslatesIndex--;
 				}
 			}
-			iIndex++;
+			++iIndex;
 			if(uiTranslatesIndex >= cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 			if((iSelectTranslate == -1) && (uiTranslatesIndex > 0))
 			{
@@ -955,9 +954,7 @@ __fastcall GsTreeNodeClass::~GsTreeNodeClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug("GsTreeNodeClass::~GsTreeNodeClass()");
-	#endif
+	///
 }
 /****************************************************************************
  *												Klasalasa GsTreeBibleClass												*
@@ -981,7 +978,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	this->ReadOnly = true;
 	this->DragMode = dmAutomatic;
 	this->DoubleBuffered = true;
-	this->StyleElements = TStyleElements() << seBorder; //Tylko Border
+	//this->StyleElements = TStyleElements() << seBorder; //Tylko Border
 	this->Font->Quality = TFontQuality::fqClearType;
 	//---
 	this->FPMenuBook = new TPopupMenu(this);
@@ -1047,7 +1044,7 @@ void __fastcall GsTreeBibleClass::CreateWnd()
 	GsTreeNodeClass *pNodeMainRoot = this->_AddRootNodeObject("Księgi Biblijne", enTypeRoot_Books);
 	if(!pNodeMainRoot) throw(Exception("Błąd inicjalizacji korzenia, drzewa"));
 	//---
-	for(unsigned char ucIndex=0; ucIndex<GsReadBibleTextData::GsNumberGroups; ucIndex++)
+	for(unsigned char ucIndex=0; ucIndex<GsReadBibleTextData::GsNumberGroups; ++ucIndex)
 	//Dodawanie grup bibli do drzewa
 	{
 		GsTreeNodeClass *pNodeGroup = this->_AddChildNodeObject(pNodeMainRoot, GsReadBibleTextData::GsNamesTableNameGroupBook[ucIndex]);
@@ -1059,7 +1056,7 @@ void __fastcall GsTreeBibleClass::CreateWnd()
 			if(!pNodeBook) throw(Exception("Błąd inicjalizacji klasy GsTreeNodeClass"));
 			pNodeBook->ucIndexBook = uiLicz; //Numer księgi
 			pNodeBook->ucCountChapt = GsReadBibleTextData::GsInfoAllBooks[uiLicz].ucCountChapt; //Ilość rozdziałów
-			uiLicz++; //Licznik indeksu księgi
+			++uiLicz; //Licznik indeksu księgi
 		}
 	}
 	this->FullExpand();	//Drzewo całkowicie rozwinięte
@@ -1124,7 +1121,7 @@ void __fastcall GsTreeBibleClass::DoContextPopup(const Types::TPoint &MousePos, 
 	}
 	this->FPMenuBook->Items->Clear();	//Skasowanie wszystkich pozycji z menu podręcznego
 	//Tworzenie podręcznego menu rozdziałów
-	for(int iIndex=0; iIndex<pGsTreeNodeClass->ucCountChapt; iIndex++)
+	for(int iIndex=0; iIndex<pGsTreeNodeClass->ucCountChapt; ++iIndex)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->FPMenuBook);
 		if(!NewItem) throw(Exception("Błąd inicjalizacji klasy TMenuItem"));
@@ -1164,65 +1161,6 @@ void __fastcall GsTreeBibleClass::Resize(void)
 {
 
 }
-//----------------------------------------------------------------------------
-bool __fastcall GsTreeBibleClass::CustomDrawItem(TTreeNode* Node, TCustomDrawState State, TCustomDrawStage Stage, bool &PaintImages)
-/**
-	OPIS METOD(FUNKCJI): Własny wygląd objektu
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TRect NodeRect = Node->DisplayRect(true),
-				NodeRectImage = TRect();
-	TPoint pointExt[4], pointNoExt[4];
-	//Rysowanie własnych wskażników, rozwinięcia i zwinięcia pozycji
-	pointNoExt[0].X = NodeRect.Left - this->Images->Width - 14; pointNoExt[0].Y = NodeRect.Top + (NodeRect.Height() / 2) - 3;
-	pointNoExt[1].X = pointNoExt[0].X; pointNoExt[1].Y = NodeRect.Top + (NodeRect.Height() / 2) + 3;
-	pointNoExt[2].X = NodeRect.Left - this->Images->Width - 8; pointNoExt[2].Y = NodeRect.Top + (NodeRect.Height() / 2);
-	pointNoExt[3].X = pointNoExt[0].X; pointNoExt[3].Y = pointNoExt[0].Y;
-
-	pointExt[0].X = NodeRect.Left - this->Images->Width - 14; pointExt[0].Y = NodeRect.Top + (NodeRect.Height() / 2) - 3;
-	pointExt[1].X = NodeRect.Left - this->Images->Width - 11; pointExt[1].Y = NodeRect.Top + NodeRect.Height() - 5;
-	pointExt[2].X = NodeRect.Left - this->Images->Width - 8; pointExt[2].Y = pointExt[0].Y;
-	pointExt[3].X = pointExt[0].X; pointExt[3].Y = pointExt[0].Y;
-	//---
-	PaintImages = true;
-	if (State.Contains(cdsSelected))
-	{
-		this->Canvas->Font->Color = clWindowText;
-		this->Canvas->Brush->Color = clYellow;
-	}
-	switch(Node->Level)
-	{
-		case 0:
-			this->Canvas->Font->Color = clRed;
-			this->Canvas->Font->Style = TFontStyles()<< fsBold;
-			break;
-
-		case 1:
-			this->Canvas->Font->Color = clPurple;
-			this->Canvas->Font->Style = TFontStyles()<< fsBold;
-			break;
-	}
-	this->Images->Draw(this->Canvas, NodeRect.Left - this->Images->Width - 2, NodeRect.Top + (NodeRect.Height() / 2 - (this->Images->Height / 2)), Node->ImageIndex);
-
-	DrawText(this->Canvas->Handle, Node->Text.c_str(), -1, &NodeRect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-	//---
-	//this->Canvas->Font->Color = clWindowText;
-	if(Node->HasChildren)
-	{
-		if(Node->Expanded)
-		{
-			this->Canvas->Polyline(pointNoExt, 3);
-		}
-		else
-		{
-			this->Canvas->Polyline(pointExt, 3);
-		}
-	}
-	return false;
-}
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::Delete(TTreeNode* Node)
 /**
@@ -1237,32 +1175,7 @@ void __fastcall GsTreeBibleClass::Delete(TTreeNode* Node)
 	if(pGsTreeNodeClass)
 	{
 		//delete pGsTreeNodeClass; pGsTreeNodeClass = nullptr; //[30-07-2023]
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug("GsTreeBibleClass::Delete");
-		#endif
 	}
-}
-//---------------------------------------------------------------------------
-bool __fastcall GsTreeBibleClass::CustomDraw(const System::Types::TRect &ARect, TCustomDrawStage Stage)
-/**
-	OPIS METOD(FUNKCJI): Własny wygląd objektu
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	return true;
-}
-//---------------------------------------------------------------------------
-bool __fastcall GsTreeBibleClass::IsCustomDrawn(TCustomDrawTarget Target, TCustomDrawStage Stage)
-/**
-	OPIS METOD(FUNKCJI): Bez tej metody własnwe rysowanie objektu jest niemożliwe.
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI): True, jeśli ma być włany wygląd objektu!!!
-*/
-{
-	return true;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTreeBibleClass::_CreateNodeClass(TCustomTreeView *Sender, TTreeNodeClass &NodeClass)
@@ -1404,7 +1317,7 @@ __fastcall GsListBoxSelectedVersClass::GsListBoxSelectedVersClass(TComponent* Ow
 {
 	this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
-	this->StyleElements = TStyleElements();
+	//this->StyleElements = TStyleElements();
 	this->MultiSelect = true; this->ExtendedSelect = false;
 	this->Color = clCream;
 	this->iRIndex = -1;	 //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
@@ -1447,7 +1360,7 @@ void __fastcall GsListBoxSelectedVersClass::DestroyWnd()
 //---------------------------------------------------------------------------
 void __fastcall GsListBoxSelectedVersClass::DrawItem(int Index, const TRect &Rect, TOwnerDrawState State)
 /**
-	OPIS METOD(FUNKCJI): Główny konstruktor, klasy GsTabSheetClass
+	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -1455,12 +1368,15 @@ void __fastcall GsListBoxSelectedVersClass::DrawItem(int Index, const TRect &Rec
 {
 	MyObjectVers *pMyObjectVers = static_cast<MyObjectVers *>(this->Items->Objects[Index]);
 	if(!pMyObjectVers) return;
-	//---
+	//--- Kolory aktywnego stylu //[16-12-2023]
+	//TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
+
+	//this->Canvas->Brush->Color = cBackGround;
 	TCanvas *pCanvas = this->Canvas;
 	const int ciLeftOffset=8;
 	TRect MyRect(Rect), CRect(0, Rect.Top, ciLeftOffset, Rect.Bottom);
 	//Gdy pusta pozycja, kolor zaznaczenia systemowy
-	pCanvas->Font = this->Font;
+	//pCanvas->Font->Color = cText;
 	UnicodeString ustrText;
 	//Adres wersetu
 	ustrText = this->Items->Strings[Index];
@@ -1524,9 +1440,6 @@ void __fastcall GsListBoxSelectedVersClass::Click()
 	{
 		GsReadBibleTextData::pGsListBoxFavoritiesClass->ReLoadFavList();
 	}
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("ustrSelect: %s", ARRAYOFCONST(( ustrSelect ))));
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListBoxSelectedVersClass::MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -1568,7 +1481,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	TToolButton *pToolButton = nullptr;
 	//---
 	this->DoubleBuffered = true;
-	this->StyleElements = TStyleElements();
+	//this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
 	//---
 	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
@@ -1714,7 +1627,7 @@ void __fastcall GsTabSheetClass::_InitToolBarViewText(TPanel *pPanelParent)
 
 	this->pToolBarText = new TToolBar(pPanelParent);
 	if(!this->pToolBarText) throw(Exception("Błąd inicjalizacji klasy TToolBar"));
-	this->pToolBarText->StyleElements = TStyleElements();
+	//this->pToolBarText->StyleElements = TStyleElements();
 	this->pToolBarText->Parent = pPanelParent;
 	this->pToolBarText->AutoSize = true;
 	this->pToolBarText->Align = alLeft;
@@ -1760,7 +1673,7 @@ void __fastcall GsTabSheetClass::_InitToolBarAllButtons(TPanel *pPanelParent)
 
 	this->pToolBar = new TToolBar(pPanelParent);
 	if(!this->pToolBar) throw(Exception("Błąd inicjalizacji klasy TToolBar"));
-	this->pToolBar->StyleElements = TStyleElements();
+	//this->pToolBar->StyleElements = TStyleElements();
 	this->pToolBar->Parent = pPanelParent;
 	this->pToolBar->AutoSize = true;
 	this->pToolBar->Align = alLeft;
@@ -1844,7 +1757,7 @@ void __fastcall GsTabSheetClass::_InitCBoxChaptersSelect(TPanel *pPanelParent)
 	this->pComboBox->ShowHint = true;
 	this->pComboBox->Hint = "Wybór rozdziału|Wybór numeru rozdziału z listy rozdziałów, dostępnych dla wybranej księgi";
 			//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
-	for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; iChapt++)
+	for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; ++iChapt)
 		{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
 }
 //---------------------------------------------------------------------------
@@ -1966,7 +1879,7 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
 				this->pComboBox->Clear();
-				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; ++iChapt)
 					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
 				this->pComboBox->ItemIndex = 0;
 				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
@@ -1978,14 +1891,14 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 		{
 			if(this->_ShucIndexBook < GlobalVar::Global_NumberBooks-1)
 			{
-				this->_ShucIndexBook++;
+				++this->_ShucIndexBook;
 				this->pComboBox->ItemIndex = 0;	 //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
 				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, 0);
 				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
 				this->pComboBox->Clear();
-				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; iChapt++)
+				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; ++iChapt)
 					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
 				this->pComboBox->ItemIndex = 0;
 				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
@@ -1997,8 +1910,8 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 		{
 			if(this->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt-1)
 			{
-				this->_ShucIndexChapt++; //Następny rozdział
-				this->pComboBox->ItemIndex++;	 //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
+				++this->_ShucIndexChapt; //Następny rozdział
+				++this->pComboBox->ItemIndex;	 //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
 				GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(this->_ShucIndexBook, this->_ShucIndexChapt);
 				//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
@@ -3369,9 +3282,9 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 	if((cucBook < GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStartRange+1) || (cucBook > GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStopRange+1))
 	{
 		//Wyczyszczenie zawartości objektu, klasy TStringGrid
-		for(int iRow=0; iRow<this->_pSGridInterlinearVers->RowCount; iRow++)
+		for(int iRow=0; iRow<this->_pSGridInterlinearVers->RowCount; ++iRow)
 		{
-			for(int iCol=0; iCol<this->_pSGridInterlinearVers->ColCount; iCol++)
+			for(int iCol=0; iCol<this->_pSGridInterlinearVers->ColCount; ++iCol)
 			{
 				this->_pSGridInterlinearVers->Cells[iCol][iRow] = "";
 			}
@@ -3396,7 +3309,7 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		}
 	}
 	if(pHSListSelectVers->Count > 0) this->_pSGridInterlinearVers->ColCount = pHSListSelectVers->Count;	//Kolumn tyle, ile słów w wersecie
-	for(int iIndex=0; iIndex<pHSListSelectVers->Count; iIndex++)
+	for(int iIndex=0; iIndex<pHSListSelectVers->Count; ++iIndex)
 	{
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(1, 5);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(7, 20);
@@ -3420,7 +3333,7 @@ __fastcall GsTabSheetSelectVersClass::GsTabSheetSelectVersClass(TComponent* Owne
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
 	this->DoubleBuffered = true;
-	this->StyleElements = TStyleElements();
+	//this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->Caption = "Lista wybranych wersetów";
 	this->ImageIndex = enImageIndex_CopyToSheet;
@@ -3480,7 +3393,7 @@ __fastcall GsListBoxVersClass::GsListBoxVersClass(TComponent* Owner) : TCustomLi
 {
 	this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
-	this->StyleElements = TStyleElements(); //Musi być
+	//this->StyleElements = TStyleElements(); //Musi być
 	this->Color = clWebWheat;
 	this->Font->Quality = TFontQuality::fqClearType;
 }
@@ -3530,8 +3443,7 @@ void __fastcall GsListBoxVersClass::DrawItem(int Index, const TRect &Rect, TOwne
 {
 	TCanvas *pCanvas = this->Canvas;
 	TRect MyRect(Rect);
-	//Gdy pusta pozycja, kolor zaznaczenia systemowy
-	pCanvas->Font = this->Font;
+
 	if(State.Contains(odSelected) && !this->Items->Strings[Index].IsEmpty())
 	{
 		pCanvas->Brush->Color = clWebDarkTurquoise;
@@ -3607,8 +3519,11 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 {
 	this->_pListWordGrec = new TList();
 	if(!this->_pListWordGrec) throw(Exception("Błąd funkcji TList"));
+  //this->StyleElements = TStyleElements(); //Musi być
 	this->OwnerData = true;
 	this->OwnerDraw = true;
+	//this->OnGetImageIndex = this->_OnGetImageIndex;
+	//this->OnGetSubItemImage = this->_OnGetSubItemImage;
 	this->DoubleBuffered = true;
 	this->Font->Size = 10;
 	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
@@ -3754,7 +3669,7 @@ void __fastcall GsLViewDictionaryClass::_CreateAllColumns()
 	TListColumn *NewColumn=nullptr;
 
 	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNames); iColumns++)
+	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNames); ++iColumns)
 	{
 		NewColumn = this->Columns->Add();
 		NewColumn->Caption = ustrColumsNames[iColumns];
@@ -3809,45 +3724,73 @@ void __fastcall GsLViewDictionaryClass::DrawItem(TListItem* Item, const System::
 	TRect RectBounds = Item->DisplayRect(drBounds);
 	TRect RectLabel = Item->DisplayRect(drLabel);
 	TRect RectIcon = Item->DisplayRect(drIcon);
-	//TRect RectItemColumn = TRect(RectBounds.Left, RectBounds.Top, RectLabel.Right, RectLabel.Bottom);
+	//--- Kolory aktywnego stylu //[16-12-2023]
+	TColor cBackGround = TStyleManager::ActiveStyle->GetStyleColor(scListView);
+	TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
+	this->Canvas->Brush->Color = cBackGround;
 
 	if(State.Contains(odSelected))
 	{
-		this->Canvas->Brush->Color = clYellow;
+		this->Canvas->Brush->Color = clWebRoyalBlue;//clYellow;
 	}
 	this->Canvas->FillRect(RectBounds);
-	//this->Canvas->Brush->Color = clWebLavender;
-	//this->Canvas->FillRect(RectItemColumn);
 
 	this->SmallImages->Draw(this->Canvas, RectIcon.Left, RectIcon.Top + 1, enImageIndex_GrecWordItem);
 
 	this->Canvas->Font->Color = clRed;
 	this->Canvas->Font->Style = TFontStyles() << fsBold;
 	DrawText(this->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-	//this->Canvas->Brush->Color = this->Color;
 	//---
-	TRect RectSubItem = RectBounds;
-	for(int iColumn=1; iColumn<this->Columns->Count; iColumn++)
+	TRect RectSubItemText = RectBounds; RectSubItemText.Left += 20; //[16-12-2023]
+	TRect RectSubItemIcon = RectBounds; RectSubItemIcon.Left += 4;  //[16-12-2023]
+
+	for(int iColumn=1; iColumn<this->Columns->Count; ++iColumn)
 	{
 		//Wymiary następnej kolumny
-		RectSubItem.Left += this->Column[iColumn-1]->Width + 1;
-		RectSubItem.Right = RectSubItem.Left + this->Column[iColumn]->Width;
+		RectSubItemText.Left += this->Column[iColumn-1]->Width;
+		RectSubItemText.Right = RectSubItemText.Left + this->Column[iColumn]->Width;
+
+		RectSubItemIcon.Left += this->Column[iColumn-1]->Width; //[16-12-2023]
 		//
 		if(iColumn==1)
 		{
-			this->Canvas->Font->Color = clBlue;	//Strong
+			this->Canvas->Font->Color = clWebLimeGreen;
 			this->Canvas->Font->Style = TFontStyles();
+			this->SmallImages->Draw(this->Canvas, RectSubItemIcon.Left, RectSubItemIcon.Top + 1, enImageIndex_GrecStrongColumn); //[16-12-2023]
 		}
 		else if(iColumn==2)
 		{
-			this->Canvas->Font->Color = this->Font->Color; //Tłumaczenie
+			this->Canvas->Font->Color = cText;//this->Font->Color; //Tłumaczenie
 			this->Canvas->Font->Style = TFontStyles();
+			this->SmallImages->Draw(this->Canvas, RectSubItemIcon.Left, RectSubItemIcon.Top + 1, enImageIndex_GrecDictionaryColumn); //[16-12-2023]
 		}
 
-		DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+		DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItemText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	}
 }
 //--------------------------------------------------------------------------
+void __fastcall GsLViewDictionaryClass::_OnGetImageIndex(System::TObject* Sender, TListItem* Item)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	Item->ImageIndex = enImageIndex_GrecWordItem;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsLViewDictionaryClass::_OnGetSubItemImage(System::TObject* Sender, TListItem* Item, int SubItem, int &ImageIndex)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	ImageIndex = enImageIndex_GrecWordItem;
+}
+//---------------------------------------------------------------------------
 void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selected)
 /**
 	OPIS METOD(FUNKCJI): Wybranie pozycji z ListView listy
@@ -3867,7 +3810,7 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 		if(pDataGrecWordDictClass)
 		//Jeśli uzyskano wskażnik na listę wystąpień słowa greckiego
 		{
-			for(int iVers=0; iVers<pDataGrecWordDictClass->pHSListVers->Count; iVers++)
+			for(int iVers=0; iVers<pDataGrecWordDictClass->pHSListVers->Count; ++iVers)
 			//Liczenie elementów listy wystąpień greckiego słowa
 			{
 				//Odczytanie księgi z pozycji, listy wystąpień greckiego słowa
@@ -3959,7 +3902,7 @@ __fastcall GsLViewCommentsAllClass::GsLViewCommentsAllClass(TComponent* Owner) :
 	this->ViewStyle = vsReport;
 	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
 	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNamesComments); iColumns++)
+	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNamesComments); ++iColumns)
 	{
 		NewColumn = this->Columns->Add();
 		NewColumn->Caption = ustrColumsNamesComments[iColumns];
@@ -4170,30 +4113,33 @@ void __fastcall GsLViewCommentsAllClass::DrawItem(TListItem* Item, const System:
 	TRect RectBounds = Item->DisplayRect(drBounds);
 	TRect RectLabel = Item->DisplayRect(drLabel);
 	TRect RectIcon = Item->DisplayRect(drIcon);
-	//---
+	//--- Kolory aktywnego stylu //[16-12-2023]
+	TColor cBackGround = TStyleManager::ActiveStyle->GetStyleColor(scListView);
+  TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
+
+	this->Canvas->Brush->Color = cBackGround;//clGreen;
 	if(State.Contains(odSelected))
 	{
-		this->Canvas->Brush->Color = clYellow;
+		this->Canvas->Brush->Color = clWebDarkTurquoise;//clGreen;
 	}
 	this->Canvas->FillRect(RectBounds);
-	this->Canvas->Font->Color = clRed;
+	this->Canvas->Font->Color = clWebBlue;
 	this->Canvas->Font->Style = TFontStyles() << fsBold;
 
 	DrawText(this->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	//return;
 	TRect RectSubItem = RectBounds; RectSubItem.Left += 4;
-	for(int iColumn=1; iColumn<this->Columns->Count; iColumn++)
+	for(int iColumn=1; iColumn<this->Columns->Count; ++iColumn)
 	{
 		//Wymiary następnej kolumny
 		RectSubItem.Left += this->Column[iColumn-1]->Width + 1;
 		RectSubItem.Right = RectSubItem.Left + this->Column[iColumn]->Width;
 		if(iColumn==1)
 		{
-			this->Canvas->Font->Color = this->Font->Color;
+			this->Canvas->Font->Color = cText;//this->Font->Color;
 			this->Canvas->Font->Style = TFontStyles();
 		}
 
-		//DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn+1].c_str(), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 		DrawText(this->Canvas->Handle, TEXT("Komentarz"), -1, &RectSubItem, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	}
 }
@@ -4229,7 +4175,7 @@ __fastcall GsListBoxFavoritiesClass::GsListBoxFavoritiesClass(TComponent* Owner)
 	this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
 	this->Font->Quality = TFontQuality::fqClearType;
-	this->StyleElements = TStyleElements();
+	//this->StyleElements = TStyleElements();
 	GsReadBibleTextData::pGsListBoxFavoritiesClass = this;
 }
 //---------------------------------------------------------------------------
@@ -4295,13 +4241,7 @@ void __fastcall GsListBoxFavoritiesClass::DrawItem(int Index, const TRect &Rect,
 	TRect MyRect(Rect);
 	int ucBook, ucChapt, ucVers;
 	UnicodeString BookChaptVers;
-	//Gdy pusta pozycja, kolor zaznaczenia systemowy
-	pCanvas->Font = this->Font;
-	if(State.Contains(odSelected) && !this->Items->Strings[Index].IsEmpty())
-	{
-		pCanvas->Brush->Color = clWebDarkTurquoise;
-		pCanvas->Font->Color = clYellow;
-	}
+
 	pCanvas->FillRect(Rect);
 
 	if(!this->Items->Strings[Index].IsEmpty())

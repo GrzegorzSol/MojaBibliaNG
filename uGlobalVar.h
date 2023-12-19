@@ -28,11 +28,12 @@ enum {enHelpTextIndex_CloseSheet=0,		//0.Zamknięcie aktywnej zakładki
 			enHelpTextIndex_MailChapt,			//14.Wyśli emailem rozdział
 			enHelpTextIndex_ImageAndText,		//15.Tworzenie grafiki z tekstem
 			enHelpTextIndex_Help,						//16.Pomocnik
-			enHelpTextIndex_Count						//17.
+			enHelpTextIndex_Count					 //17.
 };
 /*
 	Całkowicie publiczna i statyczna klasa globalnych zmiennych, dostępnych wszystkim modułom
 */
+
 struct GlobalVar
 {
 	inline const static UnicodeString Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName),					 //Ścieżka dostępu do katalogu głównego programu;
@@ -134,6 +135,8 @@ struct GlobalVar
 																				GlobalIni_FontNameAdress="FontNameAdress",				 //Nazwa czcionki adresu wersetu
 																				GlobalIni_FontNameTranslators="FontNameTranslators",		//Nazwa czcionki nazwy tłymaczenia
 																				GlobalIni_SelectStyleName="SelectStyleName",				//Nazwa wybranego z listy tematu dla aplikacji
+																				GlobalIni_GrahicsBackground="GrahicsBackground",  //Ścieżka dostępu do podkładu graficznego dla głównego okna.
+                                                                                          //Grafika będzie widoczna tylko gdy nie będzie wczytana żadna księga biblijna  //[11-12-2023]
 																		//----- Sekcje Translates
 																		GlobalIni_TranslatesSection_Main="TRANSLATES",								//Główna sekcja TRANSLATES pliku ini
 																				GlobalIni_ExcludeTranslates="ExcludeTranslates",		//Tłumaczenia nie wyświetlane

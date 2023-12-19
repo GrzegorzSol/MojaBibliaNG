@@ -299,37 +299,6 @@ void __fastcall TReadingPlanWindow::FormDestroy(TObject *Sender)
 	if(this->_pHSListJournaling) {delete this->_pHSListJournaling; this->_pHSListJournaling = nullptr;}
 }
 //---------------------------------------------------------------------------
-void __fastcall TReadingPlanWindow::PageControlReadingPlanesDrawTab(TCustomTabControl *Control,
-					int TabIndex, const TRect &Rect, bool Active)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
-	if(!pPControl) return;
-	//-----
-	TTabSheet *pActSheet = dynamic_cast<TTabSheet *>(pPControl->Pages[TabIndex]);	//Aktualna zakładka
-	if(!pActSheet) return;
-	//---
-	TRect MyRect(Rect);
-	if(Active)
-	{
-		pPControl->Canvas->Font->Color = clYellow;
-		pPControl->Canvas->Brush->Color = clBlue;
-	}
-	else
-	{
-		pPControl->Canvas->Brush->Color = clCream;
-	}
-	pPControl->Canvas->FillRect(Rect);
-	pPControl->Images->Draw(pPControl->Canvas, Rect.Left + 4, (Rect.Top + ((Rect.Bottom - Rect.Top) / 2)) - (pPControl->Images->Height / 2), pActSheet->ImageIndex);
-	MyRect.Left += (pPControl->Images->Width + 4);
-	DrawText(pPControl->Canvas->Handle, pActSheet->Caption.c_str(), -1, &MyRect, DT_VCENTER | DT_SINGLELINE);
-}
-//---------------------------------------------------------------------------
 void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak)
 /**
 	OPIS METOD(FUNKCJI): Tekst do przeczytania na głos przez syntezator mowy

@@ -25,13 +25,14 @@ object ReadingPlanWindow: TReadingPlanWindow
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 1218
+    Width = 1222
     Height = 70
     Align = alTop
     Color = clMoneyGreen
     ParentBackground = False
     ShowCaption = False
     TabOrder = 0
+    ExplicitWidth = 1218
     object LabelInfosReadingPlan: TLabel
       AlignWithMargins = True
       Left = 4
@@ -39,6 +40,7 @@ object ReadingPlanWindow: TReadingPlanWindow
       Width = 1003
       Height = 62
       Align = alLeft
+      Alignment = taCenter
       AutoSize = False
       Color = clMoneyGreen
       Font.Charset = DEFAULT_CHARSET
@@ -52,6 +54,7 @@ object ReadingPlanWindow: TReadingPlanWindow
       Transparent = False
       Layout = tlCenter
       WordWrap = True
+      StyleElements = []
     end
     object PanelButtons: TPanel
       Left = 1010
@@ -139,33 +142,34 @@ object ReadingPlanWindow: TReadingPlanWindow
   object PanelDayTextRead: TPanel
     Left = 0
     Top = 76
-    Width = 1224
-    Height = 845
+    Width = 1228
+    Height = 846
     Align = alClient
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 1
-    ExplicitWidth = 1228
-    ExplicitHeight = 846
+    ExplicitWidth = 1224
+    ExplicitHeight = 845
     object SplitterSizeJournaling: TSplitter
       AlignWithMargins = True
-      Left = 966
+      Left = 970
       Top = 3
       Width = 5
-      Height = 839
+      Height = 840
       Align = alRight
       Beveled = True
       Color = clBlue
       ParentColor = False
       OnCanResize = SplitterSizeJournalingCanResize
       ExplicitLeft = 1009
+      ExplicitHeight = 839
     end
     object PageControlReadingPlanes: TPageControl
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 957
-      Height = 839
+      Width = 961
+      Height = 840
       ActivePage = TabSheetPlan8
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
@@ -178,7 +182,8 @@ object ReadingPlanWindow: TReadingPlanWindow
       OwnerDraw = True
       ParentFont = False
       TabOrder = 0
-      OnDrawTab = PageControlReadingPlanesDrawTab
+      ExplicitWidth = 957
+      ExplicitHeight = 839
       object TabSheetPlan1: TTabSheet
         Caption = 'TabSheetPlan1'
         TabVisible = False
@@ -349,14 +354,16 @@ object ReadingPlanWindow: TReadingPlanWindow
       end
     end
     object PanelJournaling: TPanel
-      Left = 974
+      Left = 978
       Top = 0
       Width = 250
-      Height = 845
+      Height = 846
       Align = alRight
       BevelOuter = bvNone
       ShowCaption = False
       TabOrder = 1
+      ExplicitLeft = 974
+      ExplicitHeight = 845
       object ChListBoxJournaling: TCheckListBox
         AlignWithMargins = True
         Left = 3
@@ -383,6 +390,7 @@ object ReadingPlanWindow: TReadingPlanWindow
         OnClick = ChListBoxJournalingClick
         OnClickCheck = ChListBoxJournalingClickCheck
         OnDrawItem = ChListBoxJournalingDrawItem
+        ExplicitHeight = 833
       end
     end
   end

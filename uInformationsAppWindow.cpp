@@ -92,7 +92,7 @@ void __fastcall TInformationsAppWindow::TimerInfoSystemTimer(TObject *Sender)
 {
 	static unsigned char sucTick;
 	if(sucTick==8) this->Close();
-	sucTick++;
+	++sucTick;
 }
 //---------------------------------------------------------------------------
 

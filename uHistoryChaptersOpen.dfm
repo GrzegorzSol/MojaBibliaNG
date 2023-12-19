@@ -24,7 +24,6 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     Columns = <>
     MultiSelect = True
     OwnerData = True
-    OwnerDraw = True
     ReadOnly = True
     RowSelect = True
     SmallImages = ImageListSmallHistoryCh
@@ -35,9 +34,10 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     OnDataFind = LViewHistoryChDataFind
     OnDataHint = LViewHistoryChDataHint
     OnDblClick = LViewHistoryChDblClick
-    OnDrawItem = LViewHistoryChDrawItem
-    ExplicitLeft = 8
-    ExplicitTop = 48
+    OnGetImageIndex = LViewHistoryChGetImageIndex
+    OnGetSubItemImage = LViewHistoryChGetSubItemImage
+    ExplicitWidth = 972
+    ExplicitHeight = 815
   end
   object ActionToolBarHistoryCh: TActionToolBar
     Left = 0
@@ -61,6 +61,7 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
+    ExplicitWidth = 978
   end
   object ActionManagerHistoryCh: TActionManager
     ActionBars = <

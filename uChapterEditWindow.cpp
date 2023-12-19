@@ -150,7 +150,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 				}
 			}
 
-			iIndexVers++;
+			++iIndexVers;
 			if(this->_iGetTranslate == 0)
 			//Jeśli wybrane konkretne tłumaczenie to nie wstawiać	 przerw pustej lini
 			{

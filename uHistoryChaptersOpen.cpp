@@ -94,9 +94,6 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 	while(pListItem)
 	{
 		pHSListSelected->Add(GlobalVar::Global_HListHistoryChapterOpen->Strings[pListItem->Index]);
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug(Format("Select: %s", ARRAYOFCONST((GlobalVar::Global_HListHistoryChapterOpen->Strings[pListItem->Index]))));
-//		#endif
 		pListItem = this->LViewHistoryCh->GetNextItem(pListItem, sdAll, selected);
 	}
 
@@ -113,9 +110,6 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 	{
 		iIndexOf = GlobalVar::Global_HListHistoryChapterOpen->IndexOf(pHSListSelected->Strings[i]);
 		if(iIndexOf == -1) continue;
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug(Format("iIndexOf: %d - %s", ARRAYOFCONST((iIndexOf, GlobalVar::Global_HListHistoryChapterOpen->Strings[iIndexOf]))));
-//		#endif
 		GlobalVar::Global_HListHistoryChapterOpen->Delete(iIndexOf);
 	}
 
@@ -179,57 +173,6 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDataHint(TObject *Send
 	iLViewEndIndex = EndIndex;		 //Górny zakres, elementów listy
 }
 //---------------------------------------------------------------------------
-void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDrawItem(TCustomListView *Sender,
-					TListItem *Item, TRect &Rect, TOwnerDrawState State)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TListView *pLView = dynamic_cast<TListView *>(Sender);
-	if(!pLView) return;
-	//--- Wyjście, gdy element, nie mieści się w zakresie listy
-	if((Item->Index<iLViewStartIndex) || (Item->Index>iLViewEndIndex)) return;
-	//---
-	TRect RectBounds = Item->DisplayRect(drBounds);
-	TRect RectLabel = Item->DisplayRect(drLabel);
-	TRect RectIcon = Item->DisplayRect(drIcon);
-
-	if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
-
-	if(State.Contains(odSelected))
-	{
-		pLView->Canvas->Brush->Color = clWebDarkOrange;
-	}
-
-	pLView->Canvas->FillRect(RectBounds);
-	pLView->Canvas->Font = pLView->Font;
-	pLView->Canvas->Font->Style = TFontStyles() << fsBold;
-
-	DrawText(pLView->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-	pLView->SmallImages->Draw(pLView->Canvas, RectIcon.Left,
-		RectIcon.Top + ((Rect.Height() - pLView->SmallImages->Height) / 2), enSmallImage_ChaptItem);
-
-	TRect RectSubItem	 = RectLabel;
-	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; ++iColumn)
-	{
-		//Wymiary następnej kolumny
-		RectSubItem.Left += pLView->Column[iColumn]->Width;
-		RectSubItem.Right += pLView->Column[iColumn + 1]->Width;
-
-		pLView->Canvas->Font->Color = clWindowText;
-		pLView->Canvas->Font->Style = TFontStyles();
-
-		TRect RectSubItem1 = RectSubItem;
-		DrawText(pLView->Canvas->Handle, Item->SubItems->Strings[iColumn].c_str(), -1, &RectSubItem1,
-			DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-		pLView->SmallImages->Draw(pLView->Canvas, RectSubItem.Left - pLView->SmallImages->Width - 2,
-			RectSubItem.Top + ((RectSubItem.Height() - pLView->SmallImages->Height) / 2), enSmallImage_DateItem);
-	}
-}
-//---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
@@ -252,13 +195,6 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 	ustrChapt = ustrTest.Delete(iPosSpace, 28);
 	iChapt = ustrChapt.ToIntDef(1);
 
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("Item->Caption: %s", ARRAYOFCONST((Item->Caption))));
-//		GsDebugClass::WriteDebug(Format("ustrName: %s", ARRAYOFCONST((ustrName))));
-//		GsDebugClass::WriteDebug(Format("ustrTest: %s", ARRAYOFCONST((ustrTest))));
-//		GsDebugClass::WriteDebug(Format("iPosSpace: %d", ARRAYOFCONST((iPosSpace))));
-//		GsDebugClass::WriteDebug(Format("ustrChapt: %s - %d", ARRAYOFCONST((ustrChapt, iChapt))));
-//	#endif
 	for(int i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		pInfobook = const_cast<PInfoAllBooks>(&GsReadBibleTextData::GsInfoAllBooks[i]);
@@ -293,6 +229,30 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChChange(TObject *Sender
 		//Aktywacja przycisku do kasowania pozycji gdy istnieje choćby jeden element zaznaczony
 		this->Act_DeleteSelectItemHistoryCh->Enabled = (this->LViewHistoryCh->SelCount > 0);
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall THistoryOpenChaptersWindow::LViewHistoryChGetImageIndex(TObject *Sender,
+					TListItem *Item)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	Item->ImageIndex = enSmallImage_ChaptItem;
+}
+//---------------------------------------------------------------------------
+void __fastcall THistoryOpenChaptersWindow::LViewHistoryChGetSubItemImage(TObject *Sender,
+					TListItem *Item, int SubItem, int &ImageIndex)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	ImageIndex = enSmallImage_DateItem;
 }
 //---------------------------------------------------------------------------
 

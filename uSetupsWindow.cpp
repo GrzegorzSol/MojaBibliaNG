@@ -24,7 +24,8 @@ TSetupsWindow *SetupsWindow;
 enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_OtherSetups, enPageSetup_Translates,
 			enPageSetups_ReadingPlan, enPageSetups_SelectThemes,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
-			enSetup_Save=10, enSetup_Return, enSetup_Cancel, enSetup_Help,
+			enSelectBackground, //[12-12-2023]
+			enSetup_Save=50, enSetup_Return, enSetup_Cancel, enSetup_Help,
 			//enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
 			//Tagi dla przycisków i innych kontrolek
 			enTagControl_ButtFontMain=100,
@@ -119,20 +120,24 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	//Hinty
 	this->SW_ButGroupSections->Hint = "Grupy ustawień";
-	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
-	this->SW_LEditPath2->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
-	this->SW_LEditPath3->Hint = Format("Ścieżka dostępu do katalogu z multimediami||%u", ARRAYOFCONST((enImage_SmallSelectDir)));
-	this->SW_ButtSelectDirMulti_1->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_1->ImageIndex)));
-	this->SW_ButtSelectDirMulti_2->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_2->ImageIndex)));
-	this->SW_ButtSelectDirMulti_3->Hint = Format("Wybór katalogu z multimediami||%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_3->ImageIndex)));
+	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do głównego katalogu z multimediami|%u", ARRAYOFCONST((enImage_SmallSelectDir)));
+	this->SW_LEditPath2->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do pierwszego, dodatkowego katalogu z multimediami|%u", ARRAYOFCONST((enImage_SmallSelectDir)));
+	this->SW_LEditPath3->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do drugiego, dodatkowego katalogu z multimediami|%u", ARRAYOFCONST((enImage_SmallSelectDir)));
+	this->SW_ButtSelectDirMulti_1->Hint = Format("Wybór katalogu z multimediami|Główny katalog z multimediami|%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_1->ImageIndex)));
+	this->SW_ButtSelectDirMulti_2->Hint = Format("Wybór katalogu z multimediami|Pierwszy, dodatkowy katalog z multimediami|%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_2->ImageIndex)));
+	this->SW_ButtSelectDirMulti_3->Hint = Format("Wybór katalogu z multimediami|Drugi, dodatkowy katalog z multimediami|%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_3->ImageIndex)));
 	this->SW_ButtSetupSave->Hint = Format("Zapis zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupSave->ImageIndex)));
 	this->SW_ButtSetupCancel->Hint = Format("Anulowanie zmienionej konfiguracji||%u", ARRAYOFCONST((this->SW_ButtSetupCancel->ImageIndex)));
+	this->ButtFontNameMainText->Hint = Format("Wybór głównej czcionki|Główna czcionka używana do wyświetlania tekstów wersetów w głównym oknie|%u", ARRAYOFCONST((this->ButtFontNameMainText->ImageIndex)));
+	this->ButtFontNameAdress->Hint = Format("Wybór czcionki dla adresu wersetu|Czcionka do wyświetlania adresów wersetów w głównym oknie|%u", ARRAYOFCONST((this->ButtFontNameAdress->ImageIndex)));
+	this->ButtFontNameTranslates->Hint = Format("Wybór czcionki dla nazwy tłumaczenia|Czcionka do wyświetlania nazwy tłumaczenia w głównym oknie|%u", ARRAYOFCONST((this->ButtFontNameTranslates->ImageIndex)));
 	//Tagi
 
 	//Pole tekstowe z wybranymi katalogami z multimediami
 	this->SW_LEditPath1->Tag = enSelectDirMulti_1; this->SW_ButtSelectDirMulti_1->Tag = enSelectDirMulti_1;
 	this->SW_LEditPath2->Tag = enSelectDirMulti_2; this->SW_ButtSelectDirMulti_2->Tag = enSelectDirMulti_2;
 	this->SW_LEditPath3->Tag = enSelectDirMulti_3; this->SW_ButtSelectDirMulti_3->Tag = enSelectDirMulti_3;
+	this->SW_ButtSelectBackground->Tag =  enSelectBackground; //[12-12-2023]
 	//Dolne przyciski
 	this->SW_ButtSetupSave->Tag = enSetup_Save;
 	this->SW_ButtSetupReturn->Tag = enSetup_Return;
@@ -156,14 +161,14 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	//Tagi dla przycisków rozpoczęcia i przerwania Planu czytania Pisma Świętego
 	this->SpButtonStartPlan->Tag = enTagButt_StartPlan;
 	//Dodawanie grup do objektu, typu TListView
-	for(int i=0; i<enGroup_Count; ++i)
+	for(int i=0; i<enGroup_Count; i++)
 	{
 		TListGroup *pLGroup = this->SW_ListViewAllTranslates->Groups->Add();
 		pLGroup->Header = ustrGroups[i];
 	}
 	//Dodawanie kolumn do objektu, typu TListView
 	TListColumn	 *NewColumn;//=0;
-	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumnLViewTranslates); ++iColumns)
+	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumnLViewTranslates); iColumns++)
 	{
 		NewColumn = this->SW_ListViewAllTranslates->Columns->Add();
 		NewColumn->Caption = ustrColumnLViewTranslates[iColumns];
@@ -171,9 +176,9 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 		NewColumn->ImageIndex = enImage_Translates + iColumns;
 	}
 	//Tekst informacyjny na dole okna
-	this->SW_STextInfo->Caption = UnicodeString("\tUwagi dotyczące zadziałanie ustawień\n") +
-		" 1. - Ustawienie będzie obowiązywało po ponownym uruchomieniu aplikacji." +
-		"\n 2. - Po zmianie tych parametrów, dopiero w nowo otwartej księdze, zaczną, one obowiązywać.";
+	this->SW_STextInfo->Caption = UnicodeString("\tUwagi dotyczące zadziałanie ustawień.\n") +
+		"  1. Ustawienie będzie obowiązywało po ponownym uruchomieniu aplikacji.\n" +
+		"  2. Po zmianie tych parametrów, dopiero w nowo otwartej księdze, zaczną, one obowiązywać.";
 
 	//Logo ustawień
 	if(TFile::Exists(GlobalVar::Global_custrPathSetupsLogo))
@@ -282,7 +287,7 @@ void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
 {
 	TListColumn *NewColumn=nullptr;
 	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<enNameColumnDisplaySelectPlay_CountColumn; ++iColumns)
+	for(unsigned int iColumns=0; iColumns<enNameColumnDisplaySelectPlay_CountColumn; iColumns++)
 	{
 		NewColumn = this->LViewDisplayselectPlan->Columns->Add();
 		NewColumn->Caption = ustrNamesColumns[iColumns];
@@ -376,7 +381,7 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 
 	try
 	{
-		for(int i=0; i<_pTempHSListViewAllTr->Count; ++i)
+		for(int i=0; i<_pTempHSListViewAllTr->Count; i++)
 		{
 			pMyOjectVers = static_cast<MyObjectVers *>(_pTempHSListViewAllTr->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
@@ -476,13 +481,13 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 
 				if(!TFile::Exists(ustrPathFileReadingPlan)) throw(Exception("Brak pliku z wybranym planem czytania biblii"));
 				pHSList->LoadFromFile(ustrPathFileReadingPlan, TEncoding::UTF8);
-				for(int i=1; i<pHSList->Count; ++i)
+				for(int i=1; i<pHSList->Count; i++)
 				{
 					pItem = this->LViewDisplayselectPlan->Items->Add();
 					pItem->Caption = UnicodeString(i);
 
 					TStringDynArray sda = SplitString(pHSList->Strings[i], custrSeparator); //Ilość par rozdzialona znakiem custrSeparator
-					for(int si=0; si<sda.Length; ++si)
+					for(int si=0; si<sda.Length; si++)
 					{
 						ustrTemp = ReplaceText(UnicodeString(sda[si]), " ", ""); //Usunięcie wszystkich spacji
 						iLengthPair = ustrTemp.Length(); //Długość pary
@@ -544,6 +549,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->SW_LEditPath1->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1, "");
 	this->SW_LEditPath2->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, "");
 	this->SW_LEditPath3->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, "");
+  this->SW_LEditPathBackGround->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection,
+		GlobalVar::GlobalIni_GrahicsBackground, GlobalVar::Global_custrPathBackgroundWindow); //[12-12-2023]
 	//Sprawdzenie poprawności ścieżki dostępu
 	this->_VaidatePathMedia(this->SW_LEditPath1, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1);
 	this->_VaidatePathMedia(this->SW_LEditPath2, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2);
@@ -601,8 +608,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	pSListExcludeTrans->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, "");
 	//Dodawanie ścieżek dostępu do wszystkich tłumaczeń
 	UnicodeString ustrNameTranslate;
-	//for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
-	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
+	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
 	{
 		TListItem *NewItem = this->SW_ListViewAllTranslates->Items->Add();
 		NewItem->Caption = TPath::GetFileName(GlobalVar::SDirTranslatesList[i]);
@@ -644,7 +650,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		//--- Odczyt planów
 	TStringDynArray SDirReadingPlanList = TDirectory::GetFiles(GlobalVar::Global_custrPathAllReadingPlan, "*" +GlobalVar::Global_ustrFileReadingPlanExtend, 0);
 	this->CBoxSelectPlan->Items->BeginUpdate();
-	for(int i=0; i<SDirReadingPlanList.Length; ++i)
+	for(int i=0; i<SDirReadingPlanList.Length; i++)
 	{
 		this->CBoxSelectPlan->AddItem(TPath::GetFileName(SDirReadingPlanList[i]), 0);
 	}
@@ -659,14 +665,14 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->_DisplaySelectPlan();
 		//--- Lista czcionek dla planu czytania biblii
 	this->CBoxSelectFontReadingPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
-	for(int i=0; i<ARRAYSIZE(ustrFontList); ++i)
+	for(int i=0; i<ARRAYSIZE(ustrFontList); i++)
 	{
 		this->CBoxSelectFontReadingPlan->AddItem(ustrFontList[i], 0);
 	}
 	this->CBoxSelectFontReadingPlan->ItemIndex = this->CBoxSelectFontReadingPlan->Items->IndexOf(this->CBoxSelectFontReadingPlan->Text);
 		//--- Wielkość czcionek
 	this->CBoxSelectSizeFontPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SizeFontPlan, "16");
-	for(int i=0; i<ARRAYSIZE(ustrSizeFontList); ++i)
+	for(int i=0; i<ARRAYSIZE(ustrSizeFontList); i++)
 	{
 		this->CBoxSelectSizeFontPlan->AddItem(ustrSizeFontList[i], 0);
 	}
@@ -724,6 +730,47 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, this->SW_LEditPath2->Text);}
 	if(!this->SW_LEditPath3->Text.IsEmpty())
 		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, this->SW_LEditPath3->Text);}
+	if(!this->SW_LEditPathBackGround->Text.IsEmpty())
+	{
+    //[12-12-2023]
+		GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_GrahicsBackground, this->SW_LEditPathBackGround->Text);
+		TForm *pMainWindow = Application->MainForm;
+		TWICImage *pWICImage=nullptr;
+
+		try
+		{
+			try
+			{
+				pWICImage = new TWICImage();
+				if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+				if(pMainWindow)
+				{
+					TComponent *pComponent=nullptr;
+					for(int i=0; i<pMainWindow->ComponentCount; ++i)
+					{
+						pComponent = pMainWindow->Components[i];
+						if(pComponent->ClassNameIs("TImage"))
+						{
+							TImage *pImage = dynamic_cast<TImage *>(pComponent);
+							if(pImage)
+							{
+								pWICImage->LoadFromFile(this->SW_LEditPathBackGround->Text);
+								pImage->Picture->Assign(pWICImage);
+							}
+						}
+					}
+				}
+			}
+      catch(Exception &e)
+			{
+				MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			}
+		}
+		__finally
+		{
+			delete pWICImage; pWICImage = nullptr;
+		}
+	} //[12-12-2023]
 	//Zapis flag //[15-08-2023]
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, this->ToggleSwitchIsDisplayInfos->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, this->ToggleSwitchIsRequestClose->IsOn());
@@ -772,7 +819,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	//TStringList *pSListIncludeTrans = new TStringList(); //Lista przekładów używanych
 	//if(!pSListIncludeTrans) throw(Exception("Błąd inicjalizacji objektu TStringList"));
 	//---
-	for(int i=0; i<this->SW_ListViewAllTranslates->Items->Count; ++i)
+	for(int i=0; i<this->SW_ListViewAllTranslates->Items->Count; i++)
 	{
 		if(!this->SW_ListViewAllTranslates->Items->Item[i]->Checked)
 		//Jeśli tłumaczenie nie jest zaznaczone, dodaj tłumaczenie do listy wykluczeń
@@ -795,7 +842,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	//----- Jest wybrane tłumaczenie z listy dla planu
 	{
 		intPosSpace = this->CBoxSelectTranslate->Text.Pos(" ");
-		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; ++i)
+		for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
 		{
 			ustrNameTransIDPlan = TPath::GetFileName(GlobalVar::SDirTranslatesList[i]);
 			if(this->CBoxSelectTranslate->Text.SubString(1, intPosSpace-1) == ustrNameTransIDPlan)
@@ -908,6 +955,10 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 		case enSelectDirMulti_3:
 			this->SW_LEditPath3->Text = this->_SelectMultimediaDir(this->SW_LEditPath3->Text);
 			break;
+		//Wybór grafiki na podkład
+		case enSelectBackground:
+			this->SW_LEditPathBackGround->Text = this->_SelectBackGround();
+    break;
 		//Dolne przyciski akcji
 		case enSetup_Save:
 		{
@@ -976,12 +1027,21 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 			UnicodeString ustrSelectPathThemeName = TPath::ChangeExtension(TPath::Combine(GlobalVar::Global_custrPathImagesStyles,
 																								this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]), ".jpg");
 
-			TWICImage *pWICImage = new TWICImage();
-			if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			TWICImage *pWICImage=nullptr;
+
 			try
 			{
-				pWICImage->LoadFromFile(ustrSelectPathThemeName);
-				this->SW_ImagePreviewSelectStyle->Picture->Assign(pWICImage);
+				try
+				{
+					pWICImage = new TWICImage();
+					if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+					pWICImage->LoadFromFile(ustrSelectPathThemeName);
+					this->SW_ImagePreviewSelectStyle->Picture->Assign(pWICImage);
+				}
+        catch(Exception &e)
+				{
+					MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+				}
 			}
 			__finally
 			{
@@ -1013,6 +1073,40 @@ UnicodeString __fastcall TSetupsWindow::_SelectMultimediaDir(UnicodeString _ustr
 	else ustrSelect = _ustrPath;
 
 	if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
+	return ustrSelect;
+}
+//---------------------------------------------------------------------------
+UnicodeString __fastcall TSetupsWindow::_SelectBackGround(UnicodeString _ustrPath)
+/**
+	OPIS METOD(FUNKCJI): //[12-12-2023]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	const UnicodeString ustrFileTypes[] = {"Pliki jpg", "*.jpg", "Pliki jpeg", "*.jpeg",
+																				 "Pliki png", "*.png", "Pliki bmp", "*.bmp", "Każdy plik", "*.*"};
+
+	UnicodeString ustrSelect;
+  TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
+	if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
+	//---
+  for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
+	{
+		TFileTypeItem *pTFileTypeItem = pFileOpenDialog->FileTypes->Add();
+		pTFileTypeItem->DisplayName = ustrFileTypes[i];
+		pTFileTypeItem->FileMask = ustrFileTypes[i+1];
+	}
+
+	pFileOpenDialog->Title = "Wybierz plik z grafiką jako podkład pod główne okno...";
+	pFileOpenDialog->Options << fdoPathMustExist << fdoFileMustExist << fdoForceFileSystem;
+	pFileOpenDialog->DefaultFolder = _ustrPath;
+
+  if(pFileOpenDialog->Execute())
+		ustrSelect = pFileOpenDialog->FileName;
+	else ustrSelect = _ustrPath;
+
+  if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
 	return ustrSelect;
 }
 //---------------------------------------------------------------------------
@@ -1190,7 +1284,7 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 			//Plik dziennika nie istnieje
 			{
 				pHSList->Add(this->CBoxSelectPlan->Text);
-				for(int i=0; i<this->LViewDisplayselectPlan->Items->Count; ++i)
+				for(int i=0; i<this->LViewDisplayselectPlan->Items->Count; i++)
 				{
 					pLItem = this->LViewDisplayselectPlan->Items->Item[i];
 					if(pLItem)
@@ -1255,25 +1349,29 @@ void __fastcall TSetupsWindow::LViewDisplayselectPlanDrawItem(TCustomListView *S
 	TRect RectBounds = Item->DisplayRect(drBounds);
 	TRect RectLabel = Item->DisplayRect(drLabel);
 	TRect RectIcon = Item->DisplayRect(drIcon);
+  //--- Kolory aktywnego stylu //[16-12-2023]
+	TColor cBackGround = TStyleManager::ActiveStyle->GetStyleColor(scListView);
+	TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
 
-	if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
+	pLView->Canvas->Brush->Color = cBackGround; //[16-12-2023]
+	//if(!(Item->Index % 2)) pLView->Canvas->Brush->Color = (TColor)0x00EEEEEE;
 
 	pLView->Canvas->FillRect(RectBounds);
-	pLView->Canvas->Font = pLView->Font;
+	pLView->Canvas->Font->Color = cText; //[16-12-2023]
 	pLView->Canvas->Font->Style = TFontStyles() << fsBold;
 
 	this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectIcon.Left, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)	/ 2)) + RectIcon.Top, enImage_NumberDayPlan);
 	DrawText(pLView->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 
 	TRect RectSubItem	 = RectLabel;
-	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; ++iColumn)
+	for(int iColumn=0; iColumn<pLView->Columns->Count - 1; iColumn++)
 	{
 		//Wymiary następnej kolumny
 		RectSubItem.Left += pLView->Column[iColumn]->Width;
 		RectSubItem.Right += pLView->Column[iColumn + 1]->Width;
 		this->SW_ImgListMainSmall->Draw(pLView->Canvas, RectSubItem.Left - this->SW_ImgListMainSmall->Width, (this->SW_ImgListMainSmall->Width / 2 - ((RectIcon.Bottom - RectIcon.Top)	/ 2)) + RectIcon.Top, enImage_ReadingPlan);
 
-		pLView->Canvas->Font->Color = clBlue;
+		//pLView->Canvas->Font->Color = clBlue;
 		pLView->Canvas->Font->Style = TFontStyles();
 
 		TRect RectSubItem1 = RectSubItem;

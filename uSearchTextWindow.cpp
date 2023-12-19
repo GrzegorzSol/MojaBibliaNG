@@ -386,7 +386,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 					{
 						this->_pHSListSearchResult->AddObject(pBookListText->Strings[i].SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-						MyDataStatistic->uiCountFind++;
+						++MyDataStatistic->uiCountFind;
 					}
 				}
 				else //Wyszukiwanie tradycyjne
@@ -410,7 +410,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 //
 //						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 //						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-//						MyDataStatistic->uiCountFind++;
+//						++MyDataStatistic->uiCountFind;
 //					}
 					if(iPositionSearch > 0)
 					{
@@ -421,7 +421,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 
 						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-						MyDataStatistic->uiCountFind++;
+						++MyDataStatistic->uiCountFind;
 					} //if(iPositionSearch > 0)
 				} //if(this->STW_ChBoxIsRegEx->Checked)
 			} //for(int i=0; i<pBookListText->Count; ++i)
@@ -1007,23 +1007,17 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	{
 		case enTypeDisplay_ResultsearchAll:				 //Wyświetlanie wszystkich znalezionych wersetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSearchAll;
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("Wyświetlanie wszystkich znalezionych wersetów");
-			#endif
+
 		break;
 		//---
 		case enTypeDisplay_ResultSearchSelectBook: //Wyświetlanie znelozionych wersetów dla konkretnej księgi
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSearchBook;
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("Wyświetlanie znelozionych wersetów dla konkretnej księgi");
-			#endif
+
 		break;
 		//---
 		case enTypeDisplay_ResultSelectVers:			 //Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów
 			ustrDefineDisplayHTML = ustrDisplayHeaderHTMLSelectSearchVers;
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug("Wyświetlanie wybranego wersetu z listy wszystkich znalezionych wesetów");
-			#endif
+
 		break;
 	}
 	pStringStream->WriteString(ustrDefineDisplayHTML);
@@ -1051,9 +1045,6 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 		{
 			this->_ustrResultSearchHTML = ""; //[10-10-2023]
 			this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
-			#if defined(_DEBUGINFO_)
-				GsDebugClass::WriteDebug(Format("this->_ustrResultSearchHTML length: %d", ARRAYOFCONST(( this->_ustrResultSearchHTML.Length() ))));
-			#endif
 		}
 		//---
 		IPersistStreamInit *psi;

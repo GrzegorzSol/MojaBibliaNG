@@ -220,9 +220,6 @@ void __fastcall GsSearchFavFilesClass::_CreateListSelect()
 	while(pListItem)
 	{
 		this->_pHSListSelect->Add(TPath::Combine(GlobalVar::Global_custrPathSearchFavorities, pListItem->Caption));
-		#if defined(_DEBUGINFO_)
-			GsDebugClass::WriteDebug(Format("Select: %s", ARRAYOFCONST(( this->SelectFile ))));
-		#endif
 		pListItem = this->GetNextItem(pListItem, sdAll, selected);
 	}
 	this->_pHSListSelect->EndUpdate();

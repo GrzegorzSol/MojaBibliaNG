@@ -124,6 +124,9 @@ __published:	// IDE-managed Components
 	TWebBrowser *WebBrowserPreview;
 	TColorBox *SW_ColorBoxBorderFavoritiesVers;
 	TLabel *LabelColorBorderFavoritiesVers;
+	TGroupBox *SW_GrBoxSelectBackground;
+	TLabeledEdit *SW_LEditPathBackGround;
+	TButton *SW_ButtSelectBackground;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -146,6 +149,7 @@ __published:	// IDE-managed Components
 
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);
+	UnicodeString __fastcall _SelectBackGround(UnicodeString _ustrPath=GlobalVar::Global_custrPathBackgroundWindow); //[12-12-2023]
 	TStringList *_SListOldConfig=nullptr;	//Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
 	THashedStringList	*_HSListViewAllTr=nullptr; //Tekst wszystkich dostępnych tłumaczeń, modelowego wersetu
 	void __fastcall _ReadAllConfig(); //Odczyt wszystkich ustawień aplikacji i ustawienie komponentów

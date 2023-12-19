@@ -11,7 +11,7 @@ __fastcall TDictGrecPolWindow::TDictGrecPolWindow(TComponent* Owner)
 	: TForm(Owner)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -21,7 +21,7 @@ __fastcall TDictGrecPolWindow::TDictGrecPolWindow(TComponent* Owner)
 void __fastcall TDictGrecPolWindow::FormClose(TObject *Sender, TCloseAction &Action)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -32,7 +32,7 @@ void __fastcall TDictGrecPolWindow::FormClose(TObject *Sender, TCloseAction &Act
 void __fastcall TDictGrecPolWindow::FormCreate(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
@@ -47,7 +47,7 @@ void __fastcall TDictGrecPolWindow::FormCreate(TObject *Sender)
 void __fastcall TDictGrecPolWindow::FormDestroy(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
+	OPIS ARGUMENTÃ“W:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */

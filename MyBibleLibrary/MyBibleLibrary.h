@@ -336,9 +336,6 @@ class GsTreeBibleClass : public TCustomTreeView //Klasa cała jest prywatna
 		DYNAMIC void __fastcall DragOver(System::TObject* Source, int X, int Y, System::Uitypes::TDragState State, bool &Accept);
 		DYNAMIC void __fastcall Resize(void);
 		DYNAMIC void __fastcall Delete(TTreeNode* Node);
-		virtual bool __fastcall CustomDrawItem(TTreeNode* Node, TCustomDrawState State, TCustomDrawStage Stage, bool &PaintImages); //Własny wygląd objektu
-		virtual bool __fastcall CustomDraw(const System::Types::TRect &ARect, TCustomDrawStage Stage);
-		virtual bool __fastcall IsCustomDrawn(TCustomDrawTarget Target, TCustomDrawStage Stage);	//Bez tej metody własnwe rysowanie objektu jest niemożliwe
 		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczarólnym gałęziom
 		//---
 		void __fastcall _OnMouseLeave(TObject *Sender);
@@ -641,6 +638,8 @@ class GsLViewDictionaryClass : public TCustomListView
 		TWebBrowser *_pWBrowseResult=nullptr;	//Wyświetlanie wyników, dla wybranego słowa
 		TList *_pListWordGrec=nullptr; //Lista objektów, klasy DataGrecWordDictClass
 		void __fastcall _CreateAllColumns(); //Tworzenie kolumn
+		void __fastcall _OnGetImageIndex(System::TObject* Sender, TListItem* Item);
+		void __fastcall _OnGetSubItemImage(System::TObject* Sender, TListItem* Item, int SubItem, int &ImageIndex);
 };
 /***************************************************************************************
  *												Klasa ListComments																					 *
