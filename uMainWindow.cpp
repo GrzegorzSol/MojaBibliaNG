@@ -255,9 +255,9 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	UnicodeString ustrVersion = Library::GetInfo();
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 	#if defined(_WIN64)
-		this->Caption = Format("Moja Biblia NG wersja beta x64 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
+		this->Caption = Format("Moja Biblia NG wersja x64 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
 	#else
-		this->Caption = Format("Moja Biblia NG wersja beta x32 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
+		this->Caption = Format("Moja Biblia NG wersja x32 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
 	#endif
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);
