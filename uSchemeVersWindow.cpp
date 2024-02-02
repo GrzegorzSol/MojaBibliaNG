@@ -291,7 +291,7 @@ void __fastcall TSchemeVersWindow::FormKeyDown(TObject *Sender, WORD &Key, TShif
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TWinControl *pSelectObject = this->pGsMasterBibleScheme->SelectObject;
+	GsChildBibleScheme *pSelectObject = this->pGsMasterBibleScheme->SelectObject;
 	TWinControl *pGetDrawPanelScheme = this->pGsMasterBibleScheme->GetDrawPanelScheme;
 
 	if(Shift.Contains(ssCtrl))

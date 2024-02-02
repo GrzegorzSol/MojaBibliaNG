@@ -131,6 +131,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			//Nagi dla zakładki plików ulubionych, wyszukiwania
 			enTagSearchFav_DeleteFile = 200 //200.Przycisk kasowania zaznaczonego pliku w zakładce ulubionych plików wyszukiwania
 		 };
+UnicodeString Gl_ustrNameAppReload = "MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -951,6 +952,22 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
 	TSetupsWindow *pSetupsWindow = new TSetupsWindow(this);
 	if(!pSetupsWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSetupsWindow"));
 	pSetupsWindow->ShowModal();
+	//Przeładowanie aplikacji po zminie ustawień o aktywnych tłumaczeniach
+
+	if(GlobalVar::IsRunReload)
+	{
+    int iResult = MessageBox(NULL, TEXT("Została zmieniona konfiguracja dostępnych tłumaczeń. Potrzebny jest restart aplikacji, Czy chcesz zamknąć i ponownie otworzyć aplikacje, by zmiany zostały wprowadzone?"),
+													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
+		if(iResult == IDNO)
+		{
+			GlobalVar::IsRunReload = false;
+      return;
+		}
+		ShellExecute(NULL, L"open", Gl_ustrNameAppReload.c_str(), NULL, GlobalVar::Global_custrGetExeDir.c_str(), SW_SHOW);
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug("GlobalVar::IsRunReload");
+//		#endif
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)

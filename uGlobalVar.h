@@ -165,7 +165,8 @@ struct GlobalVar
 											 Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
 											 Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
 	const static unsigned char cuchABlendValue; //Współczynnik przezroczystości okna, gdy jest nieaktywne
-	inline bool static IsWindows10=false; //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
+	inline bool static IsWindows10=false, //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
+										 IsRunReload=false; //Czy potrzeba przeładować aplikcje po zmianie konfiguracji
 	static const unsigned char Global_NumberBooks = 73; //Maksymalna ilość ksiąg w Piśmie Świętym
 	static const int Global_MaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
 //***************************************************************************

@@ -25,7 +25,7 @@ object SetupsWindow: TSetupsWindow
     Width = 1003
     Height = 679
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetReadingPlan
+    ActivePage = SW_SheetTranslates
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -768,6 +768,9 @@ object SetupsWindow: TSetupsWindow
         SmallImages = SW_ImgListMainSmall
         TabOrder = 0
         ViewStyle = vsReport
+        OnItemChecked = SW_ListViewAllTranslatesItemChecked
+        ExplicitWidth = 967
+        ExplicitHeight = 602
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
@@ -792,6 +795,7 @@ object SetupsWindow: TSetupsWindow
         ParentFont = False
         TabOrder = 1
         Transparent = False
+        ExplicitWidth = 985
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -981,6 +985,7 @@ object SetupsWindow: TSetupsWindow
           Align = alClient
           Caption = 'Ustawienia parametr'#243'w komputerowego  czytania tekstu'
           TabOrder = 5
+          ExplicitHeight = 241
           object TrackBarSetRate: TTrackBar
             AlignWithMargins = True
             Left = 5
@@ -1028,11 +1033,13 @@ object SetupsWindow: TSetupsWindow
         Align = alClient
         ShowCaption = False
         TabOrder = 1
+        ExplicitWidth = 590
+        ExplicitHeight = 643
         object LabelTitleDisplayListPlan: TLabel
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 586
+          Width = 232
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1049,7 +1056,6 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = True
           Layout = tlCenter
-          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           AlignWithMargins = True
@@ -1071,6 +1077,8 @@ object SetupsWindow: TSetupsWindow
           ViewStyle = vsReport
           OnChanging = LViewDisplayselectPlanChanging
           OnDrawItem = LViewDisplayselectPlanDrawItem
+          ExplicitWidth = 582
+          ExplicitHeight = 616
         end
       end
     end
@@ -1091,7 +1099,6 @@ object SetupsWindow: TSetupsWindow
         ParentCtl3D = False
         ShowCaption = False
         TabOrder = 0
-        ExplicitHeight = 643
         object SW_LBoxSelectTheme: TListBox
           AlignWithMargins = True
           Left = 4
@@ -1104,7 +1111,6 @@ object SetupsWindow: TSetupsWindow
           ItemHeight = 13
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
-          ExplicitHeight = 635
         end
       end
       object PanelDisplaySelectTheme: TPanel

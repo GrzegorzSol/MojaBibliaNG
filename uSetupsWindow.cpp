@@ -695,6 +695,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		this->SW_LBoxSelectTheme->ItemIndex = this->SW_LBoxSelectTheme->Items->IndexOf(GlobalVar::Global_DefaultStyleName);
 	}
 	this->SW_ButtSetups_Click(this->SW_ButtDisplaySelectTheme);
+  this->_bIsStart = false; //Koniec uruchamiania listy przekładów
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, UnicodeString ustrSection, UnicodeString ustrkey) //30-03-2021
@@ -978,6 +979,7 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 		//---
 		case enSetup_Cancel:
 		{
+      GlobalVar::IsRunReload = false; //Anulowanie przeładowania aplikcji po zmianie konfiguracji
 			this->Close();
 		}
 		break;
@@ -1421,6 +1423,25 @@ void __fastcall TSetupsWindow::SW_LBoxSelectThemeClick(TObject *Sender)
 	if(!pLBox) return;
 	//---
 	this->SW_ButtDisplaySelectTheme->Enabled = pLBox->ItemIndex > -1;
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::SW_ListViewAllTranslatesItemChecked(TObject *Sender,
+					TListItem *Item)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	if(!pLView) return;
+	//---
+  if(this->_bIsStart) return; //Wyjście jeśli ustawienia listy przekładów są w stanie uruchamiania
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("Index: %d", ARRAYOFCONST((Item->Index ))));
+	#endif
+  GlobalVar::IsRunReload = true; //Potrzeba przeładować aplikcje po zmianie konfiguracji
 }
 //---------------------------------------------------------------------------
 

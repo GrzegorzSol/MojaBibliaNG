@@ -730,7 +730,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 				{
 					uiTranslatesIndex--;
 					if(iSelectTranslate>-1)
-						{pStringStream->WriteString("<span class=\"styleNoTranslate\">To tłumaczenie nie zawiera tekstu, wybranej księgi!</span>\n");}
+						{pStringStream->WriteString("<span class=\"styleNoTranslate\">To tłumaczenie nie zawiera tekstu wybranej księgi!</span>\n");}
 					continue;
 				}
 
@@ -2295,7 +2295,7 @@ __fastcall GsBarSelectVers::GsBarSelectVers(TComponent* Owner, const unsigned ch
 		{this->_FucSelectTranslate = i; break;}
 	}
 
-  this->EdgeBorders = TEdgeBorders() << ebBottom << ebTop << ebLeft << ebRight;
+	this->EdgeBorders = TEdgeBorders() << ebBottom << ebTop << ebLeft << ebRight;
 	this->ShowCaptions = true;
 	this->DoubleBuffered = true;
 	this->AutoSize = true;
@@ -3519,7 +3519,7 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 {
 	this->_pListWordGrec = new TList();
 	if(!this->_pListWordGrec) throw(Exception("Błąd funkcji TList"));
-  //this->StyleElements = TStyleElements(); //Musi być
+	//this->StyleElements = TStyleElements(); //Musi być
 	this->OwnerData = true;
 	this->OwnerDraw = true;
 	//this->OnGetImageIndex = this->_OnGetImageIndex;
@@ -3742,7 +3742,7 @@ void __fastcall GsLViewDictionaryClass::DrawItem(TListItem* Item, const System::
 	DrawText(this->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 	//---
 	TRect RectSubItemText = RectBounds; RectSubItemText.Left += 20; //[16-12-2023]
-	TRect RectSubItemIcon = RectBounds; RectSubItemIcon.Left += 4;  //[16-12-2023]
+	TRect RectSubItemIcon = RectBounds; RectSubItemIcon.Left += 4;	//[16-12-2023]
 
 	for(int iColumn=1; iColumn<this->Columns->Count; ++iColumn)
 	{
@@ -4115,7 +4115,7 @@ void __fastcall GsLViewCommentsAllClass::DrawItem(TListItem* Item, const System:
 	TRect RectIcon = Item->DisplayRect(drIcon);
 	//--- Kolory aktywnego stylu //[16-12-2023]
 	TColor cBackGround = TStyleManager::ActiveStyle->GetStyleColor(scListView);
-  TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
+	TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
 
 	this->Canvas->Brush->Color = cBackGround;//clGreen;
 	if(State.Contains(odSelected))

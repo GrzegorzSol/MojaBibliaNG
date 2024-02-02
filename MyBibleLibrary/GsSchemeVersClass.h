@@ -6,8 +6,25 @@
 #include <Vcl.Samples.Spin.hpp>
 //---------------------------------------------------------------------------
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
-const int SIZE_ADDR_VERS = 16;
-static UnicodeString sustrVersionGsMasterBibleScheme = "0.7.8235.8529";
+const int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
+					SIZE_CHILD_COMMENT = 255; //Długość komentarza do pojedyńczego elementu
+const UnicodeString custrExtFilesScheme = ".nsvp";
+static UnicodeString sustrVersionGsMasterBibleScheme = "0.9.9235.8529";
+//Deklaracja klas
+class GsScrollBibleScheme;
+class GsDrawPanelBibleScheme;
+class GsMasterBibleScheme;
+class GsTreeBibleScheme;
+
+//Globalna struktura danych
+struct CommonData
+{
+	inline static GsTreeBibleScheme *pComGsTreeBibleScheme=nullptr;
+	inline static GsMasterBibleScheme *pComGsMasterBibleScheme=nullptr;
+	inline static GsScrollBibleScheme *pComGsScrollBibleScheme=nullptr;
+  inline static GsDrawPanelBibleScheme *pComGsDrawPanelBibleScheme=nullptr;
+};
+
 typedef struct _ReadWriteDataObject
 {
 	int RW_ID,															//Numer identyfikacyjny
@@ -17,12 +34,14 @@ typedef struct _ReadWriteDataObject
 			RW_IDListParent;										//Numer identyfikacyjny przodka w głównej liście, lub -1, gdy jest to korzeń
 	wchar_t RW_AdressVers[SIZE_ADDR_VERS];	//Adres wersetu
 	unsigned char RW_Book, RW_Chapt, RW_Vers, RW_Trans;
+	//Nowe pola dodawać na końcu
+	wchar_t wchComment[SIZE_CHILD_COMMENT]; //Komentarz do pozycji
 } ReadWriteDataObject, *PReadWriteDataObject;
 /****************************************************************************
-*					 Klasa całkowicie PRYWATNA GsCoreBibleScheme,											*
+*					 Klasa całkowicie PRYWATNA GsGrCoreBibleScheme,										*
 *										 pochodna TCustomPanel.																	*
 *****************************************************************************/
-class GsCoreBibleScheme : public TCustomPanel
+class GsCoreBibleScheme : public TGraphicControl
 {
 	public:
 		__fastcall GsCoreBibleScheme(TComponent* Owner);
@@ -36,14 +55,9 @@ class GsCoreBibleScheme : public TCustomPanel
 		bool _StartMove=false;	//Rozpoczıcie przesuwania
 };
 /****************************************************************************
-*					 Klasa całkowicie PRYWATNA GsChildBibleScheme,										*
+*					 Klasa całkowicie PRYWATNA GsGrChildBibleScheme,									*
 *										 pochodna GsCoreBibleScheme.														*
 *****************************************************************************/
-class GsScrollBibleScheme;
-class GsDrawPanelBibleScheme;
-class GsMasterBibleScheme;
-class GsTreeBibleScheme;
-
 class GsChildBibleScheme : public GsCoreBibleScheme
 {
 	friend class GsDrawPanelBibleScheme;
@@ -57,17 +71,14 @@ class GsChildBibleScheme : public GsCoreBibleScheme
 	GsChildBibleScheme *_PrevObjectScheme=nullptr, //Wskaźnik na przodka
 										 *_NextObjectScheme=nullptr; //Wskaźnik na następny objekt
 	//---
-	GsDrawPanelBibleScheme *_DrawPanelScheme=nullptr; //Objekt klasy GsDrawPanelBibleScheme, na którym objekt jest rysowany
-	GsScrollBibleScheme *_pGsScrollBibleScheme=nullptr; //Objekt, klasy GsScrollBibleScheme
-	GsMasterBibleScheme *_pGsMasterBibleScheme=nullptr; //Główny objekt klasy GsMasterBibleScheme
-  TTreeNode *_NodeObjectScheme=nullptr;
+	TTreeNode *_NodeObjectScheme=nullptr;
+	UnicodeString _ustrCommentChild; //Komentarz
 	//---
 	THashedStringList *_SListVers=nullptr; //Lista wersetów ze wszystkich tłumaczeń
 	void __fastcall _ViewSelectObject(); //Wyświetlenie wersetu wybranego objektu
   void __fastcall _SelectTreeObject();
 	protected:
-		virtual void __fastcall CreateWnd();
-		virtual void __fastcall DestroyWnd();
+    virtual void __fastcall Paint();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		DYNAMIC void __fastcall MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		DYNAMIC void __fastcall MouseMove(System::Classes::TShiftState Shift, int X, int Y);
@@ -81,7 +92,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 	friend class GsMasterBibleScheme;
 	friend class GsScrollBibleScheme;
 	friend class GsChildBibleScheme;
-  friend class GsTreeBibleScheme;
+	friend class GsTreeBibleScheme;
+	friend struct CommonData;
 	//---
 	__fastcall GsDrawPanelBibleScheme(TComponent* Owner);
 	__fastcall virtual ~GsDrawPanelBibleScheme();
@@ -89,7 +101,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
     BEGIN_MESSAGE_MAP
 			VCL_MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, _WMErasebackground);
 		END_MESSAGE_MAP(TCustomPanel);
-    void __fastcall _WMErasebackground(TWMEraseBkgnd &Message);
+		void __fastcall _WMErasebackground(TWMEraseBkgnd &Message);
+
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall Paint();
@@ -103,7 +116,7 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		GsTreeBibleScheme *_pGsTreeBibleScheme=nullptr; //Wskaźnika na drzewo zależnosci
 		UnicodeString _ustrSelectNameProject; //Nazwa aktualnego projektu
 		TList *_GsChildBibleSchemeList=nullptr;
-    //bool bIsAllRefresh=true;
+    TMemo *_pComment=nullptr; //Komentarz do wybranej pozycji
 		//---
 		void __fastcall _AddNewObject(); //Dodanie objektu, klasy GsChildBibleScheme
 		void __fastcall _DeleteObject();
@@ -112,6 +125,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 		bool __fastcall _SaveProjectObjectToFile(UnicodeString &ustrGetProjectName);
 		void __fastcall _ViewProjectDocument(UnicodeString ustrProjectName);
 		void __fastcall _SetObjectName(); //Zmiana wersety przypoządkowanego do objektu
+		void __fastcall _CommentOnChange(System::TObject* Sender);
+
 };
 /****************************************************************************
 *								 Główna klasa GsScrollBibleScheme,													*
@@ -120,7 +135,8 @@ class GsDrawPanelBibleScheme : public TCustomPanel
 class GsScrollBibleScheme : public TScrollBox
 {
 	friend class GsMasterBibleScheme;
-  friend class GsTreeBibleScheme;
+	friend class GsTreeBibleScheme;
+	friend struct CommonData;
 
 	__fastcall GsScrollBibleScheme(TComponent* Owner);
 	__fastcall virtual ~GsScrollBibleScheme();
@@ -141,13 +157,14 @@ class GsMasterBibleScheme : public TCustomPanel
 	friend class GsChildBibleScheme;
 	friend class GsDrawPanelBibleScheme;
 	friend class GsTreeBibleScheme;
-  friend class GsScrollBibleScheme;
+	friend class GsScrollBibleScheme;
+	friend struct CommonData;
 	//---
 	public:
 		__fastcall GsMasterBibleScheme(TComponent* Owner);
 		__fastcall virtual ~GsMasterBibleScheme();
 
-		__property TWinControl *SelectObject {read = FGetSelectObject, default = 0};
+		__property GsChildBibleScheme *SelectObject {read = FGetSelectObject, default = 0};
 		__property TWinControl *GetDrawPanelScheme {read = _pGsDrawPanelBibleScheme, default = 0};
 		__property TWinControl *GetTreeBibleScheme {read = _pGsTreeBibleScheme, default = 0};
 		__property GsEditorClass *GetEditor {read = _pGsEditorClass, default = 0};
@@ -171,7 +188,7 @@ class GsMasterBibleScheme : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 	private:
 
-		TWinControl * __fastcall FGetSelectObject(); //Odczyt aktualnego objektu
+		GsChildBibleScheme *__fastcall FGetSelectObject(); //Odczyt aktualnego objektu
 		void __fastcall _OnAccept(System::TObject* Sender);
 		void __fastcall _OnNoAccept(System::TObject* Sender);
 		void __fastcall _ColorBoxGetColors(TCustomColorBox *Sender, TStrings *Items);
@@ -198,7 +215,8 @@ class GsMasterBibleScheme : public TCustomPanel
 class GsTreeBibleScheme : public TCustomTreeView
 {
 	friend class GsMasterBibleScheme;
-  friend class GsDrawPanelBibleScheme;
+	friend class GsDrawPanelBibleScheme;
+	friend struct CommonData;
 
 	__fastcall GsTreeBibleScheme(TComponent* Owner);
 	__fastcall virtual ~GsTreeBibleScheme();

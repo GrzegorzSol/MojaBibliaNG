@@ -146,6 +146,7 @@ __published:	// IDE-managed Components
 	void __fastcall LViewDisplayselectPlanChanging(TObject *Sender, TListItem *Item,
 					TItemChange Change, bool &AllowChange);
 	void __fastcall SW_LBoxSelectThemeClick(TObject *Sender);
+	void __fastcall SW_ListViewAllTranslatesItemChecked(TObject *Sender, TListItem *Item);
 
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);
@@ -162,6 +163,7 @@ private:	// User declarations
 	void __fastcall _InitToggleSwitches();//Inicjalizacja obsługi przełączników flag //[15-08-2023]
 	void __fastcall _DisplayPreview(); //Wyświetlenie podgladu tekstu
 	int _iNumberDayPlan=-1; //Numer kolejnej lekcji z aktywnego planu
+	bool _bIsStart=true; //Czy stan uruchamiania ?
 public:		// User declarations
 	__fastcall TSetupsWindow(TComponent* Owner);
 };
