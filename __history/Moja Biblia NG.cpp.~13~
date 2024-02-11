@@ -12,11 +12,11 @@ USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
 USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
+USEFORM("uViewAllResourcesWindow.cpp", ViewAllResourcesWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
 USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
-USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
@@ -87,7 +87,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			Application->Initialize();
 			Application->MainFormOnTaskBar = true;
 			Application->CreateForm(__classid(TMainBibleWindow), &MainBibleWindow);
-		Application->Run();
+			Application->Run();
 		}
 		catch (Exception &exception)
 		{

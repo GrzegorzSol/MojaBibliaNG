@@ -37,7 +37,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uSelectVersWindow.h"
 #include "uDictGrecPolWindow.h"
 #include "uSchemeVersWindow.h"
-#include "uViewAllResourcesWindow.h"
+#include "uAllMultimediaView.h"
 #include "uInformationsAppWindow.h"
 #include "uChapterEditWindow.h"
 #include "uSendingMailWindow.h"
@@ -963,10 +963,11 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
 			GlobalVar::IsRunReload = false;
       return;
 		}
-		ShellExecute(NULL, L"open", Gl_ustrNameAppReload.c_str(), NULL, GlobalVar::Global_custrGetExeDir.c_str(), SW_SHOW);
-//		#if defined(_DEBUGINFO_)
-//			GsDebugClass::WriteDebug("GlobalVar::IsRunReload");
-//		#endif
+		//Sprawdzanie czy aplikacja do przeładowania istnieje i uruchomienie jej
+		if(TFile::Exists(Gl_ustrNameAppReload))
+		{
+			ShellExecute(NULL, L"open", Gl_ustrNameAppReload.c_str(), NULL, GlobalVar::Global_custrGetExeDir.c_str(), SW_SHOW);
+		}
 	}
 }
 //---------------------------------------------------------------------------
@@ -1058,9 +1059,9 @@ void __fastcall TMainBibleWindow::Act_ViewAllResourcesExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	TViewAllResourcesWindow *pViewAllResourcesWindow = new TViewAllResourcesWindow(this);
-	if(!pViewAllResourcesWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TViewAllResourcesWindow"));
-	pViewAllResourcesWindow->ShowModal();
+	TAllMultimediaView *pAllMultimediaView = new TAllMultimediaView(this);
+	if(!pAllMultimediaView) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TAllMultimediaView"));
+	pAllMultimediaView->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_ResizeWorkExecute(TObject *Sender)
