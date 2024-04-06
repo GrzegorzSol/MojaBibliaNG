@@ -23,7 +23,7 @@ object SetupsWindow: TSetupsWindow
     Left = 185
     Top = 0
     Width = 1003
-    Height = 679
+    Height = 669
     CustomHint = SW_BalloonHint
     ActivePage = SW_SheetTranslates
     Align = alClient
@@ -33,7 +33,7 @@ object SetupsWindow: TSetupsWindow
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
     ExplicitWidth = 999
-    ExplicitHeight = 678
+    ExplicitHeight = 668
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -321,12 +321,13 @@ object SetupsWindow: TSetupsWindow
         Left = 0
         Top = 426
         Width = 995
-        Height = 224
+        Height = 214
         CustomHint = SW_BalloonHint
         Align = alClient
         TabOrder = 1
+        ExplicitHeight = 224
         ControlData = {
-          4C000000D6660000271700000100000001020000000000000000000000000000
+          4C000000D66600001E1600000100000001020000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126209000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -751,11 +752,10 @@ object SetupsWindow: TSetupsWindow
       object SW_ListViewAllTranslates: TListView
         AlignWithMargins = True
         Left = 12
-        Top = 35
+        Top = 131
         Width = 971
-        Height = 603
+        Height = 497
         Margins.Left = 12
-        Margins.Top = 12
         Margins.Right = 12
         Margins.Bottom = 12
         CustomHint = SW_BalloonHint
@@ -768,34 +768,89 @@ object SetupsWindow: TSetupsWindow
         SmallImages = SW_ImgListMainSmall
         TabOrder = 0
         ViewStyle = vsReport
+        OnClick = SW_ListViewAllTranslatesClick
         OnItemChecked = SW_ListViewAllTranslatesItemChecked
+        ExplicitTop = 99
         ExplicitWidth = 967
-        ExplicitHeight = 602
+        ExplicitHeight = 528
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
-        Left = 3
-        Top = 3
-        Width = 989
-        Height = 17
+        Left = 12
+        Top = 105
+        Width = 971
+        Height = 20
+        Margins.Left = 12
+        Margins.Top = 12
+        Margins.Right = 12
         CustomHint = SW_BalloonHint
         Align = alTop
         Alignment = taCenter
-        AutoSize = False
-        BorderStyle = sbsSunken
-        Caption = 'Wyb'#243'r u'#380'ywanych t'#322'umacze'#324' w aplikacji - uwaga nr. 1 '
-        Color = clInfoBk
+        Caption = 'Wyb'#243'r u'#380'ywanych t'#322'umacze'#324' w aplikacji - uwaga nr. 1  i 2'
+        Color = clBtnFace
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
+        Font.Color = clRed
+        Font.Height = -13
         Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
+        Font.Style = []
         Font.Quality = fqClearType
         ParentColor = False
         ParentFont = False
         TabOrder = 1
         Transparent = False
-        ExplicitWidth = 985
+        StyleElements = [seFont]
+        ExplicitTop = 73
+        ExplicitWidth = 967
+      end
+      object ToggleSwitchOnlyPolTranslates: TToggleSwitch
+        AlignWithMargins = True
+        Left = 12
+        Top = 45
+        Width = 971
+        Height = 36
+        Margins.Left = 12
+        Margins.Right = 12
+        Margins.Bottom = 12
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Font.Quality = fqClearType
+        ParentFont = False
+        SwitchWidth = 24
+        TabOrder = 2
+        ThumbWidth = 10
+        OnClick = ToggleSwitchOnlyPolTranslatesClick
+      end
+      object SW_STextInfoOnOnlyPolTranslates: TStaticText
+        AlignWithMargins = True
+        Left = 12
+        Top = 3
+        Width = 971
+        Height = 36
+        Margins.Left = 12
+        Margins.Right = 12
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 
+          'Nie ka'#380'dy zna oryginalne j'#281'zyki, w kt'#243'rych zosta'#322'o napisane Pism' +
+          'o '#346'wi'#281'te. Dlatego ten prze'#322#261'cznik wy'#322#261'cza przek'#322'ady w tych  j'#281'zy' +
+          'kach, a zostawia tylko przek'#322'ady poskie, kt'#243're by'#322'y zaznaczone'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Font.Quality = fqClearType
+        ParentFont = False
+        TabOrder = 3
+        Transparent = False
+        StyleElements = []
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -807,7 +862,7 @@ object SetupsWindow: TSetupsWindow
         Left = 3
         Top = 3
         Width = 389
-        Height = 644
+        Height = 634
         CustomHint = SW_BalloonHint
         Align = alLeft
         BevelOuter = bvNone
@@ -980,12 +1035,11 @@ object SetupsWindow: TSetupsWindow
           Left = 3
           Top = 399
           Width = 383
-          Height = 242
+          Height = 232
           CustomHint = SW_BalloonHint
           Align = alClient
           Caption = 'Ustawienia parametr'#243'w komputerowego  czytania tekstu'
           TabOrder = 5
-          ExplicitHeight = 241
           object TrackBarSetRate: TTrackBar
             AlignWithMargins = True
             Left = 5
@@ -1028,18 +1082,16 @@ object SetupsWindow: TSetupsWindow
         Left = 398
         Top = 3
         Width = 594
-        Height = 644
+        Height = 634
         CustomHint = SW_BalloonHint
         Align = alClient
         ShowCaption = False
         TabOrder = 1
-        ExplicitWidth = 590
-        ExplicitHeight = 643
         object LabelTitleDisplayListPlan: TLabel
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 232
+          Width = 586
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1056,13 +1108,14 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = True
           Layout = tlCenter
+          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           AlignWithMargins = True
           Left = 4
           Top = 23
           Width = 586
-          Height = 617
+          Height = 607
           CustomHint = SW_BalloonHint
           Align = alClient
           Color = clCream
@@ -1077,8 +1130,6 @@ object SetupsWindow: TSetupsWindow
           ViewStyle = vsReport
           OnChanging = LViewDisplayselectPlanChanging
           OnDrawItem = LViewDisplayselectPlanDrawItem
-          ExplicitWidth = 582
-          ExplicitHeight = 616
         end
       end
     end
@@ -1091,7 +1142,7 @@ object SetupsWindow: TSetupsWindow
         Left = 3
         Top = 3
         Width = 185
-        Height = 644
+        Height = 634
         CustomHint = SW_BalloonHint
         Align = alLeft
         Ctl3D = True
@@ -1104,7 +1155,7 @@ object SetupsWindow: TSetupsWindow
           Left = 4
           Top = 4
           Width = 177
-          Height = 636
+          Height = 626
           CustomHint = SW_BalloonHint
           Align = alClient
           BorderStyle = bsNone
@@ -1118,13 +1169,12 @@ object SetupsWindow: TSetupsWindow
         Left = 194
         Top = 3
         Width = 419
-        Height = 644
+        Height = 634
         ParentCustomHint = False
         Align = alLeft
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 1
-        ExplicitHeight = 643
         object SW_ImagePreviewSelectStyle: TImage
           AlignWithMargins = True
           Left = 4
@@ -1271,9 +1321,9 @@ object SetupsWindow: TSetupsWindow
   object SW_STextInfo: TStaticText
     AlignWithMargins = True
     Left = 3
-    Top = 682
+    Top = 672
     Width = 1182
-    Height = 42
+    Height = 52
     Align = alBottom
     AutoSize = False
     BevelInner = bvNone
@@ -1282,30 +1332,31 @@ object SetupsWindow: TSetupsWindow
     Color = clInfoBk
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clRed
-    Font.Height = -11
+    Font.Height = -13
     Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
+    Font.Style = []
     Font.Quality = fqClearType
     ParentColor = False
     ParentFont = False
     TabOrder = 2
     Transparent = False
-    ExplicitTop = 681
+    StyleElements = [seFont, seBorder]
+    ExplicitTop = 671
     ExplicitWidth = 1178
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
     Top = 0
     Width = 185
-    Height = 679
+    Height = 669
     Align = alLeft
     TabOrder = 3
-    ExplicitHeight = 678
+    ExplicitHeight = 668
     object SW_ButGroupSections: TButtonGroup
       Left = 1
       Top = 1
       Width = 183
-      Height = 494
+      Height = 484
       CustomHint = SW_BalloonHint
       Align = alClient
       BevelInner = bvNone
@@ -1348,17 +1399,17 @@ object SetupsWindow: TSetupsWindow
       TabOrder = 0
       OnButtonClicked = SW_ButGroupSectionsButtonClicked
       OnKeyUp = SW_ButGroupSectionsKeyUp
-      ExplicitHeight = 493
+      ExplicitHeight = 483
     end
     object SW_PanelImageLogo: TPanel
       Left = 1
-      Top = 495
+      Top = 485
       Width = 183
       Height = 183
       Align = alBottom
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 494
+      ExplicitTop = 484
       object SW_SetupsImageLogo: TImage
         AlignWithMargins = True
         Left = 27

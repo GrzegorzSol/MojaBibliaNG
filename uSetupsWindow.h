@@ -127,6 +127,8 @@ __published:	// IDE-managed Components
 	TGroupBox *SW_GrBoxSelectBackground;
 	TLabeledEdit *SW_LEditPathBackGround;
 	TButton *SW_ButtSelectBackground;
+	TToggleSwitch *ToggleSwitchOnlyPolTranslates;
+	TStaticText *SW_STextInfoOnOnlyPolTranslates;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -147,6 +149,8 @@ __published:	// IDE-managed Components
 					TItemChange Change, bool &AllowChange);
 	void __fastcall SW_LBoxSelectThemeClick(TObject *Sender);
 	void __fastcall SW_ListViewAllTranslatesItemChecked(TObject *Sender, TListItem *Item);
+	void __fastcall ToggleSwitchOnlyPolTranslatesClick(TObject *Sender);
+	void __fastcall SW_ListViewAllTranslatesClick(TObject *Sender);
 
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);

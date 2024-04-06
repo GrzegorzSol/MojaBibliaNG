@@ -75,7 +75,10 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enToggleCaptionOff_ToggleSwitchIsHintsOnStart,
 
 			enToggleCaptionOn_ToggleSwitchisInfosOnStatusBar,
-			enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar
+			enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar,
+
+			enToggleCaptionOn_ToggleSwitchIsOnlyPoTranslateOnStart,
+			enToggleCaptionOff_ToggleSwitchIsOnlyPoTranslateOnStart
 		 };
 const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tłumaczenia", "Opis tłumaczenia"},
 										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne"},
@@ -104,7 +107,10 @@ const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tł
 																						"Szybkie podpowiedzi nie pojawią się po otwarciu aplikacji.",
 
 																						"Wyświetlanie informacji na pasku zadań, podczas jej uruchamiania.",
-																						"Informacje nie będą wyświetlane na pasku zadań, podczas jej uruchamiania."
+																						"Informacje nie będą wyświetlane na pasku zadań, podczas jej uruchamiania.",
+
+																						"Będą dostępne tylko zaznaczone, polskie tłumaczenia Pisma Świętego",
+																						"Będą dostępne wszystkie zaznaczone tłumaczenia Pisma Świętego, w językach oryginalnych jak i po polsku"
 																						};
 
 //---------------------------------------------------------------------------
@@ -137,6 +143,8 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_LEditPath1->Tag = enSelectDirMulti_1; this->SW_ButtSelectDirMulti_1->Tag = enSelectDirMulti_1;
 	this->SW_LEditPath2->Tag = enSelectDirMulti_2; this->SW_ButtSelectDirMulti_2->Tag = enSelectDirMulti_2;
 	this->SW_LEditPath3->Tag = enSelectDirMulti_3; this->SW_ButtSelectDirMulti_3->Tag = enSelectDirMulti_3;
+	//Inne pola tekstowe
+  this->SW_STextInfoOnOnlyPolTranslates->Caption = "Nie każdy zna oryginalne języki, w których zostało napisane Pismo Święte. Dlatego ten przełącznik wyłącza przekłady w tych językach,\n a zostawia tylko zaznaczone przekłady polskie";
 	this->SW_ButtSelectBackground->Tag =  enSelectBackground; //[12-12-2023]
 	//Dolne przyciski
 	this->SW_ButtSetupSave->Tag = enSetup_Save;
@@ -275,6 +283,9 @@ void __fastcall TSetupsWindow::_InitToggleSwitches()
 
 	this->ToggleSwitchisInfosOnStatusBar->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchisInfosOnStatusBar];
 	this->ToggleSwitchisInfosOnStatusBar->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar];
+
+	this->ToggleSwitchOnlyPolTranslates->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsOnlyPoTranslateOnStart];
+	this->ToggleSwitchOnlyPolTranslates->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsOnlyPoTranslateOnStart];
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
@@ -562,7 +573,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->ToggleSwitchIsUpdatesOnStartup->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, true));
 	this->ToggleSwitchIsReopenSchets->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, true));
 	this->ToggleSwitchIsHintsOnStart->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true));
-	this->ToggleSwitchisInfosOnStatusBar->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true));
+	this->ToggleSwitchisInfosOnStatusBar->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, true));
+	this->ToggleSwitchOnlyPolTranslates->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayOnlyPolTranslates, false));
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
 	this->SW_ColorBoxFavorities->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, clYellow);
@@ -779,7 +791,8 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsAutoFindUpdate, this->ToggleSwitchIsUpdatesOnStartup->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, this->ToggleSwitchIsReopenSchets->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, this->ToggleSwitchIsHintsOnStart->IsOn());
-	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, this->ToggleSwitchisInfosOnStatusBar->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, this->ToggleSwitchisInfosOnStatusBar->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayOnlyPolTranslates, this->ToggleSwitchOnlyPolTranslates->IsOn());
 	//Zapis kolorów
 		//Kolor zaznaczenie ulubionych wersetów
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, this->SW_ColorBoxFavorities->Selected);
@@ -1434,14 +1447,55 @@ void __fastcall TSetupsWindow::SW_ListViewAllTranslatesItemChecked(TObject *Send
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	TListView *pLView = dynamic_cast<TListView *>(Sender);
 	if(!pLView) return;
 	//---
   if(this->_bIsStart) return; //Wyjście jeśli ustawienia listy przekładów są w stanie uruchamiania
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("Index: %d", ARRAYOFCONST((Item->Index ))));
-	#endif
-  GlobalVar::IsRunReload = true; //Potrzeba przeładować aplikcje po zmianie konfiguracji
+
+	GlobalVar::IsRunReload = true; //Potrzeba przeładować aplikcje po zmianie konfiguracji
 }
 //---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::SW_ListViewAllTranslatesClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TListView *pLView = dynamic_cast<TListView *>(Sender);
+	if(!pLView) return;
+	//---
+	//Zaznaczyłeś coś samodzielnie więc przelącznik zostaje przelączony w stan off
+	this->ToggleSwitchOnlyPolTranslates->State = tssOff;
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::ToggleSwitchOnlyPolTranslatesClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Przełączanie dostępnych tłumaczeń z wszystkich dostępnych, na tylko polskie
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TToggleSwitch *pTSwitch = dynamic_cast<TToggleSwitch *>(Sender);
+	if(!pTSwitch) return;
+	//---
+	TListItem *pLItem=nullptr;
+
+	for(int i=0; i<this->SW_ListViewAllTranslates->Items->Count; ++i)
+	{
+		pLItem = this->SW_ListViewAllTranslates->Items->Item[i];
+		if(pLItem)
+		{
+			if((pTSwitch->State == tssOn) && (pLItem->GroupID == enGroup_OrygTrans))
+			//Tylko polskie, języki oryginalne zostaną wyłączone
+			{
+				pLItem->Checked = false;
+			}
+		}
+  }
+}
+//---------------------------------------------------------------------------
+
 

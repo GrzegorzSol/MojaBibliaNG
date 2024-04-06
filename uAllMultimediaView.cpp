@@ -25,14 +25,14 @@ enum {//Indeksy głównych zakładek
 			//Indeksy dla nagłówka ulubionych wersetów
 			enHeaderFav_Name=0,
 			//Indeksy dla nagłowka, dla grafik
-			enHeaderGraphics_Name=0};
+			enHeaderGraphics_Name=0, enHeaderGraphics_Size};
 //Nazwy zakładek
 const UnicodeString //Nazwy zakładek
 										cstrGroupName[] = {"Dostępne tłumaczenia", "Zarejestrowana grafika", "Lista komentarzy do wersetów", "Lista ulubionych wersetów"},
 										//Nazwy nagłówków dla tłumaczeń
 										cstrNameHeaderTranslates[] = {"Nazwa tłumaczenia", "Typ tłumaczenia"},
 										//Nazwy nagłówków dla grafik
-										cstrNameHeaderGraphics[] = {"Nazwa grafiki"},
+										cstrNameHeaderGraphics[] = {"Nazwa grafiki", "Wielkość grafiki"},
 										//Nazwy nagłówków komentarzy
 										cstrNameHeaderComments[] = {"Werset, z komentarzem"},
 										//Nazwy nagłówków ulubionych wersetów
@@ -184,7 +184,7 @@ void __fastcall TAllMultimediaView::_LoadAllTraslates()
 
   //Parametry list tłumaczeń
 	this->CListTranlates->ItemCount = this->_pHSListTranslates->Count;
-	this->CListTranlates->ItemHeight = -2 * this->Font->Height;
+	this->CListTranlates->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Translates, this->ImageTranslates->Picture->Icon);
   //THeaderControlTranslates
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderTranslates); ++i)
@@ -205,6 +205,8 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 	TStringDynArray SDirMultiMList;
 	UnicodeString ustrExt, ustrTempLowerName;
 	THeaderSection *Section=nullptr;
+  NativeUInt nuiFile=0;
+	int iSize=0;
 
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
 	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
@@ -225,13 +227,23 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 				 (TPath::GetExtension(ustrTempLowerName) != ".jpeg") &&
 				 (TPath::GetExtension(ustrTempLowerName) != ".png") &&
 				 (TPath::GetExtension(ustrTempLowerName) != ".bmp")) continue;
-			this->_pHListGraphics->Add(SDirMultiMList[i]);
+
+			try
+			{
+				nuiFile = FileOpen(SDirMultiMList[i], fmOpenRead);
+				if(nuiFile) iSize = FileSeek(nuiFile, 0, 2);
+			}
+			__finally
+			{
+				if(nuiFile) FileClose(nuiFile);
+			}
+			this->_pHListGraphics->Add(Format("%s=%d", ARRAYOFCONST((SDirMultiMList[i], iSize))));
 		}
 		SDirMultiMList.Length = 0;
 	}
   //Parametry listy grafik
 	this->CListGraphics->ItemCount = this->_pHListGraphics->Count;
-	this->CListGraphics->ItemHeight = -2 * this->Font->Height;
+	this->CListGraphics->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Graphics, this->ImageGraphics->Picture->Icon);
   //THeaderControlGraphics
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderGraphics); ++i)
@@ -263,7 +275,7 @@ void __fastcall TAllMultimediaView::_LoadAllComments()
 	SDCommentFile.Length = 0;
 	//Parametry listy komentarzy
 	this->CListComments->ItemCount = this->_pHListComments->Count;
-	this->CListComments->ItemHeight = -2 * this->Font->Height;
+	this->CListComments->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Comments, this->ImageComments->Picture->Icon);
 	//HeaderControlComments
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderComments); ++i)
@@ -296,7 +308,7 @@ void __fastcall TAllMultimediaView::_LoadAllFavVerses()
 	}
 	//Parametry listy ulubionych
 	this->CListFavVerses->ItemCount = this->_pHListFavVerses->Count;
-	this->CListFavVerses->ItemHeight = -2 * this->Font->Height;
+	this->CListFavVerses->ItemHeight = this->ImgListAllView->Height;;
 	this->ImgListAllView->GetIcon(enImage_FavVerses, this->ImageFavVerses->Picture->Icon);
 	//HeaderControlFavVerses
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderFav); ++i)
@@ -345,9 +357,6 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 	GsReadBibleTextData::GetSelectVerAllTranslates(iBook, iChapt, iVers, pHSListGetAllTransVers);
 
 	pStringStream->WriteString(GlobalHeaderRtf);
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("%s - Count: %d", ARRAYOFCONST(( ustrCodeVers, pHSListGetAllTransVers->Count))));
-	#endif
 
 	for(int iLicz=0; iLicz<pHSListGetAllTransVers->Count; ++iLicz)
 	{
@@ -419,10 +428,16 @@ void __fastcall TAllMultimediaView::CListTranlatesBeforeDrawItem(int AIndex,
 	THeaderSection *Section=nullptr;
 	TStringDynArray StrDynArrInfo;
 	UnicodeString ustrExt = TPath::GetExtension(this->_pHSListTranslates->Strings[AIndex]);
+	TColor cSelectImg = clHighlight;
   //Zmiana rozszerzenia dla pliku informacji
 	UnicodeString ustrInfo = TPath::ChangeExtension(this->_pHSListTranslates->Strings[AIndex], GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
 
 	this->ImageTranslates->Width = this->ImageTranslates->Height;
+	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
+	ACanvas->Brush->Color = cSelectImg;
+	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelNameTranlate->Left);
+	ACanvas->FillRect(RectFill);
+
 	if(TFile::Exists(ustrInfo))
 	{
 		//Istnieje informacja o przekładzie - pełna nazwa
@@ -457,14 +472,23 @@ void __fastcall TAllMultimediaView::CListGraphicsBeforeDrawItem(int AIndex, TCan
 */
 {
 	THeaderSection *Section=nullptr;
+	TColor cSelectImg = clHighlight;
 
 	this->ImageGraphics->Width = this->ImageGraphics->Height;
-	this->LabelNameGraphics->Caption = this->_pHListGraphics->Strings[AIndex];
+	this->LabelNameGraphics->Caption = this->_pHListGraphics->Names[AIndex];
+
+	this->LabelSizeGraphics->Caption = this->_pHListGraphics->ValueFromIndex[AIndex];
+
+	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
+	ACanvas->Brush->Color = cSelectImg;
+	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelNameGraphics->Left);
+	ACanvas->FillRect(RectFill);
 
 	for(int i=0; i<this->HeaderControlGraphics->Sections->Count; ++i)
 	{
 		Section = this->HeaderControlGraphics->Sections->Items[i];
 		if(i==enHeaderGraphics_Name) Section->Width = this->LabelNameGraphics->Left + this->LabelNameGraphics->Width;
+		else if(i == enHeaderGraphics_Size) Section->Width = this->LabelSizeGraphics->Width;
 	}
 }
 //---------------------------------------------------------------------------
@@ -480,6 +504,7 @@ void __fastcall TAllMultimediaView::CListCommentsBeforeDrawItem(int AIndex, TCan
 	THeaderSection *Section=nullptr;
 	int iBook, iChap, iVers;
 	UnicodeString ustrComm = TPath::GetFileNameWithoutExtension(this->_pHListComments->Strings[AIndex]);
+	TColor cSelectImg = clHighlight;
 
 	iBook = ustrComm.SubString(1, 3).ToInt()-1;
 	iChap = ustrComm.SubString(4, 3).ToInt();
@@ -487,6 +512,11 @@ void __fastcall TAllMultimediaView::CListCommentsBeforeDrawItem(int AIndex, TCan
 
 	this->ImageComments->Width = this->ImageComments->Height;
 	this->LabelComments->Caption = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
+
+	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
+	ACanvas->Brush->Color = cSelectImg;
+	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelComments->Left);
+	ACanvas->FillRect(RectFill);
 
 	for(int i=0; i<this->HeaderControlComments->Sections->Count; ++i)
 	{
@@ -507,6 +537,7 @@ void __fastcall TAllMultimediaView::CListFavVersesBeforeDrawItem(int AIndex,
 	THeaderSection *Section=nullptr;
 	int iBook, iChapt, iVers;
 	UnicodeString _ustrFavCodeVers=this->_pHListFavVerses->Strings[AIndex];
+	TColor cSelectImg = clHighlight;
 
 	iBook = _ustrFavCodeVers.SubString(1, 3).ToInt()-1;
 	iChapt = _ustrFavCodeVers.SubString(4, 3).ToInt();
@@ -514,6 +545,11 @@ void __fastcall TAllMultimediaView::CListFavVersesBeforeDrawItem(int AIndex,
 
 	this->ImageFavVerses->Width = this->ImageFavVerses->Height;
 	this->LabelFavVerses->Caption =  Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
+
+	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
+  ACanvas->Brush->Color = cSelectImg;
+	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelFavVerses->Left);
+	ACanvas->FillRect(RectFill);
 
 	for(int i=0; i<this->HeaderControlFavVerses->Sections->Count; ++i)
 	{
@@ -549,11 +585,11 @@ void __fastcall TAllMultimediaView::CListAllItemClick(TObject *Sender)
 			break;
 		//---
 		case enCList_Graphics:
-			this->_DisplayImage(this->_pHListGraphics->Strings[pCList->ItemIndex]);
+			this->_DisplayImage(this->_pHListGraphics->Names[pCList->ItemIndex]);
 			break;
 		//---
 		case enCList_Comments:
-			this->_DisplaySelectVersAllTrans(TPath::GetFileNameWithoutExtension(this->_pHListComments->Strings[pCList->ItemIndex]));
+			this->RichEditInfo->Lines->LoadFromFile(this->_pHListComments->Strings[pCList->ItemIndex]);
 			break;
 		//---
 		case enCList_FavVerses:
@@ -600,18 +636,56 @@ void __fastcall TAllMultimediaView::HeaderControlAllSectionResize(THeaderControl
 				{this->LabelNameTranlate->Width = Section->Width - this->ImageTranslates->Width;}
 			else if(Section->Index == enHeaderTranslates_Type)
 				{this->LabelTypeTranslate->Width = Section->Width;}
+      this->CListTranlates->Invalidate();
 			break;
 		//---
 		case enCList_Graphics:
+			if(Section->Index == enHeaderGraphics_Name)
+				{this->LabelNameGraphics->Width = Section->Width - this->ImageGraphics->Width;}
+			this->CListGraphics->Invalidate();
 			break;
 		//---
 		case enCList_Comments:
+			this->CListComments->Invalidate();
 			break;
 		//---
 		case enCList_FavVerses:
+			this->CListFavVerses->Invalidate();
 			break;
 		//---
   }
+}
+//---------------------------------------------------------------------------
+void __fastcall TAllMultimediaView::PControlAllMultimediaDrawTab(TCustomTabControl *Control,
+					int TabIndex, const TRect &Rect, bool Active)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TPageControl *pPControl = dynamic_cast<TPageControl *>(Control);
+	if(!pPControl) return;
+	//---
+	TRect MyRect(Rect);
+	TColor ColorBackG=clBtnFace, ColorSelect=clRed, ColorFont=clWindowText;
+
+  if(TStyleManager::Enabled)
+	{
+		ColorBackG = TStyleManager::ActiveStyle->GetStyleColor((TStyleColor)clBackground);
+		pPControl->Canvas->Font->Color =  TStyleManager::ActiveStyle->GetStyleFontColor((TStyleFont)sfTabTextActiveNormal);
+	}
+	//pPControl->Canvas->Font->Color = clGreen;
+	if(Active)
+		{pPControl->Canvas->Brush->Color = ColorSelect;}
+	else {pPControl->Canvas->Brush->Color = ColorBackG;}
+
+	pPControl->Canvas->FillRect(MyRect);
+	MyRect.Inflate(-6, 0);
+
+	TTabSheet *pSheet = pPControl->Pages[TabIndex];
+	DrawText(pPControl->Canvas->Handle, pSheet->Caption.c_str(), -1, &MyRect, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
 }
 //---------------------------------------------------------------------------
 /////////////////////////////////////////////////////////////////////////////
@@ -632,7 +706,7 @@ void __fastcall TAllMultimediaView::ImageSelectDisplayDblClick(TObject *Sender)
 	if(!pImg) return;
 	//---
 	TWICImage *pWICImg=nullptr;
-	UnicodeString _ustrCurrentPathImage = this->_pHListGraphics->Strings[this->CListGraphics->ItemIndex];
+	UnicodeString _ustrCurrentPathImage = this->_pHListGraphics->Names[this->CListGraphics->ItemIndex];
   //---
 	try
 	{
@@ -694,7 +768,7 @@ void __fastcall TAllMultimediaView::_OnKeyPress(TObject *Sender, System::WideCha
 			{
 				++this->CListGraphics->ItemIndex;
 				this->ImageSelectDisplayDblClick(this->ImageSelectDisplay);
-				this->_DisplayImage(this->_pHListGraphics->Strings[this->CListGraphics->ItemIndex] );
+				this->_DisplayImage(this->_pHListGraphics->Names[this->CListGraphics->ItemIndex] );
 			}
 		break;
 		//---
@@ -703,7 +777,7 @@ void __fastcall TAllMultimediaView::_OnKeyPress(TObject *Sender, System::WideCha
 			{
 				--this->CListGraphics->ItemIndex;
 				this->ImageSelectDisplayDblClick(this->ImageSelectDisplay);
-        this->_DisplayImage(this->_pHListGraphics->Strings[this->CListGraphics->ItemIndex] );
+				this->_DisplayImage(this->_pHListGraphics->Names[this->CListGraphics->ItemIndex] );
 			}
 		break;
 	}

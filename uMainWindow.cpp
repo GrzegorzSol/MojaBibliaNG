@@ -285,7 +285,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->pGsSearchFavFilesClass->Align = alClient;
 	this->pGsSearchFavFilesClass->OnSelectItem = this->_OnSelectItemSearchFile; //[15-10-2023]
 	//---
-	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::Globalini_IsDisplayStartInfoTray, true))
+	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, true))
 		//Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
 		{this->TrayIconMain->ShowBalloonHint();}
 	this->TrayIconMain->Hint = Format("Moja Biblia NG wersja beta v%s © Grzegorz Sołtysik.", ARRAYOFCONST((ustrVersion)));

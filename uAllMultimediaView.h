@@ -41,6 +41,7 @@ __published:	// IDE-managed Components
 	TImage *ImageFavVerses;
 	TLabel *LabelComments;
 	TLabel *LabelFavVerses;
+	TLabel *LabelSizeGraphics;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -57,6 +58,8 @@ __published:	// IDE-managed Components
 	void __fastcall ImageSelectDisplayDblClick(TObject *Sender);
 	void __fastcall HeaderControlAllSectionResize(THeaderControl *HeaderControl,
           THeaderSection *Section);
+	void __fastcall PControlAllMultimediaDrawTab(TCustomTabControl *Control, int TabIndex,
+          const TRect &Rect, bool Active);
 
 private:	// User declarations
 	void __fastcall _SetTagsAndHints();

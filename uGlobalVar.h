@@ -97,7 +97,8 @@ struct GlobalVar
 																				GlobalIni_IsAutoFindUpdate="IsAutoFindUpdate",			 //Czy sprawdzać aktualizacje podczas uruchamiania aplikacji
 																				GlobalIni_IsLoadBooksOnInit="IsLoadBooksOnInit", //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
 																				GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
-																				Globalini_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
+																				GlobalIni_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //Czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
+																				GlobalIni_IsDisplayOnlyPolTranslates="IsDisplayOnlyPolTranslates", //Czy wyświetlić tylko polskie tłumaczenia Pisma Świętego, czy wszystkie dostępne
 																		GlobalIni_ColorsSection_Main="COLORS",			 //Główna sekcja COLORS pliku ini
 																				GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",				//Kolor zaznaczenie ulubionych wersetów
 																				GlobalIni_ColorCommentVers="ColorCommentVers",				 //Kolor zaznaczenie wersetów, do których istnieje komentarz
