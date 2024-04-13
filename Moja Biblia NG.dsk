@@ -12,10 +12,9 @@ EditWindowCount=1
 ModuleType=TSourceModule
 
 [EditWindow0]
-ViewCount=2
+ViewCount=1
 CurrentEditView=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
 View0=0
-View1=1
 PercentageSizes=1
 Create=1
 Visible=1
@@ -44,10 +43,6 @@ BottomMiddlePanelClients=DockSite0,GraphDrawingModel
 BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779F1D00000000000002F206000000000000FFFFFFFF
 
 [View0]
-CustomEditViewType=TOTACustomEditView
-OTAEditViewType=WelcomePage.MainPage
-
-[View1]
 CustomEditViewType=TEditView
 Module=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
 CursorX=1
@@ -56,7 +51,7 @@ TopLine=636
 LeftCol=1
 Elisions={{136,65},{193,0},{'...'}}{{195,49},{210,0},{'...'}}{{212,62},{333,0},{'...'}}{{335,64},{379,0},{'...'}}{{381,82},{411,0},{'...'}}{{413,83},{449,0},{'...'}}{{451,63},{460,0},{'...'}}{{462,62},{473,0},{'...'}}{{475,91},{489,0},{'...'}}{{491,88},{502,0},{'...'}}{{504,97},{515,0},{'...'}}{{517,62},{529,0},{'...'}}{{531,74},{540,0},{'...'}}{{542,55},{596,0},{'...'}}{{598,53},{620,0},{'...'}}{{622,76},{634,0},{'...'}}{{636,57},{658,0},{'...'}}{{660,144},{671,0},{'...'}}{{673,66},{688,0},{'...'}}{{690,77},{715,0},{'...'}}{{717,76},{756,0},{'...'}}{{758,120},{779,0},{'...'}}{{781,78},{793,0},{'...'}}{{795,83},{813,0},{'...'}}{{815,86},{835,0},{'...'}}{{837,79},{879,0},{'...'}}{{881,78},{922,0},{'...'}}{{924,78},{939,0},{'...'}}{{941,75},{972,0},{'...'}}{{974,73},{996,0},{'...'}}{{998,88},{1012,0},{'...'}}{{1014,80},{1028,0},{'...'}}{{1030,74},{1049,0},{'...'}}{{1051,79},{1065,0},{'...'}}{{1067,73},{1083,0},{'...'}}{{1085,85},{1108,0},{'...'}}{{1110,71},{1122,0},{'...'}}{{1124,69},{1142,0},{'...'}}{{1144,74},{1166,0},{'...'}}{{1168,72},{1185,0},{'...'}}{{1187,74},{1207,0},{'...'}}{{1209,78},{1225,0},{'...'}}{{1227,73},{1304,0},{'...'}}{{1306,74},{1323,0},{'...'}}{{1325,115},{1354,0},{'...'}}
 Bookmarks=
-EditViewName=F:\DevelopGS\MojaBibliaNG_Git\uMainWindow.cpp
+EditViewName=Borland.FormDesignerView
 
 [Watches]
 Count=0
@@ -214,6 +209,11 @@ LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 SplitPos=111
+
+[PropInspDesignerSelection]
+ArrangeBy=Name
+SelectedItem=Name,
+ExpandedItems=
 
 [frmDesignPreview]
 PercentageSizes=1
