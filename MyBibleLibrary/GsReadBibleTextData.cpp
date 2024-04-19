@@ -477,20 +477,34 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	UnicodeString ustr_FontNameMain = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_FontNameMain, "Times New Roman"),
 								ustr_FontNameAdress = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_FontNameAdress, "Times New Roman"),
 								ustr_FontNameTranslators = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_FontNameTranslators, "Times New Roman");
-	//--- Style dla wyświetlanych tekstów
-		//Przeksztaucenie ścieżek dostępu Windows na Unix [01-09-2023]
-	//UnicodeString ustrTemp = StringReplace(GlobalVar::Global_custrPathBacgroundImageText, "\\", "/", TReplaceFlags() << rfReplaceAll); //[01-09-2023]
+	//--- Style dla wyświetlanych tekstów [18-04-2024]
+	bool bIsDisplayBackgroundImage = GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayBackgroundImage, false);
+	//Kolor podkładu głównego tekstu [18-04-2024]
+	UnicodeString _BackGroundMainText, _ConvertPathImage;
+	//Przeksztaucenie ścieżek dostępu Windows na Unix [18-04-2024]
+	_ConvertPathImage = StringReplace(GlobalVar::Global_custrPathImageBackgroundMainText, "\\", "\\\\", TReplaceFlags() << rfReplaceAll);
+	if(bIsDisplayBackgroundImage) //[18-04-2024]
+	//Podkład pod głównym tekstem jako grafika domyślna (w przyszłości bedzie wybór)
+	{
+		_BackGroundMainText = Format("body {background-image: url(\"%s\");\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+			ARRAYOFCONST((_ConvertPathImage, iSizeFontMain, ustr_FontNameMain)));
+	}
+	else
+	//Podkład pod głównym tekstem jako jednolity tekst, lub grafika
+	{
+		_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+			ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain)));
+	}
+  //---
 	UnicodeString		//Styl dla głównego tekstu
-								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
+								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n",
+									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
-								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
-								//_FavoriteStyle = Format(".styleFavorite {border: 3px solid %s}", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
+								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
 									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
-								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n", ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
-									//Kolor podkładu głównego tekstu
-								_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain))),
-								//_BackGroundMainText = Format("body {background-color: %s;\n\tbackground-image: url(\"%s\");\n\tbackground-repeat: no-repeat;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
-								//	ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), ustrTemp, iSizeFontMain, ustr_FontNameMain))), //[01-09-2023]
+								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n",
+									ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
 									//Kolor nazwy przekładu, dla pełnego tłumaczenia
 								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
 									//Kolor adresu dla pełnych tłumaczeń

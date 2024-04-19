@@ -762,12 +762,12 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							if(iIndexFav > -1) ///Werset jest na liście ulubionych 13.01.2019
 							{
 								_Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //"<span class=\"styleFavorite\">"; //Styl zaznaczania ulubionego wersetu
-								_StyleFav_End = "</div>";
+								_StyleFav_End = "</div>\n";
 							}
 							else //Wersetu nie ma na liście ulubionych 13.01.2019, style będą puste
 							{
 								_Style_FavoriteStyle = ""; //Styl zaznaczania ulubionego wersetu
-								_StyleFav_End = "";
+								_StyleFav_End = "\n";
 							}
 							//Odznaczanie wersetu z komentarzem
 							if(TFile::Exists(TPath::Combine(GlobalVar::Global_custrPathDirComments, pMyOjectVers->AdressString) + GlobalVar::Global_custrExtendCommentsFiles))
@@ -781,24 +781,23 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 								_Style_CommentStyle = "";	 //Styl zaznaczania wersetu skomentowanego
 								_StyleComm_End = "";
 							}
-
-							pStringStream->WriteString(Format(UnicodeString("<p>\n") +	//[21-09-2023]
-							"%s" +	//_Style_FavoriteStyle
+							//[14-04-2024]
+							pStringStream->WriteString(Format(UnicodeString(_Style_FavoriteStyle) +	//[21-09-2023] //[14-04-2024]
+							"<p>\n" +
 							"%s" +	//_Style_CommentStyle
 							"%s" +	"<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
 							"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
-							"<span class=\"styleText\">\n\t" + "%s\n</span>\n" + //pTempHSList->Strings[iIndex]
-							"%s\n", //_StyleFav_End
-							ARRAYOFCONST((_Style_FavoriteStyle,
-														_Style_CommentStyle,
+							"<span class=\"styleText\">\n\t" + "%s\n</span>\n", //pTempHSList->Strings[iIndex]
+							ARRAYOFCONST((_Style_CommentStyle,
 														_StyleComm_End,
 														pMyOjectVers->BookChaptVers,
-														pTempHSList->Strings[iIndex],
-														_StyleFav_End))));
-
+														pTempHSList->Strings[iIndex]
+														))));
 							//Nazwa tłumaczenia
 							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
 								ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString("</p>\n");
+							pStringStream->WriteString(_StyleFav_End); //[14-04-2024]
 						}
 						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{
@@ -811,8 +810,9 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							//Nazwa tłumaczenia
 							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
 								ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString("</p>\n");
 						}
-						pStringStream->WriteString("</p>\n\n");
+						pStringStream->WriteString("<!---- Kolejny werset ---->\n"); //[14-04-2024] //[18-04-2024]
 					} //if(!pTempHSList->Strings[iIndex].IsEmpty())
 				} //if(iIndex < pTempHSList->Count)
 				else
@@ -822,7 +822,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 				}
 			}
 			++iIndex;
-			if(uiTranslatesIndex >= cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
+			if(uiTranslatesIndex >= GlobalVar::Global_cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 			if((iSelectTranslate == -1) && (uiTranslatesIndex > 0))
 			{
 				pStringStream->WriteString("<hr>\n");
@@ -1434,7 +1434,8 @@ void __fastcall GsListBoxSelectedVersClass::Click()
 	}
 	//Uaktualnienie wyświetlania aktualnego rozdziału, z zaznaczonymi, lub nie, ulubionymi wersetami
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage); //Aktualna zakładka 07-01-2019
-	if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);//Powtórne wczytanie tekstu rozdziału 07-01-2019
+	//Powtórne wczytanie tekstu rozdziału [07-01-2019][14-04-2024 - wyświetlanie na tym samym tłumaczeniu, a nie na wszystkich]
+	if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, pGsTabSheetClass->pGsTabSetClass->TabIndex-1);
 	//Uaktualnienie listy ulubionych wersetów, w głównym oknie, na zakładce
 	if(GsReadBibleTextData::pGsListBoxFavoritiesClass)
 	{
@@ -2236,6 +2237,9 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("GsTabSetClass::_OnChange -> %d", ARRAYOFCONST((NewTab))));
+	#endif
 	if(!this->bIsCreate)
 	{
 		GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);

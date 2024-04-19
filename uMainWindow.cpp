@@ -75,13 +75,12 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImageLogoApplication,					 //12.Ikona z główną grafiką aplikacji
 			enImageEditChapter,							 //13.Edycja rozdziału
 			enImage_MailChapt,							 //14.Wyśli emailem rozdział
-			//enImage_ImageAndText,						 //15.Tworzenie grafiki z tekstem
-			enImage_Help,										 //16.Pomocnik
-			enImage_Tips,										 //17.Nawigator podpowiedzi
-			enImage_ReadingPlan,						 //18.Plan czytania bibli
-			enImage_HistoryTextOpen,				 //19.Historia otwieranych rozdziałów
-			enImage_OpenInWord,							 //20.Otwarcie wybranego rozdziału w Ms Wordzie
-			enImageMainIndex_Count,
+			enImage_Help,										 //15.Pomocnik
+			enImage_Tips,										 //16.Nawigator podpowiedzi
+			enImage_ReadingPlan,						 //17.Plan czytania bibli
+			enImage_HistoryTextOpen,				 //18.Historia otwieranych rozdziałów
+			enImage_OpenInWord,							 //19.Otwarcie wybranego rozdziału w Ms Wordzie
+			enImageMainIndex_Count,          //Ilość ikon
 			//Małe ikony
 			enImage16_Books=0,							 //0.Księgi biblijne
 			enImage16_Media,								 //1.Multimedia
@@ -146,6 +145,9 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
 	#endif
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("%d", ARRAYOFCONST((GlobalVar::Global_ColorsAllTranslates[0] ))));
+//	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10); //???
 	//----- Sprawdzanie istnienia odpowiednich katalogów

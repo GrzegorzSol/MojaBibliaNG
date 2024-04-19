@@ -129,6 +129,10 @@ __published:	// IDE-managed Components
 	TButton *SW_ButtSelectBackground;
 	TToggleSwitch *ToggleSwitchOnlyPolTranslates;
 	TStaticText *SW_STextInfoOnOnlyPolTranslates;
+	TPanel *SW_PanelSetupFlags;
+	TPanel *SW_PanelSetupBacgroundText;
+	TToggleSwitch *ToggleSwitchIsImageBgn;
+	TImage *SW_ImageBackground;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

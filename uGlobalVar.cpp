@@ -8,11 +8,6 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-//----- Wersje plików i bibliotek
-UnicodeString	GlobalVar::Global_ustrVerGsReadBibleTextClass = "", //Wersja biblioteki GsReadBibleTextClass
-							GlobalVar::Global_ustrVerAplicMain = "", //Wersja głównej biblioteki
-							//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
-							GlobalVar::Global_custrLocalVersionFile = "", //Ścieżka dostępu lokalna, do pobranego pliku wersji
-							GlobalVar::Global_custrLocalApplicFile = ""; //Ścieżka dostępu lokalna, do pobranej aplikacji
+
 //---------------------------------------------------------------------------
 

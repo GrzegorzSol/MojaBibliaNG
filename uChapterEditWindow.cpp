@@ -156,7 +156,7 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 			{
 				if(uiTranslatesIndex > 0) pStringStream->WriteString("\\line");
 			}
-			if(uiTranslatesIndex >= cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
+			if(uiTranslatesIndex >= GlobalVar::Global_cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 		}while(uiTranslatesIndex > 0);
 		pStringStream->WriteString("}");
 		pStringStream->Position = 0;

@@ -1,6 +1,6 @@
 object MainBibleWindow: TMainBibleWindow
   Left = 0
-  Top = 21
+  Top = 0
   Caption = 'G'#322#243'wne okno'
   ClientHeight = 885
   ClientWidth = 1188
@@ -102,7 +102,6 @@ object MainBibleWindow: TMainBibleWindow
     ParentShowHint = False
     ShowHint = True
     ShowText = False
-    ExplicitWidth = 1184
     object ActionToolBarMain: TActionToolBar
       Left = 11
       Top = 0
@@ -177,7 +176,6 @@ object MainBibleWindow: TMainBibleWindow
       TabOrder = 0
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
-      ExplicitHeight = 817
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
@@ -386,7 +384,7 @@ object MainBibleWindow: TMainBibleWindow
     DisabledImages = ImageListMainInactive
     Images = ImageListMainActive
     Left = 146
-    Top = 411
+    Top = 259
     StyleName = 'Platform Default'
     object Act_CloseSheetActive: TAction
       Caption = 'Zamkni'#281'cie aktywnej zak'#322'adki'
@@ -484,7 +482,7 @@ object MainBibleWindow: TMainBibleWindow
     Height = 32
     Width = 32
     Left = 146
-    Top = 467
+    Top = 323
     Bitmap = {
       494C010114000001040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000C000000001002000000000000080
@@ -3667,7 +3665,7 @@ object MainBibleWindow: TMainBibleWindow
     Height = 32
     Width = 32
     Left = 146
-    Top = 507
+    Top = 387
     Bitmap = {
       494C010113000001040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
@@ -6320,7 +6318,7 @@ object MainBibleWindow: TMainBibleWindow
     Images = ImageListMainActive
     HideAfter = 3200
     Left = 146
-    Top = 557
+    Top = 453
   end
   object TrayIconMain: TTrayIcon
     Animate = True
@@ -6329,24 +6327,24 @@ object MainBibleWindow: TMainBibleWindow
     Visible = True
     OnBalloonClick = TrayIconMainBalloonClick
     Left = 146
-    Top = 605
+    Top = 517
   end
   object PMenuTray: TPopupMenu
     Left = 146
-    Top = 653
+    Top = 581
   end
   object TaskbarMain: TTaskbar
     TaskBarButtons = <>
     ProgressState = Normal
     TabProperties = []
     Left = 146
-    Top = 701
+    Top = 645
   end
   object ImageListSmall: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Left = 146
-    Top = 353
+    Top = 193
     Bitmap = {
       494C010106000800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
@@ -6622,7 +6620,7 @@ object MainBibleWindow: TMainBibleWindow
   object ActionManagerOther: TActionManager
     Images = ImageListSmall
     Left = 144
-    Top = 282
+    Top = 130
     StyleName = 'Platform Default'
     object Act_OtherInfoTaskbarButton: TAction
       Caption = 'Informacja o aktualnie wczytanym rozdziale...'

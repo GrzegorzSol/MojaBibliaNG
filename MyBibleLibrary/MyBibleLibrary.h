@@ -35,11 +35,10 @@
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.0.82632.96566";
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.1.82632.96566";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
-const unsigned char cucMaxCountTranslates=12; //Maksymalna ilość tłumaczeń
 //Numery ikon dla lsisty typu TImageList GsReadBibleTextData::GsImgListData
 enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_Root,						//0.Główny korzeń drzew
@@ -155,7 +154,7 @@ typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijn
 /****************************************************************************
  *										KLASA MyObjectVers																		*
  ****************************************************************************/
-const int CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER = 3;
+static const int CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER = 3;
 class MyObjectVers : public TObject
 {
 	friend class GsReadBibleTextClass; //Klasa GsReadBibleTextClass ma pełny dostęp

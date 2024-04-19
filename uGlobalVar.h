@@ -68,6 +68,7 @@ struct GlobalVar
 																		Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		//Ścieżka dostępu do pliku z listą ulubionych wersetów
 																		Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			//Katalog do pojedyńczych plików z komentarzami do wersetów
 																		Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
+																		Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  //Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
 																		//--- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 																		Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
 																		//----- Syle
@@ -99,6 +100,7 @@ struct GlobalVar
 																				GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
 																				GlobalIni_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //Czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
 																				GlobalIni_IsDisplayOnlyPolTranslates="IsDisplayOnlyPolTranslates", //Czy wyświetlić tylko polskie tłumaczenia Pisma Świętego, czy wszystkie dostępne
+																				GlobalIni_IsDisplayBackgroundImage="IsDisplayBackgroundImage", //Czy podkładem pod główny tekst bibli bedzie jednolity kolor, czy grafika
 																		GlobalIni_ColorsSection_Main="COLORS",			 //Główna sekcja COLORS pliku ini
 																				GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",				//Kolor zaznaczenie ulubionych wersetów
 																				GlobalIni_ColorCommentVers="ColorCommentVers",				 //Kolor zaznaczenie wersetów, do których istnieje komentarz
@@ -160,11 +162,11 @@ struct GlobalVar
 																				GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 //Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 																		Global_ustrFileReadingPlanExtend=".rpf";	 //Zmienić na stałą!? Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
-	static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
-											 Global_ustrVerAplicMain,							//Wersja głównej biblioteki
-											 //--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
-											 Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
-											 Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
+	inline static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
+															Global_ustrVerAplicMain,							//Wersja głównej biblioteki
+															//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
+															Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
+															Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
 	const static unsigned char cuchABlendValue; //Współczynnik przezroczystości okna, gdy jest nieaktywne
 	inline bool static IsWindows10=false, //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 										 IsRunReload=false; //Czy potrzeba przeładować aplikcje po zmianie konfiguracji
@@ -181,5 +183,8 @@ struct GlobalVar
 														//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 														//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
 														//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
+	inline static const unsigned char Global_cucMaxCountTranslates=12; //Maksymalna ilość tłumaczeń
+//	inline static TColor Global_ColorsAllTranslates[GlobalVar::Global_cucMaxCountTranslates] =
+//		{(TColor)0xFFFFFF}; //Tablica kolorów tłumaczeń
 };
 #endif

@@ -78,7 +78,10 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar,
 
 			enToggleCaptionOn_ToggleSwitchIsOnlyPoTranslateOnStart,
-			enToggleCaptionOff_ToggleSwitchIsOnlyPoTranslateOnStart
+			enToggleCaptionOff_ToggleSwitchIsOnlyPoTranslateOnStart,
+
+			enToggleCaptionOn_ToggleSwitchIsImageBgn,
+			enToggleCaptionOff_ToggleSwitchIsImageBgn
 		 };
 const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tłumaczenia", "Opis tłumaczenia"},
 										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne"},
@@ -110,7 +113,10 @@ const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tł
 																						"Informacje nie będą wyświetlane na pasku zadań, podczas jej uruchamiania.",
 
 																						"Będą dostępne tylko zaznaczone, polskie tłumaczenia Pisma Świętego",
-																						"Będą dostępne wszystkie zaznaczone tłumaczenia Pisma Świętego, w językach oryginalnych jak i po polsku"
+																						"Będą dostępne wszystkie zaznaczone tłumaczenia Pisma Świętego, w językach oryginalnych jak i po polsku",
+
+																						"Podkładem pod główny tekst biblijny bedzie grafika domyślna",
+																						"Podkładem pod główny tekst biblijny będzie jednolity kolor, wybierany z listy obok"
 																						};
 
 //---------------------------------------------------------------------------
@@ -227,6 +233,7 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	TWICImage *pWICImage=nullptr;
 	//---
 	this->_SListOldConfig = new TStringList(); //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
 	if(!this->_SListOldConfig) throw(Exception("Błąd funkcji TStringList"));
@@ -241,6 +248,26 @@ void __fastcall TSetupsWindow::FormCreate(TObject *Sender)
 	this->_InitLViewDisplaySelectPlan();
 	this->_ReadAllConfig();
 	this->_DisplayPreview();
+	//Wczytanie podglądu dla podkładu pod główny tekst
+	try
+	{
+		try
+		{
+			//--- Wczytanie grafiki podkładu głównego tekstu(dopuszczalne jest jej brak)
+			pWICImage = new TWICImage();
+			if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			pWICImage->LoadFromFile(GlobalVar::Global_custrPathImageBackgroundMainText);
+			this->SW_ImageBackground->Picture->Assign(pWICImage);
+		}
+		catch(Exception &e)
+		{
+			MessageBox(NULL, e.Message.c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
+	}
+	__finally
+	{
+		delete pWICImage; pWICImage = nullptr;
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormDestroy(TObject *Sender)
@@ -286,6 +313,9 @@ void __fastcall TSetupsWindow::_InitToggleSwitches()
 
 	this->ToggleSwitchOnlyPolTranslates->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsOnlyPoTranslateOnStart];
 	this->ToggleSwitchOnlyPolTranslates->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsOnlyPoTranslateOnStart];
+
+	this->ToggleSwitchIsImageBgn->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsImageBgn];
+	this->ToggleSwitchIsImageBgn->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsImageBgn];
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
@@ -575,6 +605,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->ToggleSwitchIsHintsOnStart->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true));
 	this->ToggleSwitchisInfosOnStatusBar->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, true));
 	this->ToggleSwitchOnlyPolTranslates->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayOnlyPolTranslates, false));
+	this->ToggleSwitchIsImageBgn->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayBackgroundImage, false));
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
 	this->SW_ColorBoxFavorities->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, clYellow);
@@ -784,7 +815,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 			delete pWICImage; pWICImage = nullptr;
 		}
 	} //[12-12-2023]
-	//Zapis flag //[15-08-2023]
+	//Zapis flag //[15-08-2023] [18-04-2024]
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplaySplashStart, this->ToggleSwitchIsDisplayInfos->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, this->ToggleSwitchIsRequestClose->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsOnlyOne, this->ToggleSwitchIsOneInstance->IsOn());
@@ -793,6 +824,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, this->ToggleSwitchIsHintsOnStart->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, this->ToggleSwitchisInfosOnStatusBar->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayOnlyPolTranslates, this->ToggleSwitchOnlyPolTranslates->IsOn());
+	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayBackgroundImage, this->ToggleSwitchIsImageBgn->IsOn());
 	//Zapis kolorów
 		//Kolor zaznaczenie ulubionych wersetów
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, this->SW_ColorBoxFavorities->Selected);
