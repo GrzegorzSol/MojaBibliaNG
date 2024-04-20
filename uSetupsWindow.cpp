@@ -367,26 +367,34 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 								ustr_FontNameTranslators = this->ButtFontNameTranslates->Caption;
 
 	UnicodeString		//Styl dla głównego tekstu
-								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
+								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n",
+									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
-								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
+								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
 								//_FavoriteStyle = Format(".styleFavorite {border: 3px solid %s}", ARRAYOFCONST((RGBToWebColorStr(iColorFavVers)))),
 									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
-								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n", ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
+								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n",
+									ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
 									//Kolor podkładu głównego tekstu
-								_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain))),
+								_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain))),
 								//_BackGroundMainText = Format("body {background-color: %s;\n\tbackground-image: url(\"%s\");\n\tbackground-repeat: no-repeat;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
 								//	ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), ustrTemp, iSizeFontMain, ustr_FontNameMain))), //[01-09-2023]
 									//Kolor nazwy przekładu, dla pełnego tłumaczenia
 								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
 									//Kolor adresu dla pełnych tłumaczeń
-								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress))),
+								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress))),
 									//Styl dla tekstu oryginalnego
-								_VersOryginalText = Format(".styleOrygin {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorOryginalTranslates), iSizeFontMain, ustr_FontNameMain))),
+								_VersOryginalText = Format(".styleOrygin {color: %s;font-size:%upt;font-family:%s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorOryginalTranslates), iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla nazwy tłumaczenia oryginalnego
-								_VersOryginalName = Format(".styleOrygTrans {color: %s;font-size:9pt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameOryginalTranslate), ustr_FontNameTranslators))),
+								_VersOryginalName = Format(".styleOrygTrans {color: %s;font-size:9pt;font-family:%s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorNameOryginalTranslate), ustr_FontNameTranslators))),
 									//Styl dla adresu oryginalnego tłumaczenia
-								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
+								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
 	UnicodeString HTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																							 "<html>\n<head>\n" +
 																							 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
@@ -432,8 +440,8 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 
 			if(i==0) //Będzie wyswietlony text ulubiony i z komentarzem
 			{
-				_Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //"<span class=\"styleFavorite\">"; //Styl zaznaczania ulubionego wersetu
-				_StyleFav_End = "</div>";
+				_Style_FavoriteStyle = "<div class=\"styleFavorite\">\n"; //Styl zaznaczania ulubionego wersetu
+				_StyleFav_End = "</div>\n";
 				_Style_CommentStyle = "<span class=\"styleComment\">C";	 //Styl zaznaczania wersetu skomentowanego
 				_StyleComm_End = "</span>\n";
 			}
@@ -444,39 +452,38 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 				_Style_CommentStyle = "";	 //Styl zaznaczania wersetu skomentowanego
 				_StyleComm_End = "";
 			}
-			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //Pełne polskie tłumaczenie
+			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //[20-04-2024]Pełne polskie tłumaczenie
 			{
-				pStringStream->WriteString(Format(UnicodeString("<p>\n") +
-					"%s" +	//_Style_FavoriteStyle
+					pStringStream->WriteString(Format(UnicodeString(_Style_FavoriteStyle) +
+					"<p>\n" +	//_Style_FavoriteStyle
 					"%s" +	//_Style_CommentStyle
 					"%s" + "<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
 					"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
-					"<span class=\"styleText\">\n\t" + "%s\n</span>\n" +
-					"%s\n", //_StyleFav_End, //_pTempHSListViewAllTr->Strings[iIndex]
-					ARRAYOFCONST((_Style_FavoriteStyle,
-												_Style_CommentStyle,
+					"<span class=\"styleText\">\n\t" + "%s\n</span>\n",
+					ARRAYOFCONST((_Style_CommentStyle,
 												_StyleComm_End,
 												pMyOjectVers->BookChaptVers,
-												_pTempHSListViewAllTr->Strings[i],
-												_StyleFav_End))));
-
+												_pTempHSListViewAllTr->Strings[i]))));
 				//Nazwa tłumaczenia
 				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
 					ARRAYOFCONST((DisplaySelectNameTranslate))));
+        pStringStream->WriteString("</p>\n");
+				pStringStream->WriteString(_StyleFav_End);
 			}
 			else
 			{
 				pStringStream->WriteString(Format(UnicodeString("<p>\n") +
 					"<span class=\"styleVersOryg\">" +
-					"\n\t%s\n</span>\n<span class=\"styleOrygin\">" + //pMyOjectVers->BookChaptVers
-					"\n\t%s\n</span>\n", //pTempHSList->Strings[i]
+					"\n\t%s\n</span>\n<span class=\"styleOrygin\">" +
+					"\n\t%s\n</span>\n",
 						ARRAYOFCONST((pMyOjectVers->BookChaptVers,
 													_pTempHSListViewAllTr->Strings[i]))));
 				//Nazwa tłumaczenia
 				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
 					ARRAYOFCONST((DisplaySelectNameTranslate))));
+        pStringStream->WriteString("</p>\n");
 			}
-			pStringStream->WriteString("</p>\n");
+			pStringStream->WriteString("<!---- Kolejny werset ---->\n"); //[20-04-2024]
 		}
 		pStringStream->WriteString("</body>\n</html>\n");
 		pStringStream->Position = 0;
