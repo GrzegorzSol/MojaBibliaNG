@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2008,2009,2010,2011,2012,2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 //
-//							 2022,2023																																		 //
+//							 2022,2023, 2024																															 //
 //																		 Grzegorz Sołtysik																			 //
 //																		 All rights reserved.																		 //
 //																		grzegorzsol@gmail.com																		 //
@@ -43,6 +43,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uSendingMailWindow.h"
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
+#include "uBooksSpecjalistWindow.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <System.Win.Registry.hpp>
 //---------------------------------------------------------------------------
@@ -80,6 +81,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage_ReadingPlan,						 //17.Plan czytania bibli
 			enImage_HistoryTextOpen,				 //18.Historia otwieranych rozdziałów
 			enImage_OpenInWord,							 //19.Otwarcie wybranego rozdziału w Ms Wordzie
+			enImage_BooksSpec,               //20.Okno z tłumaczeniami specjalistycznymi
 			enImageMainIndex_Count,          //Ilość ikon
 			//Małe ikony
 			enImage16_Books=0,							 //0.Księgi biblijne
@@ -118,6 +120,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
 			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
 			enTagImage_OpenInWord,		//119.Otwarcie wybranego rozdziału w Ms Wordzie
+			enTagImage_BooksSpec,     //120.Okno z tłumaczeniami specjalistycznymi
 			//Tagi dla komponentów TImage
 			enTagPic_Backgound,       //120.Komponent typu TImage podkładu
 			//
@@ -590,6 +593,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	else
 		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
+	this->Act_SpecBooks->Tag = enTagImage_BooksSpec;
+	this->Act_SpecBooks->Hint = Format("Okno tłumaczeń specjalistycznych|Otwiera okno z dostępnymi tłumaczeniami specjalistycznymi, Pisma Świetego.|%u", ARRAYOFCONST((this->Act_SpecBooks->ImageIndex)));
 
 	this->ToolButtDeleteFile->Hint = "Usunięcie zaznaczonego pliku z ulubionym wyszukiwaniem"; //[14-10-2023]
 	//---
@@ -1304,6 +1309,22 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	if(pHSListGetText) {delete pHSListGetText; pHSListGetText = nullptr;}
 	if(pPBar) {delete pPBar; pPBar = nullptr;}
 }
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_SpecBooksExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Otwarcie wybranego okna z tłumaczeniami specjalistycznymi
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	TBooksSpecjalistWindow *pBooksSpecjalistWindow = new TBooksSpecjalistWindow(this);
+	if(!pBooksSpecjalistWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TBooksSpecjalistWindow"));
+  pBooksSpecjalistWindow->Show();
+}
 //-----------------------ZDARZENIA ZWIAZANE Z KONTROLKAMI--------------------
 void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
 /**
@@ -1355,4 +1376,5 @@ void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sende
 	}
 }
 //---------------------------------------------------------------------------
+
 

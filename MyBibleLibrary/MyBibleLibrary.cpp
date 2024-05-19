@@ -23,7 +23,7 @@
 
 #pragma hdrstop
 
-#include "MyBibleLibrary.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 #include <System.IOUtils.hpp>
 #include <System.StrUtils.hpp>
 //#include <Vcl.Themes.hpp>
@@ -42,6 +42,9 @@
 [30-07-2023]
 */
 //const int ciMaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
+///////////////////////////////////////////////////////////////////////////////////
+// 	 KLASY PRZEZNACZONE DO PRACY ZE SDANDARTOWYMI TŁUMACZENIAMI PISMA SWIETEGO 	 //
+///////////////////////////////////////////////////////////////////////////////////
 /****************************************************************************
  *										KLASA MyObjectVers																		*
  ****************************************************************************/
@@ -132,7 +135,8 @@ void __fastcall GsHashedStringListItem::Clear()
 	//=========================================================================
 GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex)
 	: IsActiveTranslate(true),	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
-		enTypeTranslate(IdenTypeTranslate)
+		enTypeTranslate(IdenTypeTranslate),
+		FullPathTranslate(_PathTransl) //Kompletna ścieżka do tłumaczenia
 /**
 	OPIS METOD(FUNKCJI): Konstruktor klasy GsReadBibletextItem
 	OPIS ARGUMENTÓW:
@@ -147,7 +151,7 @@ GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTransl
 
 	try
 	{
-		this->ucIndexTranslate = cucIndex; //Indeks tłumaczenia
+		this->uiIndexTranslate = cucIndex; //Indeks tłumaczenia
 		_tempHStringList = new THashedStringList();	//String lista z całym tłumaczeniem
 		if(!_tempHStringList) throw(Exception("Błąd inicjalizacji listy na pojedyńczą księge tłumaczenia"));
 		_tempHStringList->LoadFromFile(_PathTransl, TEncoding::UTF8); //Wczytanie całego tłumaczenia
@@ -369,6 +373,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 {
 	if(!TDirectory::Exists(_PathDir)) throw(Exception("Niewłaściwy katalog z tłumaczeniami"));	//Jeśli nie istnieje katalog z księgami to upuść metodę
 	EnTypeTranslate _enTypeTranslate; //Typ tłumaczenia, typu EnTypeTranslate
+	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
 	this->uiCountPol=0; this->uiCountOryg=0;
 	TStringList *pSListExcludeTrans = new TStringList();
 	if(!pSListExcludeTrans) throw(Exception("Błąd inicjalizacji objektu TStringList"));
@@ -404,7 +409,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 		//--- Dodawanie klasy(GsReadBibleTextItem) tłumaczenia, listy klas dostępnych tłumaczeń
 		GsReadBibleTextItem *pGsReadBibleTextItem = new GsReadBibleTextItem(pSortedListFileTrans->Strings[i], _enTypeTranslate, i);
 		if(!pGsReadBibleTextItem) throw(Exception("Błąd inicjalizacji objektu, klasy GsReadBibleTextItem"));
-		this->_GsListItemsTranslates->Add(pGsReadBibleTextItem); //Dodawanie tłumaczenia
+		this->_GsListItemsTranslates->Add(pGsReadBibleTextItem); //[13-05-2024]Dodawanie tłumaczenia
 		//--- Dodawanie string listy tłumaczenia, do listy klas THashedStringList, z tekstami wszystkich dostępnych tłumaczeń, dla wybranego rozdziału i księgi.
 		//		Klasy THashedStringList wszystkich tłumaczeń, będą wypełniane gdy zostanie wybrana księga, oraz rozdział
 		THashedStringList *_pHListChapt = new THashedStringList();	//String lista NA PRZYSZŁY wybranego rozdziału i księgi, kolejnego tłumaczenia
@@ -412,6 +417,9 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 		this->_ListAllTrChap->Add(_pHListChapt); //Dodanie String listy, która na początku jest PUSTA, wybranej księgi i tłumaczenia do listy głównej, DLA PRZYSZŁEGO wybranego rozdziału i księgi
 		//Potem gdy zostanie wybrana księga i rozdział, string lista będzie zawierała, wersety wybranej księgi i rozdziału, każdego tłumaczenia.
 	}
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("this->_ListAllTrChap->Count: %d", ARRAYOFCONST((this->_ListAllTrChap->Count))));
+//	#endif
 	//this->_DeleteSelectTranslate(1); //Działa!!!
 	//Wczytanie danych do objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
@@ -479,11 +487,12 @@ void __fastcall GsReadBibleTextClass::_GetInfoNameTranslate(const int i, Unicode
 //---------------------------------------------------------------------------
 THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookTranslate(const int iGetTranslate, const int iGetBook)
 /**
-	OPIS METOD(FUNKCJI): Metoda zwraca THashedStringListe na konkretne tłumaczenia i księge
+	OPIS METOD(FUNKCJI): Metoda zwraca THashedStringListe na konkretne tłumaczenia i księgi
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
+	Metoda używana w Metodzie GetAllTranslatesChapter()
 */
 {
 	if(iGetTranslate >= this->_GsListItemsTranslates->Count) return 0;
@@ -501,11 +510,12 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookTranslate(const
 //---------------------------------------------------------------------------
 THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(int _iBook, const EnTypeTranslate _EnTypeTranslate)
 /**
-	OPIS METOD(FUNKCJI): Metoda zwraca string listę oryginalnego tłumaczenia, zależnie od zmienne _EnTypeTranslate,	 i wybranej, CAŁEJ księgi oryginalnej.
+	OPIS METOD(FUNKCJI): Metoda zwraca string listę wersetów z pierwszego w kolejności tłumaczenia typu EnTypeTranslate, dla wybranego rozdziału
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
+	Metoda używana tylko w module(klasie) GsLViewDictionaryClass (lista Słów greckich z ich tłumaczeniami)
 */
 {
 	if(_iBook >= static_cast<int>(GlobalVar::Global_NumberBooks)) return 0;
@@ -531,6 +541,7 @@ void __fastcall GsReadBibleTextClass::_ViewSListBibleToHTML(TWebBrowser *_cWebBr
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI): Tekst w formacie html
+
 */
 {
 	if((DataDisplay.strBackgroundColor.IsEmpty()) || (DataDisplay.strBackgroundColor.Length() != 7)) {return;}	//Opuść metodę jeśli zmienna _astrColor nie jest określeniem koloru w formacie html, czyli np. #CCAAFF
@@ -800,17 +811,9 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							pStringStream->WriteString(_StyleFav_End); //[14-04-2024]
 						}
 						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
-						{
-							pStringStream->WriteString(Format(UnicodeString("<p>\n") +
-								"<span class=\"styleVersOryg\">" +
-								"\n\t%s\n</span>\n<span class=\"styleOrygin\">" + //pMyOjectVers->BookChaptVers
-								"\n\t%s\n</span>\n", //pTempHSList->Strings[iIndex]
-								ARRAYOFCONST((pMyOjectVers->BookChaptVers,
-															pTempHSList->Strings[iIndex]))));
-							//Nazwa tłumaczenia
-							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
-								ARRAYOFCONST((DisplaySelectNameTranslate))));
-							pStringStream->WriteString("</p>\n");
+						{ // Usunięte z powody tworzenia przeglądy tłumaczeń specjalistycznych //[11-05-2024]
+							// Więc tłumaczenia nie będą wyswietlane w głównym oknie, tylko w oknie do przeglądy
+							// tego typu tłumaczeń. Jedna warunek "else" zostanie zachowany //[12-05-2024]
 						}
 						pStringStream->WriteString("<!---- Kolejny werset ---->\n"); //[14-04-2024] //[18-04-2024]
 					} //if(!pTempHSList->Strings[iIndex].IsEmpty())
@@ -2237,9 +2240,9 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("GsTabSetClass::_OnChange -> %d", ARRAYOFCONST((NewTab))));
-	#endif
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("GsTabSetClass::_OnChange -> %d", ARRAYOFCONST((NewTab))));
+//	#endif
 	if(!this->bIsCreate)
 	{
 		GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
@@ -4277,5 +4280,112 @@ void __fastcall GsListBoxFavoritiesClass::ReLoadFavList()
 		this->Items->Assign(GlobalVar::Global_HSListAllFavoritiesVers);
 		this->Items->EndUpdate();
 	}
+}
+//---------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////
+// KLASY PRZEZNACZONE DO PRACY ZE SPECJALISTYCZNYMI TŁUMACZENIAMI PISMA SWIETEGO //
+///////////////////////////////////////////////////////////////////////////////////
+/*
+	Rozpoczęcie pracy nad modułem przeglądu tłumaczeń specjalistycznych
+	oraz wszystkimi potrzebnymi klasami dla tego modułu, czyli tłumaczeń w
+	oryginalnych językach oraz interlinearnych - Oświęcim 11-05-2024
+*/
+/****************************************************************************
+*										 Główna klasa GsObjectItemsSpec						  						*
+*****************************************************************************/
+__fastcall GsObjectItemsSpec::GsObjectItemsSpec()
+/**
+	OPIS METOD(FUNKCJI): Konstruktor klasy GsObjectItemsSpec //[11-05-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("GsObjectItemsSpec::GsObjectItemsSpec()");
+//		GsDebugClass::WriteDebug("-------------------------------------------");
+//	#endif
+	this->OwnsObjects = false;
+}
+//---------------------------------------------------------------------------
+__fastcall GsObjectItemsSpec::~GsObjectItemsSpec()
+/**
+	OPIS METOD(FUNKCJI): Destruktor klasy GsObjectItemsSpec //[11-05-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->Clear();
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("-------------------------------------------");
+//		GsDebugClass::WriteDebug("GsObjectItemsSpec::~GsObjectItemsSpec()");
+//	#endif
+}
+//---------------------------------------------------------------------------
+void __fastcall GsObjectItemsSpec::Clear()
+/**
+	OPIS METOD(FUNKCJI): Wirtualna klasa wywolywana podczas czyszczenia całej zawartosci //[11-05-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TObjectList::Clear();
+}
+//---------------------------------------------------------------------------
+/****************************************************************************
+ *												Klasa GsReadBibleSpecTextClass										*
+ ****************************************************************************/
+__fastcall GsReadBibleSpecTextClass::GsReadBibleSpecTextClass()
+/**
+	OPIS METOD(FUNKCJI): //[11-05-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("GsReadBibleSpecTextClass::GsReadBibleSpecTextClass()");
+//		GsDebugClass::WriteDebug("==========================================");
+//	#endif
+	// Inicjalizacja list wszystkich tłumaczeń specjalistycznych
+	this->_pGsObjectItemsSpec = new GsObjectItemsSpec();
+	if(!this->_pGsObjectItemsSpec) throw(Exception("Błąd inicjalizacji objektu GsObjectItemsSpec"));
+
+	TList *pList = GsReadBibleTextData::pGsReadBibleTextClass->GetListAllTranslates();
+	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+	// Dodawanie z listy już wczytanych tłumaczeń pozycji do listy tłumaczeń specjalistycznych.
+	// Jako pozycje jest wykorzystana istniejąca klasa GsReadBibleTextItem
+	for(int i=0; i<pList->Count; ++i)
+	{
+		pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(pList->Items[i]);
+
+		if(pGsReadBibleTextItem->enTypeTranslate != enTypeTr_Full)
+		{
+//			#if defined(_DEBUGINFO_)
+//				GsDebugClass::WriteDebug(Format("Name: %s", ARRAYOFCONST((pGsReadBibleTextItem->FullPathTranslate))));
+//			#endif
+			this->_pGsObjectItemsSpec->Add(pGsReadBibleTextItem);
+		}
+	}
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("this->_pGsObjectItemsSpec->Count: %d", ARRAYOFCONST((this->_pGsObjectItemsSpec->Count))));
+//	#endif
+}
+//---------------------------------------------------------------------------
+__fastcall GsReadBibleSpecTextClass::~GsReadBibleSpecTextClass()
+/**
+	OPIS METOD(FUNKCJI): //[11-05-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(this->_pGsObjectItemsSpec) {delete this->_pGsObjectItemsSpec; this->_pGsObjectItemsSpec = nullptr;}
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("==========================================");
+//		GsDebugClass::WriteDebug("GsReadBibleSpecTextClass::~GsReadBibleSpecTextClass()");
+//	#endif
 }
 //---------------------------------------------------------------------------

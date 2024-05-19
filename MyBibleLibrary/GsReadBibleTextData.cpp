@@ -384,10 +384,15 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	else {GlobalVar::Global_HSListAllFavoritiesVers->SaveToFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);}
 	//---
 	GsReadBibleTextData::GsInitGlobalImageList(MainWindow);	 //Inicjalizacja listy ikon
+	// Inicjalizacja głównej klasy
 	GsReadBibleTextClass *_pGsReadBibleTextClass = new GsReadBibleTextClass(GlobalVar::Global_custrGetDataDir);
 	if(!_pGsReadBibleTextClass) throw(Exception("Błąd inicjalizacji objektu GsReadBibleTextClass"));
-
-	GsReadBibleTextData::pGsReadBibleTextClass = _pGsReadBibleTextClass;
+	// Inicjalizacja klasy tłumaczeń specjalistycznych
+	GsReadBibleSpecTextClass* _pGsReadBibleSpecTextClass = new GsReadBibleSpecTextClass();
+	if(!_pGsReadBibleSpecTextClass) throw(Exception("Błąd inicjalizacji objektu GsReadBibleSpecTextClass"));
+	// Przypisania do statycznych zmiennych
+	GsReadBibleTextData::pGsReadBibleTextClass = _pGsReadBibleTextClass; // Główna klasa
+	GsReadBibleTextData::pGsReadBibleSpecTextClass = _pGsReadBibleSpecTextClass; // Klasa tłumaczeń specjalistycznych
 	GsReadBibleTextData::GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 	//---
 	TComponent *Component=nullptr;
@@ -602,6 +607,12 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	{
 		throw(Exception("Objekt GsReadBibleTextClass NIE JEST jeszcze zainicjowany, dlatego nie będzie zamknięty!"));
 	}
+	//--- Zamykanie klasy specjalistycznych tłumaczeń
+	if(GsReadBibleTextData::pGsReadBibleSpecTextClass)
+	{
+		delete GsReadBibleTextData::pGsReadBibleSpecTextClass;
+    GsReadBibleTextData::pGsReadBibleSpecTextClass = nullptr;
+  }
 	GsReadBibleTextData::IsInitLibrary = false; //Czy została zainicjowana bibliteka (moduł)
 }
 //---------------------------------------------------------------------------

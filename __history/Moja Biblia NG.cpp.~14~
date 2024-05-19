@@ -9,15 +9,14 @@ USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uMainWindow.cpp", MainBibleWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
 USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
-USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
+USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
-USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
+USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
-USEFORM("uBooksSpecjalistWindow.cpp", BooksSpecjalistWindow);
+USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------

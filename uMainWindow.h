@@ -70,6 +70,7 @@ __published:	// IDE-managed Components
 	TToolBar *ToolBarSearcheFiles;
 	TToolButton *ToolButtDeleteFile;
 	TMemo *MemoInfosSearchFile;
+	TAction *Act_SpecBooks;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -103,6 +104,7 @@ __published:	// IDE-managed Components
 	void __fastcall FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall Act_OpenInWordExecute(TObject *Sender);
 	void __fastcall ToolButtSearchFavClick(TObject *Sender);
+	void __fastcall Act_SpecBooksExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr;

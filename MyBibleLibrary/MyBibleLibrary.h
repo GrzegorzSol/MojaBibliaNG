@@ -32,6 +32,7 @@
 #include <Vcl.OleCtrls.hpp> //TWebBrowser
 #include <Vcl.Grids.hpp> //TStringGrid
 #include <Vcl.Taskbar.hpp>//TTaskBar
+#include <System.Contnrs.hpp>
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 
@@ -69,6 +70,11 @@ enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_DisplayInfoTranslates, //23.Obraz wyświetlania informacji o przekładach, lub wybranym przekładzie, rozdziale
 			enImageIndex_Count						//Ilość grafik w objekcie GsReadBibleTextData::GsImgListData, typu TImageList
 		 };
+
+///////////////////////////////////////////////////////////////////////////////////
+// 	 KLASY PRZEZNACZONE DO PRACY ZE SDANDARTOWYMI TŁUMACZENIAMI PISMA SWIETEGO 	 //
+///////////////////////////////////////////////////////////////////////////////////
+
 //Deklaracja niektórych klas
 class GsReadBibleTextClass;
 class GsTreeBibleClass;
@@ -191,11 +197,12 @@ class GsHashedStringListItem : public THashedStringList //[07-08-2023]
 	virtual void __fastcall Clear();
 };
 //Typy tłumaczeń (w języku polskim, lub oryginalnym)
-enum EnTypeTranslate {enTypeTr_Full=0x10,	//Cały przekład Pisma Świętego
+enum EnTypeTranslate {enTypeTr_Full=0x10,	//Cały polski przekład Pisma Świętego
 											enTypeTr_Greek,	//Tekst oryginalny Nowego Testamentu w języku greckim
 											enTypeTr_Hebrew	//Tekst oryginalny Starego Testamentu w języku hebrajskim
 										 };
 class GsReadBibleTextItem : public TObject
+// Klasa poszczególnych, standartowych tłumaczeń
 {
 	friend class GsReadBibleTextClass;
 	friend class GsReadBibleTextData;
@@ -209,15 +216,17 @@ class GsReadBibleTextItem : public TObject
 	//Tablica wskaźników do klasy THashedStringList wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
 	GsHashedStringListItem *_pGsHListAllListBooks[GlobalVar::Global_NumberBooks];	 //73 wskaźniki (tablica) na GsHashedStringListItem
 	GsHashedStringListItem *__fastcall GetSelectBooks(const unsigned char uiSelectBook=0); //Metoda zwraca wskaźnik na konkrętną księge
-	bool IsActiveTranslate;	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
-	unsigned char ucCountBooks, //Ilość ksiąg w tłumaczeniu (oryginalne tłumaczenia, katolickie)
-								ucStartBook,	 //Od numeru jakiej księgi zaczyna się tłumaczenie
-								ucIndexTranslate;//Numer tłumaczenia
+
 	public:
 		EnTypeTranslate enTypeTranslate; //Typ tłumaczenia, typu EnTypeTranslate (całe pismo, grecki nt. itd.)
 		UnicodeString NameTranslate,	//Nazwa tłumaczenia
+                  FullPathTranslate,//Kompletna ścieżka do tłumaczenia //[12-05-2024]
 									PathInfoTranslate; //Ścieżka do pliku informacji o tłumaczeniu
-		int uiAllVersCount;	 //Ilość wszystkich wersetów
+		unsigned int uiAllVersCount,	 //Ilość wszystkich wersetów
+								 uiIndexTranslate; //Numer tłumaczenia
+		unsigned char ucCountBooks, //Ilość ksiąg w tłumaczeniu (oryginalne tłumaczenia, katolickie)
+									ucStartBook;	 //Od numeru jakiej księgi zaczyna się tłumaczenie
+    bool IsActiveTranslate;	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 };
 /****************************************************************************
  *												Klasa GsReadBibleTextClass												*
@@ -239,6 +248,7 @@ class GsListItemTranslates : public TList //[08-08-2023]
 //tylko polskich, czy oryginalnych
 //enum EnTypeGetTranslates {enTypeGTr_All = 0x20, enTypeGTr_Pol, enTypeGTr_Org};
 class GsReadBibleTextClass : public TObject
+//Główna klasa standartowych tłumaczeń, pełnych i nie pełnych
 {
 	friend class GsTabSheetClass;
 	friend class GsTreeBibleClass;
@@ -247,6 +257,9 @@ class GsReadBibleTextClass : public TObject
 	friend class GsPanelSelectVers;
 	friend class GsLViewDictionaryClass;
 	friend class GsListBoxSelectedVersClass;
+	friend class GsReadBibleSpecTextClass;
+
+  friend class TBooksSpecjalistWindow;
 	//---
 	GsReadBibleTextClass(const UnicodeString _PathDir);
 	virtual ~GsReadBibleTextClass();
@@ -278,7 +291,7 @@ class GsReadBibleTextClass : public TObject
 
 	public:
 		void __fastcall GlobalTextDragDrop(TObject *Sender, TObject *Source, int X, int Y); //Publiczny ze względu na umożliwienie dostępu z głównego okna
-};
+};	
 /****************************************************************************
  *												Klasa GsTreeNodeClass															*
  ****************************************************************************/
@@ -707,5 +720,40 @@ class GsListBoxFavoritiesClass : public TCustomListBox
 		void __fastcall DrawItem(int Index, const TRect &Rect, TOwnerDrawState State);
 	private:
 		TNotifyEvent FOnDblClick;
+};
+
+///////////////////////////////////////////////////////////////////////////////////
+// KLASY PRZEZNACZONE DO PRACY ZE SPECJALISTYCZNYMI TŁUMACZENIAMI PISMA SWIETEGO //
+///////////////////////////////////////////////////////////////////////////////////
+/*
+	Rozpoczęcie pracy nad modułem przeglądu tłumaczeń specjalistycznych
+	oraz wszystkimi potrzebnymi klasami dla tego modułu, czyli tłumaczeń w
+	oryginalnych językach oraz interlinearnych - Oświęcim 11-05-2024
+*/
+/****************************************************************************
+ *										 Klasa GsObjectItemsSpec															*
+ ****************************************************************************/
+class GsObjectItemsSpec : public TObjectList //[11-05-2024]
+// Pozycja tłumaczenia specjalistycznego
+{
+	friend class GsReadBibleSpecTextClass; //Przyjaźń - GsReadBibleSpecTextClass wywołuje konstruktora i dectruktora
+	//---
+	__fastcall GsObjectItemsSpec();
+	__fastcall virtual ~GsObjectItemsSpec();
+	//---
+	virtual void __fastcall Clear(); //Tylko wywołanie TList::Clear();
+};
+/****************************************************************************
+ *												Klasa GsReadBibleSpecTextClass										*
+ ****************************************************************************/
+class GsReadBibleSpecTextClass : public TObject //[11-05-2024]
+// Główna klasa specjalistycznych tłumaczeń tłumaczeń, pełnych i nie pełnych
+{
+	public:
+		__fastcall GsReadBibleSpecTextClass();
+		__fastcall virtual ~GsReadBibleSpecTextClass();
+		inline GsObjectItemsSpec *__fastcall GetObjectItemsSpec() {return this->_pGsObjectItemsSpec;}
+	private:
+		GsObjectItemsSpec *_pGsObjectItemsSpec=nullptr;
 };
 #endif

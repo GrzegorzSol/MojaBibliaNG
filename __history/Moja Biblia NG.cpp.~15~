@@ -88,6 +88,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			Application->Initialize();
 			Application->MainFormOnTaskBar = true;
 			Application->CreateForm(__classid(TMainBibleWindow), &MainBibleWindow);
+		Application->CreateForm(__classid(TBooksSpecjalistWindow), &BooksSpecjalistWindow);
 		Application->Run();
 		}
 		catch (Exception &exception)

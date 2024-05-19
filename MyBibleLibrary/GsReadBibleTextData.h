@@ -11,6 +11,7 @@
 #include <Vcl.Taskbar.hpp>//TTaskBar
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
+#include "MyBibleLibrary\MyBibleLibrary.h"
 
 /****************************************************************************
  *						Całkowicie statyczna klasalasa GsReadBibleTextData						*
@@ -54,6 +55,7 @@ class GsReadBibleTextData : public TObject
 		static inline enReturnError EnErrorCode=enR_NoError;
 	public:
 		static inline GsReadBibleTextClass* pGsReadBibleTextClass=nullptr;	//Wskaźnik na główną klasę
+    static inline GsReadBibleSpecTextClass* pGsReadBibleSpecTextClass=nullptr; //w Wskaxnik na klase tłumaczeń specjalistycznych
 		static const inline UnicodeString GsExtendFileTranslateFull="*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
 													 GsExtendFileTranslateGrecOrg="*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
 													 GsExtendFileTranslateHbrOrg="*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!

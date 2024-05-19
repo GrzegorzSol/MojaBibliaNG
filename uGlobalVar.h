@@ -99,7 +99,6 @@ struct GlobalVar
 																				GlobalIni_IsLoadBooksOnInit="IsLoadBooksOnInit", //Czy po ponownym uruchomieniu aplikacji, będą wczytywane kksięgi, które zostały ostatnio zamknięte podczas opuszczania aplikacji?
 																				GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
 																				GlobalIni_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //Czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
-																				GlobalIni_IsDisplayOnlyPolTranslates="IsDisplayOnlyPolTranslates", //Czy wyświetlić tylko polskie tłumaczenia Pisma Świętego, czy wszystkie dostępne
 																				GlobalIni_IsDisplayBackgroundImage="IsDisplayBackgroundImage", //Czy podkładem pod główny tekst bibli bedzie jednolity kolor, czy grafika
 																		GlobalIni_ColorsSection_Main="COLORS",			 //Główna sekcja COLORS pliku ini
 																				GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",				//Kolor zaznaczenie ulubionych wersetów
@@ -180,11 +179,19 @@ struct GlobalVar
 	inline static THashedStringList *Global_HSListAllFavoritiesVers=nullptr, //String lista do wszystkich ulubionych wesrsetów
 																	*Global_HListHistoryChapterOpen=nullptr; //String lista histori otwieranych rozdziałow księg biblijnych
 	inline static int iReturnUpdate=-1; //Wynik działania procedury sprawdzającej dostępność nowej wersji na serwerze.
-														//iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
-														//iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
-														//iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
-	inline static const unsigned char Global_cucMaxCountTranslates=12; //Maksymalna ilość tłumaczeń
-//	inline static TColor Global_ColorsAllTranslates[GlobalVar::Global_cucMaxCountTranslates] =
-//		{(TColor)0xFFFFFF}; //Tablica kolorów tłumaczeń
+														// iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
+														// iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
+														// iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
+	inline static const unsigned char Global_cucMaxCountTranslates=12, // Maksymalna ilość tłumaczeń
+																		Global_cucMaxTranslatesSpecjalist=8; // Maksymalna ilość tłumaczeń specjalistycznych //[19-05-2024]
+	inline static const UnicodeString Global_ColorsAllTranslates[GlobalVar::Global_cucMaxTranslatesSpecjalist] = //[19-05-2024]
+		{RGBToWebColorStr(clWebAzure),
+		 RGBToWebColorStr(clWebLemonChiffon),
+		 RGBToWebColorStr(clWebPaleGreen),
+		 RGBToWebColorStr(clWebLightSkyBlue),
+		 RGBToWebColorStr(clWebPlum),
+		 RGBToWebColorStr(clWebDarkTurquoise),
+		 RGBToWebColorStr(clWebDarkSalmon),
+		 RGBToWebColorStr(clWebGold)}; //Tablica kolorów tłumaczeń
 };
 #endif
