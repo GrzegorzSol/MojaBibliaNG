@@ -36,7 +36,6 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     Images = ImageListSpec
     List = True
     TabOrder = 0
-    ExplicitWidth = 1178
     object CBoxTranslatesList: TComboBox
       AlignWithMargins = True
       Left = 0
@@ -56,6 +55,7 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
       Height = 23
       Align = alCustom
       Style = csDropDownList
+      DropDownCount = 24
       TabOrder = 1
       OnChange = CBoxSelectAllChange
     end

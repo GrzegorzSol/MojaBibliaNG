@@ -20,8 +20,10 @@ enum { //Tag i dla TComboBox (wyborów: Tłumaczenia, księgi, rozdziału)
  enCBoxSelect_Translate = 10,
  enCBoxSelect_Book,
  enCBoxSelect_Chapter,
+ // Tagi dla przycisków
  enToolButton_Next = 20,
  enToolButton_Prev,
+ // Grafika dla ikon
  enImage_Next=0,
  enImage_Prev
 };
@@ -35,10 +37,6 @@ __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("TBooksSpecjalistWindow::_siIndexSpecWindow: %d", ARRAYOFCONST((TBooksSpecjalistWindow::_siIndexSpecWindow))));
-	#endif
-
 	this->CBoxTranslatesList->Tag = enCBoxSelect_Translate;
 	this->CBoxBoksList->Tag = enCBoxSelect_Book;
 	this->CBoxChaptersList->Tag = enCBoxSelect_Chapter;
@@ -48,6 +46,12 @@ __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 
 	this->pImageList16 = GsReadBibleTextData::GetImageList();
 	this->WebBrowserSpecText->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+  // Licznik okien tlumaczeń specjalistycznych
+	if(TBooksSpecjalistWindow::_siIndexSpecWindow < (GlobalVar::Global_cucMaxTranslatesSpecjalist - 1))
+	{
+		TBooksSpecjalistWindow::_siIndexSpecWindow++;
+	}
+	else TBooksSpecjalistWindow::_siIndexSpecWindow = 0;
 }
 //---------------------------------------------------------------------------
 void __fastcall TBooksSpecjalistWindow::FormCreate(TObject *Sender)
@@ -90,10 +94,6 @@ void __fastcall TBooksSpecjalistWindow::FormCreate(TObject *Sender)
 	this->CBoxSelectAllChange(this->CBoxTranslatesList);
 	this->CBoxBoksList->ItemIndex = 0;
 	this->CBoxSelectAllChange(this->CBoxBoksList);
-	// Licznik okien tlumaczeń specjalistycznych
-	if(TBooksSpecjalistWindow::_siIndexSpecWindow < GlobalVar::Global_cucMaxTranslatesSpecjalist - 1)
-		TBooksSpecjalistWindow::_siIndexSpecWindow++;
-	else TBooksSpecjalistWindow::_siIndexSpecWindow = 0;
 }
 //---------------------------------------------------------------------------
 void __fastcall TBooksSpecjalistWindow::FormDestroy(TObject *Sender)
@@ -226,7 +226,7 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 
 				DataDisplayTextAnyBrowser SetDataDisplay;
 				SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
-				SetDataDisplay.strBackgroundColor = GlobalVar::Global_ColorsAllTranslates[TBooksSpecjalistWindow::_siIndexSpecWindow];//[19-05-2024]
+				SetDataDisplay.strBackgroundColor = GlobalVar::Global_ColorsAllTranslates[TBooksSpecjalistWindow::_siIndexSpecWindow - 1];//[19-05-2024]
 				SetDataDisplay.strNameFont = "Times New Roman";
 				SetDataDisplay.iSizeFont = 14;
 				SetDataDisplay.pMemoryStream = nullptr;
