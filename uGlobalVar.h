@@ -182,8 +182,8 @@ struct GlobalVar
 														// iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 														// iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
 														// iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
-	inline static const unsigned char Global_cucMaxCountTranslates=12, // Maksymalna ilość tłumaczeń
-																		Global_cucMaxTranslatesSpecjalist=8; // Maksymalna ilość tłumaczeń specjalistycznych //[19-05-2024]
+	inline static const unsigned char Global_cucMaxCountTranslates=22, // Maksymalna ilość tłumaczeń
+																		Global_cucMaxTranslatesSpecjalist=16; // Maksymalna ilość tłumaczeń specjalistycznych //[19-05-2024]
 	inline static const UnicodeString Global_ColorsAllTranslates[GlobalVar::Global_cucMaxTranslatesSpecjalist] = //[19-05-2024]
 		{RGBToWebColorStr(clWebAzure),
 		 RGBToWebColorStr(clWebLemonChiffon),
