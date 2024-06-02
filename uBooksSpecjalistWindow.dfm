@@ -50,9 +50,9 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     object CBoxBoksList: TComboBox
       AlignWithMargins = True
       Left = 297
-      Top = 7
+      Top = 0
       Width = 193
-      Height = 23
+      Height = 38
       Align = alCustom
       Style = csDropDownList
       DropDownCount = 24
@@ -62,9 +62,9 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     object CBoxChaptersList: TComboBox
       AlignWithMargins = True
       Left = 490
-      Top = 7
+      Top = 0
       Width = 145
-      Height = 23
+      Height = 38
       Align = alCustom
       Style = csDropDownList
       TabOrder = 2
@@ -135,7 +135,7 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     TabOrder = 2
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 1178
+    ExplicitWidth = 123
   end
   object ImageListSpec: TImageList
     ColorDepth = cd32Bit

@@ -32,6 +32,8 @@ object SetupsWindow: TSetupsWindow
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
+    ExplicitWidth = 995
+    ExplicitHeight = 667
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -158,7 +160,7 @@ object SetupsWindow: TSetupsWindow
             Left = 3
             Top = 114
             Width = 514
-            Height = 105
+            Height = 148
             CustomHint = SW_BalloonHint
             Align = alTop
             Caption = 
@@ -197,6 +199,15 @@ object SetupsWindow: TSetupsWindow
               Caption = 'Kolor podk'#322'adu, znacznika istnienia komentarza do wersetu.'
               Layout = tlCenter
             end
+            object LabelColorBorderFavoritiesVers: TLabel
+              Left = 170
+              Top = 106
+              Width = 337
+              Height = 13
+              CustomHint = SW_BalloonHint
+              AutoSize = False
+              Caption = 'Kolor ramki naoko'#322'o ulubionego wersetu'
+            end
             object SW_ColorBoxFavorities: TColorBox
               Left = 12
               Top = 47
@@ -230,91 +241,9 @@ object SetupsWindow: TSetupsWindow
               OnChange = SW_ColorAllChange
               OnGetColors = SW_ColorBoxGetColors
             end
-          end
-          object GrBoxOryginalPartTranslates: TGroupBox
-            AlignWithMargins = True
-            Left = 3
-            Top = 225
-            Width = 514
-            Height = 137
-            CustomHint = SW_BalloonHint
-            Align = alClient
-            Caption = 'Kolory dla przek'#322'ad'#243'w niekompletnych, lub oryginalnych'
-            TabOrder = 2
-            object LabelColorAdressOryg: TLabel
-              Left = 170
-              Top = 50
-              Width = 337
-              Height = 13
-              CustomHint = SW_BalloonHint
-              AutoSize = False
-              Caption = 'Kolor adresu oryginalnego t'#322'umaczenia'
-            end
-            object LabelColorNameOrygTrans: TLabel
-              Left = 170
-              Top = 22
-              Width = 337
-              Height = 13
-              CustomHint = SW_BalloonHint
-              AutoSize = False
-              Caption = 'Kolor nazwy oryginalnego t'#322'umaczenia'
-              Layout = tlCenter
-            end
-            object LabelColorOrygTr: TLabel
-              Left = 170
-              Top = 77
-              Width = 337
-              Height = 13
-              CustomHint = SW_BalloonHint
-              AutoSize = False
-              Caption = 'Kolor tekstu, dla oryginalnych t'#322'umacze'#324
-              Layout = tlCenter
-            end
-            object LabelColorBorderFavoritiesVers: TLabel
-              Left = 170
-              Top = 104
-              Width = 337
-              Height = 13
-              CustomHint = SW_BalloonHint
-              AutoSize = False
-              Caption = 'Kolor ramki naoko'#322'o ulubionego wersetu'
-            end
-            object SW_ColorBoxAdressOryg: TColorBox
-              Left = 12
-              Top = 47
-              Width = 145
-              Height = 22
-              CustomHint = SW_BalloonHint
-              Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-              TabOrder = 0
-              OnChange = SW_ColorAllChange
-              OnGetColors = SW_ColorBoxGetColors
-            end
-            object SW_ColorBoxColorNameOrygTran: TColorBox
-              Left = 12
-              Top = 19
-              Width = 145
-              Height = 22
-              CustomHint = SW_BalloonHint
-              Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-              TabOrder = 1
-              OnChange = SW_ColorAllChange
-              OnGetColors = SW_ColorBoxGetColors
-            end
-            object SW_ColorBoxColorOrygTr: TColorBox
-              Left = 12
-              Top = 74
-              Width = 145
-              Height = 22
-              CustomHint = SW_BalloonHint
-              Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
-              TabOrder = 2
-              OnChange = SW_ColorAllChange
-              OnGetColors = SW_ColorBoxGetColors
-            end
             object SW_ColorBoxBorderFavoritiesVers: TColorBox
               Left = 12
-              Top = 101
+              Top = 103
               Width = 145
               Height = 22
               CustomHint = SW_BalloonHint
@@ -379,8 +308,8 @@ object SetupsWindow: TSetupsWindow
         CustomHint = SW_BalloonHint
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 995
-        ExplicitHeight = 214
+        ExplicitWidth = 987
+        ExplicitHeight = 212
         ControlData = {
           4C0000006C660000041600000100000001020000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -809,7 +738,7 @@ object SetupsWindow: TSetupsWindow
         Left = 12
         Top = 38
         Width = 967
-        Height = 589
+        Height = 458
         Margins.Left = 12
         Margins.Right = 12
         Margins.Bottom = 12
@@ -825,8 +754,8 @@ object SetupsWindow: TSetupsWindow
         ViewStyle = vsReport
         OnChanging = SW_ListViewAllTranslatesChanging
         OnItemChecked = SW_ListViewAllTranslatesItemChecked
-        ExplicitTop = 115
-        ExplicitHeight = 512
+        ExplicitWidth = 963
+        ExplicitHeight = 588
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
@@ -853,7 +782,54 @@ object SetupsWindow: TSetupsWindow
         TabOrder = 1
         Transparent = False
         StyleElements = [seFont]
-        ExplicitTop = 89
+        ExplicitWidth = 963
+      end
+      object SW_STextInfoSelectTrToDict: TStaticText
+        AlignWithMargins = True
+        Left = 3
+        Top = 511
+        Width = 985
+        Height = 20
+        CustomHint = SW_BalloonHint
+        Align = alBottom
+        Alignment = taCenter
+        Caption = 
+          'Wyb'#243'r t'#322'umaczenia greckiego, uzywanego do konkordancji, oraz do ' +
+          's'#322'ownika grecko-polskiego'
+        Color = clInfoBk
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        Font.Quality = fqClearType
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 2
+        Transparent = False
+        StyleElements = [seFont]
+        ExplicitTop = 616
+        ExplicitWidth = 615
+      end
+      object SW_RGroupSelectTransDict: TRadioGroup
+        Left = 0
+        Top = 534
+        Width = 991
+        Height = 105
+        CustomHint = SW_BalloonHint
+        Align = alBottom
+        Caption = 'Wyb'#243'r t'#322'umaczenia'
+        Columns = 2
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Font.Quality = fqClearType
+        ParentFont = False
+        TabOrder = 3
+        ExplicitLeft = 3
+        ExplicitTop = 580
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -1209,113 +1185,6 @@ object SetupsWindow: TSetupsWindow
       end
     end
   end
-  object SW_GrPanelButtons: TGridPanel
-    AlignWithMargins = True
-    Left = 3
-    Top = 729
-    Width = 1178
-    Height = 29
-    Align = alBottom
-    Caption = 'SW_GrPanelButtons'
-    ColumnCollection = <
-      item
-        Value = 25.000000000000000000
-      end
-      item
-        Value = 25.000000000000000000
-      end
-      item
-        Value = 25.000000000000000000
-      end
-      item
-        Value = 25.000000000000000000
-      end>
-    ControlCollection = <
-      item
-        Column = 0
-        Control = SW_ButtSetupSave
-        Row = 0
-      end
-      item
-        Column = 2
-        Control = SW_ButtSetupCancel
-        Row = 0
-      end
-      item
-        Column = 1
-        Control = SW_ButtSetupReturn
-        Row = 0
-      end
-      item
-        Column = 3
-        Control = SW_ButtSetupHelp
-        Row = 0
-      end>
-    RowCollection = <
-      item
-        Value = 100.000000000000000000
-      end>
-    ShowCaption = False
-    TabOrder = 1
-    DesignSize = (
-      1178
-      29)
-    object SW_ButtSetupSave: TButton
-      Left = 89
-      Top = 3
-      Width = 118
-      Height = 22
-      CustomHint = SW_BalloonHint
-      Anchors = []
-      Caption = 'Zapisz konfiguracje'
-      ImageIndex = 1
-      Images = SW_ImgListSmallMain
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 0
-      OnClick = SW_ButtSetups_Click
-    end
-    object SW_ButtSetupCancel: TButton
-      Left = 698
-      Top = 3
-      Width = 75
-      Height = 22
-      CustomHint = SW_BalloonHint
-      Anchors = []
-      Caption = 'Anuluj'
-      ImageIndex = 2
-      Images = SW_ImgListSmallMain
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-      OnClick = SW_ButtSetups_Click
-    end
-    object SW_ButtSetupReturn: TButton
-      Left = 363
-      Top = 2
-      Width = 157
-      Height = 25
-      CustomHint = SW_BalloonHint
-      Anchors = []
-      Caption = 'Cofnij wprowadzone zmiany'
-      ImageIndex = 3
-      Images = SW_ImgListSmallMain
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 2
-      OnClick = SW_ButtSetups_Click
-    end
-    object SW_ButtSetupHelp: TButton
-      Left = 992
-      Top = 3
-      Width = 75
-      Height = 22
-      Anchors = []
-      Caption = 'Pomoc...'
-      TabOrder = 3
-      OnClick = SW_ButtSetups_Click
-    end
-  end
   object SW_STextInfo: TStaticText
     AlignWithMargins = True
     Left = 3
@@ -1336,9 +1205,11 @@ object SetupsWindow: TSetupsWindow
     Font.Quality = fqClearType
     ParentColor = False
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     Transparent = False
     StyleElements = [seFont, seBorder]
+    ExplicitLeft = -2
+    ExplicitTop = 641
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
@@ -1346,7 +1217,8 @@ object SetupsWindow: TSetupsWindow
     Width = 185
     Height = 668
     Align = alLeft
-    TabOrder = 3
+    TabOrder = 2
+    ExplicitHeight = 667
     object SW_ButGroupSections: TButtonGroup
       Left = 1
       Top = 1
@@ -1394,6 +1266,7 @@ object SetupsWindow: TSetupsWindow
       TabOrder = 0
       OnButtonClicked = SW_ButGroupSectionsButtonClicked
       OnKeyUp = SW_ButGroupSectionsKeyUp
+      ExplicitHeight = 482
     end
     object SW_PanelImageLogo: TPanel
       Left = 1
@@ -1403,6 +1276,7 @@ object SetupsWindow: TSetupsWindow
       Align = alBottom
       ShowCaption = False
       TabOrder = 1
+      ExplicitTop = 483
       object SW_SetupsImageLogo: TImage
         AlignWithMargins = True
         Left = 27
@@ -1421,13 +1295,125 @@ object SetupsWindow: TSetupsWindow
       end
     end
   end
+  object SW_GrPanelButtons: TGridPanel
+    AlignWithMargins = True
+    Left = 3
+    Top = 729
+    Width = 1178
+    Height = 29
+    Align = alBottom
+    Caption = 'SW_GrPanelButtons'
+    ColumnCollection = <
+      item
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
+      end>
+    ControlCollection = <
+      item
+        Column = 0
+        Control = SW_ButtSetupSave
+        Row = 0
+      end
+      item
+        Column = 2
+        Control = SW_ButtSetupCancel
+        Row = 0
+      end
+      item
+        Column = 1
+        Control = SW_ButtSetupReturn
+        Row = 0
+      end
+      item
+        Column = 3
+        Control = SW_ButtSetupHelp
+        Row = 0
+      end>
+    RowCollection = <
+      item
+        Value = 100.000000000000000000
+      end>
+    ShowCaption = False
+    TabOrder = 3
+    ExplicitLeft = -2
+    DesignSize = (
+      1178
+      29)
+    object SW_ButtSetupSave: TButton
+      Left = 89
+      Top = 3
+      Width = 118
+      Height = 22
+      CustomHint = SW_BalloonHint
+      Anchors = []
+      Caption = 'Zapisz konfiguracje'
+      ImageIndex = 1
+      Images = SW_ImgListSmallMain
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 65
+    end
+    object SW_ButtSetupCancel: TButton
+      Left = 698
+      Top = 3
+      Width = 75
+      Height = 22
+      CustomHint = SW_BalloonHint
+      Anchors = []
+      Caption = 'Anuluj'
+      ImageIndex = 2
+      Images = SW_ImgListSmallMain
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 578
+    end
+    object SW_ButtSetupReturn: TButton
+      Left = 363
+      Top = 2
+      Width = 157
+      Height = 25
+      CustomHint = SW_BalloonHint
+      Anchors = []
+      Caption = 'Cofnij wprowadzone zmiany'
+      ImageIndex = 3
+      Images = SW_ImgListSmallMain
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 291
+    end
+    object SW_ButtSetupHelp: TButton
+      Left = 992
+      Top = 3
+      Width = 75
+      Height = 22
+      Anchors = []
+      Caption = 'Pomoc...'
+      TabOrder = 3
+      OnClick = SW_ButtSetups_Click
+      ExplicitLeft = 823
+    end
+  end
   object SW_ImgListMain: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Height = 32
     Width = 32
-    Left = 240
-    Top = 552
+    Left = 352
+    Top = 264
     Bitmap = {
       494C010107001800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
@@ -2495,8 +2481,8 @@ object SetupsWindow: TSetupsWindow
   object SW_ImgListSmallMain: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
-    Left = 237
-    Top = 504
+    Left = 349
+    Top = 216
     Bitmap = {
       494C010107001800040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
@@ -2773,14 +2759,14 @@ object SetupsWindow: TSetupsWindow
     Images = SW_ImgListSmallMain
     Delay = 1200
     HideAfter = 750
-    Left = 237
-    Top = 456
+    Left = 349
+    Top = 168
   end
   object SW_ImgListMainSmall: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
-    Left = 237
-    Top = 600
+    Left = 349
+    Top = 312
     Bitmap = {
       494C01010A003001040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030

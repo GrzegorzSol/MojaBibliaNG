@@ -344,9 +344,9 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 			iColorBackgroundMarkComment = this->SW_ColorBackgroundMarkerComment->Selected,
 			iColorBorderFavoritiesVers = this->SW_ColorBoxBorderFavoritiesVers->Selected,
 			//Kolor nazwy oryginalnego tłumaczenia
-			iColorOryginalTranslates = this->SW_ColorBoxColorOrygTr->Selected,
-			iColorAdressOryg = this->SW_ColorBoxAdressOryg->Selected,
-			iColorNameOryginalTranslate = this->SW_ColorBoxColorNameOrygTran->Selected,
+			//iColorOryginalTranslates = this->SW_ColorBoxColorOrygTr->Selected,
+			//iColorAdressOryg = this->SW_ColorBoxAdressOryg->Selected,
+			//iColorNameOryginalTranslate = this->SW_ColorBoxColorNameOrygTran->Selected,
 			//Other
 			iSizeFontMain = this->SpEditSizeMainFont->Value,
 			iSizeAdressFont = this->SpEditSizeAdressFont->Value,
@@ -375,29 +375,17 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
 									//Kolor adresu dla pełnych tłumaczeń
 								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n",
-									ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress))),
-									//Styl dla tekstu oryginalnego
-								_VersOryginalText = Format(".styleOrygin {color: %s;font-size:%upt;font-family:%s;}\n",
-									ARRAYOFCONST((RGBToWebColorStr(iColorOryginalTranslates), iSizeFontMain, ustr_FontNameMain))),
-									//Styl dla nazwy tłumaczenia oryginalnego
-								_VersOryginalName = Format(".styleOrygTrans {color: %s;font-size:9pt;font-family:%s;}\n",
-									ARRAYOFCONST((RGBToWebColorStr(iColorNameOryginalTranslate), ustr_FontNameTranslators))),
-									//Styl dla adresu oryginalnego tłumaczenia
-								_VersOryginalAdress = Format(".styleVersOryg {color: %s; font-size:%upt;font-family:%s;}\n",
-									ARRAYOFCONST((RGBToWebColorStr(iColorAdressOryg), iSizeAdressFont, ustr_FontNameAdress)));
+									ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress)));
+
 	UnicodeString HTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																							 "<html>\n<head>\n" +
 																							 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
 																							 GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
-																							 //"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
 																							 "<style type=\"text/css\">\n" +
 																							 _ColorAdressFullTranslates +
-																							 _VersOryginalAdress +
 																							 _ColorNameFullTranslate +
 																							 _GlobalText +
 																							 ".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}\n" + //Informacja o braku księgi
-																							 _VersOryginalText +
-																							 _VersOryginalName +
 																							 _FavoriteStyle + //Kolor zaznaczenie ulubionego wersetu
 																							 _CommentStyle + //Kolor zaznaczania wersetu z komentarzem
 																							 _BackGroundMainText +
@@ -462,16 +450,7 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 			}
 			else
 			{
-				pStringStream->WriteString(Format(UnicodeString("<p>\n") +
-					"<span class=\"styleVersOryg\">" +
-					"\n\t%s\n</span>\n<span class=\"styleOrygin\">" +
-					"\n\t%s\n</span>\n",
-						ARRAYOFCONST((pMyOjectVers->BookChaptVers,
-													_pTempHSListViewAllTr->Strings[i]))));
-				//Nazwa tłumaczenia
-				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleOrygTrans\">\n\t%s\n</span>\n"),
-					ARRAYOFCONST((DisplaySelectNameTranslate))));
-        pStringStream->WriteString("</p>\n");
+
 			}
 			pStringStream->WriteString("<!---- Kolejny werset ---->\n"); //[20-04-2024]
 		}
@@ -619,12 +598,6 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->SW_ColorBackgroundMarkerComment->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBackgroundMarkerComment, clYellow);
 		//Kolor ramki naokoło ulubionego wersetu
 	this->SW_ColorBoxBorderFavoritiesVers->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBorderFavoritiesVers, clRed);
-		//Kolor czcionki, dla oryginalnych tłumaczeń
-	this->SW_ColorBoxColorOrygTr->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorOryginalTranslates, clMaroon);
-		//Kolor nazwy oryginalnego tłumaczenia
-	this->SW_ColorBoxColorNameOrygTran->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorNameOryginalTranslate, clRed);
-		//Kolor adresu oryginalnego tłumaczenia
-	this->SW_ColorBoxAdressOryg->Selected = (TColor)GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorAdressOryginalTranslate, clBlue);
 	//Others
 		//Wielkość głównej czcionki tekstu wersetu
 	this->SpEditSizeMainFont->Value = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_OtherSizeFontMain, 12);
@@ -649,6 +622,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	pSListExcludeTrans->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, "");
 	//Dodawanie ścieżek dostępu do wszystkich tłumaczeń
 	UnicodeString ustrNameTranslate;
+	GsReadBibleTextItem *pGsReadBibleTextItem = nullptr;
 	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
 	{
 		TListItem *NewItem = this->SW_ListViewAllTranslates->Items->Add();
@@ -674,8 +648,15 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		}
 		else {NewItem->SubItems->Add("");}
 		NewItem->SubItemImages[enColumn_TypeTranslate] = enImage_TypeTranslate;
-		//--- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023]
-		GsReadBibleTextData::GetNameIndependentTranslate(i, ustrNameTranslate);
+		//--- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023] [31-05-2024]
+		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
+		if(pGsReadBibleTextItem)
+		{
+//			#if defined(_DEBUGINFO_)
+//				GsDebugClass::WriteDebug(Format("%d - %s", ARRAYOFCONST(( i,  pGsReadBibleTextItem->NameTranslate))));
+//			#endif
+			ustrNameTranslate = pGsReadBibleTextItem->NameTranslate;
+		}
 
 		NewItem->SubItems->Add(ustrNameTranslate);
 //    #if defined(_DEBUGINFO_)
@@ -687,7 +668,24 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 			{this->CBoxSelectTranslate->AddItem(Format("%s - %s", ARRAYOFCONST((NewItem->Caption, ustrNameTranslate))), 0);}
 	}
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
-	//---Planu czytania biblii
+	//--- Wybór tłumaczenia, które bedzie uzywane dla słownika i konkordancji grecko-polskiej [02-06-2024]
+	UnicodeString ustrSelectTransDictCord = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main,
+		GlobalVar::GlobalIni_SelectTranslateForDictConcord, GlobalVar::Global_DefaultNameTranslateToDictionary);
+	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
+	{
+    //--- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023] [31-05-2024] [02-06-2024]
+		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
+		if(pGsReadBibleTextItem)
+		{
+			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Greek)
+			{
+				this->SW_RGroupSelectTransDict->Items->Add(pGsReadBibleTextItem->NameTranslate);
+				if(pGsReadBibleTextItem->NameTranslate == ustrSelectTransDictCord)
+					{this->SW_RGroupSelectTransDict->ItemIndex = this->SW_RGroupSelectTransDict->Items->Count - 1;}
+			}
+    }
+	}
+	//--- Planu czytania biblii
 		//--- Odczyt planów
 	TStringDynArray SDirReadingPlanList = TDirectory::GetFiles(GlobalVar::Global_custrPathAllReadingPlan, "*" +GlobalVar::Global_ustrFileReadingPlanExtend, 0);
 	this->CBoxSelectPlan->Items->BeginUpdate();
@@ -748,6 +746,7 @@ void __fastcall TSetupsWindow::_VaidatePathMedia(TLabeledEdit *pLEditPath, Unico
 */
 {
 	if(pLEditPath->Text.IsEmpty()) return;
+	//---
 	if(!TDirectory::Exists(pLEditPath->Text))
 	{
 		UnicodeString ustrPathError = Format("Ścieżka dostępu: %s jest nie właściwa. Prawdopodobnie wybrany katalog nie istnieje! Proszę wybrać istniejący katalog.", ARRAYOFCONST((pLEditPath->Text)));
@@ -838,12 +837,6 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBackgroundMarkerComment, this->SW_ColorBackgroundMarkerComment->Selected);
 		//Kolor ramki naokoło ulubionego wersetu
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorBorderFavoritiesVers, this->SW_ColorBoxBorderFavoritiesVers->Selected);
-		//Kolor czcionki, dla oryginalnych tłumaczeń
-	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorOryginalTranslates, this->SW_ColorBoxColorOrygTr->Selected);
-		//Kolor nazwy oryginalnego tłumaczenia
-	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorNameOryginalTranslate, this->SW_ColorBoxColorNameOrygTran->Selected);
-		//Kolor adresu oryginalnego tłumaczenia
-	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorAdressOryginalTranslate, this->SW_ColorBoxAdressOryg->Selected);
 	//Others
 		//Wielkość głównej czcionki tekstu wersetu
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_OthersSection, GlobalVar::GlobalIni_OtherSizeFontMain, this->SpEditSizeMainFont->Value);
@@ -876,8 +869,13 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 			//pSListIncludeTrans->Add(this->SW_ListViewAllTranslates->Items->Item[i]->Caption);
 		}
 	}
+  // Zapis Wykluczonych, lub wybranych tłumaczeń
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, pSListExcludeTrans->CommaText);
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+  // Zapis tłumaczenia wykorzystanego do słownika i konkordancji grecko-polskiej [02-06-2024]
+	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_TranslatesSection_Main,
+		GlobalVar::GlobalIni_SelectTranslateForDictConcord,
+		this->SW_RGroupSelectTransDict->Items->Strings[this->SW_RGroupSelectTransDict->ItemIndex]);
 	//--- Zapis konfiguracji dla Planu czytania biblii
 	UnicodeString ustrNameTransIDPlan;
 	int iIDTranslatePlan=-1, intPosSpace=0;

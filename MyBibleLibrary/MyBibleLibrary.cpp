@@ -508,18 +508,23 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookTranslate(const
 	return 0;
 }
 //---------------------------------------------------------------------------
-THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(int _iBook, const EnTypeTranslate _EnTypeTranslate)
+THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(int _iBook)
 /**
 	OPIS METOD(FUNKCJI): Metoda zwraca string listę wersetów z pierwszego w kolejności tłumaczenia typu EnTypeTranslate, dla wybranego rozdziału
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
-	Metoda używana tylko w module(klasie) GsLViewDictionaryClass (lista Słów greckich z ich tłumaczeniami)
+	Metoda używana TYLKO w module(klasie) GsLViewDictionaryClass (lista Słów greckich z ich tłumaczeniami)
 */
 {
 	if(_iBook >= static_cast<int>(GlobalVar::Global_NumberBooks)) return 0;
 	//---
+	const EnTypeTranslate _EnTypeTranslate=enTypeTr_Greek;
+  //--- Wybór tłumaczenia, które bedzie uzywane dla słownika i konkordancji grecko-polskiej [02-06-2024]
+	UnicodeString ustrSelectTransDictCord = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main,
+		GlobalVar::GlobalIni_SelectTranslateForDictConcord, GlobalVar::Global_DefaultNameTranslateToDictionary);
+
 	for(int i=0; i<this->_GsListItemsTranslates->Count; ++i)
 	{
 		GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_GsListItemsTranslates->Items[i]);
@@ -527,7 +532,14 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(in
 		{
 			if(pGsReadBibleTextItem->enTypeTranslate == _EnTypeTranslate)
 			{
-				return pGsReadBibleTextItem->_pGsHListAllListBooks[_iBook];
+				if(pGsReadBibleTextItem->NameTranslate == ustrSelectTransDictCord)
+				{
+//					#if defined(_DEBUGINFO_)
+//						GsDebugClass::WriteDebug(Format("Name: \"%s\"", ARRAYOFCONST(( pGsReadBibleTextItem->NameTranslate ))));
+//						GsDebugClass::WriteDebug(Format("File name: \"%s\"", ARRAYOFCONST(( TPath::GetFileName(pGsReadBibleTextItem->FullPathTranslate) ))));
+//					#endif
+					return pGsReadBibleTextItem->_pGsHListAllListBooks[_iBook];
+				}
 			}
 		}
 	}
@@ -3537,7 +3549,6 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	this->ReadOnly = true;
 	this->RowSelect = true;
 	this->ViewStyle = vsReport;
-	this->_CreateAllColumns();
 	this->SmallImages = GsReadBibleTextData::_GsImgListData; //Ikony kolumn
 	this->Font->Quality = TFontQuality::fqClearType;
 }
@@ -3557,6 +3568,9 @@ __fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
 		if(pDataGrecWordDictClass)
 		{
 			delete pDataGrecWordDictClass; pDataGrecWordDictClass = nullptr;
+//      #if defined(_DEBUGINFO_)
+//				GsDebugClass::WriteDebug(Format("i: %d -> GsLViewDictionaryClass", ARRAYOFCONST((i))));
+//			#endif
 		}
 	}
 
@@ -3574,6 +3588,7 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 {
 	TCustomListView::CreateWnd();
 	//Własny kod.
+  this->_CreateAllColumns();
 	this->Items->BeginUpdate();
 	//--- Allokacja listy, struktarami dla każdego słowa według Stronga
 	for(int i=0; i<ciMaxStrongCount; ++i)
@@ -3680,7 +3695,7 @@ void __fastcall GsLViewDictionaryClass::_CreateAllColumns()
 	{
 		NewColumn = this->Columns->Add();
 		NewColumn->Caption = ustrColumsNames[iColumns];
-		NewColumn->AutoSize = true;
+		NewColumn->Width = 2 * this->Canvas->TextWidth(ustrColumsNames[iColumns]);
 		NewColumn->ImageIndex = enImageIndex_GrecWordColumn + iColumns;//ID_GLOBALIMAGE_ID_GRECWORD_COLUMN + iColumns;
 	}
 }
@@ -3840,9 +3855,9 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 		}
 		DataDisplayTextAnyBrowser SetDataDisplay;
 		SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
-		SetDataDisplay.strBackgroundColor = "#00CC88";
+		SetDataDisplay.strBackgroundColor = RGBToWebColorStr(clWebAzure);
 		SetDataDisplay.strNameFont = "Times New Roman";
-		SetDataDisplay.iSizeFont = 12;
+		SetDataDisplay.iSizeFont = 16;
 		SetDataDisplay.pMemoryStream = nullptr;
 		SetDataDisplay.bIsHorizontLine = true;
 		//---

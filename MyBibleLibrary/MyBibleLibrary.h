@@ -274,7 +274,7 @@ class GsReadBibleTextClass : public TObject
 	void __fastcall _GetInfoNameTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia AKTYWNEGO  o numerze i.
 	void __fastcall _GetNameIndependentTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie)
 	THashedStringList *__fastcall GetSelectBookTranslate(const int iGetTranslate, const int iGetBook); //Metoda zwraca wskażnik THashedStringList na pozycje określonej księgi i tłumaczenia
-	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook, const EnTypeTranslate _EnTypeTranslate=enTypeTr_Greek); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
+	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
 	inline THashedStringList *GetListInterlinearGrec() {return this->_SListInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
 	void __fastcall _ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
 	bool __fastcall _LoadAllTranslates(const UnicodeString _PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.

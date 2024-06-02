@@ -47,11 +47,12 @@ struct GlobalVar
 																				//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
 																				Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),
 																		#endif
+																		//Global_custrPathTranslatesNotUse=TPath::Combine(GlobalVar::Global_custrGetDataDir, "NotUseTranslates"), //Ścieżka do katalogu z nieużywanymi tłumaczeniami //[31-05-2024]
 																		Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 																		Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	//Ścieżka dostępu do katalogu z planami czytania biblii
 																		Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), //Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
 																		Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";
-                                    Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
+																		Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
 																		Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				//Ścieżka do pliku konfiguracyjnego
 																		Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
 																		Global_custrPathGlobalHelp=TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"),			//Ścieżka dostępu do pliku pomocy
@@ -69,10 +70,13 @@ struct GlobalVar
 																		Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			//Katalog do pojedyńczych plików z komentarzami do wersetów
 																		Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 																		Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  //Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
-																		//--- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
+																		//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 																		Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
 																		//----- Syle
 																		Global_DefaultStyleName="Windows", //Domyślny styl
+																		//----- Nazwa domyślnego tłumaczenia używanego do modułu konkordancji greckiej i słownika grecko-polskiego
+                                    // Tłumaczenie będzie można wybrać [02-06-2024]
+																		Global_DefaultNameTranslateToDictionary="ELZEVIR TEXTUS RECEPTUS (1624)",// "TRO+"
 																		/*****************************************************************************
 																		*       Stałe dla pliku informacyjnego dla zapisu ulubionego wyszukiwania    *
 																		******************************************************************************/
@@ -109,9 +113,6 @@ struct GlobalVar
 																				GlobalIni_ColorNameFullTranslates="ColorNameFullTranslates",	//Kolor nazwy pełnego tłumaczenia
 																				GlobalIni_ColorNamePartTranslates="ColorNamePartTranslates",	//Kolor nazwy częściowego tłumaczenia
 																				GlobalIni_ColorBackgroundMarkerComment="ColorBackgroundMarkerComment", //Kolor podkładu dla znacznika, istnienia komentarza dla wersetu
-																				GlobalIni_ColorOryginalTranslates="ColorOryginalTranslates",	//Kolor czcionki, dla oryginalnych tłumaczeń
-																				GlobalIni_ColorNameOryginalTranslate="ColorNameOryginalTranslate", //Kolor nazwy oryginalnego tłumaczenia
-																				GlobalIni_ColorAdressOryginalTranslate="ColorAdressOryginalTranslate", //Kolor adresu oryginalnego tłumaczenia
 																				GlobalIni_ColorBorderFavoritiesVers="ColorBorderFavoritiesVers", //Kolor obwódki wokół ulubionego wersetu
 																				//----- Sekcja ColorsSetups pliku ini
 																		GlobalIni_ColorsSetupsSection_Main="COLORSSETUPS", //Główna sekcja ColorsSetups
@@ -142,6 +143,7 @@ struct GlobalVar
 																		//----- Sekcje Translates
 																		GlobalIni_TranslatesSection_Main="TRANSLATES",								//Główna sekcja TRANSLATES pliku ini
 																				GlobalIni_ExcludeTranslates="ExcludeTranslates",		//Tłumaczenia nie wyświetlane
+																				GlobalIni_SelectTranslateForDictConcord="SelectTranslateForDictConcord",
 																		GlobalIni_ReadingPlan_Main="READINGPLAN",			//Główna sekcja ustawień planu czytania biblii
 																				GlobalIni_TranslateRPlan="TypeTranslateReadingPlan",//Tłumaczenie używane w planie
 																				GlobalIni_IDTranslateRPlan="IDTranslateReadingPlan",//Numer identyfikacyjny tłumaczenie wykorzystywanego w planie czytania

@@ -59,8 +59,6 @@ __published:	// IDE-managed Components
 	TSpinEdit *SpEditSizeMainFont;
 	TSpinEdit *SpEditSizeAdressFont;
 	TSpinEdit *SpEditSizeTranslatesFont;
-	TColorBox *SW_ColorBoxColorOrygTr;
-	TLabel *LabelColorOrygTr;
 	TButton *ButtFontNameMainText;
 	TButton *ButtFontNameAdress;
 	TButton *ButtFontNameTranslates;
@@ -81,11 +79,6 @@ __published:	// IDE-managed Components
 	TColorBox *SW_ColorBoxComment;
 	TColorBox *SW_ColorBackgroundMarkerComment;
 	TLabel *LabelColorBackgroundMarkComments;
-	TGroupBox *GrBoxOryginalPartTranslates;
-	TLabel *LabelColorAdressOryg;
-	TColorBox *SW_ColorBoxAdressOryg;
-	TLabel *LabelColorNameOrygTrans;
-	TColorBox *SW_ColorBoxColorNameOrygTran;
 	TTabSheet *SW_SheetReadingPlan;
 	TPanel *PanelReadingPlanSetupLeft;
 	TComboBox *CBoxSelectTranslate;
@@ -122,8 +115,6 @@ __published:	// IDE-managed Components
 	TToggleSwitch *ToggleSwitchisInfosOnStatusBar;
 	TLabel *LabelInfoPreview;
 	TWebBrowser *WebBrowserPreview;
-	TColorBox *SW_ColorBoxBorderFavoritiesVers;
-	TLabel *LabelColorBorderFavoritiesVers;
 	TGroupBox *SW_GrBoxSelectBackground;
 	TLabeledEdit *SW_LEditPathBackGround;
 	TButton *SW_ButtSelectBackground;
@@ -131,6 +122,10 @@ __published:	// IDE-managed Components
 	TPanel *SW_PanelSetupBacgroundText;
 	TToggleSwitch *ToggleSwitchIsImageBgn;
 	TImage *SW_ImageBackground;
+	TColorBox *SW_ColorBoxBorderFavoritiesVers;
+	TLabel *LabelColorBorderFavoritiesVers;
+	TStaticText *SW_STextInfoSelectTrToDict;
+	TRadioGroup *SW_RGroupSelectTransDict;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

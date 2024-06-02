@@ -67,7 +67,7 @@ void __fastcall TBooksSpecjalistWindow::FormCreate(TObject *Sender)
 
 	this->_pListSelectChapt = new THashedStringList();
 	if(!this->_pListSelectChapt) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
-	//tworzenie PopupMenu
+	// Tworzenie PopupMenu
 	if(pGsObjectItemsSpec)
 	{
 		this->PMenuSelectTrSpec->Items->Clear();

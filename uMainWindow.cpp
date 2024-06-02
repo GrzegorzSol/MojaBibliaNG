@@ -155,6 +155,8 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	GlobalVar::IsWindows10 = TOSVersion::Check(10); //???
 	//----- Sprawdzanie istnienia odpowiednich katalogów
 	if(!TDirectory::Exists(GlobalVar::Global_custrPathMultimediaFilesData)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathMultimediaFilesData);
+    //----- Katalog z nieuzywanymi tłumaczeniami [31-05-2024]
+	//if(!TDirectory::Exists(GlobalVar::Global_custrPathTranslatesNotUse)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathTranslatesNotUse);
 	//----- Tworzenie globalnego wskaźnika, do pliku konfiguracyjnego
 	GlobalVar::Global_ConfigFile = new TMemIniFile(GlobalVar::Global_custrGetConfigFile, TEncoding::UTF8);
 	if(!GlobalVar::Global_ConfigFile) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
