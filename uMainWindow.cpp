@@ -44,6 +44,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
 #include "uBooksSpecjalistWindow.h"
+#include "uStrongWindow.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <System.Win.Registry.hpp>
 //---------------------------------------------------------------------------
@@ -82,6 +83,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage_HistoryTextOpen,				 //18.Historia otwieranych rozdziałów
 			enImage_OpenInWord,							 //19.Otwarcie wybranego rozdziału w Ms Wordzie
 			enImage_BooksSpec,               //20.Okno z tłumaczeniami specjalistycznymi
+			enImage_StrongDictionary,        //21.Okno ze słownikiem Stronga
 			enImageMainIndex_Count,          //Ilość ikon
 			//Małe ikony
 			enImage16_Books=0,							 //0.Księgi biblijne
@@ -121,6 +123,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
 			enTagImage_OpenInWord,		//119.Otwarcie wybranego rozdziału w Ms Wordzie
 			enTagImage_BooksSpec,     //120.Okno z tłumaczeniami specjalistycznymi
+			enTagImage_StrongDictionary,//121.Okno ze słownikiem Stronga
 			//Tagi dla komponentów TImage
 			enTagPic_Backgound,       //120.Komponent typu TImage podkładu
 			//
@@ -597,6 +600,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	this->Act_SpecBooks->Tag = enTagImage_BooksSpec;
 	this->Act_SpecBooks->Hint = Format("Okno tłumaczeń specjalistycznych|Otwiera okno z dostępnymi tłumaczeniami specjalistycznymi, Pisma Świetego.|%u", ARRAYOFCONST((this->Act_SpecBooks->ImageIndex)));
+	this->Act_StrongDictionary->Tag = enTagImage_StrongDictionary;
+	this->Act_StrongDictionary->Hint = Format("Okno słownika Stronga|Otwarcie okna przeznaczonego do pracy ze słownikiem stronga.|%u", ARRAYOFCONST((this->Act_StrongDictionary->ImageIndex)));
 
 	this->ToolButtDeleteFile->Hint = "Usunięcie zaznaczonego pliku z ulubionym wyszukiwaniem"; //[14-10-2023]
 	//---
@@ -1320,13 +1325,30 @@ void __fastcall TMainBibleWindow::Act_SpecBooksExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	TBooksSpecjalistWindow *pBooksSpecjalistWindow = new TBooksSpecjalistWindow(this);
 	if(!pBooksSpecjalistWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TBooksSpecjalistWindow"));
   pBooksSpecjalistWindow->Show();
 }
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_StrongDictionaryExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Otwarcie wybranego okna ze słownikiem grecko-hebrajsko-polskim
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	TStrongWindow *pStrongWindow = new TStrongWindow(this);
+	if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
+	pStrongWindow->Show();
+}
+//---------------------------------------------------------------------------
 //-----------------------ZDARZENIA ZWIAZANE Z KONTROLKAMI--------------------
 void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
 /**
@@ -1378,5 +1400,4 @@ void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sende
 	}
 }
 //---------------------------------------------------------------------------
-
 

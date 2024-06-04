@@ -32,8 +32,6 @@ object SetupsWindow: TSetupsWindow
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitWidth = 995
-    ExplicitHeight = 667
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -761,7 +759,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 12
         Top = 12
-        Width = 967
+        Width = 338
         Height = 20
         Margins.Left = 12
         Margins.Top = 12
@@ -782,13 +780,12 @@ object SetupsWindow: TSetupsWindow
         TabOrder = 1
         Transparent = False
         StyleElements = [seFont]
-        ExplicitWidth = 963
       end
       object SW_STextInfoSelectTrToDict: TStaticText
         AlignWithMargins = True
         Left = 3
         Top = 511
-        Width = 985
+        Width = 615
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alBottom
@@ -808,8 +805,6 @@ object SetupsWindow: TSetupsWindow
         TabOrder = 2
         Transparent = False
         StyleElements = [seFont]
-        ExplicitTop = 616
-        ExplicitWidth = 615
       end
       object SW_RGroupSelectTransDict: TRadioGroup
         Left = 0
@@ -885,8 +880,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 45
-            Width = 373
-            Height = 73
+            Width = 4
+            Height = 16
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -898,8 +893,6 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
-            ExplicitWidth = 4
-            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -1070,7 +1063,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 582
+          Width = 232
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1087,7 +1080,6 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = True
           Layout = tlCenter
-          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           AlignWithMargins = True

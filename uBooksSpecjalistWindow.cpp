@@ -37,6 +37,7 @@ __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	const int ciLeft=this->Left, ciTop=this->Top;
 	this->CBoxTranslatesList->Tag = enCBoxSelect_Translate;
 	this->CBoxBoksList->Tag = enCBoxSelect_Book;
 	this->CBoxChaptersList->Tag = enCBoxSelect_Chapter;

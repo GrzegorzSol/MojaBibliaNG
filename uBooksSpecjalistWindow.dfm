@@ -13,7 +13,6 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
   Font.Name = 'Segoe UI'
   Font.Style = []
   Font.Quality = fqClearType
-  Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -36,6 +35,7 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     Images = ImageListSpec
     List = True
     TabOrder = 0
+    ExplicitWidth = 1178
     object CBoxTranslatesList: TComboBox
       AlignWithMargins = True
       Left = 0
@@ -50,9 +50,9 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     object CBoxBoksList: TComboBox
       AlignWithMargins = True
       Left = 297
-      Top = 0
+      Top = 7
       Width = 193
-      Height = 38
+      Height = 23
       Align = alCustom
       Style = csDropDownList
       DropDownCount = 24
@@ -62,9 +62,9 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     object CBoxChaptersList: TComboBox
       AlignWithMargins = True
       Left = 490
-      Top = 0
+      Top = 7
       Width = 145
-      Height = 38
+      Height = 23
       Align = alCustom
       Style = csDropDownList
       TabOrder = 2
@@ -135,7 +135,7 @@ object BooksSpecjalistWindow: TBooksSpecjalistWindow
     TabOrder = 2
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 123
+    ExplicitWidth = 1178
   end
   object ImageListSpec: TImageList
     ColorDepth = cd32Bit

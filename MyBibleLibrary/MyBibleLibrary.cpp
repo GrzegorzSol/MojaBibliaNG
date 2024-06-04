@@ -420,8 +420,9 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 //  #if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug(Format("this->_ListAllTrChap->Count: %d", ARRAYOFCONST((this->_ListAllTrChap->Count))));
 //	#endif
-	//this->_DeleteSelectTranslate(1); //Działa!!!
-	//Wczytanie danych do objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
+	// this->_DeleteSelectTranslate(1); //Działa!!!
+	// Wczytanie danych do objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
+	// Czyli pliku "gnt.intrl"
 	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
 		{this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);}
 	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -3590,7 +3591,7 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 	//Własny kod.
   this->_CreateAllColumns();
 	this->Items->BeginUpdate();
-	//--- Allokacja listy, struktarami dla każdego słowa według Stronga
+	//--- Allokacja listy, struktarami dla każdego słowa według Stronga - czyli 5625 pozycji
 	for(int i=0; i<ciMaxStrongCount; ++i)
 	{
 		DataGrecWordDictClass *pDataGrecWordDictClass = new DataGrecWordDictClass();
@@ -3600,7 +3601,8 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 			{this->_pListWordGrec->Add(pDataGrecWordDictClass);}
 	}
 	//this->_pListWordGrec->Count
-	//--- Obróbka danych z pliku \Data\gnt.intrl
+	//--- Obróbka danych z pliku \Data\gnt.intrl.
+	// Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi, czyli "gnt.intrl"
 	THashedStringList *pHSListInterlinearGreek = GsReadBibleTextData::pGsReadBibleTextClass->GetListInterlinearGrec();
 
 	for(int i=0; i<pHSListInterlinearGreek->Count; ++i)
@@ -3608,17 +3610,22 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 		if(!pHSListInterlinearGreek->Strings[i].IsEmpty()) //Wszystkie słowa greckiego przekładu
 		{
 			//Pozyskanie numeru Stronga
-			int iStrongNumber = pHSListInterlinearGreek->Strings[i].SubString(12, 4).ToInt();
+			int iStrongNumber = pHSListInterlinearGreek->Strings[i].SubString(12, 4).ToIntDef(0); //Numer Stronga
 			if(iStrongNumber > 0)
 			{
+				// Wyłuskanie struktury z stringlisty this->_pListWordGrec, o numerze wybranej pozycji.
+        // Z pozycji tej odczytany jest numer Stronga
 				DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[iStrongNumber]);
 				if(pDataGrecWordDictClass->IsDataEmpty)
 				{
-					pDataGrecWordDictClass->ustrGrecName = pHSListInterlinearGreek->Names[i].SubString(17, 98);
-					pDataGrecWordDictClass->ustrStrongNumber = pHSListInterlinearGreek->Names[i].SubString(11, 5);
-					pDataGrecWordDictClass->ustrDictPol = pHSListInterlinearGreek->ValueFromIndex[i];
+					pDataGrecWordDictClass->ustrGrecName = pHSListInterlinearGreek->Names[i].SubString(17, 200); //Greckie słowo
+					pDataGrecWordDictClass->ustrStrongNumber = pHSListInterlinearGreek->Names[i].SubString(11, 5); //String stronga GXXXX
+					pDataGrecWordDictClass->ustrDictPol = pHSListInterlinearGreek->ValueFromIndex[i]; // Tłumaczenie
 					pDataGrecWordDictClass->IsDataEmpty = false;
 				}
+				// Lista wersetów, w których dane słowo występuje. Lista jest w strukturze DataGrecWordDictClass, która
+				// odpowiada konkretnemu numerowi Stronga. DataGrecWordDictClass są zgrupowane w liście
+				//
 				pDataGrecWordDictClass->pHSListVers->Add(pHSListInterlinearGreek->Names[i].SubString(1, 9)); //Lista wersetów, w których dane słowo występuje
 			}
 		}

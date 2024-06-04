@@ -677,7 +677,9 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
 		if(pGsReadBibleTextItem)
 		{
-			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Greek)
+			if((pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Greek) &&
+				 (pGsReadBibleTextItem->NameTranslate.Pos("LXX") == 0)) // [03-06-2024]
+
 			{
 				this->SW_RGroupSelectTransDict->Items->Add(pGsReadBibleTextItem->NameTranslate);
 				if(pGsReadBibleTextItem->NameTranslate == ustrSelectTransDictCord)

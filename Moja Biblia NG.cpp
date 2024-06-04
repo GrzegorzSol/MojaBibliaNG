@@ -15,9 +15,10 @@ USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSchemeVersWindow.cpp", SchemeVersWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
-USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
 USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
+USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
 USEFORM("uBooksSpecjalistWindow.cpp", BooksSpecjalistWindow);
+USEFORM("uStrongWindow.cpp", StrongWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
