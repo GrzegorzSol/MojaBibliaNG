@@ -48,6 +48,7 @@ struct GlobalVar
 																				Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),
 																		#endif
 																		//Global_custrPathTranslatesNotUse=TPath::Combine(GlobalVar::Global_custrGetDataDir, "NotUseTranslates"), //Ścieżka do katalogu z nieużywanymi tłumaczeniami //[31-05-2024]
+																		Global_custrPathStrongDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "StrongDict.strdi"), // Ścieżka dostępu do pliku ze słownikiem stronga
 																		Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 																		Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	//Ścieżka dostępu do katalogu z planami czytania biblii
 																		Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), //Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
@@ -64,6 +65,7 @@ struct GlobalVar
 																		Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"),
 																		//---
 																		Global_custrExtendCommentsFiles=".bfc", //Rozszerzenie plików z komentarzami
+																		Global_custrPathFileWordVersesExist=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExist.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, poszczególnych słów // [08-06-2024]
 																		Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
 																		Global_custrPathMultimediaFilesData=TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
 																		Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		//Ścieżka dostępu do pliku z listą ulubionych wersetów
