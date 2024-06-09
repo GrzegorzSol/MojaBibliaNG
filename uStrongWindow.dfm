@@ -2,8 +2,8 @@ object StrongWindow: TStrongWindow
   Left = 0
   Top = 0
   Caption = 'S'#322'ownik hebrajsko-grecko-polski Stronga'
-  ClientHeight = 462
-  ClientWidth = 662
+  ClientHeight = 730
+  ClientWidth = 708
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -21,14 +21,14 @@ object StrongWindow: TStrongWindow
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 656
+    Width = 702
     Height = 36
     Align = alTop
     BevelOuter = bvNone
     Caption = 'PanelSetStrong'
     ShowCaption = False
     TabOrder = 0
-    ExplicitWidth = 978
+    ExplicitWidth = 652
     object LabelSelectDict: TLabel
       AlignWithMargins = True
       Left = 3
@@ -45,7 +45,7 @@ object StrongWindow: TStrongWindow
     end
     object LEditSearchNumberStr: TLabeledEdit
       AlignWithMargins = True
-      Left = 375
+      Left = 421
       Top = 7
       Width = 74
       Height = 22
@@ -63,7 +63,7 @@ object StrongWindow: TStrongWindow
       Text = ''
       OnChange = LEditSearchNumberStrChange
       OnKeyUp = LEditSearchNumberStrKeyUp
-      ExplicitLeft = 697
+      ExplicitLeft = 371
       ExplicitHeight = 23
     end
     object CBoxSelectDict: TComboBox
@@ -81,7 +81,7 @@ object StrongWindow: TStrongWindow
     end
     object ButtStartSearch: TButton
       AlignWithMargins = True
-      Left = 464
+      Left = 510
       Top = 1
       Width = 186
       Height = 34
@@ -96,32 +96,30 @@ object StrongWindow: TStrongWindow
       Images = ImageListMain
       TabOrder = 2
       OnClick = ButtStartSearchClick
-      ExplicitLeft = 786
+      ExplicitLeft = 460
     end
   end
   object PanelResult: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 76
-    Width = 656
+    Width = 702
     Height = 383
-    Align = alClient
+    Align = alTop
     Caption = 'PanelResult'
     ShowCaption = False
     TabOrder = 1
-    ExplicitWidth = 978
-    ExplicitHeight = 382
+    ExplicitWidth = 668
     object WebBrowserStrong: TWebBrowser
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 485
+      Width = 509
       Height = 375
       Align = alLeft
       TabOrder = 0
-      ExplicitHeight = 374
       ControlData = {
-        4C00000020320000C22600000000000000000000000000000000000000000000
+        4C0000009B340000C22600000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -129,9 +127,9 @@ object StrongWindow: TStrongWindow
     end
     object ControlListVerses: TControlList
       AlignWithMargins = True
-      Left = 495
+      Left = 519
       Top = 4
-      Width = 157
+      Width = 179
       Height = 375
       Align = alClient
       ItemHeight = 25
@@ -143,13 +141,16 @@ object StrongWindow: TStrongWindow
       TabOrder = 1
       StyleElements = []
       OnBeforeDrawItem = ControlListVersesBeforeDrawItem
-      ExplicitWidth = 483
+      OnItemClick = ControlListVersesItemClick
+      ExplicitLeft = 495
+      ExplicitTop = 8
+      ExplicitWidth = 157
       object LabelItemAdresVers: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 147
-        Height = 19
+        Width = 4
+        Height = 21
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -160,8 +161,6 @@ object StrongWindow: TStrongWindow
         ParentFont = False
         Layout = tlCenter
         StyleElements = []
-        ExplicitWidth = 4
-        ExplicitHeight = 21
       end
     end
   end
@@ -169,7 +168,7 @@ object StrongWindow: TStrongWindow
     AlignWithMargins = True
     Left = 3
     Top = 45
-    Width = 656
+    Width = 702
     Height = 25
     Align = alTop
     Alignment = taCenter
@@ -185,7 +184,36 @@ object StrongWindow: TStrongWindow
     TabOrder = 2
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 978
+    ExplicitWidth = 652
+  end
+  object PanelVers: TPanel
+    AlignWithMargins = True
+    Left = 3
+    Top = 465
+    Width = 702
+    Height = 262
+    Align = alClient
+    Caption = 'PanelVers'
+    ShowCaption = False
+    TabOrder = 3
+    ExplicitWidth = 652
+    ExplicitHeight = 261
+    object WebBrowserVers: TWebBrowser
+      Left = 1
+      Top = 1
+      Width = 700
+      Height = 260
+      Align = alClient
+      TabOrder = 0
+      ExplicitWidth = 650
+      ExplicitHeight = 259
+      ControlData = {
+        4C00000059480000DF1A00000000000000000000000000000000000000000000
+        000000004C000000000000000000000001000000E0D057007335CF11AE690800
+        2B2E126209000000000000004C0000000114020000000000C000000000000046
+        8000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000100000000000000000000000000000000000000}
+    end
   end
   object ImageListMain: TImageList
     ColorDepth = cd32Bit

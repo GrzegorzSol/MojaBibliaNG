@@ -3,6 +3,8 @@
 
 #include "uStrongWindow.h"
 #include <System.IOUtils.hpp>
+#include "MyBibleLibrary\MyBibleLibrary.h"
+#include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include "uGlobalVar.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -57,7 +59,22 @@ __fastcall TStrongWindow::TStrongWindow(TComponent* Owner)
 	this->CBoxSelectDict->Items->EndUpdate();
 	this->LEditSearchNumberStr->MaxLength = 5;
 
-  this->WebBrowserStrong->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserStrong->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+  // Wyszukanie konkretnego tłumaczenia //[09-06-2024]
+	int iCountTrans = GsReadBibleTextData::CountTranslates();
+	UnicodeString ustrNameTrans;
+	const UnicodeString custrFindNameTrans = "ELZEVIR TEXTUS RECEPTUS (1624)";
+
+	for(int i=0; i<iCountTrans; ++i)
+	{
+		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTrans);
+		if(ustrNameTrans == custrFindNameTrans)
+		{
+			this->_iNumberTranslate = i;
+			break;
+		}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -141,13 +158,13 @@ void __fastcall TStrongWindow::LEditSearchNumberStrChange(TObject *Sender)
 	TLabeledEdit *pLEdit = dynamic_cast<TLabeledEdit *>(Sender);
 	if(!pLEdit) return;
 	//--- zabezpieczenie przed wprowadzeniem niewłaściwego numeru słoa
-	this->iSearchNumber = pLEdit->Text.SubString1(2, 4).ToIntDef(0); // [07-06-2024]
+	this->_iSearchNumber = pLEdit->Text.SubString1(2, 4).ToIntDef(0); // [07-06-2024]
 //  #if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug(Format("this->iSearchNumber: %d", ARRAYOFCONST(( this->iSearchNumber ))));
 //	#endif
 	if(this->CBoxSelectDict->ItemIndex == enSelect_Hebr)
 	{
-		if((this->iSearchNumber > ciMaxNumHebr) || (this->iSearchNumber < 1))
+		if((this->_iSearchNumber > ciMaxNumHebr) || (this->_iSearchNumber < 1))
 		{
 			this->ButtStartSearch->Enabled = false;
       return;
@@ -155,7 +172,7 @@ void __fastcall TStrongWindow::LEditSearchNumberStrChange(TObject *Sender)
 	}
 	else if(this->CBoxSelectDict->ItemIndex == enSelect_Grec)
 	{
-		if((this->iSearchNumber > ciMaxNumGrec) || (this->iSearchNumber < 1))
+		if((this->_iSearchNumber > ciMaxNumGrec) || (this->_iSearchNumber < 1))
 		{
 			this->ButtStartSearch->Enabled = false;
 			return;
@@ -182,6 +199,7 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 	int iSearchDig=-1;
   TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	this->ControlListVerses->ItemIndex = -1; // Nowe wyszukiwanie więc brak zaznaczonego elementu
 	this->_pHListVerses->Clear();
 
 	// Szukanie [07-06-2024] // [08-06-2024]
@@ -189,7 +207,7 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 	{
 		ustrSignType = this->_pHSListStrong->Strings[i].SubString(1, 1);
 		iSearchDig = this->_pHSListStrong->Strings[i].SubString(2, 4).ToIntDef(0);
-		if((ustrSignType == ustrSignCurrent) && (iSearchDig == this->iSearchNumber))
+		if((ustrSignType == ustrSignCurrent) && (iSearchDig == this->_iSearchNumber))
 		{
 			ustrSearch = this->_pHSListStrong->Strings[i].SubString(7, 2000); // [08-06-2024]
 			break;
@@ -218,9 +236,14 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 	pStringStream->Position = 0;
 
 	IPersistStreamInit *psi;
-		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
-		if(SUCCEEDED(this->WebBrowserStrong->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
-			{psi->Load(sa);}
+	_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+	if(SUCCEEDED(this->WebBrowserStrong->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+		{psi->Load(sa);}
+	// Pusta kontrolka wersetu
+	pStringStream->Clear();
+	_di_IStream sa2(*(new TStreamAdapter(pStringStream, soReference)));
+	if(SUCCEEDED(this->WebBrowserVers->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+		{psi->Load(sa2);}
 
 	if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 }
@@ -255,7 +278,56 @@ void __fastcall TStrongWindow::ControlListVersesBeforeDrawItem(int AIndex, TCanv
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->LabelItemAdresVers->Caption = this->_pHListVerses->Strings[AIndex];
+	int iBook=0, iChapt=0, iVers=0;
+	UnicodeString ustrAdress = this->_pHListVerses->Strings[AIndex];
+
+	iBook = ustrAdress.SubString(1, 3).ToIntDef(0);
+	iChapt = ustrAdress.SubString(4, 3).ToIntDef(0);
+	iVers = ustrAdress.SubString(7, 3).ToIntDef(0);
+
+	this->LabelItemAdresVers->Caption = Format("%s %d:%d",
+		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
+}
+//---------------------------------------------------------------------------
+void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): // [09-06-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TControlList *pCList = dynamic_cast<TControlList *>(Sender);
+	if(!pCList) return;
+	//---
+	if(pCList->ItemIndex == -1) return;
+	//---
+	int iBook=0, iChapt=0, iVers=0;
+	UnicodeString ustrSelectVers =  this->_pHListVerses->Strings[pCList->ItemIndex],
+								ustrAdress;
+  TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
+	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+
+	iBook = ustrSelectVers.SubString(1, 3).ToIntDef(0);
+	iChapt = ustrSelectVers.SubString(4, 3).ToIntDef(0);
+	iVers = ustrSelectVers.SubString(7, 3).ToIntDef(0);
+	ustrAdress = Format("%s %d:%d",
+		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
+
+	GsReadBibleTextData::GetTextVersOfAdress(iBook-1, iChapt, iVers, this->_iNumberTranslate, ustrSelectVers);
+
+  pStringStream->WriteString(custrHeadHTML); //Zapis nagłówka kodu html do strumienia
+	pStringStream->WriteString(Format("<span style=\"font-size: x-large\"> %s %s </span>", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
+
+	pStringStream->WriteString(custrEndHTML);
+	pStringStream->Position = 0;
+
+	IPersistStreamInit *psi;
+	_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+	if(SUCCEEDED(this->WebBrowserVers->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+		{psi->Load(sa);}
+
+  if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 }
 //---------------------------------------------------------------------------
 
