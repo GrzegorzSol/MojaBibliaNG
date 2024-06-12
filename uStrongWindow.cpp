@@ -10,8 +10,8 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 // Maksymalne numery dla słow greckich i hebrajskich
-const int ciMaxNumHebr=8674,
-					ciMaxNumGrec=5624,
+const int ciMaxNumHebr=8674, // https://pl.wikipedia.org/wiki/Konkordancja_Stronga
+					ciMaxNumGrec=5624, // https://pl.wikipedia.org/wiki/Konkordancja_Stronga
 // Inne stałe
 					ciOffsetTextStrong=5; // Od którego miejsca zaczyna się słownik, po numerze słowa
 enum {// Numery ikon
@@ -26,7 +26,11 @@ const UnicodeString custrSelectPre[] = {"H", "G"}, // [07-06-2024]
 										custrHeadHTML = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																		"<html>\n<head>\n" +
 																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
-																		"<title></title>\n</head>\n<body>\n",
+																		"<title></title>\n" +
+																		"<style type=\"text/css\">\n" +
+																		Format(".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
+																		"body {background-color:#FFFACD;font-size: x-large;}\n" +
+																		"</style>\n</head>\n<body>\n",
 										custrEndHTML = "\n</body>\n</html>";
 const unsigned char cucDelimit = '#'; // Znak cięcia lini
 
@@ -61,10 +65,11 @@ __fastcall TStrongWindow::TStrongWindow(TComponent* Owner)
 
 	this->WebBrowserStrong->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
-  // Wyszukanie konkretnego tłumaczenia //[09-06-2024]
+	// Wyszukanie konkretnego tłumaczenia //[09-06-2024]
 	int iCountTrans = GsReadBibleTextData::CountTranslates();
 	UnicodeString ustrNameTrans;
-	const UnicodeString custrFindNameTrans = "ELZEVIR TEXTUS RECEPTUS (1624)";
+	//const UnicodeString custrFindNameTrans = "ELZEVIR TEXTUS RECEPTUS (1624)";
+	const UnicodeString custrFindNameTrans = "TRO+";
 
 	for(int i=0; i<iCountTrans; ++i)
 	{
@@ -131,6 +136,21 @@ void __fastcall TStrongWindow::FormDestroy(TObject *Sender)
 	if(this->_pHListVerses) {delete this->_pHListVerses; this->_pHListVerses = nullptr;}
 }
 //---------------------------------------------------------------------------
+void __fastcall TStrongWindow::_AllClear()
+/**
+	OPIS METOD(FUNKCJI): Czysczenie wszystkiego
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!this->Visible) return;
+	this->WebBrowserStrong->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->ControlListVerses->ItemCount = 0;
+	this->_pHListVerses->Clear();
+	this->STextInfos->Caption = "";
+}
 //-------------------------- AKCJE I ZDARZENIA ------------------------------
 void __fastcall TStrongWindow::CBoxSelectDictChange(TObject *Sender)
 /**
@@ -145,6 +165,8 @@ void __fastcall TStrongWindow::CBoxSelectDictChange(TObject *Sender)
 	//---
 	this->ButtStartSearch->Enabled = ((pCBox->ItemIndex > -1) && !this->LEditSearchNumberStr->Text.IsEmpty());
 	this->LEditSearchNumberStr->Text = custrSelectPre[pCBox->ItemIndex];
+  // Czyszczenie wszystkiego
+	this->_AllClear();
 }
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::LEditSearchNumberStrChange(TObject *Sender)
@@ -219,7 +241,6 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 		ustrExistsVerses = this->_pHListWordInVersesExist->Strings[iSearchDig - 1].SubString1(6, 70000);
 		this->_pHListVerses->DelimitedText = ustrExistsVerses;
 		this->_pHListVerses->Delete(0);
-		//this->ControlListVerses->ItemCount = this->_pHListVerses->Count;
 		this->STextInfos->Caption = Format("Szukane słowo: \"%s\" Ilość wersetów , w których występuje słowo: %d",
 			ARRAYOFCONST(( this->LEditSearchNumberStr->Text, this->_pHListVerses->Count)));
 	}
@@ -227,10 +248,10 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 	{
 		this->STextInfos->Caption = Format("Szukane słowo: \"%s\"", ARRAYOFCONST(( this->LEditSearchNumberStr->Text)));
 	}
-  this->ControlListVerses->ItemCount = this->_pHListVerses->Count;
+	this->ControlListVerses->ItemCount = this->_pHListVerses->Count;
 
 	pStringStream->WriteString(custrHeadHTML); //Zapis nagłówka kodu html do strumienia
-	pStringStream->WriteString(Format("<span style=\"font-size: x-large\"> %s </span>", ARRAYOFCONST(( ustrSearch ))));
+	pStringStream->WriteString(Format("%s", ARRAYOFCONST(( ustrSearch ))));
 
 	pStringStream->WriteString(custrEndHTML);
 	pStringStream->Position = 0;
@@ -239,11 +260,8 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 	_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
 	if(SUCCEEDED(this->WebBrowserStrong->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
 		{psi->Load(sa);}
-	// Pusta kontrolka wersetu
-	pStringStream->Clear();
-	_di_IStream sa2(*(new TStreamAdapter(pStringStream, soReference)));
-	if(SUCCEEDED(this->WebBrowserVers->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
-		{psi->Load(sa2);}
+	// Oczyszczenie kontrolki podglądu wersetu
+	this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 
 	if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 }
@@ -264,7 +282,8 @@ void __fastcall TStrongWindow::LEditSearchNumberStrKeyUp(TObject *Sender, WORD &
 	{
 		if(!pLEdit->Text.IsEmpty() && (pLEdit->Text.Length() > 1))
 		{
-      this->ButtStartSearchClick(this->ButtStartSearch);
+			if(this->ButtStartSearch->Enabled) // 10-06-2024
+				{this->ButtStartSearchClick(this->ButtStartSearch);}
 		}
   }
 }
@@ -302,9 +321,12 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 	//---
 	if(pCList->ItemIndex == -1) return;
 	//---
-	int iBook=0, iChapt=0, iVers=0;
+	int iBook=0, iChapt=0, iVers=0, iPos=0;
 	UnicodeString ustrSelectVers =  this->_pHListVerses->Strings[pCList->ItemIndex],
 								ustrAdress;
+	const UnicodeString custrStyleFStart = "<span class=\"styleFound\">",
+											custrStyleFStop = "</span>";
+  //---
   TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 
@@ -315,9 +337,11 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
 
 	GsReadBibleTextData::GetTextVersOfAdress(iBook-1, iChapt, iVers, this->_iNumberTranslate, ustrSelectVers);
+	// Zaznaczanie wybranego słowa //[09-06-2024]
+	this->_SearchVersWord(ustrSelectVers);
 
-  pStringStream->WriteString(custrHeadHTML); //Zapis nagłówka kodu html do strumienia
-	pStringStream->WriteString(Format("<span style=\"font-size: x-large\"> %s %s </span>", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
+	pStringStream->WriteString(custrHeadHTML); //Zapis nagłówka kodu html do strumienia
+	pStringStream->WriteString(Format("%s %s", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
 
 	pStringStream->WriteString(custrEndHTML);
 	pStringStream->Position = 0;
@@ -328,6 +352,36 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 		{psi->Load(sa);}
 
   if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
+}
+//---------------------------------------------------------------------------
+void __fastcall TStrongWindow::_SearchVersWord(UnicodeString &_custrIn)
+/**
+	OPIS METOD(FUNKCJI): // [11-06-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	int iPos=0, iFind=0;
+	const UnicodeString custrStyleFStart = "<span class=\"styleFound\">",
+											custrStyleFStop = "</span>";
+	UnicodeString ustrTemp=_custrIn, ustrFind,
+								ustrModify;
+
+	do //[12-06-2024]
+	{
+		iPos = ustrTemp.Pos("/m>"); // Pozycja końca tłumaczenia pojedyńczego słowa
+		ustrFind = ustrTemp.SubString(1, iPos + 2); // Wyondrębnienie tłumaczenia słowa
+
+		ustrTemp = ustrTemp.Delete(1, ustrFind.Length()); // Wykasowanie definicji słowa z całego wersetu
+		iFind = ustrFind.Pos(this->LEditSearchNumberStr->Text.SubString(2, 4));
+		if(iFind > 0)
+		{
+			// Jeśli znaleziono opis słowa o numerze szukanym
+			ustrModify = Format("%s%s%s", ARRAYOFCONST(( custrStyleFStart, ustrFind.Delete(1, 1), custrStyleFStop )));
+			_custrIn = StringReplace(_custrIn, ustrFind, ustrModify, TReplaceFlags() << rfIgnoreCase);
+		}
+	} while(iPos > 0); // Warunek pozostania w pętli
 }
 //---------------------------------------------------------------------------
 

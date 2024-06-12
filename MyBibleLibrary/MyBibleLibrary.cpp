@@ -3545,7 +3545,7 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	//this->OnGetImageIndex = this->_OnGetImageIndex;
 	//this->OnGetSubItemImage = this->_OnGetSubItemImage;
 	this->DoubleBuffered = true;
-	this->Font->Size = 10;
+	this->Font->Size = 12;
 	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
 	this->ReadOnly = true;
 	this->RowSelect = true;

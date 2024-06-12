@@ -174,7 +174,7 @@ struct GlobalVar
 	inline bool static IsWindows10=false, //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 										 IsRunReload=false; //Czy potrzeba przeładować aplikcje po zmianie konfiguracji
 	static const unsigned char Global_NumberBooks = 73; //Maksymalna ilość ksiąg w Piśmie Świętym
-	static const int Global_MaxlengthVers = 1024; //Maksymalna długość pojedyńczego wersetu
+	static const int Global_MaxlengthVers = 10240; //Maksymalna długość pojedyńczego wersetu
 //***************************************************************************
 	inline static TStringList *Global_SListPathMultiM=nullptr,	//Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 														*Global_ItemsColor=nullptr;       //Lista kolorów do wyboru, dla objektu klasy TColorBox

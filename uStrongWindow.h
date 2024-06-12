@@ -48,6 +48,8 @@ private:	// User declarations
 										*_pHListVerses=nullptr; // Lista wystąpień dla wybranego słowa
 	int _iSearchNumber=-1, // [07-06-2024]
 			_iNumberTranslate=-1;// Numer tłumaczenia używany do wyświetlania wersetów
+	void __fastcall _AllClear();
+	void __fastcall _SearchVersWord(UnicodeString &_custrIn); // Wyszukiwanie ciągu ze słowem
 public:		// User declarations
 	__fastcall TStrongWindow(TComponent* Owner);
 };
