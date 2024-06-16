@@ -3193,7 +3193,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pSGridInterlinearVers->FixedRows = 0;
 	//this->_pSGridInterlinearVers->Font = this->Font;
 	this->_pSGridInterlinearVers->DefaultRowHeight = -this->_pSGridInterlinearVers->Font->Height + 4;
-	this->_pSGridInterlinearVers->DefaultColWidth = 98;
+	this->_pSGridInterlinearVers->DefaultColWidth = 148;
 	this->_pSGridInterlinearVers->Height = this->_pSGridInterlinearVers->RowCount * (this->_pSGridInterlinearVers->DefaultRowHeight) + 28;
 	this->_pSGridInterlinearVers->Options << goThumbTracking >> goRangeSelect >> goVertLine >> goHorzLine;
 	this->_pSGridInterlinearVers->Visible = !this->FIsVisibleSetTranslate;
@@ -3324,9 +3324,7 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		ucChapt = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(4, 3).ToInt();
 		ucVers = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(7, 3).ToInt();
 		if((ucBook==cucBook) && (ucChapt==cucChapt) && (ucVers==cucVers))
-		{
-			pHSListSelectVers->Add(GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i]);
-		}
+			{pHSListSelectVers->Add(GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i]);}
 	}
 	if(pHSListSelectVers->Count > 0) this->_pSGridInterlinearVers->ColCount = pHSListSelectVers->Count;	//Kolumn tyle, ile słów w wersecie
 	for(int iIndex=0; iIndex<pHSListSelectVers->Count; ++iIndex)
@@ -3334,6 +3332,8 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(1, 5);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(7, 20);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pHSListSelectVers->ValueFromIndex[iIndex];
+		// Szerokość kolumny zależna od zawartości. Szerokość zależna od tekstu tłumaczenia, ze względu ze tekst ten jest najdłuższy //[16-06-2024]
+		this->_pSGridInterlinearVers->ColWidths[iIndex] = this->_pSGridInterlinearVers->Canvas->TextWidth(pHSListSelectVers->ValueFromIndex[iIndex]) + 12;
 	}
 	if(pHSListSelectVers) {delete pHSListSelectVers; pHSListSelectVers = nullptr;}
 }

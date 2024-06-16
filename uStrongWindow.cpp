@@ -118,6 +118,9 @@ void __fastcall TStrongWindow::FormCreate(TObject *Sender)
 		throw(Exception("Brak pliku ze słownikiem Stronga!"));
 	this->_pHSListStrong->LoadFromFile(GlobalVar::Global_custrPathStrongDict, TEncoding::UTF8);
 	// Plik z danymi wystapień w wersetach, poszczególnych słów // [08-06-2024]
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("Global_custrPathStrongDict: \"%s\"", ARRAYOFCONST(( GlobalVar::Global_custrPathFileWordVersesExist ))));
+//	#endif
 	if(!TFile::Exists(GlobalVar::Global_custrPathFileWordVersesExist))
 		throw(Exception("Brak pliku ze słownikiem Stronga!"));
 	this->_pHListWordInVersesExist->LoadFromFile(GlobalVar::Global_custrPathFileWordVersesExist, TEncoding::UTF8);
@@ -321,12 +324,10 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 	//---
 	if(pCList->ItemIndex == -1) return;
 	//---
-	int iBook=0, iChapt=0, iVers=0, iPos=0;
+	int iBook=0, iChapt=0, iVers=0;
 	UnicodeString ustrSelectVers =  this->_pHListVerses->Strings[pCList->ItemIndex],
 								ustrAdress;
-	const UnicodeString custrStyleFStart = "<span class=\"styleFound\">",
-											custrStyleFStop = "</span>";
-  //---
+	//---
   TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 
@@ -368,18 +369,23 @@ void __fastcall TStrongWindow::_SearchVersWord(UnicodeString &_custrIn)
 	UnicodeString ustrTemp=_custrIn, ustrFind,
 								ustrModify;
 
-	do //[12-06-2024]
+	do //[13-06-2024]
 	{
 		iPos = ustrTemp.Pos("/m>"); // Pozycja końca tłumaczenia pojedyńczego słowa
-		ustrFind = ustrTemp.SubString(1, iPos + 2); // Wyondrębnienie tłumaczenia słowa
+		ustrFind = ustrTemp.SubString(1, iPos + 3); // Wyondrębnienie tłumaczenia słowa ze spacją na końcu.
+		// Jeśli wyodrębie o 1 znak mniej, będe miał spacje z przodu
+		ustrFind = ustrFind.Delete(ustrFind.Length(), 1); // Usuniecie spacji na końcu
 
-		ustrTemp = ustrTemp.Delete(1, ustrFind.Length()); // Wykasowanie definicji słowa z całego wersetu
-		iFind = ustrFind.Pos(this->LEditSearchNumberStr->Text.SubString(2, 4));
+		ustrTemp = ustrTemp.Delete(1, ustrFind.Length() + 1); // Wykasowanie definicji słowa z całego wersetu,
+		// wraz ze spacją na końcu
+		//iFind = ustrFind.Pos(this->LEditSearchNumberStr->Text.SubString(2, 4));
+		iFind = ustrFind.Pos(Format(" <font color=\"green\"><sup>%s</sup></font> ",
+			ARRAYOFCONST(( this->LEditSearchNumberStr->Text.SubString(2, 4) )))); //[15-06-2024]
 		if(iFind > 0)
 		{
 			// Jeśli znaleziono opis słowa o numerze szukanym
-			ustrModify = Format("%s%s%s", ARRAYOFCONST(( custrStyleFStart, ustrFind.Delete(1, 1), custrStyleFStop )));
-			_custrIn = StringReplace(_custrIn, ustrFind, ustrModify, TReplaceFlags() << rfIgnoreCase);
+			ustrModify = Format("%s%s%s", ARRAYOFCONST(( custrStyleFStart, ustrFind, custrStyleFStop )));
+			_custrIn = StringReplace(_custrIn, ustrFind, ustrModify, TReplaceFlags());// << rfIgnoreCase);
 		}
 	} while(iPos > 0); // Warunek pozostania w pętli
 }

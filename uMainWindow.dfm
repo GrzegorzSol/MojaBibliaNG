@@ -177,7 +177,6 @@ object MainBibleWindow: TMainBibleWindow
       TabOrder = 0
       TabPosition = tpLeft
       OnChange = MBW_PageControlAllChange
-      ExplicitHeight = 814
       object TabSheetBooks: TTabSheet
         Hint = 'zak'#322'adka z list'#261' ksi'#261'g biblijnych'
         Caption = 'Ksi'#281'gi Pisma '#346'wi'#281'tego'
