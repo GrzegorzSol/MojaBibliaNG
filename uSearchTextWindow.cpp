@@ -326,8 +326,9 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	int iPositionSearch,//=0,
 			iIndexTable;//=0;	 //Numer księgi liczony od 0.
 	const int ciSizeCutString=512; //Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
-	UnicodeString ustrTemp;
-	const UnicodeString custrStyleF = "<span class=\"styleFound\">";
+	UnicodeString ustrTemp, ustrReplaced;
+	const UnicodeString custrStyleF = "<span class=\"styleFound\">",
+											custrStyleEnd = "</span>";
 	//---
 	TRegExOptions regOptions;
 	if(this->STW_ChBoxSizeTextSearch->Checked) //Uwzględniana wielkość liter przy używaniu wyrażeń regularnych
@@ -402,22 +403,13 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 						ustrSearchString = System::Sysutils::AnsiLowerCase(this->STW_CBoxHistorySearchText->Text);
 						iPositionSearch = System::Sysutils::AnsiLowerCase(pBookListText->Strings[i]).Pos(ustrSearchString);
 					}
-//					if(iPositionSearch > 0)
-//					{
-//						UnicodeString ustrReplace = custrStyleF + ustrSearchString + "</span>";
-//							ustrTemp = StringReplace(pBookListText->Strings[i], ustrSearchString,
-//								ustrReplace, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
-//
-//						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
-//						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-//						++MyDataStatistic->uiCountFind;
-//					}
+
 					if(iPositionSearch > 0)
 					{
-						//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia
-						ustrTemp = pBookListText->Strings[i].Insert(custrStyleF, iPositionSearch); //Wstawienie początku stylu, przed słowem szukanym
-						//Wstawienie zakończenia stylu po szukanym słowie, plus wcześniej wstawionym stylu.
-						ustrTemp = ustrTemp.Insert("\n</span>\n", iPositionSearch + this->STW_CBoxHistorySearchText->Text.Length() + custrStyleF.Length());
+						//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia //[19-06-2024]
+						ustrTemp = pBookListText->Strings[i];
+						ustrReplaced = Format("%s%s%s", ARRAYOFCONST((custrStyleF, this->STW_CBoxHistorySearchText->Text, custrStyleEnd )));
+						ustrTemp = StringReplace(ustrTemp, this->STW_CBoxHistorySearchText->Text, ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 
 						this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
 						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.

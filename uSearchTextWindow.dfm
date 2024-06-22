@@ -36,6 +36,7 @@ object SearchTextWindow: TSearchTextWindow
     TabOrder = 0
     OnChanging = STW_PControlChanging
     OnDrawTab = STW_PControlViewsTextDrawTab
+    ExplicitWidth = 1184
     object STW_TabSheetInputText: TTabSheet
       Caption = 'Szukany tekst'
       ImageIndex = 8
@@ -107,6 +108,7 @@ object SearchTextWindow: TSearchTextWindow
         TabOrder = 2
         TextHint = 'Wpisz szukany tekst'
         OnChange = STW_CBoxHistorySearchTextChange
+        ExplicitWidth = 1158
       end
       object STW_ChBoxSizeTextSearch: TCheckBox
         AlignWithMargins = True
@@ -496,6 +498,8 @@ object SearchTextWindow: TSearchTextWindow
       StyleElements = []
       OnChanging = STW_PControlChanging
       OnDrawTab = STW_PControlViewsTextDrawTab
+      ExplicitWidth = 1180
+      ExplicitHeight = 366
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9
@@ -547,6 +551,8 @@ object SearchTextWindow: TSearchTextWindow
           Height = 217
           Align = alClient
           TabOrder = 1
+          ExplicitWidth = 1172
+          ExplicitHeight = 216
           ControlData = {
             4C0000008B7900006D1600000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800

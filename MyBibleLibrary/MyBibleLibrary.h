@@ -258,7 +258,7 @@ class GsReadBibleTextClass : public TObject
 	friend class GsLViewDictionaryClass;
 	friend class GsListBoxSelectedVersClass;
 	friend class GsReadBibleSpecTextClass;
-
+  friend class GsBarSelectVers; //[16-06-2024]
   friend class TBooksSpecjalistWindow;
 	//---
 	GsReadBibleTextClass(const UnicodeString _PathDir);
@@ -564,6 +564,7 @@ class GsPanelSelectVers	 : public TCustomPanel
 		void __fastcall _SetVisibleIONoteEditors(bool bIsDisplayIO);
 		void __fastcall _SetIsVisibleAccessories(bool bIsAccess);
 		void __fastcall _DisplayInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla greckiego oryginału
+		void __fastcall _DrawGridInterlinearVersCell(System::TObject* Sender, int ACol, int ARow, const System::Types::TRect &Rect, TGridDrawState State);
 };
 /****************************************************************************
  *										 KLASA GsTabSheetSelectVersClass											*

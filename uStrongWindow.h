@@ -43,13 +43,13 @@ __published:	// IDE-managed Components
 	void __fastcall ControlListVersesItemClick(TObject *Sender);
 
 private:	// User declarations
-	THashedStringList *_pHSListStrong=nullptr,
-										*_pHListWordInVersesExist=nullptr, // Lista wystąpień słów, poszczególnych wersetach
+	THashedStringList *_pHSListStrong=nullptr, // Lista wczytanego przekładu interlinearnego "StrongDict.strdi"
+										*_pHListWordInVersesExist=nullptr, // Lista wystąpień słów, poszczególnych wersetach "WordToExist.wte"
 										*_pHListVerses=nullptr; // Lista wystąpień dla wybranego słowa
 	int _iSearchNumber=-1, // [07-06-2024]
 			_iNumberTranslate=-1;// Numer tłumaczenia używany do wyświetlania wersetów
 	void __fastcall _AllClear();
-	void __fastcall _SearchVersWord(UnicodeString &_custrIn); // Wyszukiwanie ciągu ze słowem
+	UnicodeString __fastcall _SearchVersWord(const UnicodeString &_custrIn); //[22-06-2024]
 public:		// User declarations
 	__fastcall TStrongWindow(TComponent* Owner);
 };

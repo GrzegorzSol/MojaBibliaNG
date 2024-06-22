@@ -2855,7 +2855,8 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 	//---
 	if(!pGsPanelSelectVers->IsPanelText) return; //Brak wyświetlania wersetu
 	//---
-	MyObjectVers *pMyOjectVers;
+	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+	MyObjectVers *pMyOjectVers=nullptr;
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 
@@ -2867,11 +2868,14 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 	{
 		for(int i=0; i<this->_pHSListSelectVers->Count; ++i)
 		{
+			// Nie wyświetlaj innego tłumaczenia, jak pełne polskie //[16-06-2024]
+			pGsReadBibleTextItem = GsReadBibleTextData::pGsReadBibleTextClass->GetTranslateClass(i);
+			if(!pGsReadBibleTextItem) break;
+			if(pGsReadBibleTextItem->enTypeTranslate != enTypeTr_Full) continue;
 			//Stworzenie kodu html, dla listy każdego, dostępnego tłumaczenie, dla wybranego wersetu
 			pMyOjectVers = static_cast<MyObjectVers *>(this->_pHSListSelectVers->Objects[i]);
 			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
 			//---
-	
 			//Jeśli wybór tłumaczenia jest możliwy, to wyświetlany jest tylko werset wybranego tłumaczenia, w przeciwnym wypadku
 			//wyświetlane są wszystkie dostępne tłumaczenia, dla wybranego wersetu.
 			if(this->_pButTranslates->Visible && pMyOjectVers->ucIdTranslate != this->_FucSelectTranslate) continue;
@@ -3017,6 +3021,9 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 		//---
 		case enPopupMenu_Books:					//Wybrano pozycje z listy ksiąg
 		{
+      // Wyświetlanie widoku interlinearnego tylko dla Nowego Testamentu //[16-06-2024]
+			this->_pGsPanelSelectVers->_pSGridInterlinearVers->Visible = pMItem->Tag > 38;
+
 			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->_FucSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 			if(!pGsReadBibleTextItem) throw(Exception("Błąd funkcji GsReadBibleTextData::GetTranslate()"));
 			if( (pMItem->Tag > (signed char)(pGsReadBibleTextItem->ucStartBook + pGsReadBibleTextItem->ucCountBooks)) ||
@@ -3185,18 +3192,23 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 		throw(Exception("Nie dokonano inicjalizacji objektu TStringGrid"));
 	this->_pSGridInterlinearVers->Parent = this;
 	this->_pSGridInterlinearVers->Align = alBottom;
-	//this->_pSGridInterlinearVers->DefaultDrawing = false;
 	this->_pSGridInterlinearVers->Ctl3D = false;
-	this->_pSGridInterlinearVers->DrawingStyle = gdsClassic;
 	this->_pSGridInterlinearVers->RowCount = enRow_Count;
 	this->_pSGridInterlinearVers->FixedCols = 0;
 	this->_pSGridInterlinearVers->FixedRows = 0;
-	//this->_pSGridInterlinearVers->Font = this->Font;
-	this->_pSGridInterlinearVers->DefaultRowHeight = -this->_pSGridInterlinearVers->Font->Height + 4;
+	this->_pSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
+	this->_pSGridInterlinearVers->DefaultRowHeight = 2 * -this->_pSGridInterlinearVers->Font->Height;
 	this->_pSGridInterlinearVers->DefaultColWidth = 148;
 	this->_pSGridInterlinearVers->Height = this->_pSGridInterlinearVers->RowCount * (this->_pSGridInterlinearVers->DefaultRowHeight) + 28;
-	this->_pSGridInterlinearVers->Options << goThumbTracking >> goRangeSelect >> goVertLine >> goHorzLine;
-	this->_pSGridInterlinearVers->Visible = !this->FIsVisibleSetTranslate;
+	this->_pSGridInterlinearVers->Options << goThumbTracking >> goRangeSelect >> goVertLine;// >> goHorzLine;
+	//this->_pSGridInterlinearVers->Visible = !this->FIsVisibleSetTranslate;
+	// [16-06-2024]
+	this->_pSGridInterlinearVers->Visible = false;
+	this->_pSGridInterlinearVers->Options = TGridOptions() >> goVertLine >> goHorzLine;
+	this->_pSGridInterlinearVers->OnDrawCell = this->_DrawGridInterlinearVersCell;
+	this->_pSGridInterlinearVers->DefaultDrawing = false;
+	this->_pSGridInterlinearVers->Font->Size = 12;
+  this->_pSGridInterlinearVers->StyleElements = TStyleElements(); //[17-06-2024]
 	//---Wyświetlenie wersetów
 	this->_pWebBrowser = new TWebBrowser(this);
 	if(!this->_pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
@@ -3333,11 +3345,38 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(7, 20);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pHSListSelectVers->ValueFromIndex[iIndex];
 		// Szerokość kolumny zależna od zawartości. Szerokość zależna od tekstu tłumaczenia, ze względu ze tekst ten jest najdłuższy //[16-06-2024]
-		this->_pSGridInterlinearVers->ColWidths[iIndex] = this->_pSGridInterlinearVers->Canvas->TextWidth(pHSListSelectVers->ValueFromIndex[iIndex]) + 12;
+		this->_pSGridInterlinearVers->ColWidths[iIndex] = this->_pSGridInterlinearVers->Canvas->TextWidth(pHSListSelectVers->ValueFromIndex[iIndex]) * 1.5;
+		if(this->_pSGridInterlinearVers->ColWidths[iIndex] < 98) this->_pSGridInterlinearVers->ColWidths[iIndex] = 120;
 	}
 	if(pHSListSelectVers) {delete pHSListSelectVers; pHSListSelectVers = nullptr;}
 }
 //---------------------------------------------------------------------------
+void __fastcall GsPanelSelectVers::_DrawGridInterlinearVersCell(System::TObject* Sender, int ACol, int ARow, const System::Types::TRect &Rect, TGridDrawState State)
+/**
+	OPIS METOD(FUNKCJI): Własne rysowanie komórek w objekcie, klasy TStringGrid // [16-06-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TStringGrid *pSGrid = dynamic_cast<TStringGrid *>(Sender);
+	if(!pSGrid) return;
+	UnicodeString ustrCellText = pSGrid->Cells[ACol][ARow];
+	TRect DrawRect = Rect;
+	InflateRect(DrawRect, -2, 0);
+
+	pSGrid->Canvas->Brush->Color = pSGrid->Color;
+  pSGrid->Canvas->FillRect(Rect);
+
+	if(ARow == enRow_GreckWord) pSGrid->Canvas->Font->Color = clRed;
+	else if(ARow == enRow_StrongNumber) pSGrid->Canvas->Font->Color = clGreen;
+	else if(ARow == enRow_PolWord)
+	{
+		pSGrid->Canvas->Font->Style = TFontStyles() << fsBold;
+	}
+
+	DrawText(pSGrid->Canvas->Handle, ustrCellText.c_str(), -1, &DrawRect, DT_SINGLELINE | DT_VCENTER);
+}
 /****************************************************************************
  *										 KLASA GsTabSheetSelectVersClass											*
  ****************************************************************************/

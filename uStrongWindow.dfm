@@ -53,6 +53,7 @@ object StrongWindow: TStrongWindow
       Margins.Right = 12
       Margins.Bottom = 7
       Align = alRight
+      AutoSelect = False
       EditLabel.Width = 164
       EditLabel.Height = 22
       EditLabel.Caption = 'Wpisz numer szukanego s'#322'owa:'
@@ -119,6 +120,8 @@ object StrongWindow: TStrongWindow
       Align = alLeft
       TabOrder = 0
       StyleElements = []
+      ExplicitLeft = -14
+      ExplicitTop = 0
       ControlData = {
         4C0000009B340000C22600000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -220,7 +223,7 @@ object StrongWindow: TStrongWindow
     Height = 32
     Width = 32
     Left = 72
-    Top = 72
+    Top = 120
     Bitmap = {
       494C010101000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000002000000001002000000000000040
@@ -763,7 +766,7 @@ object StrongWindow: TStrongWindow
     Height = 32
     Width = 32
     Left = 72
-    Top = 128
+    Top = 176
     Bitmap = {
       494C010101000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000002000000001002000000000000040
