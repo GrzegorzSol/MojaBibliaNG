@@ -24,16 +24,26 @@ enum {// Numery ikon
 const UnicodeString custrSelectPre[] = {"H", "G"}, // [07-06-2024]
 										// Wybór słownika
 										custrSelectDict[] = {"Hebrajsko-Polski", "Grecko-Polski"},
-										custrHeadHTML = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+										custrHeadTransHTML = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																		"<html>\n<head>\n" +
 																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
-																		"<title></title>\n" +
+																		"<title>Tłumaczenie wybranego słowa</title>\n" +
 																		"<style type=\"text/css\">\n" +
 																		Format(".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
-																		".styleNumber {color: #FF0000;vertical-align: super;font-size: small;font-weight: bold;}" +
+																		".styleNumber {color: #FF0000;vertical-align: super;font-size: small;font-weight: bold;}\n" +
 																		"body {background-color:#FFFACD;font-size: x-large;}\n" +
 																		"</style>\n</head>\n<body>\n",
-										custrEndHTML = "\n</body>\n</html>";
+										custrHeadText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																		"<html>\n<head>\n" +
+																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
+																		"<title>Tekst interlinearny grecko-polski</title>\n" +
+																		"<style type=\"text/css\">\n" +
+																		Format(".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
+																		".styleNumber {color: #FF0000;vertical-align: super;font-size: small;font-weight: bold;}\n" +
+																		Format("body {background-color: %s;font-size: x-large;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebLavender) )))  +
+																		"</style>\n</head>\n<body>\n",
+										custrEndHTML = "\n</body>\n</html>",
+										custrPathImportane = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ImpStrong.html");
 const unsigned char cucDelimit = '#'; // Znak cięcia lini
 
 TStrongWindow *StrongWindow;
@@ -67,10 +77,10 @@ __fastcall TStrongWindow::TStrongWindow(TComponent* Owner)
 
 	this->WebBrowserStrong->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserImpotance->Navigate(custrPathImportane.c_str()); // wypełnienie kontrolki instrukcją.
 	// Wyszukanie konkretnego tłumaczenia //[09-06-2024]
 	int iCountTrans = GsReadBibleTextData::CountTranslates();
 	UnicodeString ustrNameTrans;
-	//const UnicodeString custrFindNameTrans = "ELZEVIR TEXTUS RECEPTUS (1624)";
 	const UnicodeString custrFindNameTrans = "TRO+";
 
 	for(int i=0; i<iCountTrans; ++i)
@@ -189,11 +199,14 @@ void __fastcall TStrongWindow::LEditSearchNumberStrChange(TObject *Sender)
 {
 	TLabeledEdit *pLEdit = dynamic_cast<TLabeledEdit *>(Sender);
 	if(!pLEdit) return;
-	//--- zabezpieczenie przed wprowadzeniem niewłaściwego numeru słoa
+	//---
+	if(pLEdit->Text.IsEmpty()) return; //[23-06-2024]
+	//---
+	// Brak litery na początku, która informuje do jakiego słownika odnosi się numer Stronga //[23-06-2024]
+	if((pLEdit->Text.Pos("H") != 1) && (pLEdit->Text.Pos("G") != 1)) {this->ButtStartSearch->Enabled = false; return;}
+	//--- zabezpieczenie przed wprowadzeniem niewłaściwego numeru słowa
 	this->_iSearchNumber = pLEdit->Text.SubString1(2, 4).ToIntDef(0); // [07-06-2024]
-//  #if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("this->iSearchNumber: %d", ARRAYOFCONST(( this->iSearchNumber ))));
-//	#endif
+
 	if(this->CBoxSelectDict->ItemIndex == enSelect_Hebr)
 	{
 		if((this->_iSearchNumber > ciMaxNumHebr) || (this->_iSearchNumber < 1))
@@ -261,7 +274,7 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 	}
 	this->ControlListVerses->ItemCount = this->_pHListVerses->Count;
 
-	pStringStream->WriteString(custrHeadHTML); //Zapis nagłówka kodu html do strumienia
+	pStringStream->WriteString(custrHeadTransHTML); //Zapis nagłówka kodu html do strumienia
 	pStringStream->WriteString(Format("%s", ARRAYOFCONST(( ustrSearch ))));
 
 	pStringStream->WriteString(custrEndHTML);
@@ -355,7 +368,7 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 	// Zaznaczanie wybranego słowa //[09-06-2024]
 	ustrSelectVers = this->_SearchVersWord(ustrSelectVers);
 
-	pStringStream->WriteString(custrHeadHTML); //Zapis nagłówka kodu html do strumienia
+	pStringStream->WriteString(custrHeadText); //Zapis nagłówka kodu html do strumienia
 	pStringStream->WriteString(Format("%s %s", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
 
 	pStringStream->WriteString(custrEndHTML);

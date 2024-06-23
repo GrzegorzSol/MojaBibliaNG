@@ -2,7 +2,7 @@ object StrongWindow: TStrongWindow
   Left = 0
   Top = 0
   Caption = 'S'#322'ownik hebrajsko-grecko-polski Stronga'
-  ClientHeight = 782
+  ClientHeight = 922
   ClientWidth = 708
   Color = clBtnFace
   DoubleBuffered = True
@@ -105,25 +105,25 @@ object StrongWindow: TStrongWindow
     Left = 3
     Top = 76
     Width = 702
-    Height = 383
+    Height = 341
     Align = alTop
     Caption = 'PanelResult'
     ShowCaption = False
     TabOrder = 1
-    ExplicitWidth = 698
     object WebBrowserStrong: TWebBrowser
       AlignWithMargins = True
       Left = 4
       Top = 4
       Width = 509
-      Height = 375
+      Height = 333
       Align = alLeft
       TabOrder = 0
       StyleElements = []
       ExplicitLeft = -14
       ExplicitTop = 0
+      ExplicitHeight = 375
       ControlData = {
-        4C0000009B340000C22600000000000000000000000000000000000000000000
+        4C0000009B3400006B2200000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -134,7 +134,7 @@ object StrongWindow: TStrongWindow
       Left = 519
       Top = 4
       Width = 179
-      Height = 375
+      Height = 333
       Align = alClient
       Color = clSkyBlue
       ItemHeight = 25
@@ -148,12 +148,13 @@ object StrongWindow: TStrongWindow
       OnBeforeDrawItem = ControlListVersesBeforeDrawItem
       OnItemClick = ControlListVersesItemClick
       ExplicitWidth = 175
+      ExplicitHeight = 375
       object LabelItemAdresVers: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 4
-        Height = 21
+        Width = 169
+        Height = 19
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -164,6 +165,8 @@ object StrongWindow: TStrongWindow
         ParentFont = False
         Layout = tlCenter
         StyleElements = []
+        ExplicitWidth = 4
+        ExplicitHeight = 21
       end
     end
   end
@@ -192,25 +195,42 @@ object StrongWindow: TStrongWindow
   object PanelVers: TPanel
     AlignWithMargins = True
     Left = 3
-    Top = 465
+    Top = 423
     Width = 702
-    Height = 314
+    Height = 496
     Align = alClient
     Caption = 'PanelVers'
     ShowCaption = False
     TabOrder = 3
-    ExplicitWidth = 698
-    ExplicitHeight = 313
+    ExplicitTop = 439
+    ExplicitHeight = 480
     object WebBrowserVers: TWebBrowser
-      Left = 1
-      Top = 1
-      Width = 700
-      Height = 312
+      AlignWithMargins = True
+      Left = 4
+      Top = 4
+      Width = 694
+      Height = 286
       Align = alClient
       TabOrder = 0
       StyleElements = []
+      ExplicitHeight = 250
       ControlData = {
-        4C000000594800003F2000000000000000000000000000000000000000000000
+        4C000000BA4700008F1D00000000000000000000000000000000000000000000
+        000000004C000000000000000000000001000000E0D057007335CF11AE690800
+        2B2E126209000000000000004C0000000114020000000000C000000000000046
+        8000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000100000000000000000000000000000000000000}
+    end
+    object WebBrowserImpotance: TWebBrowser
+      AlignWithMargins = True
+      Left = 4
+      Top = 296
+      Width = 694
+      Height = 196
+      Align = alBottom
+      TabOrder = 1
+      ControlData = {
+        4C000000BA470000421400000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
