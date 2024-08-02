@@ -71,6 +71,10 @@ __fastcall TStrongWindow::TStrongWindow(TComponent* Owner)
 		{this->CBoxSelectDict->Items->Add(custrSelectDict[i]);}
 	// Domyślnie aktywny pierwszy element, czyli słownik hebrajsko-polski
 	this->CBoxSelectDict->ItemIndex = enSelect_Hebr;
+	// Lista wystąpień i tekstu widoczna tylko przy słowniku grecko-polskim //08-07-2024
+	//this->ControlListVerses->Visible = (this->CBoxSelectDict->ItemIndex == enSelect_Grec);
+	//this->PanelVers->Visible = this->ControlListVerses->Visible;
+
 	this->CBoxSelectDict->OnChange(this->CBoxSelectDict);
 	this->CBoxSelectDict->Items->EndUpdate();
 	this->LEditSearchNumberStr->MaxLength = 5;
@@ -81,17 +85,29 @@ __fastcall TStrongWindow::TStrongWindow(TComponent* Owner)
 	// Wyszukanie konkretnego tłumaczenia //[09-06-2024]
 	int iCountTrans = GsReadBibleTextData::CountTranslates();
 	UnicodeString ustrNameTrans;
-	const UnicodeString custrFindNameTrans = "TRO+";
+	const UnicodeString custrFindNameTransGrec = "TRO+",
+											custrFindNameTransHebr = "IBHP+"; // [31-07-2024]
 
 	for(int i=0; i<iCountTrans; ++i)
 	{
 		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTrans);
-		if(ustrNameTrans == custrFindNameTrans)
+		// Wyszukiwanie numerów tłumaczeń greckiego i hebrajskiego, używanych do modułu Stronga
+//    #if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("%d. - %s", ARRAYOFCONST(( i, ustrNameTrans ))));
+//		#endif
+		if(ustrNameTrans == custrFindNameTransGrec)
 		{
-			this->_iNumberTranslate = i;
-			break;
+			this->_iNumberTranslateGrec = i;
+		}
+		if(ustrNameTrans == custrFindNameTransHebr) // [31-07-2024]
+		{
+			this->_iNumberTranslateHbr = i;
 		}
 	}
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("_iNumberTranslateGrec: \"%d\" - _iNumberTranslateHbr: \"%d\"",
+//			ARRAYOFCONST(( this->_iNumberTranslateGrec, this->_iNumberTranslateHbr ))));
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -116,9 +132,12 @@ void __fastcall TStrongWindow::FormCreate(TObject *Sender)
 	// Lista z danymi Stronga// [05-06-2024]
 	this->_pHSListStrong = new THashedStringList();
 	if(!this->_pHSListStrong) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
-	// Lista z danymi wystapień w wersetach, poszczególnych słów // [08-06-2024]
-	this->_pHListWordInVersesExist = new THashedStringList();
-	if(!this->_pHListWordInVersesExist) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	// Lista z danymi wystapień w wersetach, poszczególnych słów greckich // [08-06-2024]
+	this->_pHListWordInVersesExistGrec = new THashedStringList();
+	if(!this->_pHListWordInVersesExistGrec) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	// Lista z danymi wystapień w wersetach, poszczególnych słów hebrajskich // [31-07-2024]
+	this->_pHListWordInVersesExistHbr = new THashedStringList();
+	if(!this->_pHListWordInVersesExistHbr) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	// Lista wystąpień dla wybranego słowa
 	this->_pHListVerses = new THashedStringList();
 	if(!this->_pHListVerses) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
@@ -131,11 +150,16 @@ void __fastcall TStrongWindow::FormCreate(TObject *Sender)
 	this->_pHSListStrong->LoadFromFile(GlobalVar::Global_custrPathStrongDict, TEncoding::UTF8);
 	// Plik z danymi wystapień w wersetach, poszczególnych słów // [08-06-2024]
 //  #if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("Global_custrPathStrongDict: \"%s\"", ARRAYOFCONST(( GlobalVar::Global_custrPathFileWordVersesExist ))));
+//		GsDebugClass::WriteDebug(Format("Global_custrPathStrongDict: \"%s\"", ARRAYOFCONST(( GlobalVar::Global_custrPathFileWordVersesExistGrec ))));
 //	#endif
-	if(!TFile::Exists(GlobalVar::Global_custrPathFileWordVersesExist))
-		throw(Exception("Brak pliku ze słownikiem Stronga!"));
-	this->_pHListWordInVersesExist->LoadFromFile(GlobalVar::Global_custrPathFileWordVersesExist, TEncoding::UTF8);
+	// Załadowanie pliku z wystąpieniami słów greckich
+	if(!TFile::Exists(GlobalVar::Global_custrPathFileWordVersesExistGrec))
+		throw(Exception("Brak pliku ze słownikiem greckim Stronga!"));
+	this->_pHListWordInVersesExistGrec->LoadFromFile(GlobalVar::Global_custrPathFileWordVersesExistGrec, TEncoding::UTF8);
+	// Załadowanie pliku z wystąpieniami słów hebrajskich
+	if(!TFile::Exists(GlobalVar::Global_custrPathFileWordVersesExistHbr))
+		throw(Exception("Brak pliku ze słownikiem hebrajskim Stronga!"));
+	this->_pHListWordInVersesExistHbr->LoadFromFile(GlobalVar::Global_custrPathFileWordVersesExistHbr, TEncoding::UTF8);
 }
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::FormDestroy(TObject *Sender)
@@ -147,7 +171,8 @@ void __fastcall TStrongWindow::FormDestroy(TObject *Sender)
 */
 {
 	if(this->_pHSListStrong) {delete this->_pHSListStrong; this->_pHSListStrong = nullptr;}
-	if(this->_pHListWordInVersesExist) {delete this->_pHListWordInVersesExist; this->_pHListWordInVersesExist = nullptr;}
+	if(this->_pHListWordInVersesExistGrec) {delete this->_pHListWordInVersesExistGrec; this->_pHListWordInVersesExistGrec = nullptr;}
+	if(this->_pHListWordInVersesExistHbr) {delete this->_pHListWordInVersesExistHbr; this->_pHListWordInVersesExistHbr = nullptr;} // [31-07-2024]
 	if(this->_pHListVerses) {delete this->_pHListVerses; this->_pHListVerses = nullptr;}
 }
 //---------------------------------------------------------------------------
@@ -185,7 +210,10 @@ void __fastcall TStrongWindow::CBoxSelectDictChange(TObject *Sender)
 	if(this->Visible) //17-06-2024]
 	{
 		this->LEditSearchNumberStr->SetFocus();
-    this->LEditSearchNumberStr->SelStart = 1; // Kursor za literą "H" lib "G"
+		this->LEditSearchNumberStr->SelStart = 1; // Kursor za literą "H" lib "G"
+		// Lista wystąpień i tekstu widoczna tylko przy słowniku grecko-polskim //08-07-2024
+		//this->ControlListVerses->Visible = (this->CBoxSelectDict->ItemIndex == enSelect_Grec);
+    //this->PanelVers->Visible = this->ControlListVerses->Visible;
 	}
 }
 //---------------------------------------------------------------------------
@@ -229,7 +257,7 @@ void __fastcall TStrongWindow::LEditSearchNumberStrChange(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI): [07-06-2024]
+	OPIS METOD(FUNKCJI): Tworzenie listy wersetów z wybranym słowem[07-06-2024]
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -259,21 +287,24 @@ void __fastcall TStrongWindow::ButtStartSearchClick(TObject *Sender)
 			break;
 		}
 	}
-	// Wyodrębnianie miejsca wystapień wybranego słowa
-	if(this->CBoxSelectDict->ItemIndex == enSelect_Grec)
-	{
-		ustrExistsVerses = this->_pHListWordInVersesExist->Strings[iSearchDig - 1].SubString1(6, 70000);
-		this->_pHListVerses->DelimitedText = ustrExistsVerses;
-		this->_pHListVerses->Delete(0);
-		this->STextInfos->Caption = Format("Szukane słowo: \"%s\" Ilość wersetów , w których występuje słowo: %d",
-			ARRAYOFCONST(( this->LEditSearchNumberStr->Text, this->_pHListVerses->Count)));
-	}
-	else
-	{
-		this->STextInfos->Caption = Format("Szukane słowo: \"%s\"", ARRAYOFCONST(( this->LEditSearchNumberStr->Text)));
-	}
-	this->ControlListVerses->ItemCount = this->_pHListVerses->Count;
 
+	if(this->CBoxSelectDict->ItemIndex == enSelect_Grec) // [31-07-2024]
+	{
+		ustrExistsVerses = this->_pHListWordInVersesExistGrec->Strings[iSearchDig - 1].SubString1(6, 70000);
+	}
+  // Wyodrębnianie miejsca wystapień wybranego słowa hebrajskiego
+	else if(this->CBoxSelectDict->ItemIndex == enSelect_Hebr) // [31-07-2024]
+	{
+		ustrExistsVerses = this->_pHListWordInVersesExistHbr->Strings[iSearchDig - 1].SubString1(6, 70000);
+	}
+	// Wyodrębnianie miejsca wystapień wybranego słowa greckiego
+  this->_pHListVerses->DelimitedText = ustrExistsVerses;
+	this->_pHListVerses->Delete(0);
+	this->STextInfos->Caption = Format("Szukane słowo: \"%s\" Ilość wersetów , w których występuje słowo: %d",
+		ARRAYOFCONST(( this->LEditSearchNumberStr->Text, this->_pHListVerses->Count)));
+  //---
+	this->ControlListVerses->ItemCount = this->_pHListVerses->Count;
+	// Wyświetlenie tłumaczenia wyszukanego słowa
 	pStringStream->WriteString(custrHeadTransHTML); //Zapis nagłówka kodu html do strumienia
 	pStringStream->WriteString(Format("%s", ARRAYOFCONST(( ustrSearch ))));
 
@@ -355,18 +386,36 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 	UnicodeString ustrSelectVers = this->_pHListVerses->Strings[pCList->ItemIndex],
 								ustrAdress;
 	//---
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST(( ustrSelectVers ))));
+//	#endif
   TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
-
+  // Wypisanie adresu wersetu w formie czytelnej
 	iBook = ustrSelectVers.SubString(1, 3).ToIntDef(0);
 	iChapt = ustrSelectVers.SubString(4, 3).ToIntDef(0);
 	iVers = ustrSelectVers.SubString(7, 3).ToIntDef(0);
 	ustrAdress = Format("%s %d:%d",
 		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
 
-	GsReadBibleTextData::GetTextVersOfAdress(iBook-1, iChapt, iVers, this->_iNumberTranslate, ustrSelectVers);
+		// Wypisanie tekstu, zależnie od tłumaczenia // [31-07-2024]
+	if(this->CBoxSelectDict->ItemIndex == enSelect_Grec) // [31-07-2024]
+	{
+		GsReadBibleTextData::GetTextVersOfAdress(iBook-1, iChapt, iVers, this->_iNumberTranslateGrec, ustrSelectVers);
+	}
+  else if(this->CBoxSelectDict->ItemIndex == enSelect_Hebr) // [31-07-2024]
+	{
+    GsReadBibleTextData::GetTextVersOfAdress(iBook-1, iChapt, iVers, this->_iNumberTranslateHbr, ustrSelectVers);
+  }
 	// Zaznaczanie wybranego słowa //[09-06-2024]
-	ustrSelectVers = this->_SearchVersWord(ustrSelectVers);
+  if(this->CBoxSelectDict->ItemIndex == enSelect_Grec)
+	{
+		ustrSelectVers = this->_SearchVersWordGrec(ustrSelectVers);
+	}
+  else if(this->CBoxSelectDict->ItemIndex == enSelect_Hebr)
+	{
+    ustrSelectVers = this->_SearchVersWordHbr(ustrSelectVers);
+  }
 
 	pStringStream->WriteString(custrHeadText); //Zapis nagłówka kodu html do strumienia
 	pStringStream->WriteString(Format("%s %s", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
@@ -382,7 +431,7 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
   if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
 }
 //---------------------------------------------------------------------------
-UnicodeString __fastcall TStrongWindow::_SearchVersWord(const UnicodeString &_custrIn)
+UnicodeString __fastcall TStrongWindow::_SearchVersWordGrec(const UnicodeString &_custrIn)
 /**
 	OPIS METOD(FUNKCJI): //[18-06-2024]
 	OPIS ARGUMENTÓW:
@@ -420,20 +469,50 @@ UnicodeString __fastcall TStrongWindow::_SearchVersWord(const UnicodeString &_cu
 				ustrModify = Format("%s%s%s", ARRAYOFCONST(( custrStyleFStart, daWord[i], custrStyleFStop )));
 				// Podmiana oryginalnego definicji słowa, podkoloryzowaną wersją //[22-06-2024]
 				daWord[i] = StringReplace(daWord[i], daWord[i], ustrModify, TReplaceFlags());
-				#if defined(_DEBUGINFO_)
-					GsDebugClass::WriteDebug(Format("%d: %s", ARRAYOFCONST(( i, daWord[i]))));
-				#endif
+//				#if defined(_DEBUGINFO_)
+//					GsDebugClass::WriteDebug(Format("%d: %s", ARRAYOFCONST(( i, daWord[i]))));
+//				#endif
 			}
 			// Ponowne dodanie wszystkich, wczesniej pociętych podciągów //[22-06-2024]
 			ustrOut += daWord[i] + " ";
-      #if defined(_DEBUGINFO_)
-				ustrOut += "\n";
-			#endif
+//      #if defined(_DEBUGINFO_)
+//				ustrOut += "\n";
+//			#endif
 		}
 	}
 
 	return ustrOut;
 }
 //---------------------------------------------------------------------------
+UnicodeString __fastcall TStrongWindow::_SearchVersWordHbr(const UnicodeString &_custrIn)
+/**
+	OPIS METOD(FUNKCJI): //[01-08-2024]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	const UnicodeString custrStyleFStart="<span class=\"styleFound\">",
+											custrStyleFStop="</span>";
+	UnicodeString ustrOp=_custrIn,
+								ustrOut,
+								ustrModify,
+								ustrTo;
+	int iFind=0;
+  // [02-08-2024]
+	iFind = ustrOp.Pos(this->LEditSearchNumberStr->Text.SubString(2, 4));
 
+	if(iFind > 0)
+	{
+		ustrModify = Format("<sup>%s%s%s",
+			ARRAYOFCONST(( custrStyleFStart, this->LEditSearchNumberStr->Text.SubString(2, 4), custrStyleFStop )));
+		ustrTo = Format("<sup>%s", ARRAYOFCONST(( this->LEditSearchNumberStr->Text.SubString(2, 4) )) );
+//		#if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("%s", ARRAYOFCONST(( ustrModify ))));
+//		#endif
+		ustrOut = StringReplace(ustrOp, ustrTo, ustrModify, TReplaceFlags());
+	}
 
+	return ustrOut;
+}
+//---------------------------------------------------------------------------

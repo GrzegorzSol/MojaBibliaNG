@@ -106,22 +106,21 @@ object StrongWindow: TStrongWindow
     Top = 76
     Width = 702
     Height = 341
-    Align = alTop
+    Align = alClient
     Caption = 'PanelResult'
     ShowCaption = False
     TabOrder = 1
+    ExplicitWidth = 698
+    ExplicitHeight = 340
     object WebBrowserStrong: TWebBrowser
       AlignWithMargins = True
       Left = 4
       Top = 4
       Width = 509
       Height = 333
-      Align = alLeft
+      Align = alClient
       TabOrder = 0
       StyleElements = []
-      ExplicitLeft = -14
-      ExplicitTop = 0
-      ExplicitHeight = 375
       ControlData = {
         4C0000009B3400006B2200000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -135,7 +134,7 @@ object StrongWindow: TStrongWindow
       Top = 4
       Width = 179
       Height = 333
-      Align = alClient
+      Align = alRight
       Color = clSkyBlue
       ItemHeight = 25
       ItemMargins.Left = 0
@@ -147,14 +146,14 @@ object StrongWindow: TStrongWindow
       StyleElements = []
       OnBeforeDrawItem = ControlListVersesBeforeDrawItem
       OnItemClick = ControlListVersesItemClick
-      ExplicitWidth = 175
-      ExplicitHeight = 375
+      ExplicitLeft = 515
+      ExplicitHeight = 332
       object LabelItemAdresVers: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 169
-        Height = 19
+        Width = 4
+        Height = 21
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -165,8 +164,6 @@ object StrongWindow: TStrongWindow
         ParentFont = False
         Layout = tlCenter
         StyleElements = []
-        ExplicitWidth = 4
-        ExplicitHeight = 21
       end
     end
   end
@@ -198,12 +195,12 @@ object StrongWindow: TStrongWindow
     Top = 423
     Width = 702
     Height = 496
-    Align = alClient
+    Align = alBottom
     Caption = 'PanelVers'
     ShowCaption = False
     TabOrder = 3
-    ExplicitTop = 439
-    ExplicitHeight = 480
+    ExplicitTop = 422
+    ExplicitWidth = 698
     object WebBrowserVers: TWebBrowser
       AlignWithMargins = True
       Left = 4
@@ -213,7 +210,6 @@ object StrongWindow: TStrongWindow
       Align = alClient
       TabOrder = 0
       StyleElements = []
-      ExplicitHeight = 250
       ControlData = {
         4C000000BA4700008F1D00000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -229,6 +225,7 @@ object StrongWindow: TStrongWindow
       Height = 196
       Align = alBottom
       TabOrder = 1
+      ExplicitWidth = 690
       ControlData = {
         4C000000BA470000421400000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800

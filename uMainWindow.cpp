@@ -136,7 +136,11 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			//Nagi dla zakładki plików ulubionych, wyszukiwania
 			enTagSearchFav_DeleteFile = 200 //200.Przycisk kasowania zaznaczonego pliku w zakładce ulubionych plików wyszukiwania
 		 };
-UnicodeString Gl_ustrNameAppReload = "MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
+
+const UnicodeString Gl_custrNameAppReload = "MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
+                    // Zmiana makr ze względu na nazwe projektu //08-07-2024
+//										Gl_custrModuleTestings = "Moja Biblia NG Testing.exe",
+//                    Gl_custrModuleRelease = "Moja Biblia NG.exe";
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -147,13 +151,18 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	const UnicodeString custrNameMod  = TPath::GetFileName(Application->ExeName); // Zmiana makr ze względu na nazwe projektu //08-07-2024
+
+	//if(custrNameMod == Gl_custrModuleTestings)
+
 	Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
+
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
 	#endif
-//  #if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("%d", ARRAYOFCONST((GlobalVar::Global_ColorsAllTranslates[0] ))));
-//	#endif
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("Module name: %s", ARRAYOFCONST(( custrNameMod ))));
+	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10); //???
 	//----- Sprawdzanie istnienia odpowiednich katalogów
@@ -978,9 +987,9 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
       return;
 		}
 		//Sprawdzanie czy aplikacja do przeładowania istnieje i uruchomienie jej
-		if(TFile::Exists(Gl_ustrNameAppReload))
+		if(TFile::Exists(Gl_custrNameAppReload))
 		{
-			ShellExecute(NULL, L"open", Gl_ustrNameAppReload.c_str(), NULL, GlobalVar::Global_custrGetExeDir.c_str(), SW_SHOW);
+			ShellExecute(NULL, L"open", Gl_custrNameAppReload.c_str(), NULL, GlobalVar::Global_custrGetExeDir.c_str(), SW_SHOW);
 		}
 	}
 }

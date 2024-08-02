@@ -45,12 +45,15 @@ __published:	// IDE-managed Components
 
 private:	// User declarations
 	THashedStringList *_pHSListStrong=nullptr, // Lista wczytanego przekładu interlinearnego "StrongDict.strdi"
-										*_pHListWordInVersesExist=nullptr, // Lista wystąpień słów, poszczególnych wersetach "WordToExist.wte"
+										*_pHListWordInVersesExistGrec=nullptr, // Lista wystąpień słów greckich, poszczególnych wersetach "WordToExistGrec.wte" // [31-07-2024]
+										*_pHListWordInVersesExistHbr=nullptr, // Lista wystąpień słów hebrajskich, poszczególnych wersetach "WordToExistHbr.wte" // [31-07-2024]
 										*_pHListVerses=nullptr; // Lista wystąpień dla wybranego słowa
 	int _iSearchNumber=-1, // [07-06-2024]
-			_iNumberTranslate=-1;// Numer tłumaczenia używany do wyświetlania wersetów
+			_iNumberTranslateGrec=-1, // Numer tłumaczenia greckiego używany do wyświetlania wersetów // [31-07-2024]
+			_iNumberTranslateHbr=-1;  // Numer tłumaczenia hebrajskiego używany do wyświetlania wersetów // [31-07-2024]
 	void __fastcall _AllClear();
-	UnicodeString __fastcall _SearchVersWord(const UnicodeString &_custrIn); //[22-06-2024]
+	UnicodeString __fastcall _SearchVersWordGrec(const UnicodeString &_custrIn); //[22-06-2024]
+  UnicodeString __fastcall _SearchVersWordHbr(const UnicodeString &_custrIn); //[01-08-2024]
 public:		// User declarations
 	__fastcall TStrongWindow(TComponent* Owner);
 };

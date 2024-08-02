@@ -28,7 +28,7 @@ enum {enHelpTextIndex_CloseSheet=0,		//0.Zamknięcie aktywnej zakładki
 			enHelpTextIndex_MailChapt,			//14.Wyśli emailem rozdział
 			enHelpTextIndex_ImageAndText,		//15.Tworzenie grafiki z tekstem
 			enHelpTextIndex_Help,						//16.Pomocnik
-			enHelpTextIndex_Count					 //17.
+			enHelpTextIndex_Count					  //17.
 };
 /*
 	Całkowicie publiczna i statyczna klasa globalnych zmiennych, dostępnych wszystkim modułom
@@ -65,7 +65,8 @@ struct GlobalVar
 																		Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"),
 																		//---
 																		Global_custrExtendCommentsFiles=".bfc", //Rozszerzenie plików z komentarzami
-																		Global_custrPathFileWordVersesExist=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExist.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, poszczególnych słów // [08-06-2024]
+																		Global_custrPathFileWordVersesExistGrec=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistGrec.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu greckiegoposzczególnych słów // [08-06-2024]
+																		Global_custrPathFileWordVersesExistHbr=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistHbr.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu hebrajskiego, poszczególnych słów // [31-07-2024]
 																		Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
 																		Global_custrPathMultimediaFilesData=TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
 																		Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		//Ścieżka dostępu do pliku z listą ulubionych wersetów
@@ -76,7 +77,7 @@ struct GlobalVar
 																		Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
 																		//----- Syle
 																		Global_DefaultStyleName="Windows", //Domyślny styl
-																		//----- Nazwa domyślnego tłumaczenia używanego do modułu konkordancji greckiej i słownika grecko-polskiego
+																		//----- Nazwa domyślnego tłumaczenia używanego do modułu konkordancji greckiej i słownika grecko-polskiego (nie w module Stronga!)
                                     // Tłumaczenie będzie można wybrać [02-06-2024]
 																		Global_DefaultNameTranslateToDictionary="ELZEVIR TEXTUS RECEPTUS (1624)",// "TRO+"
 																		/*****************************************************************************
