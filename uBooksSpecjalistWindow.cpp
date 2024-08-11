@@ -27,6 +27,9 @@ enum { //Tag i dla TComboBox (wyborów: Tłumaczenia, księgi, rozdziału)
  enImage_Next=0,
  enImage_Prev
 };
+// Translinearne tłumaczenie hebrajskiej bibli (IBHP+) posiada w ksiedze Malachiasza czwarty rozdział,
+// który zawiera końcowe wersety trzeciego rozdziału w tłumaczeniach polskich
+const UnicodeString Gl_NameModifyChapterBook = "IBHP+"; //[10-08-2024]
 //---------------------------------------------------------------------------
 __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -134,9 +137,6 @@ void __fastcall TBooksSpecjalistWindow::_SelectTranslateSpecExecute(TObject *Sen
 	TMenuItem *pMenuItem = dynamic_cast<TMenuItem *>(Sender);
 	if(!pMenuItem) return;
 	//---
-  #if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("pMenuItem: %s", ARRAYOFCONST(( pMenuItem->Caption ))));
-	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
@@ -150,10 +150,6 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
 	if(!pCBox) return;
 	//---
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug(Format("pCBox->Tag: %d", ARRAYOFCONST(( pCBox->Tag ))));
-//	#endif
-	//UnicodeString ustrVers;
 	int iSelectChapt=-1;
 	switch(pCBox->Tag)
 	{
@@ -165,11 +161,6 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 				{
 					this->CBoxBoksList->Items->BeginUpdate();
 					this->CBoxBoksList->Clear();
-//					#if defined(_DEBUGINFO_)
-//						GsDebugClass::WriteDebug(Format("this->_pGsReadBibleTextItem: %d", ARRAYOFCONST(( this->_pGsReadBibleTextItem->uiIndexTranslate ))));
-//						GsDebugClass::WriteDebug(Format("this->_pGsReadBibleTextItem->ucStartBook: %d", ARRAYOFCONST(( this->_pGsReadBibleTextItem->ucStartBook ))));
-//						GsDebugClass::WriteDebug(Format("this->_pGsReadBibleTextItem->ucCountBooks: %d", ARRAYOFCONST(( this->_pGsReadBibleTextItem->ucCountBooks ))));
-//					#endif
 					int iMaxBook = this->_pGsReadBibleTextItem->ucStartBook + this->_pGsReadBibleTextItem->ucCountBooks;
 					for(int i=this->_pGsReadBibleTextItem->ucStartBook; i<iMaxBook; ++i)
 					{
@@ -188,15 +179,16 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 			if(this->_pGsReadBibleTextItem)
 			{
 				this->_iSelectBoks = this->_pGsReadBibleTextItem->ucStartBook + pCBox->ItemIndex;
-//				#if defined(_DEBUGINFO_)
-//					GsDebugClass::WriteDebug(Format("ucCountChapt: %d", ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iSelectBoks].ucCountChapt ))));
-//					GsDebugClass::WriteDebug(Format("pCBox->ItemIndex: %d", ARRAYOFCONST(( iSelectBoks ))));
-//				#endif
+				unsigned char ucTempMaxChapt = GsReadBibleTextData::GsInfoAllBooks[this->_iSelectBoks].ucCountChapt; //[10-08-2024]
+				// Translinearne tłumaczenie hebrajskiej bibli (IBHP+) posiada w ksiedze Malachiasza czwarty rozdział,
+				// który zawiera końcowe wersety trzeciego rozdziału w tłumaczeniach polskich. Dlatego zmienna
+				// w wypadku wyboru tłumaczenia hebrajskiego i jednoczesnym wyborze ksiegi Malachiasza, jest
+				// po odczycie staddartowej ilosci rozdziałów, zwiekszana o jeden. //[10-08-2024]
+				if((this->CBoxTranslatesList->Text == Gl_NameModifyChapterBook) && (pCBox->ItemIndex == 38)) ucTempMaxChapt++;
 				this->CBoxChaptersList->Items->BeginUpdate();
-				for(int i=0; i<GsReadBibleTextData::GsInfoAllBooks[this->_iSelectBoks].ucCountChapt; ++i)
-				{
-					this->CBoxChaptersList->AddItem(Format("Rozdział: %d", ARRAYOFCONST(( i + 1))), nullptr);
-				}
+				//for(int i=0; i<GsReadBibleTextData::GsInfoAllBooks[this->_iSelectBoks].ucCountChapt; ++i)
+				for(int i=0; i<ucTempMaxChapt; ++i)
+					{this->CBoxChaptersList->AddItem(Format("Rozdział: %d", ARRAYOFCONST(( i + 1))), nullptr);}
 				this->CBoxChaptersList->Items->EndUpdate();
 				this->CBoxChaptersList->ItemIndex = 0;
 				this->CBoxSelectAllChange(this->CBoxChaptersList);
@@ -214,9 +206,6 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 				for(int i=0; i<HSList->Count; ++i) // Usunięcie zakodowanych adresów, wersetów
 				{
 					iSelectChapt = HSList->Strings[i].SubString(4, 3).ToInt();
-//          #if defined(_DEBUGINFO_)
-//						GsDebugClass::WriteDebug(Format("%d: %s", ARRAYOFCONST(( i, ustrVers))));
-//					#endif
 					if(iSelectChapt == pCBox->ItemIndex + 1)
 						{this->_pListSelectChapt->AddObject(HSList->Strings[i].Delete0(0, 10), HSList->Objects[i]);}
 				}
