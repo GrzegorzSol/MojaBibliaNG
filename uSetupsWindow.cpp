@@ -283,6 +283,10 @@ void __fastcall TSetupsWindow::_InitToggleSwitches()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	// Makro zmieniajace niektóre parametry w środowisku C++Builder v12.1 Athens //[30-08-2024]
+	#if(__CODEGEARC__ == 0x0770)
+	#endif
+
 	this->ToggleSwitchIsDisplayInfos->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsDisplayInfos];
 	this->ToggleSwitchIsDisplayInfos->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsDisplayInfos];
 
@@ -430,10 +434,10 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 				_Style_CommentStyle = "";	 //Styl zaznaczania wersetu skomentowanego
 				_StyleComm_End = "";
 			}
-			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //[20-04-2024]Pełne polskie tłumaczenie
+			if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) //[20-04-2024] //[17-08-2024]Pełne polskie tłumaczenie
 			{
-					pStringStream->WriteString(Format(UnicodeString(_Style_FavoriteStyle) +
-					"<p>\n" +	//_Style_FavoriteStyle
+					pStringStream->WriteString(Format(UnicodeString("<p>\n") +
+					_Style_FavoriteStyle +
 					"%s" +	//_Style_CommentStyle
 					"%s" + "<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
 					"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
@@ -445,8 +449,8 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 				//Nazwa tłumaczenia
 				pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
 					ARRAYOFCONST((DisplaySelectNameTranslate))));
-        pStringStream->WriteString("</p>\n");
-				pStringStream->WriteString(_StyleFav_End);
+				pStringStream->WriteString(_StyleFav_End); //[14-04-2024] //[17-08-2024]
+				pStringStream->WriteString("</p>\n");
 			}
 			else
 			{

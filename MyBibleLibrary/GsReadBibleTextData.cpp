@@ -496,7 +496,17 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 		_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
 			ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain)));
 	}
-  //---
+	//---
+	/* //[17-08-2024] */
+//	System::Byte bR, bG, bB;
+//	GetRGB((TColor)iColorFavVers, bR, bG, bB);
+//
+//	UnicodeString ustrRGBA = Format("rgba(%d, %d, %d, 0.5)", ARRAYOFCONST((bR, bG, bB)));
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("R: %d; G: %d; B: %d -> %s", ARRAYOFCONST((bR, bG, bB, ustrRGBA))));
+//	#endif
+	/**/
+
 	UnicodeString		//Styl dla głównego tekstu
 								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n",
 									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),

@@ -805,9 +805,10 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 								_Style_CommentStyle = "";	 //Styl zaznaczania wersetu skomentowanego
 								_StyleComm_End = "";
 							}
-							//[14-04-2024]
-							pStringStream->WriteString(Format(UnicodeString(_Style_FavoriteStyle) +	//[21-09-2023] //[14-04-2024]
-							"<p>\n" +
+							//[14-04-2024] //[17-08-2024] //[17-08-2024]
+							pStringStream->WriteString(Format(UnicodeString("<p>\n") +	//[21-09-2023] //[14-04-2024] //[17-08-2024]
+							//"<p>\n" +
+							_Style_FavoriteStyle +
 							"%s" +	//_Style_CommentStyle
 							"%s" +	"<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
 							"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
@@ -820,8 +821,8 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 							//Nazwa tłumaczenia
 							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
 								ARRAYOFCONST((DisplaySelectNameTranslate))));
+							pStringStream->WriteString(_StyleFav_End); //[14-04-2024] //[17-08-2024]
 							pStringStream->WriteString("</p>\n");
-							pStringStream->WriteString(_StyleFav_End); //[14-04-2024]
 						}
 						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{ // Usunięte z powody tworzenia przeglądy tłumaczeń specjalistycznych //[11-05-2024]

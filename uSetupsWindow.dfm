@@ -25,7 +25,7 @@ object SetupsWindow: TSetupsWindow
     Width = 999
     Height = 668
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetTranslates
+    ActivePage = SW_SheetFlags
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -753,7 +753,7 @@ object SetupsWindow: TSetupsWindow
         OnChanging = SW_ListViewAllTranslatesChanging
         OnItemChecked = SW_ListViewAllTranslatesItemChecked
         ExplicitWidth = 963
-        ExplicitHeight = 588
+        ExplicitHeight = 457
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
@@ -823,8 +823,8 @@ object SetupsWindow: TSetupsWindow
         Font.Quality = fqClearType
         ParentFont = False
         TabOrder = 3
-        ExplicitLeft = 3
-        ExplicitTop = 580
+        ExplicitTop = 533
+        ExplicitWidth = 987
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -1200,8 +1200,8 @@ object SetupsWindow: TSetupsWindow
     TabOrder = 1
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitLeft = -2
-    ExplicitTop = 641
+    ExplicitTop = 670
+    ExplicitWidth = 1174
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
@@ -1335,7 +1335,8 @@ object SetupsWindow: TSetupsWindow
       end>
     ShowCaption = False
     TabOrder = 3
-    ExplicitLeft = -2
+    ExplicitTop = 728
+    ExplicitWidth = 1174
     DesignSize = (
       1178
       29)
@@ -1353,7 +1354,7 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 0
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 65
+      ExplicitLeft = 88
     end
     object SW_ButtSetupCancel: TButton
       Left = 698
@@ -1369,7 +1370,7 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 1
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 578
+      ExplicitLeft = 696
     end
     object SW_ButtSetupReturn: TButton
       Left = 363
@@ -1385,7 +1386,7 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 2
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 291
+      ExplicitLeft = 362
     end
     object SW_ButtSetupHelp: TButton
       Left = 992
@@ -1396,7 +1397,7 @@ object SetupsWindow: TSetupsWindow
       Caption = 'Pomoc...'
       TabOrder = 3
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 823
+      ExplicitLeft = 989
     end
   end
   object SW_ImgListMain: TImageList

@@ -160,9 +160,6 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
 		GsDebugClass::InitDebug();
 	#endif
-	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("Module name: %s", ARRAYOFCONST(( custrNameMod ))));
-	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10); //???
 	//----- Sprawdzanie istnienia odpowiednich katalogów
@@ -275,9 +272,11 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	UnicodeString ustrVersion = Library::GetInfo();
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 	#if defined(_WIN64)
-		this->Caption = Format("Moja Biblia NG wersja x64 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
+		this->Caption = Format("Moja Biblia NG wersja x64 v%s © Grzegorz Sołtysik. Kompilator C++Builder CE v.%s [Oświęcim Date: %s Time: %s.]",
+			ARRAYOFCONST((ustrVersion, IntToHex(__CODEGEARC__, 4), __DATE__, __TIME__)));
 	#else
-		this->Caption = Format("Moja Biblia NG wersja x32 v%s © Grzegorz Sołtysik. [Oświęcim Date: %s Time: %s]", ARRAYOFCONST((ustrVersion, __DATE__, __TIME__)));
+		this->Caption = Format("Moja Biblia NG wersja x32 v%s © Grzegorz Sołtysik. Kompilator C++Builder CE v.%s [Oświęcim Date: %s Time: %s.]",
+			ARRAYOFCONST((ustrVersion, IntToHex(__CODEGEARC__, 4), __DATE__, __TIME__)));
 	#endif
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);
