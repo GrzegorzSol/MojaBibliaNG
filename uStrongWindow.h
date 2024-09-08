@@ -32,6 +32,8 @@ __published:	// IDE-managed Components
 	TPanel *PanelVers;
 	TWebBrowser *WebBrowserVers;
 	TWebBrowser *WebBrowserImpotance;
+	TImageList *ImageListSmall;
+	TImage *ImageVers;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

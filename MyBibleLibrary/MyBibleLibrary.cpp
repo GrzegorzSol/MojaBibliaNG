@@ -994,7 +994,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	this->RightClickSelect = true;
 	this->ReadOnly = true;
 	this->DragMode = dmAutomatic;
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	//this->StyleElements = TStyleElements() << seBorder; //Tylko Border
 	this->Font->Quality = TFontQuality::fqClearType;
 	//---
@@ -1044,7 +1044,7 @@ void __fastcall GsTreeBibleClass::CreateWnd()
 {
 	TCustomTreeView::CreateWnd();
 	//Własny kod
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->_pBalloonHint = new TBalloonHint(this);
 	if(!this->_pBalloonHint) throw(Exception("Błąd funkcji TBalloonHint"));
 	this->_pBalloonHint->Images = GsReadBibleTextData::_GsImgListData;
@@ -1332,7 +1332,7 @@ __fastcall GsListBoxSelectedVersClass::GsListBoxSelectedVersClass(TComponent* Ow
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
 	//this->StyleElements = TStyleElements();
 	this->MultiSelect = true; this->ExtendedSelect = false;
@@ -1498,7 +1498,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	GsReadBibleTextData::_GsPageControl->Visible = true; //01-02-2020
 	TToolButton *pToolButton = nullptr;
 	//---
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	//this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
 	//---
@@ -2205,7 +2205,7 @@ __fastcall GsTabSetClass::GsTabSetClass(TComponent* Owner) : TTabSet(Owner)
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->OnChange = this->_OnChange;
 	this->bIsCreate = true; //Objekt został stworzony
 	this->Font->Quality = TFontQuality::fqClearType;
@@ -2318,7 +2318,7 @@ __fastcall GsBarSelectVers::GsBarSelectVers(TComponent* Owner, const unsigned ch
 
 	this->EdgeBorders = TEdgeBorders() << ebBottom << ebTop << ebLeft << ebRight;
 	this->ShowCaptions = true;
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->AutoSize = true;
 	this->Wrapable = true;
 	this->List = true;
@@ -3167,7 +3167,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 		//Własny kod.
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	int iWCBoxIsEdit=24, iWCBoxIsTr=24, iWCBoxIsAcc=24;
 	UnicodeString _strCBoxIsEditCap = "Czy ma być wyświetlany edytor komentarza, do wybranego wersetu?",
 								_strCBoxIsTrans = "Czy ma być wyświetlona możliwość wyboru tłumaczenia?",
@@ -3392,7 +3392,7 @@ __fastcall GsTabSheetSelectVersClass::GsTabSheetSelectVersClass(TComponent* Owne
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	//this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->Caption = "Lista wybranych wersetów";
@@ -3451,7 +3451,7 @@ __fastcall GsListBoxVersClass::GsListBoxVersClass(TComponent* Owner) : TCustomLi
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
 	//this->StyleElements = TStyleElements(); //Musi być
 	this->Color = clWebWheat;
@@ -3584,7 +3584,7 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	this->OwnerDraw = true;
 	//this->OnGetImageIndex = this->_OnGetImageIndex;
 	//this->OnGetSubItemImage = this->_OnGetSubItemImage;
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->Font->Size = 12;
 	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
 	this->ReadOnly = true;
@@ -3967,7 +3967,7 @@ __fastcall GsLViewCommentsAllClass::GsLViewCommentsAllClass(TComponent* Owner) :
 	this->OwnerDraw = true;
 	this->ReadOnly = true;
 	this->RowSelect = true;
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->ViewStyle = vsReport;
 	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
 	//Dodawanie kolumn
@@ -4241,7 +4241,7 @@ __fastcall GsListBoxFavoritiesClass::GsListBoxFavoritiesClass(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->DoubleBuffered = true;
+	//this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
 	this->Font->Quality = TFontQuality::fqClearType;
 	//this->StyleElements = TStyleElements();

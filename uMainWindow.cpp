@@ -60,6 +60,9 @@ int Global_WidthTabTools = 0;
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug("");
 #endif
+// Makro zmieniajace niektóre parametry w środowisku C++Builder v12.1 Athens //[30-08-2024]
+#if(__CODEGEARC__ == 0x0770)
+#endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki

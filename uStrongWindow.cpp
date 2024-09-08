@@ -18,7 +18,8 @@ const int ciMaxNumHebr=8674, // https://pl.wikipedia.org/wiki/Konkordancja_Stron
 enum {// Numery ikon
 	enImage_Search, //0.Ikona wyszukiwania
 	enSelect_Hebr=0,
-	enSelect_Grec
+	enSelect_Grec,
+  enImage16_Vers=0 //0.Ikona wersetu wystepowania
  };
 // Przedrostki do numeru Stronga
 const UnicodeString custrSelectPre[] = {"H", "G"}, // [07-06-2024]
@@ -367,6 +368,8 @@ void __fastcall TStrongWindow::ControlListVersesBeforeDrawItem(int AIndex, TCanv
 
 	this->LabelItemAdresVers->Caption = Format("%s %d:%d",
 		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
+
+	this->ImageListSmall->GetIcon(0, this->ImageVers->Picture->Icon);
 }
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
