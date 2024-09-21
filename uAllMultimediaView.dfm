@@ -22,12 +22,11 @@ object AllMultimediaView: TAllMultimediaView
     Top = 0
     Width = 1188
     Height = 521
-    ActivePage = TabSheetComments
+    ActivePage = TabSheetTranslates
     Align = alTop
     OwnerDraw = True
     TabOrder = 0
     OnDrawTab = PControlAllMultimediaDrawTab
-    ExplicitWidth = 1184
     object TabSheetTranslates: TTabSheet
       Caption = 'TabSheetTranslates'
       object CListTranlates: TControlList
@@ -49,32 +48,30 @@ object AllMultimediaView: TAllMultimediaView
           Left = 39
           Top = 3
           Width = 199
-          Height = -6
+          Height = 64
           Align = alLeft
           AutoSize = False
           Caption = 'LabelNameTranlate'
           EllipsisPosition = epEndEllipsis
           Layout = tlCenter
           ExplicitLeft = 114
-          ExplicitHeight = 64
         end
         object ImageTranslates: TImage
           Left = 0
           Top = 0
           Width = 36
-          Height = 0
+          Height = 70
           Align = alLeft
-          Transparent = True
+          Center = True
           ExplicitLeft = -3
           ExplicitTop = 4
-          ExplicitHeight = 70
         end
         object LabelTypeTranslate: TLabel
           AlignWithMargins = True
           Left = 244
           Top = 3
           Width = 98
-          Height = -6
+          Height = 64
           Align = alLeft
           AutoSize = False
           Caption = 'LabelTypeTranslate'
@@ -116,32 +113,35 @@ object AllMultimediaView: TAllMultimediaView
           Left = 39
           Top = 3
           Width = 407
-          Height = 64
+          Height = -6
           Align = alLeft
           AutoSize = False
           Caption = 'LabelNameGraphics'
           EllipsisPosition = epPathEllipsis
           Layout = tlCenter
           ExplicitTop = 4
+          ExplicitHeight = 64
         end
         object ImageGraphics: TImage
           Left = 0
           Top = 0
           Width = 36
-          Height = 70
+          Height = 0
           Align = alLeft
           Transparent = True
+          ExplicitHeight = 70
         end
         object LabelSizeGraphics: TLabel
           AlignWithMargins = True
           Left = 452
           Top = 3
           Width = 165
-          Height = 64
+          Height = -6
           Align = alLeft
           AutoSize = False
           Caption = 'LabelSizeGraphics'
           Layout = tlCenter
+          ExplicitHeight = 64
         end
       end
       object HeaderControlGraphics: THeaderControl
@@ -151,7 +151,6 @@ object AllMultimediaView: TAllMultimediaView
         Height = 17
         Sections = <>
         OnSectionResize = HeaderControlAllSectionResize
-        ExplicitWidth = 1176
       end
     end
     object TabSheetComments: TTabSheet
@@ -175,22 +174,24 @@ object AllMultimediaView: TAllMultimediaView
           Left = 0
           Top = 0
           Width = 36
-          Height = 70
+          Height = 0
           Align = alLeft
           Transparent = True
+          ExplicitHeight = 70
         end
         object LabelComments: TLabel
           AlignWithMargins = True
           Left = 39
           Top = 3
           Width = 239
-          Height = 64
+          Height = -6
           Align = alLeft
           AutoSize = False
           Caption = 'LabelComments'
           EllipsisPosition = epEndEllipsis
           Layout = tlCenter
           ExplicitLeft = 114
+          ExplicitHeight = 64
         end
       end
       object HeaderControlComments: THeaderControl
@@ -200,7 +201,6 @@ object AllMultimediaView: TAllMultimediaView
         Height = 17
         Sections = <>
         OnSectionResize = HeaderControlAllSectionResize
-        ExplicitWidth = 1176
       end
     end
     object TabSheetFavVerses: TTabSheet
@@ -289,8 +289,6 @@ object AllMultimediaView: TAllMultimediaView
     TabOrder = 2
     StyleElements = []
     OnResize = PanelDisplayResize
-    ExplicitTop = 708
-    ExplicitWidth = 1178
     object ImageSelectDisplay: TImage
       Left = 192
       Top = 88

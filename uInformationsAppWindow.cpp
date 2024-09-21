@@ -25,7 +25,7 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 	if(Application->MainForm)
 	{
 		//Istnieje główne okno
-		this->STextHeadInfo->Caption = Format("%s.", ARRAYOFCONST((Application->MainForm->Caption)));
+		this->LabelHeaderInfos->Caption = Format("%s.", ARRAYOFCONST((Application->MainForm->Caption)));
 		this->STextInfoVersions->Caption = Format("Wersje zasobów:\n%s.", ARRAYOFCONST((GlobalVar::Global_ustrVerGsReadBibleTextClass)));
 		this->TimerInfoSystem->Enabled = false;
 	}
@@ -34,7 +34,7 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 		//Nie istnieje główne okno
 		this->FormStyle = fsStayOnTop;
 		//this->AlphaBlendValue = 190;
-		this->STextHeadInfo->Caption = "Uruchamianie aplikacji...";
+		this->LabelHeaderInfos->Caption = "Uruchamianie aplikacji...";
 		this->TimerInfoSystem->Enabled = true;
 	}
 	//---
@@ -48,7 +48,7 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 		"jednak o wszystkich takich zabiegach autor pragnie być poinformowany, razem z przedstawieniem zmodyfikowanego kodu.\n" +
 		"Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik.\n\n" +
 		"Jej rozwój rozpoczął się od 2007 roku (kolejne wersje były przeprojektowywane, zmieniane itd.). Więcej informacji znajduje się pod adresem \"https://www.facebook.com/MojaBiblia/\"\n\n",
-								ustrInfoVerCompilation = UnicodeString("Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder Community 11.3 Version 28.0.48361.3236.\n") +
+								ustrInfoVerCompilation = UnicodeString("Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder Community 12.1 Version 29.0.52631.8427.\n") +
 																				 "Skompilowany został za pomocą kompilatora C++ z powyższego pakietu, w wersji CLang\n",
 								ustrInfox64 = "\nAktualna wersja jest w wersji 64 bitowej!\n\n";
 	//---

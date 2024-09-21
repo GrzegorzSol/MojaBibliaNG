@@ -6,7 +6,7 @@
 #include <System.IOUtils.hpp>
 
 #include "MyBibleLibrary\MyBibleLibrary.h"
-#include "MyBibleLibrary\GsReadBibleTextdata.h"
+#include "MyBibleLibrary\GsReadBibleTextData.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -76,14 +76,14 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 	}
 	this->PControlAllMultimedia->ActivePage = this->TabSheetTranslates;
 
-	this->_pHSListTranslates = new THashedStringList();
-	if(!this->_pHSListTranslates) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListGraphics = new THashedStringList();
 	if(!this->_pHListGraphics) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListComments  = new THashedStringList();
 	if(!this->_pHListComments) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListFavVerses  = new THashedStringList();
 	if(!this->_pHListFavVerses) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	this->_pListAllFullTranslates = new TList();
+	if(!this->_pListAllFullTranslates) throw(Exception("Błąd inicjalizacji objektu TList"));
 
 	this->_SetTagsAndHints();
 	this->_LoadAllTraslates(); //Tworzenie listy katalogów z grafiką
@@ -117,11 +117,11 @@ void __fastcall TAllMultimediaView::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(this->_pHSListTranslates) {delete this->_pHSListTranslates; this->_pHSListTranslates = nullptr;}
 	if(this->_pHListGraphics) {delete this->_pHListGraphics; this->_pHListGraphics = nullptr;}
   if(this->_pHListComments) {delete this->_pHListComments; this->_pHListComments = nullptr;}
 	if(this->_pDisplayWindow) {delete this->_pDisplayWindow; this->_pDisplayWindow = nullptr;}
 	if(this->_pHListFavVerses) {delete this->_pHListFavVerses; this->_pHListFavVerses = nullptr;}
+	if(this->_pListAllFullTranslates) {delete this->_pListAllFullTranslates; this->_pListAllFullTranslates = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::FormClose(TObject *Sender, TCloseAction &Action)
@@ -165,25 +165,22 @@ void __fastcall TAllMultimediaView::_LoadAllTraslates()
 	TStringDynArray SDirList;
 	UnicodeString ustrExt, ustrTempLowerName;
 	THeaderSection *Section=nullptr;
+	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+	TList *pListAllTranslates=nullptr;
 
-	//Lista tłumaczeń
-	SDirList = TDirectory::GetFiles(GlobalVar::Global_custrGetDataDir);
-
-	for(int i=0; i<SDirList.Length; ++i)
+	//List wszystkich tłumaczeń
+	pListAllTranslates = GsReadBibleTextData::GetGlobalListAllTraslates(); // Lista wszystkich tłumaczeń
+	for(int i=0; i<pListAllTranslates->Count; ++i)
 	{
-		ustrExt = TPath::GetExtension(SDirList[i]);
-
-		if((ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) &&			//Pełne tłumaczenie
-			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) &&	//Grecki oryginał
-			 (ustrExt != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)			//Hebrajski oryginał
-			) continue;
-
-		this->_pHSListTranslates->Add(SDirList[i]);
+		pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(pListAllTranslates->Items[i]);
+		if((pGsReadBibleTextItem)  && (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full))
+		{
+			this->_pListAllFullTranslates->Add(pGsReadBibleTextItem);
+		}
 	}
-	SDirList.Length = 0;
 
-  //Parametry list tłumaczeń
-	this->CListTranlates->ItemCount = this->_pHSListTranslates->Count;
+	//Parametry list tłumaczeń
+	this->CListTranlates->ItemCount = this->_pListAllFullTranslates->Count;
 	this->CListTranlates->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Translates, this->ImageTranslates->Picture->Icon);
   //THeaderControlTranslates
@@ -330,7 +327,7 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 {
 	//return;
 	int iBook, iChapt, iVers;
-	UnicodeString ustrAdress;
+	UnicodeString ustrAdress, ustrNameTr, ustrText;
 	const UnicodeString GlobalSizeFontText = "\\fs32",
 											GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
 																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;\\red200\\green0\\blue200;}" +
@@ -346,36 +343,35 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
-	THashedStringList *pHSListGetAllTransVers = new THashedStringList();
-	if(!pHSListGetAllTransVers) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 
 	iBook = ustrCodeVers.SubString(1, 3).ToInt()-1;
 	iChapt = ustrCodeVers.SubString(4, 3).ToInt();
 	iVers = ustrCodeVers.SubString(7, 3).ToInt();
 	ustrAdress = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
-	GsReadBibleTextData::GetSelectVerAllTranslates(iBook, iChapt, iVers, pHSListGetAllTransVers);
-
 	pStringStream->WriteString(GlobalHeaderRtf);
 
-	for(int iLicz=0; iLicz<pHSListGetAllTransVers->Count; ++iLicz)
+	for(int iLicz=0; iLicz<this->_pListAllFullTranslates->Count; ++iLicz)
 	{
-    GsReadBibleTextItem *GsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iLicz);
-		if(!pHSListGetAllTransVers->Strings[iLicz].IsEmpty())
-		{
-      pStringStream->WriteString(Format("%s%s %s " ,ARRAYOFCONST((GlobalSizeFontText, GlobalAdressVersRtf, ustrAdress))));
-			pStringStream->WriteString(Format("%s %s" ,ARRAYOFCONST((GlobalVersRtf, pHSListGetAllTransVers->Strings[iLicz]))));
+		//ustrText = "";
+		GsReadBibleTextItem *pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_pListAllFullTranslates->Items[iLicz]);
+		if(pGsReadBibleTextItem->enTypeTranslate != enTypeTr_Full) continue;
+		GsReadBibleTextData::GetTextVersOfAdress(iBook, iChapt, iVers, iLicz, ustrText);
 
-			pStringStream->WriteString(Format("%s%s	 [%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, GsReadBibleTextItem->NameTranslate, "\\line"))));
-    }
-  }
+		if(ustrText.Length() > 0)
+		{
+			pStringStream->WriteString(Format("%s%s %s " ,ARRAYOFCONST((GlobalSizeFontText, GlobalAdressVersRtf, ustrAdress))));
+			pStringStream->WriteString(Format("%s %s" ,ARRAYOFCONST((GlobalVersRtf, ustrText))));
+			ustrNameTr = Format("%s%s	[%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, "\\line")));
+			pStringStream->WriteString(ustrNameTr);
+		}
+	}
 
   pStringStream->WriteString("}");
 	pStringStream->Position = 0;
 	this->RichEditInfo->Lines->LoadFromStream(pStringStream);
 
 	if(pStringStream) {delete pStringStream; pStringStream = nullptr;}
-	if(pHSListGetAllTransVers) {delete pHSListGetAllTransVers; pHSListGetAllTransVers = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::_DisplayImage(const UnicodeString _pathImages)
@@ -426,29 +422,18 @@ void __fastcall TAllMultimediaView::CListTranlatesBeforeDrawItem(int AIndex,
 */
 {
 	THeaderSection *Section=nullptr;
-	TStringDynArray StrDynArrInfo;
-	UnicodeString ustrExt = TPath::GetExtension(this->_pHSListTranslates->Strings[AIndex]);
-	TColor cSelectImg = clHighlight;
-  //Zmiana rozszerzenia dla pliku informacji
-	UnicodeString ustrInfo = TPath::ChangeExtension(this->_pHSListTranslates->Strings[AIndex], GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
+	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+	UnicodeString ustrExt, ustrInfo;
 
 	this->ImageTranslates->Width = this->ImageTranslates->Height;
-	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
-	ACanvas->Brush->Color = cSelectImg;
-	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelNameTranlate->Left);
-	ACanvas->FillRect(RectFill);
+	pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_pListAllFullTranslates->Items[AIndex]);
+	if(pGsReadBibleTextItem)
+	{
+		this->LabelNameTranlate->Caption = pGsReadBibleTextItem->NameTranslate;
+		ustrExt = TPath::GetExtension(pGsReadBibleTextItem->FullPathTranslate);
+		ustrInfo = pGsReadBibleTextItem->PathInfoTranslate;
+	}
 
-	if(TFile::Exists(ustrInfo))
-	{
-		//Istnieje informacja o przekładzie - pełna nazwa
-		StrDynArrInfo = TFile::ReadAllLines(ustrInfo, TEncoding::UTF8);
-		this->LabelNameTranlate->Caption = StrDynArrInfo[0];
-	}
-	else
-	{
-		//Nie istnieje informacja o przekładzie = tylko skrót
-		this->LabelNameTranlate->Caption = TPath::GetFileNameWithoutExtension(this->_pHSListTranslates->Strings[AIndex]);
-	}
 	//Rozróżnianie typu tłumaczenia po rozszerzeniu plików
 	if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) this->LabelTypeTranslate->Caption = "Pełne tłumaczenie";
 			else if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) this->LabelTypeTranslate->Caption = "Oryginalne greckie tłumaczenie";
@@ -479,11 +464,6 @@ void __fastcall TAllMultimediaView::CListGraphicsBeforeDrawItem(int AIndex, TCan
 
 	this->LabelSizeGraphics->Caption = this->_pHListGraphics->ValueFromIndex[AIndex];
 
-	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
-	ACanvas->Brush->Color = cSelectImg;
-	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelNameGraphics->Left);
-	ACanvas->FillRect(RectFill);
-
 	for(int i=0; i<this->HeaderControlGraphics->Sections->Count; ++i)
 	{
 		Section = this->HeaderControlGraphics->Sections->Items[i];
@@ -513,11 +493,6 @@ void __fastcall TAllMultimediaView::CListCommentsBeforeDrawItem(int AIndex, TCan
 	this->ImageComments->Width = this->ImageComments->Height;
 	this->LabelComments->Caption = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
 
-	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
-	ACanvas->Brush->Color = cSelectImg;
-	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelComments->Left);
-	ACanvas->FillRect(RectFill);
-
 	for(int i=0; i<this->HeaderControlComments->Sections->Count; ++i)
 	{
 		Section = this->HeaderControlComments->Sections->Items[i];
@@ -546,11 +521,6 @@ void __fastcall TAllMultimediaView::CListFavVersesBeforeDrawItem(int AIndex,
 	this->ImageFavVerses->Width = this->ImageFavVerses->Height;
 	this->LabelFavVerses->Caption =  Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
-	if(TStyleManager::Enabled) cSelectImg = TStyleManager::ActiveStyle->GetSystemColor(clHighlight);
-  ACanvas->Brush->Color = cSelectImg;
-	TRect RectFill = Rect(0, 0, ARect.Bottom, this->LabelFavVerses->Left);
-	ACanvas->FillRect(RectFill);
-
 	for(int i=0; i<this->HeaderControlFavVerses->Sections->Count; ++i)
 	{
 		Section = this->HeaderControlFavVerses->Sections->Items[i];
@@ -574,15 +544,23 @@ void __fastcall TAllMultimediaView::CListAllItemClick(TObject *Sender)
 	switch(pCList->Tag)
 	{
 		case enCList_Translates:
+		{
+			GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+
 			this->ImageSelectDisplay->Picture->Assign(nullptr);
 			this->ImageSelectDisplay->Visible = false;
-			ustrSelectItem = TPath::ChangeExtension(this->_pHSListTranslates->Strings[pCList->ItemIndex], GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate);
-			if(TFile::Exists(ustrSelectItem))
-			{
-				this->RichEditInfo->Lines->LoadFromFile(ustrSelectItem);
-			}
 
-			break;
+			pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(pCList->ItemIndex);
+			if(pGsReadBibleTextItem)
+			{
+				ustrSelectItem = pGsReadBibleTextItem->PathInfoTranslate;
+				if(TFile::Exists(ustrSelectItem))
+				{
+					this->RichEditInfo->Lines->LoadFromFile(ustrSelectItem);
+				}
+			}
+		}
+		break;
 		//---
 		case enCList_Graphics:
 			this->_DisplayImage(this->_pHListGraphics->Names[pCList->ItemIndex]);

@@ -272,18 +272,14 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	if(!GsReadBibleTextData::IsInitLibrary) throw(Exception("Błąd inicjalizacji głównej bilioteki do pracy i analizy pisma Świętego!"));
 	GsReadBibleTextData::CreateTreeBooks(this->TabSheetBooks, this->PageControlBibleText);
 	//----- Odzcyt wersji biblioteki
-	UnicodeString ustrVersion = Library::GetInfo(), ustrVersionCompilator;
+	UnicodeString ustrVersion = Library::GetInfo();
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
-
-	if(__CODEGEARC__ == 0x0760) ustrVersionCompilator = "C++Builder v11.3 - Alexandria";
-	if(__CODEGEARC__ == 0x0770) ustrVersionCompilator = "C++Builder v12.0(1) - Athens";
-
 	#if defined(_WIN64)
-		this->Caption = Format("Moja Biblia NG wersja x64 v%s © Grzegorz Sołtysik. Kompilator %s [Oświęcim Date: %s Time: %s.]",
-			ARRAYOFCONST((ustrVersion, ustrVersionCompilator, __DATE__, __TIME__)));
+		this->Caption = Format("Moja Biblia NG wersja x64 v%s © Grzegorz Sołtysik. Kompilator C++Builder CE v.%s [Oświęcim Date: %s Time: %s.]",
+			ARRAYOFCONST((ustrVersion, IntToHex(__CODEGEARC__, 4), __DATE__, __TIME__)));
 	#else
-		this->Caption = Format("Moja Biblia NG wersja x32 v%s © Grzegorz Sołtysik. Kompilator %s [Oświęcim Date: %s Time: %s.]",
-			ARRAYOFCONST((ustrVersion, ustrVersionCompilator, __DATE__, __TIME__)));
+		this->Caption = Format("Moja Biblia NG wersja x32 v%s © Grzegorz Sołtysik. Kompilator C++Builder CE v.%s [Oświęcim Date: %s Time: %s.]",
+			ARRAYOFCONST((ustrVersion, IntToHex(__CODEGEARC__, 4), __DATE__, __TIME__)));
 	#endif
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);

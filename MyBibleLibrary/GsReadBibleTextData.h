@@ -199,6 +199,8 @@ class GsReadBibleTextData : public TObject
 		static void __fastcall GetAdressFromId(UnicodeString &_ustrResult, int _iBook, int _iChapt, int _iVers=0); //Konwersja z podanych informacji typu int, numeru księgi, rozdziału i wersetu, na ciąg identyfikacyjny (001001001)
 		//Metoda udostępnia aktualna listę tekstów wszystkich tłumaczeń z wybranego rozdziału
 		static TList *__fastcall GetListAllTrChap();
+		//Metoda udostępnia listę wszystkich dostępnych tłumaczeń
+		static TList *__fastcall GetGlobalListAllTraslates();
 		//Metoda wyświetla zakres wersetów z wybranego tłumaczenia w dowolnym objekcie, klasy TWebBrowser
 		static UnicodeString __fastcall DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,
 			const UnicodeString ustrInputStartStop, const DataDisplayTextAnyBrowser &DataDisplay);

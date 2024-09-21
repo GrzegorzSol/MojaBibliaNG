@@ -72,13 +72,13 @@ private:	// User declarations
 	void __fastcall _LoadAllFavVerses();
 	void __fastcall _DisplaySelectVersAllTrans(const UnicodeString ustrCodeVers);
 
-	THashedStringList *_pHSListTranslates=nullptr,
-										*_pHListGraphics=nullptr,
+	THashedStringList *_pHListGraphics=nullptr,
 										*_pHListComments=nullptr,
 										*_pHListFavVerses=nullptr;
 	float _fFactorProp=0;
 	TForm *_pDisplayWindow=nullptr;
 	TImage *_pImageScr=nullptr;
+  TList *_pListAllFullTranslates=nullptr;
 public:		// User declarations
 	__fastcall TAllMultimediaView(TComponent* Owner);
 };

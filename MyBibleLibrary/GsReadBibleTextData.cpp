@@ -1,7 +1,7 @@
 ﻿#pragma hdrstop
 
 #include "MyBibleLibrary.h"
-#include "GsReadBibleTextdata.h"
+#include "GsReadBibleTextData.h"
 #include <System.IOUtils.hpp>
 #include <System.StrUtils.hpp>
 #include "MyBibleCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
@@ -811,6 +811,7 @@ void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cuc
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
+  ustrText = "";
 	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(cucTrans);
 	if(pGsReadBibleTextItem)
 	{
@@ -930,6 +931,17 @@ TList *__fastcall GsReadBibleTextData::GetListAllTrChap()
 */
 {
 	return GsReadBibleTextData::pGsReadBibleTextClass->_ListAllTrChap; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
+}
+//---------------------------------------------------------------------------
+TList *__fastcall GsReadBibleTextData::GetGlobalListAllTraslates()
+/**
+	OPIS METOD(FUNKCJI): Metoda udostępnia listę wszystkich dostępnych tłumaczeń
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	return GsReadBibleTextData::pGsReadBibleTextClass->_GsListItemsTranslates;
 }
 //---------------------------------------------------------------------------
 UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate,

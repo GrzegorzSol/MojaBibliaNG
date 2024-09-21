@@ -13,12 +13,13 @@ class TInformationsAppWindow : public TForm
 __published:	// IDE-managed Components
 	TImage *ImageMainInfo;
 	TPanel *PanelInfo;
-	TStaticText *STextHeadInfo;
 	TStaticText *STextInfoLicence;
 	TStaticText *STextInfoVersions;
 	TStaticText *STextInfoSystem;
 	TBevel *BevelPartSystemInfo;
 	TTimer *TimerInfoSystem;
+	TPanel *PanelHeaderInfos;
+	TLabel *LabelHeaderInfos;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall TimerInfoSystemTimer(TObject *Sender);

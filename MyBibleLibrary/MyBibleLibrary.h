@@ -285,7 +285,7 @@ class GsReadBibleTextClass : public TObject
 	//---
 	GsListItemTranslates *_GsListItemsTranslates=nullptr;	//Lista tłumaczeń aktywnych. Klas GsReadBibleTextItem
 	TStringList *_pSListAllNamesTranslates=nullptr; //[09-12-2023]String lista opisów wszystkich tłumaczeń, niezależnie od aktywacji tłumaczenia
-	TList *_ListAllTrChap=nullptr; //Lista klasy THashedStringList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
+	TList *_ListAllTrChap=nullptr; //Lista klasy TList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 	THashedStringList *_SListInterLinear=nullptr; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	unsigned int uiCountPol, uiCountOryg; //Ilość polskich i oryginalnych tłumaczeń
 

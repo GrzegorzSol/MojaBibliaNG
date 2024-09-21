@@ -27,7 +27,7 @@
 #include <System.IOUtils.hpp>
 #include <System.StrUtils.hpp>
 //#include <Vcl.Themes.hpp>
-#include "MyBibleLibrary\GsReadBibleTextdata.h"
+#include "MyBibleLibrary\GsReadBibleTextData.h"
 #include "MyBibleLibrary\MyBibleCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
 //#include <Mshtml.h> //[31-07-2023]
 //---------------------------------------------------------------------------
@@ -423,6 +423,10 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 	// this->_DeleteSelectTranslate(1); //Działa!!!
 	// Wczytanie danych do objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
 	// Czyli pliku "gnt.intrl"
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("gnt: \"%s\" - %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear,
+//			GlobalVar::Global_custrPathFileWordVersesExistHbr))));
+//	#endif
 	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
 		{this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);}
 	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
