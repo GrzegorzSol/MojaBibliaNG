@@ -2995,7 +2995,6 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 	TPopupMenu *pPMenu = dynamic_cast<TPopupMenu *>(pMItem->Owner);
 	if(!pPMenu) return;
 	//---
-
 	//if(this->_FbBarSelectComment)
 	if(this->_bIsFirstStart && this->_FbBarSelectComment)
 	//Kliknąleś na pozycje listy komentzry w oknie głównym, więc odrazu wiadomo jaki jest pełny adres wersetu.
@@ -3015,7 +3014,7 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 		case enPopupMenu_Translates:		//Wybrano pozycje z listy tłumaczeń
 		{
 			this->_pButTranslates->Caption = pMItem->Caption;
-			this->_FucSelectTranslate = pMItem->Tag;
+			this->_FucSelectTranslate = 3; //!!!//pMItem->Tag;
 			this->_FucSelectBook = 0;
 			this->_FucSelectChapt = 0;
 			this->_FucSelectVers = 1;
@@ -3026,8 +3025,8 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 		//---
 		case enPopupMenu_Books:					//Wybrano pozycje z listy ksiąg
 		{
-      // Wyświetlanie widoku interlinearnego tylko dla Nowego Testamentu //[16-06-2024]
-			this->_pGsPanelSelectVers->_pSGridInterlinearVers->Visible = pMItem->Tag > 38;
+			// Wyświetlanie widoku interlinearnego tylko dla Nowego Testamentu //[16-06-2024]
+			//this->_pGsPanelSelectVers->_pSGridInterlinearVers->Visible = pMItem->Tag > 38;
 
 			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->_FucSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
 			if(!pGsReadBibleTextItem) throw(Exception("Błąd funkcji GsReadBibleTextData::GetTranslate()"));
@@ -3068,6 +3067,13 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 
 			this->_pPMenuVers->Items->Clear(); //Wymazanie pozycji z listy rozdziałów
 			unsigned int uiVers = GsReadBibleTextData::GetCountVer(this->_FucSelectTranslate, this->_FucSelectBook, this->_FucSelectChapt);
+			#if defined(_DEBUGINFO_)
+				GsDebugClass::WriteDebug(Format("this->_FucSelectTranslate: %d", ARRAYOFCONST((this->_FucSelectTranslate))));
+			#endif
+			if(uiVers == 0)
+			{
+        break;
+      }
 			for(unsigned int i=0; i<uiVers; ++i)
 			{
 				TMenuItem *NewItem = new TMenuItem(this->_pPMenuVers);
