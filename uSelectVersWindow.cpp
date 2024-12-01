@@ -52,7 +52,7 @@ void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
 	//if(_cucStartBook < 66) ucStartBook = _cucStartBook; else ucStartBook = 0;
 	if(this->_InputCucStartBook < 66) ucStartBook = _InputCucStartBook; else ucStartBook = 0;
 	//---
-	this->_pGsPanelSelectVers = new GsPanelSelectVers(this, ucStartBook, this->_InputCucStartChapt, this->_InputCucStarVers, this->_InputBSelectComment);
+	this->_pGsPanelSelectVers = new GsPanelSelectVers(this, ucStartBook, this->_InputCucStartChapt, this->_InputCucStarVers);//, this->_InputBSelectComment);
 	if(!this->_pGsPanelSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsPanelSelectVers"));
 	this->_pGsPanelSelectVers->Parent = this;
 	this->_pGsPanelSelectVers->Align = alClient;
@@ -77,14 +77,7 @@ void __fastcall TSelectVersWindow::FormShow(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	//this->_pGsPanelSelectVers->IsVisibleSetTranslate = false; //Wybór tłumaczenia niewidoczny. MUSI być wywołany w metodzie OnShow(), okna!!!
-	//this->_pGsPanelSelectVers->IsVisibleIONoteEditors = false; //Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
-	//this->_pGsPanelSelectVers->DisplayStart();
-	/*
-	KOLEJNOŚĆ WYWOŁYWANIA:
-		1.GsPanelSelectVers::_SetupDisplayTranslate() -> GsPanelSelectVers::FIsSetTranslate
-		2.GsBarSelectVers::_SetupDisplayTranslate() -> GsBarSelectVers::FIsSetTranslate
-	*/
+	//
 }
 //---------------------------------------------------------------------------
 void __fastcall TSelectVersWindow::FormActivate(TObject *Sender)
@@ -95,14 +88,7 @@ void __fastcall TSelectVersWindow::FormActivate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->_pGsPanelSelectVers->IsVisibleSetTranslate = false; //Wybór tłumaczenia niewidoczny. MUSI być wywołany w metodzie OnShow(), okna!!!
-	//this->_pGsPanelSelectVers->IsVisibleIONoteEditors = false; //Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
-	//this->_pGsPanelSelectVers->DisplayStart();
-	/*
-	KOLEJNOŚĆ WYWOŁYWANIA:
-		1.GsPanelSelectVers::_SetupDisplayTranslate() -> GsPanelSelectVers::FIsSetTranslate
-		2.GsBarSelectVers::_SetupDisplayTranslate() -> GsBarSelectVers::FIsSetTranslate
-	*/
+	///
 }
 //---------------------------------------------------------------------------
 

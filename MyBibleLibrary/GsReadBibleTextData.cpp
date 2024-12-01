@@ -17,18 +17,23 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 */
 {
 	if(!pMainForm) throw(Exception("Błąd wyłuskania objektu głównego oka aplikacji"));
-	//---
-	GsReadBibleTextData::_GsImgListData = new TImageList(pMainForm);	//Inicjalizacja objektu klasy TImageList, z określeniem
-																																 //wymierów przyszłych obrazków na 16x16 pikseli w wersji nieaktywnej
+
+	//Inicjalizacja objektu klasy TImageList, z określeniem wymierów przyszłych obrazków na 16x16 pikseli w wersji aktywnej
+	GsReadBibleTextData::_GsImgListData = new TImageList(pMainForm);
 	if(! GsReadBibleTextData::_GsImgListData) throw(Exception("Błąd otwarcia objektu TImageList"));
 	GsReadBibleTextData::_GsImgListData->ColorDepth = cd32Bit;		 //Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListData->DrawingStyle = dsTransparent;
-	//---
-	GsReadBibleTextData::_GsImgListDataDisable = new TImageList(pMainForm);	 //Inicjalizacja objektu klasy TImageList, z określeniem
-																																				//wymierów przyszłych obrazków na 16x16 pikseli w wersji nieaktywnej
+	//Inicjalizacja objektu klasy TImageList, z określeniem wymierów przyszłych obrazków na 16x16 pikseli w wersji nieaktywnej
+	GsReadBibleTextData::_GsImgListDataDisable = new TImageList(pMainForm);
 	if(!GsReadBibleTextData::_GsImgListDataDisable) throw(Exception("Błąd otwarcia objektu TImageLists"));
 	GsReadBibleTextData::_GsImgListDataDisable->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListDataDisable->DrawingStyle = dsTransparent;
+	//Inicjalizacja objektu klasy TImageList, z określeniem wymiarów przyszłych obrazków na 32x3 2pikseli
+	GsReadBibleTextData::_GsImgListDataLarge = new TImageList(pMainForm);
+	if(!GsReadBibleTextData::_GsImgListDataLarge) throw(Exception("Błąd otwarcia objektu TImageLists"));
+	GsReadBibleTextData::_GsImgListDataLarge->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
+	GsReadBibleTextData::_GsImgListDataLarge->DrawingStyle = dsTransparent;
+	GsReadBibleTextData::_GsImgListDataLarge->Height = 32; GsReadBibleTextData::_GsImgListDataLarge->Width = 32;
 	//---
 	TIcon *pIcon=nullptr;
 	TMemoryStream *pMemoryStr=nullptr;
@@ -38,6 +43,13 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		if(!pIcon) throw(Exception("Błąd metody TIcon"));
 		pMemoryStr = new TMemoryStream();
 		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
+		//********************************** WERSJA IKON DUŻYCH NIEAKTYWNYCH **************************************
+		//--- 0.Ikona wersetu skopiowanego z modułu wyborów wersetów.
+		pMemoryStr->WriteBuffer(ID_SELECTVERS_LARGEICON, ARRAYSIZE(ID_SELECTVERS_LARGEICON)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//***************************************** WERSJA IKON AKTYWNYCH *****************************************
 		//--- 0.Ikona korzenia drzewiastej struktury Bibli
 		pMemoryStr->WriteBuffer(ID_ROOT_BOOKS, ARRAYSIZE(ID_ROOT_BOOKS)); //Zapis do strumienia danych

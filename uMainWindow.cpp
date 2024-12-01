@@ -154,10 +154,6 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	const UnicodeString custrNameMod  = TPath::GetFileName(Application->ExeName); // Zmiana makr ze względu na nazwe projektu //08-07-2024
-
-	//if(custrNameMod == Gl_custrModuleTestings)
-
 	Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
 
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
@@ -272,18 +268,16 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	if(!GsReadBibleTextData::IsInitLibrary) throw(Exception("Błąd inicjalizacji głównej bilioteki do pracy i analizy pisma Świętego!"));
 	GsReadBibleTextData::CreateTreeBooks(this->TabSheetBooks, this->PageControlBibleText);
 	//----- Odzcyt wersji biblioteki
-	UnicodeString ustrVersion = Library::GetInfo(), ustrVersionCompilator;
+	UnicodeString ustrVersion = Library::GetInfo();
+	const UnicodeString custrNameMod = TPath::GetFileNameWithoutExtension(Application->ExeName); //10-11-2024
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 
-	if(__CODEGEARC__ == 0x0760) ustrVersionCompilator = "C++Builder v11.3 - Alexandria";
-	if(__CODEGEARC__ == 0x0770) ustrVersionCompilator = "C++Builder v12.0(1) - Athens";
-
-	#if defined(_WIN64)
-		this->Caption = Format("Moja Biblia NG wersja x64 v%s © Grzegorz Sołtysik. Kompilator %s [Oświęcim Date: %s Time: %s.]",
-			ARRAYOFCONST((ustrVersion, ustrVersionCompilator, __DATE__, __TIME__)));
-	#else
-		this->Caption = Format("Moja Biblia NG wersja x32 v%s © Grzegorz Sołtysik. Kompilator %s [Oświęcim Date: %s Time: %s.]",
-			ARRAYOFCONST((ustrVersion, ustrVersionCompilator, __DATE__, __TIME__)));
+	#if defined(_WIN64) //10-11-2024
+		this->Caption = Format("%s wersja x64 v%s © Grzegorz Sołtysik [Oświęcim Date: %s Time: %s.]",
+			ARRAYOFCONST((custrNameMod, ustrVersion, __DATE__, __TIME__)));
+	#else //10-11-2024
+		this->Caption = Format("%s wersja x32 v%s © Grzegorz Sołtysik [Oświęcim Date: %s Time: %s.]",
+			ARRAYOFCONST((custrNameMod, ustrVersion, __DATE__, __TIME__)));
 	#endif
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);

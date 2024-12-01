@@ -74,7 +74,6 @@ class GsChildBibleScheme : public GsCoreBibleScheme
 	TTreeNode *_NodeObjectScheme=nullptr;
 	UnicodeString _ustrCommentChild; //Komentarz
 	//---
-	THashedStringList *_SListVers=nullptr; //Lista wersetów ze wszystkich tłumaczeń
 	void __fastcall _ViewSelectObject(); //Wyświetlenie wersetu wybranego objektu
   void __fastcall _SelectTreeObject();
 	protected:

@@ -62,14 +62,13 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	UnicodeString ustrText;
 	//Inicjalizacja listy potomków
 	this->_ListChildren = new TList();
 	if(!this->_ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->StyleElements = TStyleElements();
-	this->_SListVers = new THashedStringList(); //Lista wersetów ze wszystkich tłumaczeñ
-	if(!this->_SListVers) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	//---
 	this->ParentColor = false;
 	this->Color = ColorObject[enColorNum_Active];
@@ -81,17 +80,15 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	this->Parent = dynamic_cast<TWinControl *>(Owner);
 	if(!this->Parent) throw(Exception("Błąd tworzenia objektu, klasy GsChildBibleScheme"));
 
-	//this->_pGsMasterBibleScheme = CommonData::pComGsMasterBibleScheme;//dynamic_cast<GsMasterBibleScheme *>(CommonData::pComGsScrollBibleScheme->Parent);
-	//if(!this->_pGsMasterBibleScheme) throw(Exception("Błąd wyluskania wskaźnika na objekt, klasy GsMasterBibleScheme"));
 	//---
 	this->Text = CommonData::pComGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
 	this->Width = this->Canvas->TextWidth(this->Text) + 24;
 	this->Height = this->Canvas->TextHeight(this->Text) + 24;
-	CommonData::pComGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(this->_SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
 	//Wypelnianie pól adresu wersetu
 	CommonData::pComGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(this->_ucBook, this->_ucChapt, this->_ucVers, this->_ucTrans);
+	GsReadBibleTextData::GetTextVersOfAdress(this->_ucBook, this->_ucChapt+1, this->_ucVers, this->_ucTrans, ustrText);
 	//Podpowiedź w formie zawartości wersetu codeString
-	this->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((this->Text, this->_SListVers->Strings[this->_ucTrans])));
+	this->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((this->Text, ustrText)));
 }
 //---------------------------------------------------------------------------
 __fastcall	GsChildBibleScheme::~GsChildBibleScheme()
@@ -107,7 +104,6 @@ __fastcall	GsChildBibleScheme::~GsChildBibleScheme()
 	//Kasowanie wszystkich potomków
 	{
 		GsChildBibleScheme *pGsChildBibleScheme = static_cast<GsChildBibleScheme *>(this->_ListChildren->Items[i]);
-		//if(!pGsChildBibleScheme) throw(Exception("Błąd wyłuskania objektu, klasy GsChildBibleScheme"));
 		if(pGsChildBibleScheme)
 		{
 			//Kasowanie potomka z listy głównej
@@ -121,8 +117,6 @@ __fastcall	GsChildBibleScheme::~GsChildBibleScheme()
 	//Kasowanie objektu z listy głównej
 	iIndex = CommonData::pComGsDrawPanelBibleScheme->_GsChildBibleSchemeList->IndexOf(this);
 	if(iIndex > -1) CommonData::pComGsDrawPanelBibleScheme->_GsChildBibleSchemeList->Delete(iIndex);
-
-	if(this->_SListVers) {delete this->_SListVers; this->_SListVers = nullptr;} //Lista wersetów ze wszystkich tłumaczeñ
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChildBibleScheme::MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -819,7 +813,8 @@ void __fastcall GsDrawPanelBibleScheme::_SetObjectName()
 {
 	GsChildBibleScheme *pGsChildBibleScheme = this->_pSelectObject;
 	GsScrollBibleScheme *pGsScrollBibleScheme = static_cast<GsScrollBibleScheme *>(this->Parent);
-  GsMasterBibleScheme *pGsMasterBibleScheme = nullptr;
+	GsMasterBibleScheme *pGsMasterBibleScheme = nullptr;
+  UnicodeString ustrText;
 
 	if(pGsScrollBibleScheme)
 		{pGsMasterBibleScheme = static_cast<GsMasterBibleScheme *>(pGsScrollBibleScheme->Parent);}
@@ -831,13 +826,12 @@ void __fastcall GsDrawPanelBibleScheme::_SetObjectName()
 		{
 			pGsChildBibleScheme->Caption = pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectVers();
 			pGsChildBibleScheme->_NodeObjectScheme->Text = pGsChildBibleScheme->Caption;
-			pGsChildBibleScheme->_SListVers->Clear(); //Lista wersetów ze wszystkich tłumaczeń
-
-			pGsMasterBibleScheme->_pGsBarSelectVers->SetSListVers(pGsChildBibleScheme->_SListVers); //Wypełnienie listy wszystkimi tłumaczeniami danego wersetu.
 			//Wypelnianie pól adresu wersetu
 			pGsMasterBibleScheme->_pGsBarSelectVers->GetSelectAdress(pGsChildBibleScheme->_ucBook, pGsChildBibleScheme->_ucChapt, pGsChildBibleScheme->_ucVers, pGsChildBibleScheme->_ucTrans);
-			//Podpowiedź w formie zawartości wersetucodeString
-			pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->Caption, pGsChildBibleScheme->_SListVers->Strings[pGsChildBibleScheme->_ucTrans])));
+			GsReadBibleTextData::GetTextVersOfAdress(pGsChildBibleScheme->_ucBook, pGsChildBibleScheme->_ucChapt,
+				pGsChildBibleScheme->_ucVers, pGsChildBibleScheme->_ucTrans, ustrText);
+			//Podpowiedź w formie zawartości wersetu codeString
+			pGsChildBibleScheme->Hint = Format("%s\n\"%s\"", ARRAYOFCONST((pGsChildBibleScheme->Caption, ustrText)));
 
 			pGsChildBibleScheme->_ViewSelectObject();
 		}

@@ -31,6 +31,7 @@ class GsReadBibleTextData : public TObject
 	friend class MyObjectVers;
 	friend class GsBarSelectVers;
 	friend class GsPanelSelectVers;
+  friend class GsControlListVers;
 	friend class GsTabSheetSelectVersClass;
 	friend class GsLViewDictionaryClass;
 	friend class GsListBoxSelectedVersClass;
@@ -42,8 +43,9 @@ class GsReadBibleTextData : public TObject
 		static void __fastcall GsInitGlobalImageList(TForm *pMainForm);	 //Inicjalizacja zmiennych klasy
 		static void __fastcall GsFreeGlobalImageList();	 //Likwidacja zmiennych klasy
 		//---
-		static inline TImageList *_GsImgListData=nullptr; //Globalna lista grafik
-		static inline TImageList *_GsImgListDataDisable=nullptr; //Globalna lista grafik nieaktywnych
+		static inline TImageList *_GsImgListData=nullptr, //Globalna lista grafik 16x16
+														 *_GsImgListDataDisable=nullptr, //Globalna lista grafik nieaktywnych 16x16
+														 *_GsImgListDataLarge=nullptr; //Globalna lista grafik 32x32
 		static inline TPageControl *_GsPageControl=nullptr; //Wskaźnik na objekt klasy TPageControl z zakładkami do wyświetlania tekstów biblinych
 		static inline TTaskbar *_GsTaskBar=nullptr;	//Wskaźnik na objekt, klasy TTaskBar
 		static inline TBalloonHint *_GsBalloonHint=nullptr; //Globalna klasa podpowiedzi, zdefiniowana w konstruktorze klasy GsTreeBibleClass

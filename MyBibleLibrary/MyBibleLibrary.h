@@ -14,7 +14,7 @@
 	Klasa GsBarSelectVers - Klasa przycisków na zakładce, z wybranym rozdziałem
 	Klasa GsPanelSelectVers - Klasa główna w oknie wyboru pojedyńczego wersetu
 	Klasa GsTabSheetSelectVersClass - Klasa pochodna TTabSheet
-	Klasa GsListBoxVersClass - Klasa pochodna TCustomListBox, wyświetlająca aktualnie wybrany werset na głównej zakładce okna, w formie listy wybieralnej
+	Klasa GsControlListVers - Klasa pochodna TCustomControlListVers, wyświetlająca aktualnie wybrany werset na głównej zakładce okna, w formie listy wybieralnej
 	Klasa GsLViewDictionaryClass - Klasa pochodna TCustomListView, jest klasą słownika i konkordancji grecko-polskiej
 	Klasa GsLViewCommentsAllClass - Klasa listy wszystkich komentarzy do wersetów biblijnych
 	Klasa GsListBoxFavoritiesClass - Klasa listy ulubionych wersetów
@@ -32,6 +32,7 @@
 #include <Vcl.OleCtrls.hpp> //TWebBrowser
 #include <Vcl.Grids.hpp> //TStringGrid
 #include <Vcl.Taskbar.hpp>//TTaskBar
+#include <Vcl.ControlList.hpp> //TCustomControlList
 #include <System.Contnrs.hpp>
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
@@ -210,8 +211,8 @@ class GsReadBibleTextItem : public TObject
 	friend class GsBarSelectVers;
 	friend class GsListItemTranslates; //Przyjaźń - GsListItemTranslates wywołuje destruktor
 	//---
-	GsReadBibleTextItem(const UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
-	virtual ~GsReadBibleTextItem();
+	__fastcall GsReadBibleTextItem(const UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
+	__fastcall virtual ~GsReadBibleTextItem();
 	//---
 	//Tablica wskaźników do klasy THashedStringList wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
 	GsHashedStringListItem *_pGsHListAllListBooks[GlobalVar::Global_NumberBooks];	 //73 wskaźniki (tablica) na GsHashedStringListItem
@@ -226,7 +227,8 @@ class GsReadBibleTextItem : public TObject
 								 uiIndexTranslate; //Numer tłumaczenia
 		unsigned char ucCountBooks, //Ilość ksiąg w tłumaczeniu (oryginalne tłumaczenia, katolickie)
 									ucStartBook;	 //Od numeru jakiej księgi zaczyna się tłumaczenie
-    bool IsActiveTranslate;	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
+		bool IsActiveTranslate=true,	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
+				 IsApocryfic=false; // Czy tłumaczenie jest apokryficzne
 };
 /****************************************************************************
  *												Klasa GsReadBibleTextClass												*
@@ -449,6 +451,8 @@ class GsTabSetClass : public TTabSet //Klasa cała jest prywatna
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
+		virtual void __fastcall DrawTab(Vcl::Graphics::TCanvas* TabCanvas, const Winapi::Windows::TRect &R, int Index, bool Selected);
+		virtual int __fastcall GetImageIndex(int TabIndex);
 };
 /**********************************************************************************
  *														KLASA GsBarSelectVers																*
@@ -463,44 +467,33 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
 															 const unsigned char _cucVers=1, bool bSelectComment=false);
 		__fastcall virtual ~GsBarSelectVers();
 		//---
-		__property bool IsExtendButton = {read = _FbExtendentButt, nodefault};
-		//---
 		inline UnicodeString __fastcall GetSelectVers() {return this->_pSTextSelect->Caption;};
-		THashedStringList *__fastcall GetSListVers(); //Wypełnienie string listy this->_pHSListSelectVers, wszystkich tłumaczeń, wybranym wersetem
-		void __fastcall SetSListVers(THashedStringList *pToFillSList); //Wypełnienie string listy zewnętrznej wybanym wersetem ze wszystkich tłumaczeń
 		inline int __fastcall GetSelectTranslate() {return this->_FucSelectTranslate;} //Metoda zwraca numer wybranego tłumaczenia
 		void __fastcall GetSelectAdress(unsigned char &_usBook, unsigned char &_usChapt, unsigned char &_usVers, unsigned char &_ucTranslate); //Informacja o adresie wersetu
 	private:
-  	bool _bFirstResize,	//Startowe skalowanie (true)
-				 _FbBarSelectComment, //Wybrałeś komentarz w liście komentarzy w głównym oknie
-				 _FbExtendentButt=true, //Wyświetlanie dodatkowych przycisków
-  			 _bIsFirstStart=true; //Pierwsze uruchomienie (true, póżniej false) //[25-10-2023]
   	TToolButton *_pButBooks=nullptr,			//Wybór księgi
 								*_pButChapt=nullptr,			//Wybór rozdziału
   							*_pButVers=nullptr,				//Wybór wersetu
-  							*_pButTranslates=nullptr, //Wybór tłumaczenia
-  							*_pButDisplay=nullptr,		//Pokaż wybrany werset
-  							*_pButNextVers=nullptr,		//Następny werset
+								*_pButNextVers=nullptr,		//Następny werset
   							*_pButPrevVers=nullptr,		//Poprzedni werset
   							*_pButCopyToSheet=nullptr,//Przeniesienie tekstu na zakładkę
   							*_pSelectFavCBox=nullptr,//Czy werset należy do ulubionych
-  							*_pSaveNoteToVers=nullptr,//Zapis komentarza do aktualnego wersetu
+								*_pSaveNoteToVers=nullptr,//Zapis komentarza do aktualnego wersetu
   							*_pDeleteNoteVers=nullptr;//Kasowanie komentarza do aktualnego wersetu
   	//---
   	TPopupMenu *_pPMenuBooks=nullptr;			//Popup menu z listą ksiąg biblijnych
   	TPopupMenu *_pPMenuChapt=nullptr;			//Popup menu z listą rozdziałów
   	TPopupMenu *_pPMenuVers=nullptr;			//Popup menu z listą wersetów
-  	TPopupMenu *_pPMenuTranslates=nullptr;//Popup menu z listą tłumaczeń
-  	TStaticText *_pSTextSelect=nullptr;	//Wybrany werset
-  	//TBalloonHint *_pBalloonHint;
-  	//--- Wybrane pozycje z TPopupMenu
+		TStaticText *_pSTextSelect=nullptr;	//Wybrany werset
+
+		TList *_pBSListAllFullTranslates=nullptr; //Lista wszystkich tłumaczeń
+		//--- Wybrane pozycje z TPopupMenu
   	unsigned char _FucSelectBook,							//Wybrana księga
   								_FucSelectChapt,						//Wybrany rozdział
   								_FucSelectVers,							//Wybrany werset
-  								_FucSelectTranslate;				//Wybrane tłumaczenie
+									_FucSelectTranslate;				//Wybrane tłumaczenie
 
-  	THashedStringList *_pHSListSelectVers; //THashedStringLista wszystkich tłumaczeń wybranego wersetu
-  	GsPanelSelectVers *_pGsPanelSelectVers; //Wskaźnik na rodzica
+		GsPanelSelectVers *_pGsPanelSelectVers; //Wskaźnik na rodzica
   	//---
   	void __fastcall _CreatePMenuBooks(); //Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
   	void __fastcall _OnClick_PMenu(System::TObject* Sender);
@@ -528,16 +521,9 @@ class GsPanelSelectVers	 : public TCustomPanel
 {
 	friend class GsBarSelectVers;
 	public:
-		__fastcall GsPanelSelectVers(TComponent* Owner, const unsigned char _cucBook=0, const unsigned char _cucChapt=0, const unsigned char _cucVers=1, bool bSelectComment=false);
+		__fastcall GsPanelSelectVers(TComponent* Owner, const unsigned char _cucBook=0, const unsigned char _cucChapt=0, const unsigned char _cucVers=1);
 		__fastcall virtual ~GsPanelSelectVers();
 		//---
-		//Widoczność (true), lub nie (false), możliwości wyboru tłumaczenie
-		__property bool IsVisibleSetTranslate = {read=FIsVisibleSetTranslate, write=_SetDisplayTranslate, default=true}; //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
-		__property bool IsEditComments = {read=FIsEditComments, write=_SetEditComments, default=true}; //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (false)
-		__property bool IsVisibleAccessories = {read=FIsVisibleAccessories, write=_SetIsVisibleAccessories, default=false}; //Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
-		__property bool IsVisibleIONoteEditors = {read=FVisibleIONoteEditors, write=_SetVisibleIONoteEditors, default=false};//Czy mają być wyświetlane w edytorze notatek przyciski (IO) zapisu i odczytu.
-		//Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
-		__property bool IsPanelText = {read=FIsPanelText, write=_SetDisplayText, default=true};
 		inline void __fastcall DisplayStart() {this->_pGsBarSelectVers->_DisplayVers();}; //Wyświetla wybrany werset
 		//---
 		unsigned char ucSetBook,
@@ -547,22 +533,12 @@ class GsPanelSelectVers	 : public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
-		GsBarSelectVers *_pGsBarSelectVers=nullptr;;
-		GsEditorClass *_pEditComment=nullptr;; //Zlikwidować, lub zamienić nas wskaźnik, na klasę GsEditorClass
-		bool FIsVisibleSetTranslate=false, //Czy ma być wyświetlany przycisk, z rozwijalną listą, do wyboru przekładu, domyślnie true, czyli tak.
-				 FIsPanelText=true,			 //Czy objekt klasy GsBarSelectVers, ma być wyświetlanu sam bez panelu z zawartością wybranego wersetu, domyślnie tak (true)
-				 FIsEditComments=true,	 //Czy ma być wyświetlany objekt do pisania komentarzy, domyślnie nie (true)
-				 FIsVisibleAccessories=true,//Czy mają być wyświetlane dodatkowe prayciski: kopiowania zawartości na nowa zakładkę, wyświetlanie odznaczania ulubionego wersetu
-				 FVisibleIONoteEditors=true,//Czy mają być wyświetlane w edytorze notatek przyciski zapisu i odczytu.
-				 FbSelectComment; //Wybrałeś komentarz w liście komentarzy w głównym oknie
+		//---
+		GsBarSelectVers *_pGsBarSelectVers=nullptr;
+		GsEditorClass *_pEditComment=nullptr;
 		TWebBrowser *_pWebBrowser=nullptr;
 		TStringGrid *_pSGridInterlinearVers=nullptr; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
 		//---
-		void __fastcall _SetDisplayTranslate(bool bIsDisplay);
-		void __fastcall _SetEditComments(bool bIsComments);
-		void __fastcall _SetDisplayText(bool bIsDisplay);
-		void __fastcall _SetVisibleIONoteEditors(bool bIsDisplayIO);
-		void __fastcall _SetIsVisibleAccessories(bool bIsAccess);
 		void __fastcall _DisplayInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla greckiego oryginału
 		void __fastcall _DrawGridInterlinearVersCell(System::TObject* Sender, int ACol, int ARow, const System::Types::TRect &Rect, TGridDrawState State);
 };
@@ -570,36 +546,44 @@ class GsPanelSelectVers	 : public TCustomPanel
  *										 KLASA GsTabSheetSelectVersClass											*
  *	Klasa wizualna zakładki do wyświetlania zawartości ulubionych wersetów	*
  ****************************************************************************/
-class GsListBoxVersClass; //Lista wybranych wersetów dodanych z objektu, klasy GsPanelSelectVers (INNY WYBÓR!!!)
+class GsControlListVers;
 class GsTabSheetSelectVersClass : public TTabSheet //Klasa całkowicie PRYWATNA!
 {
 	friend class GsBarSelectVers;
+	friend class GsControlListVers;
+
 	__fastcall GsTabSheetSelectVersClass(TComponent* Owner);
 	__fastcall virtual ~GsTabSheetSelectVersClass();
 	//---
-	//void __fastcall _AddSelectvers()
-	GsListBoxVersClass *pGsListBoxVersClass=nullptr;
+	GsControlListVers *pGsControlListVers=nullptr;
+
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 };
 /****************************************************************************
-*												 Klasa GsListBoxVersClass														*
+*												 Klasa GsControlListVers														*
 *			Wyświetlanie wybranego wersetu w głównej zakładce, w głównym oknie		*
 *****************************************************************************/
-class GsListBoxVersClass : public TCustomListBox
+class GsControlListVers : public TCustomControlList
 {
 	friend class GsBarSelectVers;
 	public:
-		__fastcall GsListBoxVersClass(TComponent* Owner);
-		__fastcall virtual ~GsListBoxVersClass();
+		__fastcall GsControlListVers(TComponent* Owner);
+		__fastcall virtual ~GsControlListVers();
 	protected:
-		void __fastcall DrawItem(int Index, const TRect &Rect, TOwnerDrawState State);
-		void __fastcall MeasureItem(int Index, int &Height);
-		DYNAMIC void __fastcall Resize(void);
-		virtual void __fastcall CreateWnd();
+    virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
+		virtual void __fastcall DoBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+			const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState);
+		virtual void __fastcall DoItemClicked();
 	private:
+    //Składowe objektu klasy GsControlListVers
+		TLabel *pLabelAdress=nullptr, *pLabelText=nullptr, *pLabelTranslate=nullptr;
+		TImage *pImageVers=nullptr;
+		THashedStringList *pHSListVerses=nullptr;
+		//---
+    void __fastcall ControlListEnableItem(const int AIndex, bool &AEnabled);
 };
 /****************************************************************************
 *		 Klasa całkowicie PRYWATNA DataGrecWordDictClass, pomocnicz klasa				*
