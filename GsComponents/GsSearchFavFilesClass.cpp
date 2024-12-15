@@ -42,6 +42,7 @@ __fastcall GsSearchFavFilesClass::GsSearchFavFilesClass(TComponent* Owner) : TCu
 
 	this->ViewStyle = TViewStyle::vsIcon;
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->DoubleBuffered = true;
 	//this->MultiSelect = true;
 	this->ReadOnly = true;

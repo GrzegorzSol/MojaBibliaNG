@@ -39,6 +39,7 @@ __fastcall GsCoreBibleScheme::GsCoreBibleScheme(TComponent* Owner) : TGraphicCon
 */
 {
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->ParentFont = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsCoreBibleScheme::~GsCoreBibleScheme()
@@ -68,6 +69,7 @@ __fastcall GsChildBibleScheme::GsChildBibleScheme(TComponent* Owner, PReadWriteD
 	if(!this->_ListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	//---
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->StyleElements = TStyleElements();
 	//---
 	this->ParentColor = false;
@@ -261,6 +263,7 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
 */
 {
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->DoubleBuffered = true;
 	this->StyleElements = TStyleElements();
 	//this->AutoSize = true;
@@ -271,6 +274,7 @@ __fastcall GsDrawPanelBibleScheme::GsDrawPanelBibleScheme(TComponent* Owner) : T
   this->_pComment = new TMemo(this);
 	if(!this->_pComment) throw(Exception("Nie dokonano inicjalizacji objektu TMemo"));
 	this->_pComment->Parent = this;
+	this->_pComment->ParentFont = true;
 	this->_pComment->Width = 200; this->_pComment->Height = 100;
 	this->_pComment->Ctl3D = false;
 	this->_pComment->EditMargins->Left = 2; this->_pComment->EditMargins->Right = 2;
@@ -866,6 +870,7 @@ __fastcall GsScrollBibleScheme::GsScrollBibleScheme(TComponent* Owner) : TScroll
 */
 {
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->DoubleBuffered = true;
 	this->HorzScrollBar->Tracking = true;
 	this->VertScrollBar->Tracking = true;
@@ -942,6 +947,7 @@ __fastcall GsMasterBibleScheme::GsMasterBibleScheme(TComponent* Owner) : TCustom
 	//---
 	this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->StyleElements = TStyleElements();
 	this->Color = clWebAzure;
   this->_SListOldConfig = new TStringList(); //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
@@ -1007,6 +1013,7 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	this->_pVersDisplayText = new TLabel(this); //Wyświetlenie wybranego wersetu
 	if(!this->_pVersDisplayText) throw(Exception("Błąd inicjalizacji objektu TLabel"));
 	this->_pVersDisplayText->Parent = this;
+  this->_pVersDisplayText->ParentFont = true;
 	this->_pVersDisplayText->StyleElements = TStyleElements();
 	this->_pVersDisplayText->Align = alBottom;
 	this->_pVersDisplayText->Color = clCream;
@@ -1026,6 +1033,7 @@ void __fastcall GsMasterBibleScheme::CreateWnd()
 	this->_pGsTreeBibleScheme = new GsTreeBibleScheme(this);
 	if(!this->_pGsTreeBibleScheme) throw(Exception("Błąd inicjalizacji objektu GsTreeBibleScheme"));
 	this->_pGsTreeBibleScheme->Parent = this;
+	//this->_pGsTreeBibleScheme->ParentFont = true;
 	this->_pGsTreeBibleScheme->Align = alLeft;
 	this->_pGsTreeBibleScheme->Width = 200;
 
@@ -1311,6 +1319,7 @@ __fastcall GsTreeBibleScheme::GsTreeBibleScheme(TComponent* Owner) : TCustomTree
 {
   this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->StyleElements = TStyleElements();
 	this->ReadOnly = true;
 	this->Color = clCream;

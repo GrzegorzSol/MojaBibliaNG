@@ -63,6 +63,8 @@ const UnicodeString custrSep = "SEP", //Nazwa domyślna separatora
 										ustrNameFont[] = {"Arial", "Tahoma", "Verdana", "Times New Roman", "Courier New", "DejaVu Sans"},
 										//Wielkości czcionek
 										ustrSizeFont[] = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "28"};
+enum {EnSizeFont_8, EnSizeFont_9, EnSizeFont_10, EnSizeFont_11, EnSizeFont_12, EnSizeFont_14,
+			EnSizeFont_16, EnSizeFont_18, EnSizeFont_20, EnSizeFont_24, EnSizeFont_28, EnSizeFont_Count};
 
 __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 /**
@@ -75,6 +77,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTImageListActive = new TImageList(this);
 	if(!this->pTImageListActive) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->pTImageListActive->ColorDepth = cd32Bit;		 //Głębia kolorów przyszłych obrazków
 	this->pTImageListActive->DrawingStyle = dsTransparent;
 		//
@@ -91,6 +94,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pSBar = new TStatusBar(this);
 	if(!this->pSBar) throw(Exception("Nie dokonano inicjalizacji objektu TStatusBar"));
 	this->pSBar->Parent = this;
+	this->pSBar->ParentFont = true;
 	this->pSBar->ShowHint = true;
 	this->pSBar->Hint = "Informacje";
 	this->pSBar->Font->Quality = TFontQuality::fqClearType;
@@ -98,6 +102,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTRichEdit = new TRichEdit(this);
 	if(!this->pTRichEdit) throw(Exception("Nie dokonano inicjalizacji objektu TRichEdit"));
 	this->pTRichEdit->Parent = this;
+  this->pTRichEdit->ParentFont = true;
 	this->pTRichEdit->Align = alClient;
 	this->pTRichEdit->Font->Quality = TFontQuality::fqClearType;
 	this->pTRichEdit->StyleElements = TStyleElements();
@@ -243,7 +248,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			{
 				this->pCBoxSelectFontSize->Items->Add(ustrSizeFont[iLicz]);
 			}
-			this->pCBoxSelectFontSize->ItemIndex = 0;
+			this->pCBoxSelectFontSize->ItemIndex = EnSizeFont_12;
 			//---
 			pLabel = new TLabel(this->pToolBar);
 			if(!pLabel) throw(Exception("Błąd inicjalizacji klasy TLabel"));
@@ -435,7 +440,7 @@ void __fastcall GsEditorClass::_InitInterface()
 	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
 	//this->pTRichEdit->SelAttributes->Name = this->pCBoxSelectFontName->Text;
 	//this->pTRichEdit->SelAttributes->Size = StrToIntDef(this->pCBoxSelectFontSize->Items->Strings[this->pCBoxSelectFontSize->ItemIndex], 8);
-	this->pTRichEdit->Font->Size = 8;
+	this->pTRichEdit->Font->Size = this->pCBoxSelectFontSize->Text.ToIntDef(12);
 	this->pTRichEdit->Font->Name = "Arial";
 	this->pTRichEdit->Font->Color = clBlack;
 	this->pTRichEdit->Color = clWhite;

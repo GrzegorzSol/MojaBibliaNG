@@ -20,6 +20,10 @@ TSearchTextWindow *SearchTextWindow;
 	GsDebugClass::WriteDebug("");
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+catch(Exception &e)
+{
+	MessageBox(NULL, e.Message.c_str() , TEXT("Błąd"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+}
 */
 //---
 enum {	//Numery zakładek w ustawieniach wyszukiwania
@@ -66,7 +70,7 @@ const static UnicodeString ustrInoRegSearch = UnicodeString(". - (kropka)=dowoln
 		"^ - dopasuj występujące po operatorze wyrażenie do początku wiersza (początek linii)\n" +
 		"$ - dopasuj poprzedzające wyrażenie do końca wiersza (koniec linii)\n" +
 		"\\x - znaki specjalne, gdzie	 x to znak specjalny np. \\$ zastąpi znak dolara\n" +
-		"[lista] - zastępuje dowolny znak spośród tych wymienionych na liście, mogą to być, przedziały np. [0-9] lub [a-d]\n" +
+		"[lista] - wyszukuje dowolny znak spośród tych wymienionych na liście, mogą to być, przedziały np. [0-9] lub [a-d]\n" +
 		"[^lista] - pasuje do znaku nie podanego na liście\n" +
 		"\\< - początek słowa\n" +
 		"\\> - koniec słowa\n" +
@@ -78,7 +82,12 @@ const static UnicodeString ustrInoRegSearch = UnicodeString(". - (kropka)=dowoln
 		"a|b - dopasuje wyrażenie	 a lub wyrażenie	b\n" +
 		"*	 - dopasuj zero lub więcej wyrażeń znaku poprzedzający operator\n" +
 		"+	 - jeden lub więcej elementów poprzedzających operator\n" +
-		"{n} - poprzedzający element pasuje dokładnie n razy",
+		"{n} - poprzedzający element pasuje dokładnie n razy\n\n" +
+		"\tGRUPOWANIE - kilka zastosowań grupowań:\n" + //[11-12-2024]
+		"\" [0-7]\" – znajdź dowolną liczbę pomiędzy 0 a 7 poprzedzoną spacją.\n" +
+		"\"a.[0-9]\" – poszukaj ciąg zaczynający się od \"a\", po którym następuje dowolny znak, a następnie cyfra.\n" +
+		"\"[A-Z, ]\" – znajdź wszystkie duże litery, przecinki i spacje\n" +
+		"\"(a|b|r)* \" – ciąg, który składa się z samych liter \"a\" lub \"b\" lub \"r\" i kończy się spacją\n",
 													ustrTextLogoSearch = "DzAp 17:11\n\"...przyjęli oni Słowo z całą gotowością i codziennie BADALI Pisma, czy tak się rzeczy mają\"";
 //Nazwy kolumn dla listy statystyki
 const static UnicodeString ustrNameColumn[] = {"Nazwa księgi", "Ilość wystąpień", "Wskaźnik"};
@@ -383,12 +392,26 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 				//---
 				if(this->STW_ChBoxIsRegEx->Checked) //Wyszukiwanie za pomocą wyrażeń regularnych
 				{
-					if(System::Regularexpressions::TRegEx::IsMatch(pBookListText->Strings[i], this->STW_CBoxHistorySearchText->Text, regOptions))
+					try
 					{
-						this->_pHSListSearchResult->AddObject(pBookListText->Strings[i].SubString(10, ciSizeCutString), pBookListText->Objects[i]);
-						//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-						++MyDataStatistic->uiCountFind;
+				  	try
+				  	{
+				  		if(System::Regularexpressions::TRegEx::IsMatch(pBookListText->Strings[i], this->STW_CBoxHistorySearchText->Text, regOptions))
+				  		{
+				  			this->_pHSListSearchResult->AddObject(pBookListText->Strings[i].SubString(10, ciSizeCutString), pBookListText->Objects[i]);
+				  			//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
+				  			++MyDataStatistic->uiCountFind;
+				  		}
+						}
+				  	catch(Exception &e) //[11-12-2024]
+				  	{
+				  		MessageBox(NULL, e.Message.c_str() , TEXT("Błąd wyszukiwania za pomocą wyrażeń regularnych.\nPrawdopodobnie zastosowano niewłaściwy wzorzec"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+						}
 					}
+					__finally
+					{
+
+          }
 				}
 				else //Wyszukiwanie tradycyjne
 				{
@@ -1016,33 +1039,40 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 
 	try
 	{
-		for(int i=0; i<_pHListAnyVers->Count; ++i)
+		try
 		{
-			if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
-			pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
-			if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
-			//Dodawanie kolejnego wersetu
-			ustrTemp = Format(UnicodeString("<p>\n") +
-				"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
-				ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i])));
-			pStringStream->WriteString(ustrTemp);
-			//pStringStream->WriteString("<br>");
-			pStringStream->WriteString("</p>\n\n");
+	  	for(int i=0; i<_pHListAnyVers->Count; ++i)
+	  	{
+	  		if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
+	  		pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
+	  		if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
+	  		//Dodawanie kolejnego wersetu
+	  		ustrTemp = Format(UnicodeString("<p>\n") +
+	  			"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
+	  			ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i])));
+	  		pStringStream->WriteString(ustrTemp);
+	  		//pStringStream->WriteString("<br>");
+	  		pStringStream->WriteString("</p>\n\n");
+			}
+	  	pStringStream->WriteString("</body>\n</html>\n");
+	  	//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
+	  	pStringStream->Position = 0;
+	  	//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
+	  	if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
+	  	{
+	  		this->_ustrResultSearchHTML = ""; //[10-10-2023]
+	  		this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
+	  	}
+	  	//---
+	  	IPersistStreamInit *psi;
+	  	_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+	  	if(SUCCEEDED(_pWebBrowser->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+				{psi->Load(sa);}
 		}
-		pStringStream->WriteString("</body>\n</html>\n");
-		//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
-		pStringStream->Position = 0;
-		//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
-		if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
+		catch(Exception &e)
 		{
-			this->_ustrResultSearchHTML = ""; //[10-10-2023]
-			this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
+			MessageBox(NULL, e.Message.c_str() , TEXT("Błąd"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
-		//---
-		IPersistStreamInit *psi;
-		_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
-		if(SUCCEEDED(_pWebBrowser->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
-			{psi->Load(sa);}
 	}
 	__finally
 	{

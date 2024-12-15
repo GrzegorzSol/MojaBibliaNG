@@ -8,7 +8,7 @@ object SchemeVersWindow: TSchemeVersWindow
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
@@ -18,29 +18,22 @@ object SchemeVersWindow: TSchemeVersWindow
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
-  TextHeight = 13
+  TextHeight = 16
   object LabelNameProject: TLabel
     AlignWithMargins = True
     Left = 3
     Top = 46
     Width = 1038
-    Height = 19
+    Height = 16
     Align = alTop
     Alignment = taCenter
     Caption = 'Nazwa projektu: Bez nazwy'
     Color = clHighlight
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWhite
-    Font.Height = -16
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    Font.Quality = fqClearType
     ParentColor = False
-    ParentFont = False
     Transparent = False
     Layout = tlCenter
     StyleElements = [seClient, seBorder]
-    ExplicitWidth = 194
+    ExplicitWidth = 158
   end
   object ActToolBarScheme: TActionToolBar
     Left = 0
@@ -58,8 +51,8 @@ object SchemeVersWindow: TSchemeVersWindow
     EdgeBorders = [ebBottom]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Tahoma'
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
     Font.Style = []
     ParentFont = False
     ParentShowHint = False

@@ -10,7 +10,7 @@ object SelectVersWindow: TSelectVersWindow
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
@@ -19,5 +19,5 @@ object SelectVersWindow: TSelectVersWindow
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  TextHeight = 13
+  TextHeight = 16
 end

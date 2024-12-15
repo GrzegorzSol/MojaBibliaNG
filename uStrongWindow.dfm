@@ -3,12 +3,12 @@ object StrongWindow: TStrongWindow
   Top = 0
   Caption = 'S'#322'ownik hebrajsko-grecko-polski Stronga'
   ClientHeight = 922
-  ClientWidth = 708
+  ClientWidth = 804
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -12
+  Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
   Font.Quality = fqClearType
@@ -16,19 +16,19 @@ object StrongWindow: TStrongWindow
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  TextHeight = 15
+  TextHeight = 17
   object PanelSetStrong: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 702
+    Width = 798
     Height = 36
     Align = alTop
     BevelOuter = bvNone
     Caption = 'PanelSetStrong'
     ShowCaption = False
     TabOrder = 0
-    ExplicitWidth = 698
+    ExplicitWidth = 702
     object LabelSelectDict: TLabel
       AlignWithMargins = True
       Left = 3
@@ -45,7 +45,7 @@ object StrongWindow: TStrongWindow
     end
     object LEditSearchNumberStr: TLabeledEdit
       AlignWithMargins = True
-      Left = 421
+      Left = 517
       Top = 7
       Width = 74
       Height = 22
@@ -54,7 +54,7 @@ object StrongWindow: TStrongWindow
       Margins.Bottom = 7
       Align = alRight
       AutoSelect = False
-      EditLabel.Width = 164
+      EditLabel.Width = 182
       EditLabel.Height = 22
       EditLabel.Caption = 'Wpisz numer szukanego s'#322'owa:'
       LabelPosition = lpLeft
@@ -64,15 +64,15 @@ object StrongWindow: TStrongWindow
       Text = ''
       OnChange = LEditSearchNumberStrChange
       OnKeyUp = LEditSearchNumberStrKeyUp
-      ExplicitLeft = 417
-      ExplicitHeight = 23
+      ExplicitLeft = 421
+      ExplicitHeight = 25
     end
     object CBoxSelectDict: TComboBox
       AlignWithMargins = True
       Left = 95
       Top = 7
       Width = 145
-      Height = 23
+      Height = 25
       Margins.Top = 7
       Margins.Bottom = 7
       Align = alLeft
@@ -82,7 +82,7 @@ object StrongWindow: TStrongWindow
     end
     object ButtStartSearch: TButton
       AlignWithMargins = True
-      Left = 510
+      Left = 606
       Top = 1
       Width = 186
       Height = 34
@@ -97,32 +97,32 @@ object StrongWindow: TStrongWindow
       Images = ImageListMain
       TabOrder = 2
       OnClick = ButtStartSearchClick
-      ExplicitLeft = 506
+      ExplicitTop = 4
     end
   end
   object PanelResult: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 76
-    Width = 702
+    Width = 798
     Height = 341
     Align = alClient
     Caption = 'PanelResult'
     ShowCaption = False
     TabOrder = 1
-    ExplicitWidth = 698
-    ExplicitHeight = 340
+    ExplicitWidth = 702
     object WebBrowserStrong: TWebBrowser
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 509
+      Width = 605
       Height = 333
       Align = alClient
       TabOrder = 0
       StyleElements = []
+      ExplicitWidth = 509
       ControlData = {
-        4C0000009B3400006B2200000000000000000000000000000000000000000000
+        4C000000873E00006B2200000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -130,7 +130,7 @@ object StrongWindow: TStrongWindow
     end
     object ControlListVerses: TControlList
       AlignWithMargins = True
-      Left = 519
+      Left = 615
       Top = 4
       Width = 179
       Height = 333
@@ -146,8 +146,7 @@ object StrongWindow: TStrongWindow
       StyleElements = []
       OnBeforeDrawItem = ControlListVersesBeforeDrawItem
       OnItemClick = ControlListVersesItemClick
-      ExplicitLeft = 515
-      ExplicitHeight = 332
+      ExplicitLeft = 519
       object LabelItemAdresVers: TLabel
         AlignWithMargins = True
         Left = 28
@@ -164,8 +163,8 @@ object StrongWindow: TStrongWindow
         ParentFont = False
         Layout = tlCenter
         StyleElements = []
-        ExplicitLeft = 31
-        ExplicitWidth = 141
+        ExplicitWidth = 4
+        ExplicitHeight = 21
       end
       object ImageVers: TImage
         Left = 0
@@ -181,7 +180,7 @@ object StrongWindow: TStrongWindow
     AlignWithMargins = True
     Left = 3
     Top = 45
-    Width = 702
+    Width = 798
     Height = 25
     Align = alTop
     Alignment = taCenter
@@ -197,31 +196,31 @@ object StrongWindow: TStrongWindow
     TabOrder = 2
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 698
+    ExplicitWidth = 702
   end
   object PanelVers: TPanel
     AlignWithMargins = True
     Left = 3
     Top = 423
-    Width = 702
+    Width = 798
     Height = 496
     Align = alBottom
     Caption = 'PanelVers'
     ShowCaption = False
     TabOrder = 3
-    ExplicitTop = 422
-    ExplicitWidth = 698
+    ExplicitWidth = 702
     object WebBrowserVers: TWebBrowser
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 694
+      Width = 790
       Height = 286
       Align = alClient
       TabOrder = 0
       StyleElements = []
+      ExplicitWidth = 694
       ControlData = {
-        4C000000BA4700008F1D00000000000000000000000000000000000000000000
+        4C000000A65100008F1D00000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -231,13 +230,13 @@ object StrongWindow: TStrongWindow
       AlignWithMargins = True
       Left = 4
       Top = 296
-      Width = 694
+      Width = 790
       Height = 196
       Align = alBottom
       TabOrder = 1
-      ExplicitWidth = 690
+      ExplicitWidth = 694
       ControlData = {
-        4C000000BA470000421400000000000000000000000000000000000000000000
+        4C000000A6510000421400000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000

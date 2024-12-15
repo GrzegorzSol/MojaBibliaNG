@@ -1009,6 +1009,7 @@ __fastcall GsTreeBibleClass::GsTreeBibleClass(TComponent* Owner, TPageControl *p
 	//this->DoubleBuffered = true;
 	//this->StyleElements = TStyleElements() << seBorder; //Tylko Border
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->ParentFont = true;
 	//---
 	this->FPMenuBook = new TPopupMenu(this);
 	if(!this->FPMenuBook) throw(Exception("Błąd inicjalizacji klasy TPopupMenu"));
@@ -1351,6 +1352,7 @@ __fastcall GsListBoxSelectedVersClass::GsListBoxSelectedVersClass(TComponent* Ow
 	this->Color = clCream;
 	this->iRIndex = -1;	 //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->ParentFont = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxSelectedVersClass::~GsListBoxSelectedVersClass()
@@ -1513,6 +1515,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	//this->DoubleBuffered = true;
 	//this->StyleElements = TStyleElements();
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->ParentFont = true;
 	//---
 	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
 	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
@@ -2223,6 +2226,7 @@ __fastcall GsTabSetClass::GsTabSetClass(TComponent* Owner) : TTabSet(Owner)
 	this->OnChange = this->_OnChange;
 	this->bIsCreate = true; //Objekt został stworzony
 	this->Font->Quality = TFontQuality::fqClearType;
+  this->ParentFont = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSetClass::~GsTabSetClass()
@@ -2339,6 +2343,8 @@ __fastcall GsBarSelectVers::GsBarSelectVers(TComponent* Owner, const unsigned ch
 {
 	TList *pListTempAllTranslates=nullptr; //Tymczasowa lista
 	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
+	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 
 	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 
@@ -2408,6 +2414,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pSelectFavCBox->Style = tbsCheck;
 	this->_pSelectFavCBox->Hint = Format("Ustawia wyświetlony werset jako ulubiony|Zaznaczenie aktualnie wybranego wersetu, jako ulubionego|%u", ARRAYOFCONST((this->_pSelectFavCBox->ImageIndex)));
 	this->_pSelectFavCBox->Visible = IsVisibleButton;
+	//this->_pSelectFavCBox->ParentFont = true;
 	//Przeniesienie tekstu na zakładkę
 	this->_pButCopyToSheet = new TToolButton(this);
 	if(!this->_pButCopyToSheet) throw(Exception("Błąd funkcji TToolButton"));
@@ -2421,6 +2428,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButCopyToSheet->ShowHint = true;
 	this->_pButCopyToSheet->Hint = Format("Kopiuje werset na zakładkę|Kopiuje wybrany werset, na zakładkę, w głównym oknie|%u", ARRAYOFCONST((this->_pButCopyToSheet->ImageIndex)));
 	this->_pButCopyToSheet->Visible = IsVisibleButton;
+	//this->_pButCopyToSheet->ParentFont = true;
 	//Kasowanie komentarza do aktualnego wersetu
 	this->_pDeleteNoteVers	= new TToolButton(this);
 	if(!this->_pDeleteNoteVers) throw(Exception("Błąd funkcji TToolButton"));
@@ -2434,6 +2442,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pDeleteNoteVers->ShowHint = true;
 	this->_pDeleteNoteVers->Hint = Format("Skasuj komentarz|Kasuje komentarz do aktualnie wyświetlanego wersetu.|%u", ARRAYOFCONST((this->_pDeleteNoteVers->ImageIndex)));
 	this->_pDeleteNoteVers->Visible = IsVisibleButton;
+	//this->_pDeleteNoteVers->ParentFont = true;
 	//Zapis komentarza do aktualnego wersetu
 	this->_pSaveNoteToVers = new TToolButton(this);
 	if(!this->_pSaveNoteToVers) throw(Exception("Błąd funkcji TToolButton"));
@@ -2447,6 +2456,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pSaveNoteToVers->ShowHint = true;
 	this->_pSaveNoteToVers->Hint = Format("Zapisz komentarz|Zapisuje komentarz do aktualnie wyświetlanego wersetu.|%u", ARRAYOFCONST((this->_pSaveNoteToVers->ImageIndex)));
 	this->_pSaveNoteToVers->Visible = IsVisibleButton;
+	//this->_pSaveNoteToVers->ParentFont = true;
 	//Poprzedni werset
 	this->_pButPrevVers = new TToolButton(this);
 	if(!this->_pButPrevVers) throw(Exception("Błąd funkcji TToolButton"));
@@ -2460,6 +2470,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButPrevVers->ShowHint = true;
 	this->_pButPrevVers->Hint = Format("Przewija do poprzedniego wersetu|Przewija do poprzedniego wersetu|%u", ARRAYOFCONST((this->_pButPrevVers->ImageIndex)));
 	this->_pButPrevVers->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,																													 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
+	//this->_pButPrevVers->ParentFont = true;
 	//Następny werset
 	this->_pButNextVers = new TToolButton(this);
 	if(!this->_pButNextVers) throw(Exception("Błąd funkcji TToolButton"));
@@ -2473,36 +2484,25 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButNextVers->Hint = Format("Przewija do następnego wersetu|Przewija do nstępnego wersetu|%u", ARRAYOFCONST((this->_pButNextVers->ImageIndex)));
 	this->_pButNextVers->Visible = true;//W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																			//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
-	//Wybrany werset
-	this->_pSTextSelect = new TStaticText(this);
-	if(!this->_pSTextSelect) throw(Exception("Błąd funkcji TStaticText"));
-	this->_pSTextSelect->Parent = this;
-	this->_pSTextSelect->Transparent = false;
-	this->_pSTextSelect->Font->Quality = TFontQuality::fqClearType;
-	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
-	this->_pSTextSelect->Font->Size = this->Height - 10;
-	this->_pSTextSelect->Font->Style = TFontStyles() << fsBold;
-	this->_pSTextSelect->Font->Color = clBlue;
-	this->_pSTextSelect->Color = this->Color;
-	this->_pSTextSelect->BorderStyle = sbsSunken;
-	this->_pSTextSelect->AutoSize = true;
-	this->_pSTextSelect->Alignment = taCenter;
-	this->_pSTextSelect->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-	this->_pSTextSelect->ShowHint = true;
-	this->_pSTextSelect->Hint = Format("Adres wersetu|Pokazuje adres wersetu, czyli księge, rozdział i werset|%u",
+	//this->_pButNextVers->ParentFont = true;
+	//Wybrany werset //[15-12-2024]
+	this->_pLabelSelect = new TLabel(this);
+	if(!this->_pLabelSelect) throw(Exception("Błąd funkcji TLabel"));
+	this->_pLabelSelect->Parent = this;
+	this->_pLabelSelect->ParentFont = true;
+	this->_pLabelSelect->ShowHint = true;
+	this->_pLabelSelect->CustomHint = GsReadBibleTextData::_GsBalloonHint;
+	this->_pLabelSelect->StyleElements = TStyleElements() << seClient << seBorder;
+	this->_pLabelSelect->Transparent = true;
+	this->_pLabelSelect->Alignment = taCenter;
+  this->_pLabelSelect->Font->Size = 14;
+	this->_pLabelSelect->Font->Quality = TFontQuality::fqClearType;
+	this->_pLabelSelect->Font->Style = TFontStyles() << fsBold;
+	this->_pLabelSelect->Font->Color = clRed;
+  this->_pLabelSelect->Layout = tlCenter;
+	this->_pLabelSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
+  this->_pLabelSelect->Hint = Format("Adres wersetu|Pokazuje adres wersetu, czyli księge, rozdział i werset|%u",
 		ARRAYOFCONST((enImageIndex_InfoHelp)));
-	//Wybór tłumaczenia
-//	this->_pButTranslates = new TToolButton(this);
-//	if(!this->_pButTranslates) throw(Exception("Błąd funkcji TToolButton"));
-//	this->_pButTranslates->Parent = this;
-//	this->_pButTranslates->ImageIndex = enImageIndex_Translates;
-//	this->_pButTranslates->Style = tbsDropDown;
-//	this->_pButTranslates->AutoSize = true;
-//	this->_pButTranslates->OnClick = this->_OnClickButtonSelect;
-//	this->_pButTranslates->CustomHint = GsReadBibleTextData::_GsBalloonHint;
-//	this->_pButTranslates->ShowHint = true;
-//	this->_pButTranslates->Hint = Format("Wybór tłumaczenia|Pozwala na wybór tłumaczenia, dla wybranego wersetu|%u", ARRAYOFCONST((this->_pButTranslates->ImageIndex)));
-//  this->_pButTranslates->Visible = false;
 	//Wybór wersetu
 	this->_pButVers = new TToolButton(this);
 	if(!this->_pButVers) throw(Exception("Błąd funkcji TToolButton"));
@@ -2516,6 +2516,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButVers->Hint = Format("Wybór wersetu|Pozwala na wybór wersetu z wybranejgo rozdziału i księgi|%u", ARRAYOFCONST((this->_pButVers->ImageIndex)));
 	this->_pButVers->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																												 //nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
+	//this->_pButVers->ParentFont = true;
 	//Wybór rozdziału
 	this->_pButChapt = new TToolButton(this);
 	if(!this->_pButChapt) throw(Exception("Błąd funkcji TToolButton"));
@@ -2529,6 +2530,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButChapt->Hint = Format("Wybór rozdziału|Pozwala na wybór rozdziału z wybranej księgi|%u", ARRAYOFCONST((this->_pButChapt->ImageIndex)));
 	this->_pButChapt->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																													//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
+	//this->_pButChapt->ParentFont = true;
 	//Wybór księgi
 	this->_pButBooks = new TToolButton(this);
 	if(!this->_pButBooks) throw(Exception("Błąd funkcji TToolButton"));
@@ -2542,6 +2544,7 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pButBooks->Hint = Format("Wybór księgi|Pozwala na wybór księgi z wybranego tłumaczenia|%u", ARRAYOFCONST((this->_pButBooks->ImageIndex)));
 	this->_pButBooks->Visible = true;//!this->_FbBarSelectComment; //W przypadku gdy werset został wybrany w liście komentarzy w głównym oknie,
 																													//nie jest możliwy wybór pojedyńczego tłumaczenia, lecz wyświetlane są wszystkie dostępne tłumaczenia.
+	//this->_pButBooks->ParentFont = true;
 	//
 	this->_pSelectFavCBox->Tag = enButtonFav; //[24-10-2023]
 	//this->_pButTranslates->Tag = enButton_Translates;
@@ -3055,7 +3058,7 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 		break;
 	}
 	//
-	this->_pSTextSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
+	this->_pLabelSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::Resize()
@@ -3087,6 +3090,7 @@ __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigne
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsPanelSelectVers::~GsPanelSelectVers()
@@ -3139,7 +3143,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pSGridInterlinearVers->OnDrawCell = this->_DrawGridInterlinearVersCell;
 	this->_pSGridInterlinearVers->DefaultDrawing = false;
 	this->_pSGridInterlinearVers->Font->Size = 12;
-  this->_pSGridInterlinearVers->StyleElements = TStyleElements(); //[17-06-2024]
+	this->_pSGridInterlinearVers->StyleElements = TStyleElements(); //[17-06-2024]
 	//---Wyświetlenie wersetów
 	this->_pWebBrowser = new TWebBrowser(this);
 	if(!this->_pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
@@ -3259,6 +3263,7 @@ __fastcall GsTabSheetSelectVersClass::GsTabSheetSelectVersClass(TComponent* Owne
 	//---
   this->Font->Size = 12;
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->Caption = "Lista wybranych wersetów";
 	this->ImageIndex = enImageIndex_CopyToSheet;
 	GsReadBibleTextData::GsSheetListVers = this;
@@ -3321,6 +3326,8 @@ __fastcall GsControlListVers::GsControlListVers(TComponent* Owner) : TCustomCont
 	this->pHSListVerses = new THashedStringList();
 	if(!this->pHSListVerses) throw(Exception("Nie można zainicjować klasy THashedStringList"));
 	this->OnEnableItem = this->ControlListEnableItem;
+	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsControlListVers::~GsControlListVers()
@@ -3484,13 +3491,14 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	//this->OnGetImageIndex = this->_OnGetImageIndex;
 	//this->OnGetSubItemImage = this->_OnGetSubItemImage;
 	//this->DoubleBuffered = true;
+  this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->Font->Size = 12;
 	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
 	this->ReadOnly = true;
 	this->RowSelect = true;
 	this->ViewStyle = vsReport;
 	this->SmallImages = GsReadBibleTextData::_GsImgListData; //Ikony kolumn
-	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
 __fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
@@ -3862,6 +3870,7 @@ __fastcall GsLViewCommentsAllClass::GsLViewCommentsAllClass(TComponent* Owner) :
 	if(!this->_ListComments) throw(Exception("Błąd inicjalizacji objektu, klasy TList"));
 
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	this->OwnerData = true;
 	this->OwnerDraw = true;
 	this->ReadOnly = true;
@@ -4143,6 +4152,7 @@ __fastcall GsListBoxFavoritiesClass::GsListBoxFavoritiesClass(TComponent* Owner)
 	//this->DoubleBuffered = true;
 	this->Style = lbOwnerDrawVariable;
 	this->Font->Quality = TFontQuality::fqClearType;
+	this->ParentFont = true;
 	//this->StyleElements = TStyleElements();
 	GsReadBibleTextData::pGsListBoxFavoritiesClass = this;
 }

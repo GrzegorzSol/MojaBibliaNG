@@ -64,6 +64,10 @@ int Global_WidthTabTools = 0;
 #if(__CODEGEARC__ == 0x0770)
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+catch(Exception &e)
+{
+	MessageBox(NULL, e.Message.c_str() , TEXT("Błąd"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+}
 */
 enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImageMainIndex_Search,				 //1.Wyszukiwanie
@@ -788,6 +792,8 @@ void __fastcall TMainBibleWindow::StatusBarMainDrawPanel(TStatusBar *StatusBar,
 */
 {
 	TCanvas *pCanvas = StatusBar->Canvas;
+	//StatusBar->Font = this->Font;
+	pCanvas->Font = this->Font;
 	switch(Panel->Index)
 	{
 		case enPanelMain_InfoText: //Podstawowy tekst podpowiedzi

@@ -8,7 +8,7 @@ object AllMultimediaView: TAllMultimediaView
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -12
+  Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
   Font.Quality = fqClearType
@@ -16,7 +16,7 @@ object AllMultimediaView: TAllMultimediaView
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  TextHeight = 15
+  TextHeight = 17
   object PControlAllMultimedia: TPageControl
     Left = 0
     Top = 0
@@ -33,7 +33,7 @@ object AllMultimediaView: TAllMultimediaView
         Left = 0
         Top = 17
         Width = 1180
-        Height = 474
+        Height = 472
         Align = alClient
         ItemMargins.Left = 0
         ItemMargins.Top = 0
@@ -43,6 +43,7 @@ object AllMultimediaView: TAllMultimediaView
         TabOrder = 0
         OnBeforeDrawItem = CListTranlatesBeforeDrawItem
         OnItemClick = CListAllItemClick
+        ExplicitHeight = 474
         object LabelNameTranlate: TLabel
           AlignWithMargins = True
           Left = 39
@@ -98,7 +99,7 @@ object AllMultimediaView: TAllMultimediaView
         Left = 0
         Top = 17
         Width = 1180
-        Height = 474
+        Height = 472
         Align = alClient
         ItemMargins.Left = 0
         ItemMargins.Top = 0
@@ -113,35 +114,32 @@ object AllMultimediaView: TAllMultimediaView
           Left = 39
           Top = 3
           Width = 407
-          Height = -6
+          Height = 64
           Align = alLeft
           AutoSize = False
           Caption = 'LabelNameGraphics'
           EllipsisPosition = epPathEllipsis
           Layout = tlCenter
           ExplicitTop = 4
-          ExplicitHeight = 64
         end
         object ImageGraphics: TImage
           Left = 0
           Top = 0
           Width = 36
-          Height = 0
+          Height = 70
           Align = alLeft
           Transparent = True
-          ExplicitHeight = 70
         end
         object LabelSizeGraphics: TLabel
           AlignWithMargins = True
           Left = 452
           Top = 3
           Width = 165
-          Height = -6
+          Height = 64
           Align = alLeft
           AutoSize = False
           Caption = 'LabelSizeGraphics'
           Layout = tlCenter
-          ExplicitHeight = 64
         end
       end
       object HeaderControlGraphics: THeaderControl
@@ -160,7 +158,7 @@ object AllMultimediaView: TAllMultimediaView
         Left = 0
         Top = 17
         Width = 1180
-        Height = 474
+        Height = 472
         Align = alClient
         ItemMargins.Left = 0
         ItemMargins.Top = 0
@@ -174,24 +172,22 @@ object AllMultimediaView: TAllMultimediaView
           Left = 0
           Top = 0
           Width = 36
-          Height = 0
+          Height = 70
           Align = alLeft
           Transparent = True
-          ExplicitHeight = 70
         end
         object LabelComments: TLabel
           AlignWithMargins = True
           Left = 39
           Top = 3
           Width = 239
-          Height = -6
+          Height = 64
           Align = alLeft
           AutoSize = False
           Caption = 'LabelComments'
           EllipsisPosition = epEndEllipsis
           Layout = tlCenter
           ExplicitLeft = 114
-          ExplicitHeight = 64
         end
       end
       object HeaderControlComments: THeaderControl
@@ -263,13 +259,6 @@ object AllMultimediaView: TAllMultimediaView
     Width = 1182
     Height = 179
     Align = alClient
-    Font.Charset = EASTEUROPE_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    Font.Quality = fqClearType
-    ParentFont = False
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 1

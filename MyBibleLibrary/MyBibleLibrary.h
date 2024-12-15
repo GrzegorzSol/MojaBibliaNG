@@ -467,7 +467,7 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
 															 const unsigned char _cucVers=1, bool bSelectComment=false);
 		__fastcall virtual ~GsBarSelectVers();
 		//---
-		inline UnicodeString __fastcall GetSelectVers() {return this->_pSTextSelect->Caption;};
+		inline UnicodeString __fastcall GetSelectVers() {return this->_pLabelSelect->Caption;};
 		inline int __fastcall GetSelectTranslate() {return this->_FucSelectTranslate;} //Metoda zwraca numer wybranego tłumaczenia
 		void __fastcall GetSelectAdress(unsigned char &_usBook, unsigned char &_usChapt, unsigned char &_usVers, unsigned char &_ucTranslate); //Informacja o adresie wersetu
 	private:
@@ -484,7 +484,7 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
   	TPopupMenu *_pPMenuBooks=nullptr;			//Popup menu z listą ksiąg biblijnych
   	TPopupMenu *_pPMenuChapt=nullptr;			//Popup menu z listą rozdziałów
   	TPopupMenu *_pPMenuVers=nullptr;			//Popup menu z listą wersetów
-		TStaticText *_pSTextSelect=nullptr;	//Wybrany werset
+    TLabel *_pLabelSelect=nullptr; //[15-12-2024]
 
 		TList *_pBSListAllFullTranslates=nullptr; //Lista wszystkich tłumaczeń
 		//--- Wybrane pozycje z TPopupMenu

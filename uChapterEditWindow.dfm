@@ -2,8 +2,8 @@ object ChapterEditWindow: TChapterEditWindow
   Left = 0
   Top = 0
   Caption = 'ChapterEditWindow'
-  ClientHeight = 822
-  ClientWidth = 1248
+  ClientHeight = 820
+  ClientWidth = 1240
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET

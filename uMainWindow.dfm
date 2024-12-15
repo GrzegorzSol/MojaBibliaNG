@@ -8,7 +8,7 @@ object MainBibleWindow: TMainBibleWindow
   DoubleBuffered = True
   Font.Charset = EASTEUROPE_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
   Font.Quality = fqClearType
@@ -21,7 +21,7 @@ object MainBibleWindow: TMainBibleWindow
   OnDestroy = FormDestroy
   OnKeyUp = FormKeyUp
   OnResize = FormResize
-  TextHeight = 13
+  TextHeight = 16
   object ImageBackgroundWindow: TImage
     Left = 300
     Top = 46
@@ -41,22 +41,13 @@ object MainBibleWindow: TMainBibleWindow
     Width = 876
     Height = 817
     Align = alClient
-    Font.Charset = EASTEUROPE_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    Font.Quality = fqClearType
     OwnerDraw = True
-    ParentFont = False
     ParentShowHint = False
     ShowHint = False
     TabOrder = 1
     Visible = False
     OnChange = MBW_PageControlAllChange
     OnEnter = PageControlBibleTextEnter
-    ExplicitWidth = 872
-    ExplicitHeight = 816
   end
   object StatusBarMain: TStatusBar
     Left = 0
@@ -72,11 +63,11 @@ object MainBibleWindow: TMainBibleWindow
         Style = psOwnerDraw
         Width = 50
       end>
+    ParentFont = True
     ParentShowHint = False
     ShowHint = True
+    UseSystemFont = False
     OnDrawPanel = StatusBarMainDrawPanel
-    ExplicitTop = 862
-    ExplicitWidth = 1172
   end
   object CoolBarMain: TCoolBar
     Left = 0
@@ -116,12 +107,6 @@ object MainBibleWindow: TMainBibleWindow
       ColorMap.HighlightColor = clWhite
       ColorMap.BtnSelectedFont = clBlack
       ColorMap.UnusedColor = clWhite
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = 'Segoe UI'
-      Font.Style = []
-      ParentFont = False
       Spacing = 0
     end
     object ActionToolBarTools: TActionToolBar
@@ -137,12 +122,6 @@ object MainBibleWindow: TMainBibleWindow
       ColorMap.HighlightColor = clWhite
       ColorMap.BtnSelectedFont = clBlack
       ColorMap.UnusedColor = clWhite
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlack
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
       Spacing = 0
     end
   end
@@ -154,7 +133,6 @@ object MainBibleWindow: TMainBibleWindow
     Align = alLeft
     Caption = 'PanelTools'
     TabOrder = 3
-    ExplicitHeight = 816
     object PageControlTools: TPageControl
       Left = 1
       Top = 1
@@ -162,16 +140,9 @@ object MainBibleWindow: TMainBibleWindow
       Height = 815
       ActivePage = TabSheetAllCommentsVers
       Align = alClient
-      Font.Charset = EASTEUROPE_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      Font.Quality = fqClearType
       Images = ImageListSmall
       MultiLine = True
       OwnerDraw = True
-      ParentFont = False
       ParentShowHint = False
       ShowHint = False
       TabOrder = 0
@@ -187,7 +158,7 @@ object MainBibleWindow: TMainBibleWindow
         object STextHeaderListCommentVers: TStaticText
           Left = 0
           Top = 0
-          Width = 270
+          Width = 268
           Height = 33
           Align = alTop
           Alignment = taCenter
@@ -208,7 +179,7 @@ object MainBibleWindow: TMainBibleWindow
         object STextHeaderFavorteListVers: TStaticText
           Left = 0
           Top = 33
-          Width = 270
+          Width = 268
           Height = 24
           Align = alTop
           Alignment = taCenter
@@ -234,7 +205,7 @@ object MainBibleWindow: TMainBibleWindow
         object ToolBarSearcheFiles: TToolBar
           Left = 0
           Top = 0
-          Width = 270
+          Width = 268
           Height = 22
           CustomHint = BalloonHintMain
           AutoSize = True
@@ -242,6 +213,7 @@ object MainBibleWindow: TMainBibleWindow
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
+          ExplicitWidth = 270
           object ToolButtDeleteFile: TToolButton
             Left = 0
             Top = 0
@@ -254,12 +226,13 @@ object MainBibleWindow: TMainBibleWindow
         object MemoInfosSearchFile: TMemo
           Left = 0
           Top = 687
-          Width = 270
+          Width = 268
           Height = 120
           Align = alBottom
           Color = clCream
           ReadOnly = True
           TabOrder = 1
+          ExplicitWidth = 270
         end
       end
     end
