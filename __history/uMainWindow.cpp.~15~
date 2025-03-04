@@ -36,7 +36,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uSetupsWindow.h"
 #include "uSelectVersWindow.h"
 #include "uDictGrecPolWindow.h"
-#include "uNewSchemeVersWindow.h"
+#include "uSchemeVersWindow.h"
 #include "uAllMultimediaView.h"
 #include "uInformationsAppWindow.h"
 #include "uChapterEditWindow.h"
@@ -1051,9 +1051,9 @@ void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	TNewSchemeVersWindow *pNewSchemeVersWindow = new TNewSchemeVersWindow(this);
-	if(!pNewSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TNewSchemeVersWindow"));
-	pNewSchemeVersWindow->ShowModal();
+	TSchemeVersWindow *pTSchemeVersWindow = new TSchemeVersWindow(this);
+	if(!pTSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSchemeVersWindow"));
+	pTSchemeVersWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_InfomationsExecute(TObject *Sender)

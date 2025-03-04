@@ -6,7 +6,7 @@
 #include <System.IOUtils.hpp>
 #include <Vcl.HtmlHelpViewer.hpp>
 #include "HelpMojaBibliaNT.h"
-//#define _DEBUGINFO_	 //Używanie okna konsoli do debugowania aplikacji
+
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif
@@ -36,46 +36,41 @@ enum {enHelpTextIndex_CloseSheet=0,		//0.Zamknięcie aktywnej zakładki
 
 struct GlobalVar
 {
-	inline const static UnicodeString Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName),					 //Ścieżka dostępu do katalogu głównego programu;
-																		Global_custrNameIVerFile="MBibleNG.iver",				 //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
-																		Global_custrGetVersionUpdate=TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),		 //Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
-																		Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
-																		#if defined(_DEBUGINFO_)
-																				//Jeśli projekt jest kompilowany z oknem konsoli, dane dla aplikacji są pobierane nie standartowo z zewnętrznego katalogu
-																				Global_custrGetDataDir= "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\",					 //Ścieżka dostępu do katalogu z danymi aplikacji
-																		#else
-																				//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
-																				Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data"),
-																		#endif
-																		//Global_custrPathTranslatesNotUse=TPath::Combine(GlobalVar::Global_custrGetDataDir, "NotUseTranslates"), //Ścieżka do katalogu z nieużywanymi tłumaczeniami //[31-05-2024]
-																		Global_custrPathStrongDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "StrongDict.strdi"), // Ścieżka dostępu do pliku ze słownikiem stronga
-																		Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 //Ścieżka do katalogu z podglądem stylów graficznych aplikacji
-																		Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	//Ścieżka dostępu do katalogu z planami czytania biblii
-																		Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), //Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
-																		Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";
+	//****************** STAŁE STATYCZNE ZE ŚCIERZKAMI DOSTĘPU ******************
+	const static UnicodeString Global_custrNameIVerFile, // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
+														 Global_custrGetExeDir, // Ścieżka dostępu do pliku ze słownikiem stronga
+														 Global_custrGetDataDir,  // Ścieżka dostępu do katalogu z danymi aplikacji
+														 Global_custrGetVersionUpdate, // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
+														 Global_custrPathStrongDict, // Ścieżka dostępu do pliku ze słownikiem stronga
+														 Global_custrPathImagesStyles,  // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
+														 Global_custrPathAllReadingPlan, // Ścieżka dostępu do katalogu z planami czytania biblii
+														 GlobalPath_CurrentActivePlan, // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
+														 Global_custrPathSearchFavorities, // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
+														 Global_custrGetConfigFile, // Ścieżka do pliku konfiguracyjnego
+														 Global_custrPathLastUsedAddressFile, // Ścieżka dostępu do pliku z ostatnio używanymi adresami
+														 Global_custrPathGlobalHelp, // Ścieżka dostępu do pliku pomocy
+														 Global_custrPathHistory, // Ścieżka dostępu do pliku historii
+														 Global_custrPathBackgroundWindow, // Grafika z podkładem okna głównego
+														 Global_custrPathSearchLogo, // Logo w oknie wyszukiwania
+														 Global_custrPathSetupsLogo, // Logo w oknie ustawień
+														 Global_custrPathBacgroundImageText, // Logo główne podkładu
+														 Global_custrPathFileWordVersesExistGrec, // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu greckiegoposzczególnych słów // [08-06-2024]
+														 Global_custrPathFileWordVersesExistHbr, // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu hebrajskiego, poszczególnych słów // [31-07-2024]
+														 Global_custrPathFileInterlinear, // Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+														 Global_custrPathMultimediaFilesData, // Ścieżka dostępu do danych multimedialnych
+														 Global_custrPathFileFavoriteVers, // Ścieżka dostępu do pliku z listą ulubionych wersetów
+														 Global_custrPathDirComments, // Katalog do pojedyńczych plików z komentarzami do wersetów
+														 Global_custrPathHistorySearch, // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
+														 Global_custrPathImageBackgroundMainText, // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
+														 //----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
+														 Global_ustrMutexName; //Mutekst główny aplikacji
+
+	//=======================================
+	inline const static UnicodeString Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";
 																		Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
-																		Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				//Ścieżka do pliku konfiguracyjnego
-																		Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),//Ścieżka dostępu do pliku z ostatnio używanymi adresami
-																		Global_custrPathGlobalHelp=TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"),			//Ścieżka dostępu do pliku pomocy
-																		Global_custrPathHistory=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistoryChaptersOpen.hco"),					//Ściezka dostępu do pliku historii
-																		//Graficne loga z rozszerzeniem .gli
-																		Global_custrPathBackgroundWindow=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),//Grafika z podkładem okna głównego
-																		Global_custrPathSearchLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),//Logo w oknie wyszukiwania
-																		Global_custrPathSetupsLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),//Logo w oknie ustawień
-																		Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"),
-																		//---
 																		Global_custrExtendCommentsFiles=".bfc", //Rozszerzenie plików z komentarzami
-																		Global_custrPathFileWordVersesExistGrec=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistGrec.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu greckiegoposzczególnych słów // [08-06-2024]
-																		Global_custrPathFileWordVersesExistHbr=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistHbr.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu hebrajskiego, poszczególnych słów // [31-07-2024]
-																		Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			//Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
-																		Global_custrPathMultimediaFilesData=TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),//Ścieżka dostępu do danych multimedialnych
-																		Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		//Ścieżka dostępu do pliku z listą ulubionych wersetów
-																		Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			//Katalog do pojedyńczych plików z komentarzami do wersetów
-																		Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 //Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
-																		Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  //Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
-																		//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
-																		Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
-																		//----- Syle
+                                    Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
+														//----- Syle
 																		Global_DefaultStyleName="Windows", //Domyślny styl
 																		//----- Nazwa domyślnego tłumaczenia używanego do modułu konkordancji greckiej i słownika grecko-polskiego (nie w module Stronga!)
                                     // Tłumaczenie będzie można wybrać [02-06-2024]
@@ -84,11 +79,11 @@ struct GlobalVar
 																		*       Stałe dla pliku informacyjnego dla zapisu ulubionego wyszukiwania    *
 																		******************************************************************************/
 																		GlobalInfoSearch_Header="INFOFILESEARCH", //Nagłówek
-																			GlobalInfoSearch_Name="Name", //Wyrażenie do wyszukiwania
-																			GlobalInfoSearch_Translate="Translate", //Tłumaczenie brane pod uwagę podczas wyszukiwania
-																			GlobalInfoSearch_RangeName="RangeName", //Nazwa zakresu wyszukiwania
-																			GlobalInfoSearch_Range="Range", //Dokładny zakres wyszukiwania
-                                      GlobalInfoSearch_Count="Count", //Ilość wystąpień
+																				GlobalInfoSearch_Name="Name", //Wyrażenie do wyszukiwania
+																				GlobalInfoSearch_Translate="Translate", //Tłumaczenie brane pod uwagę podczas wyszukiwania
+																				GlobalInfoSearch_RangeName="RangeName", //Nazwa zakresu wyszukiwania
+																				GlobalInfoSearch_Range="Range", //Dokładny zakres wyszukiwania
+																				GlobalInfoSearch_Count="Count", //Ilość wystąpień
 																		/*****************************************************************************
 																		 *							 Stałe dla pliku konfiguracyjnego typu ini									 *
 																		 *****************************************************************************/
@@ -158,12 +153,12 @@ struct GlobalVar
 																				GlobalIni_SetRate="SetRateSpeakText",								//Szybkość czytania tekstu
 																				GlobalIni_SetVolume="SetVolumeSpeakText",						//Głośność czytania
 																		GlobalIni_SetupsSchemeVers="SETUPSSCHEMEVERS",          //Główna sekcja modułu ustawień powiązań wersetów
-																				GlobalIni_SetSchemeColorLine="SetupSchemeColorLine",
-																				GlobalIni_SetSchemeColorRot="SetupSchemeColorRot",
-																				GlobalIni_SetSchemeColorSelect="SetupSchemeColorSelect",
-                                        GlobalIni_SetSchemeWidthLine="SetupSchemeWidthLine",
-
-																				GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 //Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
+																				GlobalIni_SetSchemeNumTranslate="SetupSchemeNumTranslate", // Numer tłumaczenia
+																				GlobalIni_SetSchemeColorLine="SetupSchemeColorLine", // Kolor lini
+																				GlobalIni_SetSchemeColorRot="SetupSchemeColorRot",   // Kolor głównego węzła
+																				GlobalIni_SetSchemeColorSelect="SetupSchemeColorSelect", // Kolor wybranej pozycji
+																				GlobalIni_SetSchemeWidthLine="SetupSchemeWidthLine", // Szerokość lini
+                                        GlobalIni_SetIsTransparent="SetupIsTransparent", // Czy objekty maja być przezroczyste
 																		Global_ustrFileReadingPlanExtend=".rpf";	 //Zmienić na stałą!? Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
 	inline static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
@@ -196,7 +191,8 @@ struct GlobalVar
 		 RGBToWebColorStr(clWebLightSkyBlue),
 		 RGBToWebColorStr(clWebPlum),
 		 RGBToWebColorStr(clWebDarkTurquoise),
-		 RGBToWebColorStr(clWebDarkSalmon),
-		 RGBToWebColorStr(clWebGold)}; //Tablica kolorów tłumaczeń
+		 RGBToWebColorStr(clWebDarkSalmon)}; //Tablica kolorów tłumaczeń
+	//*************************** METODY STATYCZNE ******************************
+	static void __fastcall Global_InitGlobalVariables(); //Ustawienie globalnych zmiennych dla całej aplikacji
 };
 #endif

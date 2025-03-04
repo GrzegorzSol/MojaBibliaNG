@@ -8,6 +8,32 @@
 /****************************************************************************
  *							Całkowicie statyczna KLASA GsReadBibleTextData							*
  ****************************************************************************/
+void __fastcall GsReadBibleTextData::InitGlobalVariables()
+/**
+	OPIS METOD(FUNKCJI): Ustawienie globalnych zmiennych dla całej aplikacji
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN64) && defined(__MINGW64__)
+		#if defined(_DEBUGINFO_)
+      // Kompilator dla Win64 typu Modern
+			GsDebugClass::WriteDebug("BCC64X Modern");
+		#endif
+	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN64)
+		#if defined(_DEBUGINFO_)
+			// Tradycyjny kompilator dla Win64
+			GsDebugClass::WriteDebug("BCC64C Standart");
+		#endif
+	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32) && !defined(_WIN64)
+    #if defined(_DEBUGINFO_)
+			// Tradycyjny kompilator dla Win32
+			GsDebugClass::WriteDebug("BCC32C i BCC32X Standart");
+		#endif
+	#endif
+}
+//---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//Inicjalizacja zmiennych klasy
 /**
 	OPIS METOD(FUNKCJI):
@@ -382,6 +408,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	GsReadBibleTextData::InitGlobalVariables(); //Ustawienie globalnych zmiennych dla całej aplikacji
 	GsReadBibleTextData::InitListColors(); //Inicjalizacja listy kolorów
 	GsReadBibleTextData::InitHistoryList(); //Metoda inicjuje zmienne dotyczące historii [30-07-2023]
 	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy

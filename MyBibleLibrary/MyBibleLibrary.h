@@ -137,7 +137,7 @@ typedef struct _PairsGroupBooks
 /*============================================================================
  =													STRUKTURA DataToSearch													 =
  ============================================================================*/
-typedef struct //Struktura danych jako argument dla metody wyszukiwania
+typedef struct _DataSearch//Struktura danych jako argument dla metody wyszukiwania
 		{
 			bool IsRegular;										 //Czy pole należy traktować jako wyrażenie regularne
 			UnicodeString ustrRegExSearchText; //Szukana fraza w formie wyrażeń regularnych
@@ -149,7 +149,7 @@ typedef struct //Struktura danych jako argument dla metody wyszukiwania
 //enum enTypeRangeText {enTypeRange_Vers=100,				//Zakres ograniczony pełnymi adresami wersetów (po 9 znaków)
 //											enTypeRange_Chapter,				//Zakres ograniczony tylko adresamo rozdziałów (po 6 znaków)
 //											enTypeRange_OnlyOneChapter};//Zakres dotyczy pojedyńczego rozdziału (6 znaków)
-typedef struct //Struktura danych jako argument dla wyświetlania tekstu biblijnego w dowolnym objekcie, klasy TWebBrowser
+typedef struct _DataDisplayTextAnyBrowser//Struktura danych jako argument dla wyświetlania tekstu biblijnego w dowolnym objekcie, klasy TWebBrowser
 	{
 		UnicodeString strBackgroundColor,		//Kolor podkładu
 									strNameFont;					//nazwa czcionki
