@@ -91,6 +91,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage_OpenInWord,							 //19.Otwarcie wybranego rozdziału w Ms Wordzie
 			enImage_BooksSpec,               //20.Okno z tłumaczeniami specjalistycznymi
 			enImage_StrongDictionary,        //21.Okno ze słownikiem Stronga
+			enImage_HelpVideo,               //22.Pomocnicy video na kanale.
 			enImageMainIndex_Count,          //Ilość ikon
 			//Małe ikony
 			enImage16_Books=0,							 //0.Księgi biblijne
@@ -131,6 +132,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagImage_OpenInWord,		//119.Otwarcie wybranego rozdziału w Ms Wordzie
 			enTagImage_BooksSpec,     //120.Okno z tłumaczeniami specjalistycznymi
 			enTagImage_StrongDictionary,//121.Okno ze słownikiem Stronga
+			enTagImage_HelpVideo,       //122.Pomocnicy video na kanale.
 			//Tagi dla komponentów TImage
 			enTagPic_Backgound,       //120.Komponent typu TImage podkładu
 			//
@@ -469,6 +471,9 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	{
 		GlobalVar::Global_ConfigFile->UpdateFile();	//Zrzut pliku ini z pamięci, do pliku ini
 	}
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("FormClose -> GlobalIni_IsDisplayBackgroundImage: \"%s\"", ARRAYOFCONST((GlobalVar::GlobalIni_IsDisplayBackgroundImage))));
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)
@@ -480,6 +485,9 @@ void __fastcall TMainBibleWindow::FormDestroy(TObject *Sender)
 */
 {
 	//OleUninitialize();
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("FormDestroy -> GlobalIni_IsDisplayBackgroundImage: \"%s\"", ARRAYOFCONST((GlobalVar::GlobalIni_IsDisplayBackgroundImage))));
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormResize(TObject *Sender)
@@ -615,6 +623,8 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_SpecBooks->Hint = Format("Okno tłumaczeń specjalistycznych|Otwiera okno z dostępnymi tłumaczeniami specjalistycznymi, Pisma Świetego.|%u", ARRAYOFCONST((this->Act_SpecBooks->ImageIndex)));
 	this->Act_StrongDictionary->Tag = enTagImage_StrongDictionary;
 	this->Act_StrongDictionary->Hint = Format("Okno słownika Stronga|Otwarcie okna przeznaczonego do pracy ze słownikiem stronga.|%u", ARRAYOFCONST((this->Act_StrongDictionary->ImageIndex)));
+	this->Act_HelpVideo->Tag = enTagImage_HelpVideo;
+	this->Act_HelpVideo->Hint = Format("Pomocnicy video dla aplikacji.|Otwarcie kanału filmów instruktażowych dla aplikacji.|%u", ARRAYOFCONST((this->Act_HelpVideo->ImageIndex)));
 
 	this->ToolButtDeleteFile->Hint = "Usunięcie zaznaczonego pliku z ulubionym wyszukiwaniem"; //[14-10-2023]
 	//---
@@ -894,7 +904,7 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 			this->Act_ResizeWork->Checked = false;
 			this->Act_ResizeWorkExecute(this->Act_ResizeWork);
 		}
-		if(this->PageControlBibleText->PageCount == 0) //???
+		if(this->PageControlBibleText->PageCount == 0) // Brak zakładek z tekstem
 		{
 			this->PageControlBibleText->Visible = false; //01-02-2020
 			// W wypadku zamkniecia ostatniej zakładki, wskaźnik na pasku zadań zostaje wyzerowany
@@ -1051,7 +1061,10 @@ void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	TNewSchemeVersWindow *pNewSchemeVersWindow = new TNewSchemeVersWindow(this);
+//	TSchemeVersWindow *pTSchemeVersWindow = new TSchemeVersWindow(this);
+//	if(!pTSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSchemeVersWindow"));
+//	pTSchemeVersWindow->ShowModal();
+  TNewSchemeVersWindow *pNewSchemeVersWindow = new TNewSchemeVersWindow(this);
 	if(!pNewSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TNewSchemeVersWindow"));
 	pNewSchemeVersWindow->ShowModal();
 }
@@ -1364,6 +1377,19 @@ void __fastcall TMainBibleWindow::Act_StrongDictionaryExecute(TObject *Sender)
 	pStrongWindow->Show();
 }
 //---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::Act_HelpVideoExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Pomoc video
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	ShellExecute(this->Handle, NULL , TEXT("https://www.youtube.com/channel/UCqx3U8EUzjAcwHOM4GNDWNw"), NULL, NULL, SW_SHOWNORMAL);
+}
 //-----------------------ZDARZENIA ZWIAZANE Z KONTROLKAMI--------------------
 void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
 /**

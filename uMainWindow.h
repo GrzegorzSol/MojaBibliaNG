@@ -72,6 +72,7 @@ __published:	// IDE-managed Components
 	TMemo *MemoInfosSearchFile;
 	TAction *Act_SpecBooks;
 	TAction *Act_StrongDictionary;
+	TAction *Act_HelpVideo;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall Act_CloseSheetActiveExecute(TObject *Sender);
@@ -107,6 +108,7 @@ __published:	// IDE-managed Components
 	void __fastcall ToolButtSearchFavClick(TObject *Sender);
 	void __fastcall Act_SpecBooksExecute(TObject *Sender);
 	void __fastcall Act_StrongDictionaryExecute(TObject *Sender);
+	void __fastcall Act_HelpVideoExecute(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr;

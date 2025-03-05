@@ -1061,38 +1061,7 @@ void __fastcall GsMaster::SaveToGfx(const UnicodeString &ustrPathSave)
 	bmp->Canvas->FillRect(TRect(0, 0, bmp->Width, bmp->Height));
 	bmp->Canvas->Brush->Color = clBlack;
 
-	for(int i=0; i<this->_pGsDrawChildren->_pMainChildrenList->Count; ++i)
-	{
-		pGsChild = static_cast<GsChild *>(this->_pGsDrawChildren->_pMainChildrenList->Items[i]);
-		if(pGsChild)
-		{
-			pPrevChild = pGsChild->_pPrevChild;
-			bmp->Canvas->Brush->Style = bsSolid;
-			//--- Odrysowanie objektu i połączeń
-      if(pPrevChild)
-			{
-				//Rysowanie połączenia z przodkiem
-				bmp->Canvas->Pen->Width = CommData::CDataMaster->Global_iWidthLineScheme;
-				bmp->Canvas->Pen->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];
-				bmp->Canvas->MoveTo(pGsChild->Left + (pGsChild->Width / 2), pGsChild->Top);
-				bmp->Canvas->LineTo(pPrevChild->Left + (pPrevChild->Width / 2), pPrevChild->Top + pPrevChild->Height);
-			}
-
-			bmp->Canvas->Brush->Color = pGsChild->Color;
-			bmp->Canvas->FillRect(TRect(pGsChild->Left, pGsChild->Top,
-				pGsChild->Left + pGsChild->Width, pGsChild->Top + pGsChild->Height));
-			bmp->Canvas->Brush->Color = clBlack;
-			bmp->Canvas->FrameRect(TRect(pGsChild->Left, pGsChild->Top,
-				pGsChild->Left + pGsChild->Width, pGsChild->Top + pGsChild->Height));
-
-			bmp->Canvas->Brush->Style = bsClear;
-			TRect MyRect(pGsChild->Left, pGsChild->Top,
-				pGsChild->Left + pGsChild->Width, pGsChild->Top + pGsChild->Height);
-			MyRect.Top += ciAddHeight / 2; MyRect.Left += ciAddWidth / 2;
-
-			DrawText(bmp->Canvas->Handle, pGsChild->Text.c_str(), -1, &MyRect, DT_WORDBREAK);
-		}
-	}
+	this->_pGsDrawChildren->PaintTo(bmp->Canvas, 0, 0);
 
 	TWICImageFormat myFormat=wifPng;
 	if(TPath::GetExtension(ustrPathSave) == ".png") {myFormat = wifPng;}
