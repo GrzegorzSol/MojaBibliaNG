@@ -250,11 +250,17 @@ void __fastcall GsChild::MouseDown(System::Uitypes::TMouseButton Button, System:
 	//---
 	if(Button == mbLeft)
 	{
+		CommData::CDataMaster->_pTreeView->Select(this->_TreeNodeChild); // Zaznaczenie pozycji w objekcie klasy TTreeView
+
 		if(!Shift.Contains(ssCtrl))
-		// Bez Ctr
+		// Lewy przycisk myszy bez Ctr
 		{
 			CommData::CDataDraw->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
+			CommData::CDataMaster->_pMultiSelectTreeNodes->Clear();
 		}
+    // Dodanie do listy multiselect dla objektu, klasy TTreeView
+		CommData::CDataMaster->_pMultiSelectTreeNodes->Add(this->_TreeNodeChild);
+    CommData::CDataMaster->_pTreeView->Select(CommData::CDataMaster->_pMultiSelectTreeNodes);
 		this->_IsActive = true;//!this->_IsActive;
 
 		this->_GetStartX = X;
@@ -455,6 +461,7 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 						ciShiftLeftRight = 160, // Przesunięcie dodatkowe w lewo lub w prawo gałęzi
 						ciReference = 24; // Minimalna różnica między potomkiem a głównym węzłem,
 															// by zorientoweać się, w która stronę dodatkowo przesunąć potomka.
+	TTreeNode *TrNode=nullptr;
 
 	//Struktura pomocnicza pojedyńczego objektu
 	pDataToOpen = new ReadWriteDataObject();
@@ -479,6 +486,10 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 			this->_pRootObject = pGsChild;		// To jest korzeń
 			pGsChild->Top = pDataToOpen->RW_Top;
 			pGsChild->Left = pDataToOpen->RW_Left;
+      //Tworzenie korzenia drzewa
+			TrNode = CommData::CDataMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
+			if(!TrNode) throw(Exception("Błąd inicjalizacji klasy AddObject"));
+			pGsChild->_TreeNodeChild = TrNode;
 		}
 		else if(pDataToOpen->RW_IDListParent > -1)// Potomstwo
 		{
@@ -494,21 +505,31 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 				if(pDataToOpen->RW_Left < (pPrevChild->Left - ciReference)) pGsChild->Left = pDataToOpen->RW_Left - ciShiftLeftRight;
 				else if(pDataToOpen->RW_Left > (pPrevChild->Left + ciReference)) pGsChild->Left = pDataToOpen->RW_Left + ciShiftLeftRight;
 				else pGsChild->Left = pDataToOpen->RW_Left;
+				//Tworzenie potomków w drzewie
+				TrNode = CommData::CDataMaster->_pTreeView->Items->AddChildObject(pPrevChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
+				pGsChild->_TreeNodeChild = TrNode;
       }
 		}
 
 		this->_pMainChildrenList->Add(pGsChild); //Dodanie do głównej listy objektów
 	}
+	CommData::CDataMaster->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
+	CommData::CDataMaster->_pTreeView->Items->GetFirstNode()->MakeVisible();
+
 	pGsChild = static_cast<GsChild *>(this->_pMainChildrenList->Last());
 	if(pGsChild)
 	// Aktywacja i selekcja ostatniego elementu
 	{
 		this->_pSelectObject = pGsChild; // Ostatni object aktywnym
+		CommData::CDataMaster->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
+		CommData::CDataMaster->_pMultiSelectTreeNodes->Add(TrNode); // Dodanie do listy multiselect dla objektu, klasy TTreeView
+		CommData::CDataMaster->FSelectText = this->_pSelectObject->Text; // Tekst na pozycji, pole typy __property
+		CommData::CDataMaster->FSelectItem = this->_pSelectObject; // Wskażnik na GsChild, pole typy __property
 		this->_CalculateNewDimension(pGsChild);
 		this->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
 		pGsChild->_IsActive = true;
 	}
-	//this->Invalidate(); //Całe odświerzenie
+	CommData::CDataMaster->_pTreeView->Visible = true;
 
 	if(pDataToOpen) {delete pDataToOpen; pDataToOpen = nullptr;}
 	return bReturn;
@@ -527,6 +548,7 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 	GsChild *pGsChild=nullptr, *pPrevChild=nullptr;
 	int iSizeFile = pFileStream->Size, //Wielkość pliku
 			iSizeStructData = sizeof(NewReadWriteDataObject); //Wielkość struktury
+	TTreeNode *TrNode=nullptr;
 
 	//Struktura pomocnicza pojedyńczego objektu
 	pDataToOpen = new NewReadWriteDataObject();
@@ -548,6 +570,10 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 		if(pDataToOpen->NRW_IDListParent == -1) // Korzeń
 		{
 			this->_pRootObject = pGsChild;		// To jest korzeń
+      //Tworzenie korzenia drzewa
+			TrNode = CommData::CDataMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
+			if(!TrNode) throw(Exception("Błąd inicjalizacji klasy AddObject"));
+			pGsChild->_TreeNodeChild = TrNode;
 		}
 		else if(pDataToOpen->NRW_IDListParent > -1)// Potomstwo
 		{
@@ -558,22 +584,32 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 				pGsChild->_pPrevChild = pPrevChild;
         pGsChild->_Level = pPrevChild->_Level + 1;
 				pPrevChild->_pListChildren->Add(pGsChild); //Dodanie aktualnego objektu, do list potomków, przodka
+        //Tworzenie potomków w drzewie
+				TrNode = CommData::CDataMaster->_pTreeView->Items->AddChildObject(pPrevChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
+				pGsChild->_TreeNodeChild = TrNode;
 			}
 		}
 
 		this->_pMainChildrenList->Add(pGsChild); //Dodanie do głównej listy objektów
 	}
 
+  CommData::CDataMaster->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
+	CommData::CDataMaster->_pTreeView->Items->GetFirstNode()->MakeVisible();
+
   pGsChild = static_cast<GsChild *>(this->_pMainChildrenList->Last());
 	if(pGsChild)
 	// Aktywacja i selekcja ostatniego elementu
 	{
 		this->_pSelectObject = pGsChild; // Ostatni object aktywnym
+		CommData::CDataMaster->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
+    CommData::CDataMaster->_pMultiSelectTreeNodes->Add(TrNode); // Dodanie do listy multiselect dla objektu, klasy TTreeView
+    CommData::CDataMaster->FSelectText = this->_pSelectObject->Text; // Tekst na pozycji, pole typy __property
+		CommData::CDataMaster->FSelectItem = this->_pSelectObject; // Wskażnik na GsChild, pole typy __property
 		this->_CalculateNewDimension(pGsChild);
     this->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
 		pGsChild->_IsActive = true;
 	}
-	//this->Invalidate(); //Całe odświerzenie
+	CommData::CDataMaster->_pTreeView->Visible = true;
 
 	if(pDataToOpen) {delete pDataToOpen; pDataToOpen = nullptr;}
   return bReturn;
@@ -625,8 +661,8 @@ void __fastcall GsDrawChildren::_CalculateNewDimension(GsChild *pGsChild)
 *							Główna klasa GsScrollLogicalRelationship,											*
 *											pochodna TScrollingWinControl.												*
 *****************************************************************************/
-__fastcall GsMaster::GsMaster(TComponent* Owner)
- : TScrollingWinControl(Owner)
+__fastcall GsMaster::GsMaster(TComponent* Owner, TTreeView *pTrView)
+ : TScrollingWinControl(Owner), _pTreeView(pTrView)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -634,9 +670,13 @@ __fastcall GsMaster::GsMaster(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  // Lista dla wielokrotnego wyboru
+	// Lista dla wielokrotnego wyboru
 	this->FGsChildrensSelectList = new TList();
 	if(!this->FGsChildrensSelectList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	// Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
+	this->_pMultiSelectTreeNodes = new TList();
+	if(!this->_pMultiSelectTreeNodes) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+
 	this->StyleElements = TStyleElements();
 	this->AutoScroll = true;
 	this->DoubleBuffered = true;
@@ -656,7 +696,9 @@ __fastcall GsMaster::~GsMaster()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  // Lista dla wielokrotnego wyboru
+  // Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
+	if(this->_pMultiSelectTreeNodes) {delete this->_pMultiSelectTreeNodes; this->_pMultiSelectTreeNodes = nullptr;}
+	// Lista dla wielokrotnego wyboru objektów GsChild
 	if(this->FGsChildrensSelectList) {delete this->FGsChildrensSelectList; this->FGsChildrensSelectList = nullptr;}
 }
 //---------------------------------------------------------------------------
@@ -771,6 +813,8 @@ bool __fastcall GsMaster::OpenProject()
 		{
       if(pFileOpenDialog->Execute()) //Element został wybrany
 			{
+				this->_pTreeView->Items->Clear();
+        this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
 				UnicodeString ustrExt = TPath::GetExtension(pFileOpenDialog->FileName);
 				//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
 				delete this->_pGsDrawChildren->_pRootObject; this->_pGsDrawChildren->_pRootObject = nullptr; //Niszczenie rozpoczyna się od korzenia
@@ -926,11 +970,13 @@ void __fastcall GsMaster::DeleteObject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	TTreeNode *_pNode=nullptr;
 	if(this->_pGsDrawChildren->_pSelectObject)	//Aktualnie aktywny objekt
 	{
 		if(this->_pGsDrawChildren->_pSelectObject!=this->_pGsDrawChildren->_pRootObject)
 		//Nie jest korzeniem i posiada przodków
 		{
+			_pNode = this->_pGsDrawChildren->_pSelectObject->_TreeNodeChild;
 			GsChild *pParent = this->_pGsDrawChildren->_pSelectObject->_pPrevChild;
 			if(pParent)
 			{
@@ -950,6 +996,7 @@ void __fastcall GsMaster::DeleteObject()
       delete this->_pGsDrawChildren->_pRootObject; this->_pGsDrawChildren->_pRootObject = nullptr;
 			this->_pGsDrawChildren->_pSelectObject = nullptr;
 		}
+		_pNode->Delete(); // Skasowanie objektu
 		this->Invalidate();
 	}
 }
@@ -966,13 +1013,14 @@ void __fastcall GsMaster::AddNewObjectScheme(const UnicodeString &custrAdr, cons
 	int _iTop=20;
 	const int ciVertSpace = 24, // Odległość w pionie od poprzednie elementu
 						ciHorSpace = 12;  // Odległość w poziomie od poprzedniego elementu;
-
+	TTreeNode *TrNode=nullptr;
 	GsChild *pGsChild=nullptr, *prevGsChild=nullptr; //Domyślnie to korzeń
 
 	pGsChild = new GsChild(this->_pGsDrawChildren, custrAdr, custrVers);
 	if(!pGsChild) throw(Exception("Nie dokonano inicjalizacji objektu GsChildLogicalRelationship"));
 	int _left = this->_pGsDrawChildren->Width / 2 - (pGsChild->Width / 2);
 
+	this->_pTreeView->Visible = true;
 	if(this->_pGsDrawChildren->_pMainChildrenList->Count > 0) //Tylko jeden korzeń!
 	{
 		prevGsChild = this->_pGsDrawChildren->_pSelectObject;
@@ -1001,23 +1049,33 @@ void __fastcall GsMaster::AddNewObjectScheme(const UnicodeString &custrAdr, cons
 		_iTop = prevGsChild->Top + prevGsChild->Height + ciVertSpace;
 		pGsChild->_Level = prevGsChild->_Level + 1; // Jeden poziom więcej
 		prevGsChild->_pListChildren->Add(pGsChild); // Dodanie aktualnego objektu, do list potomków, przodka
+    //Tworzenie potomków w drzewie
+		TrNode = this->_pTreeView->Items->AddChildObject(prevGsChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
+		pGsChild->_TreeNodeChild = TrNode;
 	}
 	else //Dodawanie korzenia
 	{
 		this->_pGsDrawChildren->_pRootObject = pGsChild;		// Okno głównego korzenia
+    //Tworzenie korzenia drzewa
+		TrNode = this->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
+		pGsChild->_TreeNodeChild = TrNode;
 	}
 	pGsChild->Top = _iTop; pGsChild->Left = _left;
 
 	this->_pGsDrawChildren->_pSelectObject = pGsChild;	// Aktualnie aktywny nowo dodany objekt
 	this->_pGsDrawChildren->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
 	pGsChild->_IsActive = true;
+  this->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
 	this->FSelectItem = this->_pGsDrawChildren->_pSelectObject; // Aktualnie aktywny nowo dodany objekt,
 																														 // pole typy __property
 	this->FSelectText = custrVers; // Tekst na pozycji, pole typy __property
 
 	this->_pGsDrawChildren->_pMainChildrenList->Add(pGsChild); //Dodanie do głównej listy objektów
 	this->_pGsDrawChildren->Invalidate(); //Całe odświerzenie
-	//return pGsChild;
+
+	this->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
+	this->_pTreeView->Items->GetFirstNode()->MakeVisible();
+
 }
 //---------------------------------------------------------------------------
 void __fastcall GsMaster::NewProject()
@@ -1028,9 +1086,12 @@ void __fastcall GsMaster::NewProject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
+	this->_pTreeView->Items->Clear();
+	this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
+	//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
 	if(this->_pGsDrawChildren->_pRootObject) {delete this->_pGsDrawChildren->_pRootObject; this->_pGsDrawChildren->_pRootObject = nullptr;} //Niszczenie rozpoczyna się od korzenia
 	this->_pGsDrawChildren->_pSelectObject = nullptr;
+	this->_pTreeView->Visible = false;
 	this->_pGsDrawChildren->Invalidate();
 }
 //---------------------------------------------------------------------------
@@ -1076,4 +1137,23 @@ void __fastcall GsMaster::SaveToGfx(const UnicodeString &ustrPathSave)
 	if(bmp) {delete bmp; bmp = nullptr;}
 }
 //----------------------- Metody prywatne właściwości------------------------
+void __fastcall GsMaster::FSetChildSelect(GsChild *pGsChild)
+/**
+	OPIS METOD(FUNKCJI): Zmiana pozycji zaznaczenia
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	// Ustawienie właściwosci __proprties
+	this->FSelectItem = pGsChild;
+	this->FSelectText = pGsChild->Text;
+	// Wskaznik z argumenty staje się objektem aktywnym
+	this->_pGsDrawChildren->_pSelectObject = pGsChild;
+  // Modyfikacja niezbędnych danych
+	this->_pGsDrawChildren->_DeactivationAllItems(); // Wykasowanie wszystkich aktywacji pozycji
+	pGsChild->_IsActive = true; // Wskaźnik z argumentu staje się aktywną pozycją
+  this->_pGsDrawChildren->Invalidate();
+}
+//---------------------------------------------------------------------------
 

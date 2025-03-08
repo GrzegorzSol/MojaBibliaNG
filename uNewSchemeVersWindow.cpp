@@ -17,7 +17,7 @@ TNewSchemeVersWindow *NewSchemeVersWindow;
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
-enum {// Ikony
+enum {// Ikony 32x32
 			enImage_Add, // Dodanie nowej pozycji
 			enImage_Del, // Skasowanie wybranej pozycji
 			enImage_SetupsColors, // Konfiguracja kolorów
@@ -27,6 +27,9 @@ enum {// Ikony
 			enImage_Rename,// Zmiana wersetu w objekcie
 			enImage_New, // Nowy projekt
 			enImage_SaveAtGfx, // zapisz wykres jako grafikę
+			// Ikony 16x16
+			enImageSmall_Root=0,
+			enImageSmall_Child,
 			// Tagi dla głównych przycisków
 			enTag_Add = 100,   // Dodanie nowej pozycji
 			entag_Del,         // Skasowanie wybranej pozycji
@@ -58,7 +61,7 @@ __fastcall TNewSchemeVersWindow::TNewSchemeVersWindow(TComponent* Owner)
 	this->_pGsBarSelectVers->Align = alTop;
 	this->ActionToolBarMain->Top = 0; // Narzędzia na samej górze
   // Utworzenie głównego objektu klasy GsLogicalRelationshipTable
-	this->_pGsMasterRel = new GsMaster(this);
+	this->_pGsMasterRel = new GsMaster(this, this->TrViewMain);
 	if(!this->_pGsMasterRel) throw(Exception("Błąd inicjalizacji objektu GsMaster"));
 	this->_pGsMasterRel->Parent = this;
 	this->_pGsMasterRel->Align = alClient;
@@ -511,6 +514,47 @@ void __fastcall TNewSchemeVersWindow::_WriteConfig()
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_SetupsSchemeVers, GlobalVar::GlobalIni_SetSchemeNumTranslate, this->pLBox->ItemIndex);
 }
 //---------------------------------------------------------------------------
+void __fastcall TNewSchemeVersWindow::TrViewMainGetImageIndex(TObject *Sender,
+					TTreeNode *Node)
+/**
+	OPIS METOD(FUNKCJI): Ikonki dla drzewa TTreeView
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTreeView *pTV = dynamic_cast<TTreeView *>(Sender);
+	if(!pTV) return;
+	//---
+	if(Node->Level == 0) Node->ImageIndex = enImageSmall_Root;
+	else Node->ImageIndex = enImageSmall_Child;
+}
+//---------------------------------------------------------------------------
+void __fastcall TNewSchemeVersWindow::TrViewMainClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTreeView *pTV = dynamic_cast<TTreeView *>(Sender);
+	if(!pTV) return;
+	//---
+
+	TTreeNode *pNode = pTV->Selected; //Wybrany węzeł
+	if(pNode)
+	{
+		GsChild *pGsChild = static_cast<GsChild *>(pNode->Data);
+		this->_pGsMasterRel->SelectChildItem = pGsChild; // Zmiana zaznaczonej pozycji
+//		for(int i=0; i<pTV->SelectionCount; ++i)
+//		{
+//
+//		}
+	}
+}
+//---------------------------------------------------------------------------
+
 //========================== AKCJE DLA OKNA =================================
 void __fastcall TNewSchemeVersWindow::Act_AddItemExecute(TObject *Sender)
 /**
@@ -632,7 +676,7 @@ void __fastcall TNewSchemeVersWindow::Act_RenameItemExecute(TObject *Sender)
 	//---
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
 	GsChild* pGsChild=nullptr;
-	pGsChild = this->_pGsMasterRel->GetSelectItem;
+	pGsChild = this->_pGsMasterRel->SelectChildItem;
 	if(!pGsChild) return;
 
 	int iResult = MessageBox(NULL, TEXT("Czy jesteś pewny, że chcesz zmienić zawartość zaznaczonej pozycji?"),

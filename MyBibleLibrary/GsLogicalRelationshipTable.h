@@ -86,6 +86,7 @@ class GsChild : public GsCoreChild
 	__fastcall GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewReadWriteDataObject);
 	__fastcall virtual ~GsChild();
 	//---
+  TTreeNode *_TreeNodeChild=nullptr;
 	GsChild *_pPrevChild=nullptr, // Wskaźnik na przodka
 					*_pNextChild=nullptr; // Wskaźnik na następny objekt
   UnicodeString _ustrNameVers, _ustrTextVers;
@@ -136,12 +137,12 @@ class GsMaster : public TScrollingWinControl
 
 	public:
 		// Kontruktory i destruktor
-		__fastcall GsMaster(TComponent* Owner);
+		__fastcall GsMaster(TComponent* Owner, TTreeView *pTrView=nullptr);
 		__fastcall virtual ~GsMaster();
 		// Pola typu __property
 		__property TMouseEvent OnMouseDown = {read = FGetSetOnMouseDown, write = FGetSetOnMouseDown};
 			// Inne właściwości
-		__property GsChild *GetSelectItem {read = FSelectItem, default = 0}; // Wskaźnik na aktywną pozycję.
+		__property GsChild *SelectChildItem {read = FSelectItem, write = FSetChildSelect, default = 0}; // Wskaźnik na aktywną pozycję.
 		__property UnicodeString GetSelectText {read = FSelectText, nodefault}; // Tekst w aktywnej pozycji.
 		__property TList *GetSelectList {read = FGsChildrensSelectList, nodefault}; // Lista zaznaczonych elementów
 		// Metody inline
@@ -156,6 +157,7 @@ class GsMaster : public TScrollingWinControl
 		TColor Global_ColorsSchemeTable[enColorSchemeNum_Count];
 		int Global_iWidthLineScheme=2; //Szerokość lini
 		bool Global_IsTransparent=false; // Przezroczystość objektów
+    TList *_pMultiSelectTreeNodes=nullptr; // Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
@@ -169,6 +171,8 @@ class GsMaster : public TScrollingWinControl
 		UnicodeString FSelectText; // Tekst w aktywnej pozycji.
 		TMouseEvent FGetSetOnMouseDown;
 		TList *FGsChildrensSelectList=nullptr; // Lista dla wielokrotnego wyboru
+		TTreeView *_pTreeView=nullptr;
+		void __fastcall FSetChildSelect(GsChild *pGsChild);
 };
 
 #endif
