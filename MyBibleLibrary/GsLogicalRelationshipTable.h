@@ -139,6 +139,7 @@ class GsMaster : public TScrollingWinControl
 		// Kontruktory i destruktor
 		__fastcall GsMaster(TComponent* Owner, TTreeView *pTrView=nullptr);
 		__fastcall virtual ~GsMaster();
+    inline static UnicodeString sustrVersionLogicalRelationshipTable = "0.9.9235.8529";
 		// Pola typu __property
 		__property TMouseEvent OnMouseDown = {read = FGetSetOnMouseDown, write = FGetSetOnMouseDown};
 			// Inne właściwości
@@ -152,17 +153,18 @@ class GsMaster : public TScrollingWinControl
 		bool __fastcall SaveProject();
 		void __fastcall RenameTextItem(const UnicodeString &custrNewAdr, const UnicodeString &custrNewVers); // Zmiana tekstu w wybranej pozycji
 		void __fastcall DeleteObject();
-    void __fastcall SaveToGfx(const UnicodeString &ustrPathSave);
+		void __fastcall SaveToGfx(const UnicodeString &ustrPathSave);
+		void __fastcall SaveToRTFText(const UnicodeString &ustrPathSave); // Stworzenie pliku typu RTF z zawartością wszystkich pozycji
     // Zmienne dotyczące wyglądu modułu newSchemeVers
 		TColor Global_ColorsSchemeTable[enColorSchemeNum_Count];
 		int Global_iWidthLineScheme=2; //Szerokość lini
 		bool Global_IsTransparent=false; // Przezroczystość objektów
-    TList *_pMultiSelectTreeNodes=nullptr; // Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
+		TList *_pMultiSelectTreeNodes=nullptr; // Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
-    DYNAMIC bool __fastcall DoMouseWheel(System::Classes::TShiftState Shift, int WheelDelta, const System::Types::TPoint &MousePos);
+		DYNAMIC bool __fastcall DoMouseWheel(System::Classes::TShiftState Shift, int WheelDelta, const System::Types::TPoint &MousePos);
 	private:
 		GsDrawChildren *_pGsDrawChildren=nullptr;
 		UnicodeString _ustrProjectName;

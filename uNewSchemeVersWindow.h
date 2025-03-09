@@ -39,6 +39,7 @@ __published:	// IDE-managed Components
 	TTreeView *TrViewMain;
 	TAction *Act_SaveAtGfx;
 	TImageList *ImageListSmall;
+	TAction *Act_CreateAllText;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -53,6 +54,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_SaveAtGfxExecute(TObject *Sender);
 	void __fastcall TrViewMainGetImageIndex(TObject *Sender, TTreeNode *Node);
 	void __fastcall TrViewMainClick(TObject *Sender);
+	void __fastcall Act_CreateAllTextExecute(TObject *Sender);
 private:	// User declarations
   void __fastcall _InitHintsAndTags();
 	GsMaster *_pGsMasterRel=nullptr;

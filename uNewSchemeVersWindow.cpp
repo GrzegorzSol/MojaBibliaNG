@@ -26,7 +26,8 @@ enum {// Ikony 32x32
 			enImage_Open, // Otwórz projekt
 			enImage_Rename,// Zmiana wersetu w objekcie
 			enImage_New, // Nowy projekt
-			enImage_SaveAtGfx, // zapisz wykres jako grafikę
+			enImage_SaveAtGfx, // Zapisz wykres jako grafikę
+			enImage_AllText, // Stworzenie pliku typu RTF z zawartością wszystkich pozycji
 			// Ikony 16x16
 			enImageSmall_Root=0,
 			enImageSmall_Child,
@@ -40,6 +41,7 @@ enum {// Ikony 32x32
 			enTag_Rename,// Zmiana wersetu w objekcie
 			enTag_New, // Nowy projekt
 			enTag_SaveAtGfx, // zapisz wykres jako grafikę
+			enTag_AllText, // Stworzenie pliku typu RTF z zawartością wszystkich pozycji
 			// Tagi dla przycisków panelu konfiguracji
 			enTag_ConfigAccept = 200,
 			enTag_ConfigNoAccept
@@ -136,6 +138,8 @@ void __fastcall TNewSchemeVersWindow::_InitHintsAndTags()
 	this->Act_NewProject->Hint = Format("%s|Zmienia tekst w wybranej pozycji.|%u", ARRAYOFCONST((this->Act_NewProject->Caption, this->Act_NewProject->ImageIndex)));
 	this->Act_SaveAtGfx->Hint = enTag_SaveAtGfx;
 	this->Act_SaveAtGfx->Hint = Format("%s|Zapisuje wykres jako grafikę.|%u", ARRAYOFCONST((this->Act_SaveAtGfx->Caption, this->Act_SaveAtGfx->ImageIndex)));
+	this->Act_CreateAllText->Tag = enTag_AllText;
+	this->Act_CreateAllText->Hint = Format("%s|Tworzy i zapisuje zawartość wszystkich wersetów w pliku tekstowego.|%u", ARRAYOFCONST((this->Act_CreateAllText->Caption, this->Act_CreateAllText->ImageIndex)));
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::_OpenSetupsVisualScheme()
@@ -526,8 +530,16 @@ void __fastcall TNewSchemeVersWindow::TrViewMainGetImageIndex(TObject *Sender,
 	TTreeView *pTV = dynamic_cast<TTreeView *>(Sender);
 	if(!pTV) return;
 	//---
-	if(Node->Level == 0) Node->ImageIndex = enImageSmall_Root;
-	else Node->ImageIndex = enImageSmall_Child;
+	if(Node->Level == 0)
+	{
+		Node->ImageIndex = enImageSmall_Root;
+		Node->SelectedIndex = enImageSmall_Root;;
+	}
+	else
+	{
+		Node->ImageIndex = enImageSmall_Child;
+		Node->SelectedIndex = enImageSmall_Child;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::TrViewMainClick(TObject *Sender)
@@ -581,6 +593,7 @@ void __fastcall TNewSchemeVersWindow::Act_AddItemExecute(TObject *Sender)
 	this->Act_SaveAtGfx->Enabled = true;
 	this->Act_RenameItem->Enabled = true;
 	this->Act_Save->Enabled = true;
+	this->Act_CreateAllText->Enabled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_DelItemExecute(TObject *Sender)
@@ -646,6 +659,7 @@ void __fastcall TNewSchemeVersWindow::Act_OpenExecute(TObject *Sender)
 	this->Act_SaveAtGfx->Enabled = true;
 	this->Act_RenameItem->Enabled = true;
 	this->Act_Save->Enabled = true;
+	this->Act_CreateAllText->Enabled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SaveExecute(TObject *Sender)
@@ -711,6 +725,7 @@ void __fastcall TNewSchemeVersWindow::Act_NewProjectExecute(TObject *Sender)
 	this->Act_SaveAtGfx->Enabled = false;
 	this->Act_RenameItem->Enabled = false;
 	this->Act_Save->Enabled = false;
+	this->Act_CreateAllText->Enabled = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SaveAtGfxExecute(TObject *Sender)
@@ -751,15 +766,63 @@ void __fastcall TNewSchemeVersWindow::Act_SaveAtGfxExecute(TObject *Sender)
 				this->_pGsMasterRel->SaveToGfx(ustrPathSave);
 			}
 		}
-    catch(const Exception& e)
+		catch(const Exception& e)
 		{
 			MessageBox(NULL, Format("Błąd: \"%s\"", ARRAYOFCONST((ustrPathSave))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
 	}
 	__finally
 	{
-    if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
-  }
+		if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TNewSchemeVersWindow::Act_CreateAllTextExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	const UnicodeString ustrFileTypes[] = {"Pliki TXT", "*.txt"};
+	UnicodeString ustrPathSave;
+	TFileSaveDialog *pFileSaveDialog = new TFileSaveDialog(this);
+	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog"));
+	pFileSaveDialog->Title = "Podaj nazwę pliku graficznego do zapisu";
+	for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
+	{
+		TFileTypeItem *pTFileTypeItem = pFileSaveDialog->FileTypes->Add();
+		pTFileTypeItem->DisplayName = ustrFileTypes[i];
+		pTFileTypeItem->FileMask = ustrFileTypes[i+1];
+	}
+	pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
+	pFileSaveDialog->DefaultFolder = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
+	pFileSaveDialog->DefaultExtension = ".txt"; // Automatyczne dodawanie rozrzeżenia
+	pFileSaveDialog->FileName = "Bez nazwy";
+
+  try
+	{
+		try
+		{
+			if(pFileSaveDialog->Execute())
+			{
+				ustrPathSave = pFileSaveDialog->FileName;
+				this->_pGsMasterRel->SaveToRTFText(ustrPathSave);
+			}
+		}
+    catch(const Exception& e)
+		{
+			MessageBox(NULL, Format("Błąd: \"%s\"", ARRAYOFCONST((ustrPathSave))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+		}
+	}
+  __finally
+	{
+		if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
+	}
 }
 //---------------------------------------------------------------------------
 

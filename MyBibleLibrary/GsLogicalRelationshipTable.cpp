@@ -202,30 +202,54 @@ void __fastcall GsChild::Paint()
   GsCoreChild::Paint();
 	//Własny kod
 	// Kolor pozycji zależnie od jej stanu
+	TColor clFrameColor=clRed;
+	int iWidth=1;
 	if(this == CommData::CDataDraw->_pRootObject)
 		// Root nie zmienia koloru?
-		{this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Rot];}
+	{
+		this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Rot];
+		// Przy zaznaczaniu objektu typu "korzeń", będzie zmieniana tylko obwódka
+		if(this->_IsActive)
+		{
+      this->Canvas->Pen->Width = 5;
+			clFrameColor = clRed;
+		}
+		else
+		{
+      this->Canvas->Pen->Width = 1;
+			clFrameColor = clBlack;
+    }
+	}
 	else
 	{
 		if(this->_IsActive)
-			{this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Active];}
+		{
+			this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Active];
+			this->Canvas->Pen->Width = 5;
+			clFrameColor = clRed;
+		}
 		else
-			{this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_InActive];}
+		{
+			this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_InActive];
+			this->Canvas->Pen->Width = 1;
+			clFrameColor = clBlack;
+		}
 	}
 
 	if(CommData::CDataMaster->Global_IsTransparent)
   // Czy malować z przezroczystością ?
-		{FillRectAlpha(this->Canvas, this->ClientRect, this->Color, 150);}
+	{
+		FillRectAlpha(this->Canvas, this->ClientRect, this->Color, 150);
+	}
 	else
 	{
 		this->Canvas->Brush->Color = this->Color;
 		this->Canvas->FillRect(this->ClientRect);
 	}
 
-	this->Canvas->Brush->Color = clBlack; //
-	this->Canvas->FrameRect(this->ClientRect);
-
-  this->Canvas->Brush->Style = bsClear;
+	this->Canvas->Brush->Style = bsClear; // By nie rysować tekstu z podkładem, oraz by metoda Rectangle nie rysowała tła.
+	this->Canvas->Pen->Color = clFrameColor;
+	this->Canvas->Rectangle(this->ClientRect);
 	TRect MyRect(this->ClientRect); MyRect.Top = ciAddHeight / 2; MyRect.Left = ciAddWidth / 2;
 
 	DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &MyRect, DT_WORDBREAK);
@@ -396,6 +420,11 @@ void __fastcall GsDrawChildren::Paint()
 	TCustomPanel::Paint();
   //Własny kod
 	GsChild *pGsChild=nullptr, *pPrevChild=nullptr;
+
+	this->Canvas->Brush->Color = clFuchsia;
+  this->Canvas->Pen->Width = CommData::CDataMaster->Global_iWidthLineScheme;//iWidthLine;
+	this->Canvas->Pen->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];//ColorObject[enColorNum_Line];
+
 	for(int i=0; i<this->_pMainChildrenList->Count; ++i)
 	{
 		pGsChild = static_cast<GsChild *>(this->_pMainChildrenList->Items[i]);
@@ -405,14 +434,16 @@ void __fastcall GsDrawChildren::Paint()
 			//--- Odrysowanie objektu i połączeń
 			if(pPrevChild)
 			{
+				int iChildLeft=pGsChild->Left + (pGsChild->Width / 2),
+						iPrevChild=pPrevChild->Left + (pPrevChild->Width / 2);
 				//Rysowanie połączenia z przodkiem
-				this->Canvas->Pen->Width = CommData::CDataMaster->Global_iWidthLineScheme;//iWidthLine;
-				this->Canvas->Pen->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];//ColorObject[enColorNum_Line];
-				this->Canvas->MoveTo(pGsChild->Left + (pGsChild->Width / 2), pGsChild->Top);
-				this->Canvas->LineTo(pPrevChild->Left + (pPrevChild->Width / 2), pPrevChild->Top + pPrevChild->Height);
+				this->Canvas->MoveTo(iChildLeft, pGsChild->Top);
+				this->Canvas->LineTo(iPrevChild, pPrevChild->Top + pPrevChild->Height);
+
+				this->Canvas->Ellipse(TRect(iChildLeft - 6, pGsChild->Top - 6, iChildLeft + 6, pGsChild->Top + 6));
 			}
 		}
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawChildren::MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -938,6 +969,40 @@ bool __fastcall GsMaster::SaveProject()
 	}
 
 	return bReturn;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsMaster::SaveToRTFText(const UnicodeString &ustrPathSave)
+/**
+	OPIS METOD(FUNKCJI): Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GsChild *pChild=nullptr;
+	TStringList *pSListFile=nullptr;
+
+	try
+	{
+		pSListFile = new TStringList();
+		if(!pSListFile) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+
+		//pStringStream->WriteString(GlobalHeaderRtf);
+
+		for(int i=0; i<this->_pGsDrawChildren->_pMainChildrenList->Count; ++i)
+		{
+			pChild = static_cast<GsChild *>(this->_pGsDrawChildren->_pMainChildrenList->Items[i]);
+			if(pChild)
+			{
+				pSListFile->Add(Format("%s \"%s\"", ARRAYOFCONST((pChild->_ustrNameVers, pChild->_ustrTextVers))));
+			}
+		}
+		pSListFile->SaveToFile(ustrPathSave, TEncoding::UTF8);
+	}
+	__finally
+	{
+		if(pSListFile) {delete pSListFile; pSListFile = nullptr;}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsMaster::RenameTextItem(const UnicodeString &custrNewAdr, const UnicodeString &custrNewVers)
