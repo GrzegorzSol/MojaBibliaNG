@@ -5,6 +5,7 @@
 #include "GsLogicalRelationshipTable.h"
 #include "uGlobalVar.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
+#include <System.StrUtils.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -971,9 +972,9 @@ bool __fastcall GsMaster::SaveProject()
 	return bReturn;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsMaster::SaveToRTFText(const UnicodeString &ustrPathSave)
+void __fastcall GsMaster::SaveToAllText(const UnicodeString &ustrPathSave)
 /**
-	OPIS METOD(FUNKCJI): Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+	OPIS METOD(FUNKCJI): Stworzenie pliku typu txt z zawartością wszystkich pozycji
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -987,17 +988,11 @@ void __fastcall GsMaster::SaveToRTFText(const UnicodeString &ustrPathSave)
 		pSListFile = new TStringList();
 		if(!pSListFile) throw(Exception("Błąd inicjalizacji objektu TStringList"));
 
-		//pStringStream->WriteString(GlobalHeaderRtf);
-
-		for(int i=0; i<this->_pGsDrawChildren->_pMainChildrenList->Count; ++i)
+		if(this->_pGsDrawChildren->_pRootObject)
 		{
-			pChild = static_cast<GsChild *>(this->_pGsDrawChildren->_pMainChildrenList->Items[i]);
-			if(pChild)
-			{
-				pSListFile->Add(Format("%s \"%s\"", ARRAYOFCONST((pChild->_ustrNameVers, pChild->_ustrTextVers))));
-			}
+			this->_CreateHierarchyText(this->_pGsDrawChildren->_pRootObject, pSListFile);
+      pSListFile->SaveToFile(ustrPathSave, TEncoding::UTF8);
 		}
-		pSListFile->SaveToFile(ustrPathSave, TEncoding::UTF8);
 	}
 	__finally
 	{
@@ -1200,6 +1195,28 @@ void __fastcall GsMaster::SaveToGfx(const UnicodeString &ustrPathSave)
 
   if(pWICImage) {delete pWICImage; pWICImage = nullptr;}
 	if(bmp) {delete bmp; bmp = nullptr;}
+}
+//----------------------------- Metody prywatne -----------------------------
+void __fastcall GsMaster::_CreateHierarchyText(GsChild *pChild, TStrings *pStrings)
+/**
+	OPIS METOD(FUNKCJI): Tworzenie zchierarchizowanego tekstu. Metoda działa wywołując sama siebie
+                       idąc po kolejnych gałęziach hierarchii
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	GsChild *pChildChild=nullptr;
+
+	pStrings->Add(Format("%s%s \"%s\"", ARRAYOFCONST((DupeString("\t", pChild->_Level), pChild->_ustrNameVers, pChild->_ustrTextVers))));
+	for(int i=0; i<pChild->_pListChildren->Count; ++i)
+	{
+		pChildChild = static_cast<GsChild *>(pChild->_pListChildren->Items[i]);
+		if(pChildChild)
+		{
+			this->_CreateHierarchyText(pChildChild, pStrings);
+		}
+	}
 }
 //----------------------- Metody prywatne właściwości------------------------
 void __fastcall GsMaster::FSetChildSelect(GsChild *pGsChild)

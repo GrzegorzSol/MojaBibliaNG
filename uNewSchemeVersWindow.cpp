@@ -811,7 +811,7 @@ void __fastcall TNewSchemeVersWindow::Act_CreateAllTextExecute(TObject *Sender)
 			if(pFileSaveDialog->Execute())
 			{
 				ustrPathSave = pFileSaveDialog->FileName;
-				this->_pGsMasterRel->SaveToRTFText(ustrPathSave);
+				this->_pGsMasterRel->SaveToAllText(ustrPathSave);
 			}
 		}
     catch(const Exception& e)

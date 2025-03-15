@@ -154,7 +154,7 @@ class GsMaster : public TScrollingWinControl
 		void __fastcall RenameTextItem(const UnicodeString &custrNewAdr, const UnicodeString &custrNewVers); // Zmiana tekstu w wybranej pozycji
 		void __fastcall DeleteObject();
 		void __fastcall SaveToGfx(const UnicodeString &ustrPathSave);
-		void __fastcall SaveToRTFText(const UnicodeString &ustrPathSave); // Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+		void __fastcall SaveToAllText(const UnicodeString &ustrPathSave); // Stworzenie pliku typu txt z zawartością wszystkich pozycji
     // Zmienne dotyczące wyglądu modułu newSchemeVers
 		TColor Global_ColorsSchemeTable[enColorSchemeNum_Count];
 		int Global_iWidthLineScheme=2; //Szerokość lini
@@ -168,6 +168,7 @@ class GsMaster : public TScrollingWinControl
 	private:
 		GsDrawChildren *_pGsDrawChildren=nullptr;
 		UnicodeString _ustrProjectName;
+		void __fastcall _CreateHierarchyText(GsChild *pChild, TStrings *pStrings);
 		// ----- Pola prywatne dla właściwości __property -----
 		GsChild *FSelectItem=nullptr; // Wskaźnik na aktywną pozycję.
 		UnicodeString FSelectText; // Tekst w aktywnej pozycji.

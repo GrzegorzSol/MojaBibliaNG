@@ -29,7 +29,7 @@ object SearchTextWindow: TSearchTextWindow
     Top = 3
     Width = 1188
     Height = 255
-    ActivePage = STW_TabSheetSettings
+    ActivePage = STW_TabSheetInputText
     Align = alTop
     Images = ImgListSmallSearch
     OwnerDraw = True
@@ -76,7 +76,6 @@ object SearchTextWindow: TSearchTextWindow
         ShowHint = True
         TabOrder = 0
         OnClick = STW_ChBoxIsRegExClick
-        ExplicitTop = 65
       end
       object STW_ButtonHelpRegExp: TButton
         Left = 981
@@ -119,7 +118,6 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Czy podczas wyszukiwania uwzgl'#281'dnia'#263' wielko'#347#263' liter?'
         TabOrder = 3
-        ExplicitTop = 88
       end
       object STW_ChBoxMemoSetupsSearch: TCheckBox
         AlignWithMargins = True
@@ -132,7 +130,6 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Czy zapami'#281'ta'#263' parametry wyszukiwania?'
         TabOrder = 4
-        ExplicitTop = 111
       end
     end
     object STW_TabSheetStatistick: TTabSheet
@@ -328,8 +325,6 @@ object SearchTextWindow: TSearchTextWindow
       ParentColor = True
       ShowCaption = False
       TabOrder = 0
-      ExplicitTop = 15
-      ExplicitHeight = 115
       object STW_ImageLogoSearch: TImage
         Left = 0
         Top = 0
@@ -357,7 +352,6 @@ object SearchTextWindow: TSearchTextWindow
         ParentFont = False
         TabOrder = 0
         Transparent = False
-        ExplicitHeight = 109
       end
     end
     object STW_PanelSelectSearchParam: TPanel
@@ -371,8 +365,6 @@ object SearchTextWindow: TSearchTextWindow
       ParentColor = True
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 15
-      ExplicitHeight = 115
       object STW_LabelInfoTo: TLabel
         Left = 257
         Top = 72
@@ -497,13 +489,12 @@ object SearchTextWindow: TSearchTextWindow
           Left = 0
           Top = 0
           Width = 1176
-          Height = 338
+          Height = 333
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 1002
-          ExplicitHeight = 332
+          ExplicitHeight = 338
           ControlData = {
-            4C0000008B790000EF2200000000000000000000000000000000000000000000
+            4C0000008B7900006B2200000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -537,12 +528,11 @@ object SearchTextWindow: TSearchTextWindow
           Left = 0
           Top = 121
           Width = 1176
-          Height = 215
+          Height = 212
           Align = alClient
           TabOrder = 1
-          ExplicitHeight = 217
           ControlData = {
-            4C0000008B790000391600000000000000000000000000000000000000000000
+            4C0000008B790000E91500000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000

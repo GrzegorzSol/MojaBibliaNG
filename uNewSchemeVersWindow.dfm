@@ -1,7 +1,7 @@
 object NewSchemeVersWindow: TNewSchemeVersWindow
   Left = 0
   Top = 0
-  Caption = 'NewSchemeVersWindow'
+  Caption = 'Wykres logicznego powi'#261'zania werset'#243'w.'
   ClientHeight = 861
   ClientWidth = 1644
   Color = clBtnFace
