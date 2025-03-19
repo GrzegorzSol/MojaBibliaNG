@@ -119,7 +119,8 @@ class GsDrawChildren : public TCustomPanel
 	private:
 		GsChild *_pSelectObject=nullptr,	// Aktualnie aktywny objekt, potrzebny do jego odryswania
 																			// (rozpoczecie przesuwania) w metodzie MouseDown() klasy GsChild
-						*_pRootObject=nullptr;		// Objekt głównego korzenia
+						*_pRootObject=nullptr,		// Objekt głównego korzenia
+						*_pCutCopyObject=nullptr;    // Objekt aktualnie skopiowany
 		TList *_pMainChildrenList=nullptr;   // Płaska lista wszystkich pozycji
 		void __fastcall _DeactivationAllItems(); // Kasowanie wszystkich aktywności
 		bool __fastcall _OpenOldProject(TFileStream *pFileStream);
@@ -155,7 +156,9 @@ class GsMaster : public TScrollingWinControl
 		void __fastcall DeleteObject();
 		void __fastcall SaveToGfx(const UnicodeString &ustrPathSave);
 		void __fastcall SaveToAllText(const UnicodeString &ustrPathSave); // Stworzenie pliku typu txt z zawartością wszystkich pozycji
-    // Zmienne dotyczące wyglądu modułu newSchemeVers
+		void __fastcall CutCopyToPaste();
+		bool __fastcall PasteFromCopy();
+		// Zmienne dotyczące wyglądu modułu newSchemeVers
 		TColor Global_ColorsSchemeTable[enColorSchemeNum_Count];
 		int Global_iWidthLineScheme=2; //Szerokość lini
 		bool Global_IsTransparent=false; // Przezroczystość objektów
@@ -168,7 +171,8 @@ class GsMaster : public TScrollingWinControl
 	private:
 		GsDrawChildren *_pGsDrawChildren=nullptr;
 		UnicodeString _ustrProjectName;
-		void __fastcall _CreateHierarchyText(GsChild *pChild, TStrings *pStrings);
+		void __fastcall _CreateHierarchyText(const GsChild *pChild, TStrings *pStrings);
+		bool __fastcall _FindObjectInTree(const GsChild *pChildForComparison, GsChild *pChild);
 		// ----- Pola prywatne dla właściwości __property -----
 		GsChild *FSelectItem=nullptr; // Wskaźnik na aktywną pozycję.
 		UnicodeString FSelectText; // Tekst w aktywnej pozycji.

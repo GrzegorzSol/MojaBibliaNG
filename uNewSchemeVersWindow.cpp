@@ -27,7 +27,9 @@ enum {// Ikony 32x32
 			enImage_Rename,// Zmiana wersetu w objekcie
 			enImage_New, // Nowy projekt
 			enImage_SaveAtGfx, // Zapisz wykres jako grafikę
-			enImage_AllText, // Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+			enImage_AllText, // Stworzenie pliku typu txt z zawartością wszystkich pozycji
+			enImage_CutCopyToPaste, // Skopiowanie lub wycięciezaznaczonej gałęzi
+			enImage_PasteFromcopy, // Wklejenie skopiowanej gałęzi
 			// Ikony 16x16
 			enImageSmall_Root=0,
 			enImageSmall_Child,
@@ -41,7 +43,9 @@ enum {// Ikony 32x32
 			enTag_Rename,// Zmiana wersetu w objekcie
 			enTag_New, // Nowy projekt
 			enTag_SaveAtGfx, // zapisz wykres jako grafikę
-			enTag_AllText, // Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+			enTag_AllText, // Stworzenie pliku typu txt z zawartością wszystkich pozycji
+			enTag_CutCopyToPaste, // Skopiowanie lub wycięciezaznaczonej gałęzi
+			enTag_PasteFromcopy, // Wklejenie skopiowanej gałęzi
 			// Tagi dla przycisków panelu konfiguracji
 			enTag_ConfigAccept = 200,
 			enTag_ConfigNoAccept
@@ -136,10 +140,14 @@ void __fastcall TNewSchemeVersWindow::_InitHintsAndTags()
 	this->Act_RenameItem->Hint = Format("%s|Zmienia tekst w wybranej pozycji.|%u", ARRAYOFCONST((this->Act_RenameItem->Caption, this->Act_RenameItem->ImageIndex)));
 	this->Act_NewProject->Tag = enTag_New;
 	this->Act_NewProject->Hint = Format("%s|Zmienia tekst w wybranej pozycji.|%u", ARRAYOFCONST((this->Act_NewProject->Caption, this->Act_NewProject->ImageIndex)));
-	this->Act_SaveAtGfx->Hint = enTag_SaveAtGfx;
+	this->Act_SaveAtGfx->Tag = enTag_SaveAtGfx;
 	this->Act_SaveAtGfx->Hint = Format("%s|Zapisuje wykres jako grafikę.|%u", ARRAYOFCONST((this->Act_SaveAtGfx->Caption, this->Act_SaveAtGfx->ImageIndex)));
 	this->Act_CreateAllText->Tag = enTag_AllText;
 	this->Act_CreateAllText->Hint = Format("%s|Tworzy i zapisuje zawartość wszystkich wersetów w pliku tekstowego.|%u", ARRAYOFCONST((this->Act_CreateAllText->Caption, this->Act_CreateAllText->ImageIndex)));
+	this->Act_CutCopyToPaste->Tag = enTag_CutCopyToPaste;
+	this->Act_CutCopyToPaste->Hint = Format("%s|Kopiuje zaznaczony element, by go następnie wkleić.|%u", ARRAYOFCONST((this->Act_CutCopyToPaste->Caption, this->Act_CutCopyToPaste->ImageIndex)));
+	this->Act_PasteFromCopy->Tag = enTag_PasteFromcopy;
+	this->Act_PasteFromCopy->Hint = Format("%s|Wkleje wcześniej skopiowany element, w miejsce zaznaczenia.|%u", ARRAYOFCONST((this->Act_PasteFromCopy->Caption, this->Act_PasteFromCopy->ImageIndex)));
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::_OpenSetupsVisualScheme()
@@ -478,6 +486,12 @@ void __fastcall TNewSchemeVersWindow::_OnMouseDown(TObject *Sender, TMouseButton
 */
 {
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
+
+	if(Sender->ClassNameIs("GsChild") && this->_IsSelectToCopyCut)
+	// Aktywacja akcji wklejania skopiowanej gałęzi jeśli wybrano element docelowy i jest nim objekt klasy GsChild
+	{
+    this->Act_PasteFromCopy->Enabled = true;
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::_ReadConfig()
@@ -565,8 +579,6 @@ void __fastcall TNewSchemeVersWindow::TrViewMainClick(TObject *Sender)
 //		}
 	}
 }
-//---------------------------------------------------------------------------
-
 //========================== AKCJE DLA OKNA =================================
 void __fastcall TNewSchemeVersWindow::Act_AddItemExecute(TObject *Sender)
 /**
@@ -594,6 +606,7 @@ void __fastcall TNewSchemeVersWindow::Act_AddItemExecute(TObject *Sender)
 	this->Act_RenameItem->Enabled = true;
 	this->Act_Save->Enabled = true;
 	this->Act_CreateAllText->Enabled = true;
+	this->Act_CutCopyToPaste->Enabled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_DelItemExecute(TObject *Sender)
@@ -653,13 +666,16 @@ void __fastcall TNewSchemeVersWindow::Act_OpenExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
-	this->_pGsMasterRel->OpenProject();
+	bool bReturn = this->_pGsMasterRel->OpenProject();
+
+	if(!bReturn) return;
 
 	this->Act_DelItem->Enabled = true;
 	this->Act_SaveAtGfx->Enabled = true;
 	this->Act_RenameItem->Enabled = true;
 	this->Act_Save->Enabled = true;
 	this->Act_CreateAllText->Enabled = true;
+	this->Act_CutCopyToPaste->Enabled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SaveExecute(TObject *Sender)
@@ -726,6 +742,8 @@ void __fastcall TNewSchemeVersWindow::Act_NewProjectExecute(TObject *Sender)
 	this->Act_RenameItem->Enabled = false;
 	this->Act_Save->Enabled = false;
 	this->Act_CreateAllText->Enabled = false;
+	this->Act_CutCopyToPaste->Enabled = false;
+	this->Act_PasteFromCopy->Enabled = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SaveAtGfxExecute(TObject *Sender)
@@ -779,7 +797,7 @@ void __fastcall TNewSchemeVersWindow::Act_SaveAtGfxExecute(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_CreateAllTextExecute(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI): Stworzenie pliku typu RTF z zawartością wszystkich pozycji
+	OPIS METOD(FUNKCJI): Stworzenie pliku typu txt z zawartością wszystkich pozycji
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -823,6 +841,44 @@ void __fastcall TNewSchemeVersWindow::Act_CreateAllTextExecute(TObject *Sender)
 	{
 		if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TNewSchemeVersWindow::Act_CutCopyToPasteExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Skopiowanie lub wycięcie zaznaczonego elementu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	this->_pGsMasterRel->CutCopyToPaste();
+	this->_IsSelectToCopyCut = true; // Zaznaczono wybrany objekt, i wykonano akcje Act_CutCopyToPasteExecute()
+}
+//---------------------------------------------------------------------------
+void __fastcall TNewSchemeVersWindow::Act_PasteFromCopyExecute(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Wstawienie skopiowanego elementu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	if(!pAction) return;
+	//---
+	UnicodeString ustrText = UnicodeString("Chcesz pszenieść gałąź do tej samej lokalizacji, lub do własnego potomka.") +
+																				 "Wybierz inna lokalizację dla przenoszonej gałęzi objektów" +
+																				 "Powtórz całą operacje od początku, zaznaczająć prawidłowo miejsce przeznaczenie dla przeniesionej gałęzi objektów";
+	bool bRet = this->_pGsMasterRel->PasteFromCopy();
+  if(!bRet)
+	{
+		MessageBox(NULL, ustrText.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+	}
+	pAction->Enabled = false;
+	this->_IsSelectToCopyCut = false; // Zaznaczono wybrany objekt, i wykonano akcje Act_CutCopyToPasteExecute()
 }
 //---------------------------------------------------------------------------
 

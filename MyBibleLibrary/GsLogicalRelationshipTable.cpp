@@ -16,17 +16,16 @@
 	GsDebugClass::WriteDebug("");
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-GsChild *pGsChild = static_cast<GsChild *>(CommData::CDataDraw->_pGsChildrenMultiList->Items[i]);
+GsChild *pGsChild = static_cast<GsChild *>(GlGsDrawChildren->_pGsChildrenMultiList->Items[i]);
 if(pGsChild && (pGsChild != this))
 */
 /****************************************************************************
-* Wspólna statyczna struktura danych CommData, dostepna dla wszystkich klas *
+* Wspólne statyczne globalne dane, dostepna dla wszystkich klas 						*
 *****************************************************************************/
-struct CommData
-{
-	inline static GsMaster *CDataMaster=nullptr; // Główna klasa GsMasterLogicalRelationship
-	inline static GsDrawChildren *CDataDraw=nullptr; // Klasa do rysowania
-};
+
+static GsDrawChildren *GlGsDrawChildren=nullptr;
+static GsMaster *GlGsMaster=nullptr;
+
 /****************************************************************************
 *				Klasa całkowicie PRYWATNA GsCoreLogicalRelationship,								*
 *										 pochodna TCustomPanel.																	*
@@ -81,6 +80,8 @@ __fastcall GsChild::GsChild(TComponent* Owner, const UnicodeString &custrAdr, co
 	this->Canvas->Font->Quality = TFontQuality::fqClearType;
 	this->Canvas->Font->Size = 11;
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST(( _ustrNameVers, _ustrTextVers )));
+	this->Hint = this->_ustrNameVers;
+  this->ShowHint = true;
 	this->Width = 200;
 
 	TRect MyRect = this->ClientRect;
@@ -118,7 +119,8 @@ __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteD
 			_PReadWriteDataObject->RW_Chapt+1, _PReadWriteDataObject->RW_Vers)));
 	this->_ustrTextVers = ustrText;
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
-
+  this->ShowHint = true;
+	this->Hint = this->_ustrNameVers;
 	this->Width = 200;
 
 	TRect MyRect = this->ClientRect;
@@ -151,7 +153,8 @@ __fastcall GsChild::GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewRead
 	this->_ustrNameVers = _PNewReadWriteDataObject->NRW_NameVers;
 	this->_ustrTextVers = _PNewReadWriteDataObject->NRW_Text;
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
-
+	this->ShowHint = true;
+  this->Hint = this->_ustrNameVers;
   this->Width = 200;
 
 	TRect MyRect = this->ClientRect;
@@ -182,13 +185,13 @@ __fastcall GsChild::~GsChild()
 	}
 	delete this->_pListChildren; this->_pListChildren = nullptr; //Kasowanie listy potomków, po ich usunięciu
   //Kasowanie objektu z listy głównej
-	int iIndexThis = CommData::CDataDraw->_pMainChildrenList->IndexOf(this);
-	if(iIndexThis > -1) CommData::CDataDraw->_pMainChildrenList->Delete(iIndexThis);
+	int iIndexThis = GlGsDrawChildren->_pMainChildrenList->IndexOf(this);
+	if(iIndexThis > -1) GlGsDrawChildren->_pMainChildrenList->Delete(iIndexThis);
 
 //	siTempLicz++;
 //  #if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug(Format("%d -> iIndexThis: %d -> Count: %d",
-//			ARRAYOFCONST((siTempLicz, iIndexThis, CommData::CDataDraw->_pMainChildrenList->Count ))));
+//			ARRAYOFCONST((siTempLicz, iIndexThis, GlGsDrawChildren->_pMainChildrenList->Count ))));
 //	#endif
 }
 //---------------------------------------------------------------------------
@@ -205,14 +208,15 @@ void __fastcall GsChild::Paint()
 	// Kolor pozycji zależnie od jej stanu
 	TColor clFrameColor=clRed;
 	int iWidth=1;
-	if(this == CommData::CDataDraw->_pRootObject)
+	const int ciDefaultWidthSelect=5;
+	if(this == GlGsDrawChildren->_pRootObject)
 		// Root nie zmienia koloru?
 	{
-		this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Rot];
+		this->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_Rot];
 		// Przy zaznaczaniu objektu typu "korzeń", będzie zmieniana tylko obwódka
 		if(this->_IsActive)
 		{
-      this->Canvas->Pen->Width = 5;
+			this->Canvas->Pen->Width = ciDefaultWidthSelect;
 			clFrameColor = clRed;
 		}
 		else
@@ -225,19 +229,19 @@ void __fastcall GsChild::Paint()
 	{
 		if(this->_IsActive)
 		{
-			this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Active];
-			this->Canvas->Pen->Width = 5;
+			this->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_Active];
+			this->Canvas->Pen->Width = ciDefaultWidthSelect;
 			clFrameColor = clRed;
 		}
 		else
 		{
-			this->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_InActive];
+			this->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_InActive];
 			this->Canvas->Pen->Width = 1;
 			clFrameColor = clBlack;
 		}
 	}
 
-	if(CommData::CDataMaster->Global_IsTransparent)
+	if(GlGsMaster->Global_IsTransparent)
   // Czy malować z przezroczystością ?
 	{
 		FillRectAlpha(this->Canvas, this->ClientRect, this->Color, 150);
@@ -246,13 +250,13 @@ void __fastcall GsChild::Paint()
 	{
 		this->Canvas->Brush->Color = this->Color;
 		this->Canvas->FillRect(this->ClientRect);
+		//this->Canvas->RoundRect(this->ClientRect, 10, 10);
 	}
-
-	this->Canvas->Brush->Style = bsClear; // By nie rysować tekstu z podkładem, oraz by metoda Rectangle nie rysowała tła.
-	this->Canvas->Pen->Color = clFrameColor;
-	this->Canvas->Rectangle(this->ClientRect);
+  this->Canvas->Pen->Color = clFrameColor;
+	this->Canvas->Rectangle(this->ClientRect); //Obwódka o kolorze zależnym od zaznaczenia, lub nie
+	// By nie rysować tekstu z podkładem, oraz by metoda Rectangle nie rysowała tła.
+	this->Canvas->Brush->Style = bsClear;
 	TRect MyRect(this->ClientRect); MyRect.Top = ciAddHeight / 2; MyRect.Left = ciAddWidth / 2;
-
 	DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &MyRect, DT_WORDBREAK);
 }
 //---------------------------------------------------------------------------
@@ -264,35 +268,35 @@ void __fastcall GsChild::MouseDown(System::Uitypes::TMouseButton Button, System:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(CommData::CDataDraw->_pSelectObject != this) // Objekt kliknięty, staje się aktualny
+	if(GlGsDrawChildren->_pSelectObject != this) // Objekt kliknięty, staje się aktualny
 	{
-		CommData::CDataDraw->_pSelectObject = this; // Pole potrzebne do odrysowania aktualnej pozycji
+		GlGsDrawChildren->_pSelectObject = this; // Pole potrzebne do odrysowania aktualnej pozycji
 																								// (kolor) w metodzie Paint(), klasy GsDrawChildren
-		CommData::CDataMaster->FSelectItem = this; // Aktualnie aktywny nowo dodany objekt będący wskaźnikiem na GsChild,
+		GlGsMaster->FSelectItem = this; // Aktualnie aktywny nowo dodany objekt będący wskaźnikiem na GsChild,
 																							 // pole typy __property
-		CommData::CDataMaster->FSelectText = this->Text; // Tekst na pozycji, pole typy __property
+		GlGsMaster->FSelectText = this->Text; // Tekst na pozycji, pole typy __property
 	}
 	//---
 	if(Button == mbLeft)
 	{
-		CommData::CDataMaster->_pTreeView->Select(this->_TreeNodeChild); // Zaznaczenie pozycji w objekcie klasy TTreeView
+		GlGsMaster->_pTreeView->Select(this->_TreeNodeChild); // Zaznaczenie pozycji w objekcie klasy TTreeView
 
 		if(!Shift.Contains(ssCtrl))
 		// Lewy przycisk myszy bez Ctr
 		{
-			CommData::CDataDraw->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
-			CommData::CDataMaster->_pMultiSelectTreeNodes->Clear();
+			GlGsDrawChildren->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
+			GlGsMaster->_pMultiSelectTreeNodes->Clear();
 		}
     // Dodanie do listy multiselect dla objektu, klasy TTreeView
-		CommData::CDataMaster->_pMultiSelectTreeNodes->Add(this->_TreeNodeChild);
-    CommData::CDataMaster->_pTreeView->Select(CommData::CDataMaster->_pMultiSelectTreeNodes);
+		GlGsMaster->_pMultiSelectTreeNodes->Add(this->_TreeNodeChild);
+    GlGsMaster->_pTreeView->Select(GlGsMaster->_pMultiSelectTreeNodes);
 		this->_IsActive = true;//!this->_IsActive;
 
 		this->_GetStartX = X;
 		this->_GetStartY = Y;
 		this->_StartMove = true;
 	}
-	CommData::CDataMaster->MouseDown(Button, Shift, X, Y); // Wywołanie obsługi zdarzenie myszy dla klasy GsMaster
+	if(GlGsMaster->FGetSetOnMouseDown) GlGsMaster->FGetSetOnMouseDown(this, Button, Shift, X, Y);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChild::MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -306,7 +310,7 @@ void __fastcall GsChild::MouseUp(System::Uitypes::TMouseButton Button, System::C
   if(Button == mbLeft)
 	{
 		this->_StartMove = false; //Koniec przesuwania
-    CommData::CDataDraw->_CalculateNewDimension(this);
+    GlGsDrawChildren->_CalculateNewDimension(this);
 	}
 }
 //---------------------------------------------------------------------------
@@ -323,9 +327,9 @@ void __fastcall GsChild::MouseMove(System::Classes::TShiftState Shift, int X, in
 		if(Shift.Contains(ssCtrl))
 		// Klawisz Ctr
 		{
-			for(int i=0; i<CommData::CDataDraw->_pMainChildrenList->Count; ++i)
+			for(int i=0; i<GlGsDrawChildren->_pMainChildrenList->Count; ++i)
 			{
-				GsChild *pGsChild = static_cast<GsChild *>(CommData::CDataDraw->_pMainChildrenList->Items[i]);
+				GsChild *pGsChild = static_cast<GsChild *>(GlGsDrawChildren->_pMainChildrenList->Items[i]);
 				if(pGsChild && (pGsChild != this) && pGsChild->_IsActive)
 				{
 					pGsChild->Left += (X - this->_GetStartX);
@@ -336,7 +340,7 @@ void __fastcall GsChild::MouseMove(System::Classes::TShiftState Shift, int X, in
 		this->Left += (X - this->_GetStartX);
 		this->Top += (Y - this->_GetStartY);
 	}
-	CommData::CDataDraw->Invalidate();
+	GlGsDrawChildren->Invalidate();
 }
 //---------------------------------------------------------------------------
 /****************************************************************************
@@ -355,7 +359,7 @@ __fastcall GsDrawChildren::GsDrawChildren(TComponent* Owner) : TCustomPanel(Owne
 	this->_pMainChildrenList = new TList();
 	if(!this->_pMainChildrenList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
 	// Wspólny wskaźnik na klase do rysowania
-  CommData::CDataDraw = this;
+  GlGsDrawChildren = this;
 }
 //---------------------------------------------------------------------------
 __fastcall GsDrawChildren::~GsDrawChildren()
@@ -423,8 +427,8 @@ void __fastcall GsDrawChildren::Paint()
 	GsChild *pGsChild=nullptr, *pPrevChild=nullptr;
 
 	this->Canvas->Brush->Color = clFuchsia;
-  this->Canvas->Pen->Width = CommData::CDataMaster->Global_iWidthLineScheme;//iWidthLine;
-	this->Canvas->Pen->Color = CommData::CDataMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];//ColorObject[enColorNum_Line];
+  this->Canvas->Pen->Width = GlGsMaster->Global_iWidthLineScheme;//iWidthLine;
+	this->Canvas->Pen->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];//ColorObject[enColorNum_Line];
 
 	for(int i=0; i<this->_pMainChildrenList->Count; ++i)
 	{
@@ -455,7 +459,7 @@ void __fastcall GsDrawChildren::MouseDown(System::Uitypes::TMouseButton Button, 
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	CommData::CDataMaster->MouseDown(Button, Shift, X, Y); // Wywołanie obsługi zdarzenie myszy dla klasy GsMaster
+	if(GlGsMaster->FGetSetOnMouseDown) GlGsMaster->FGetSetOnMouseDown(this, Button, Shift, X, Y);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawChildren::_DeactivationAllItems()
@@ -519,7 +523,7 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 			pGsChild->Top = pDataToOpen->RW_Top;
 			pGsChild->Left = pDataToOpen->RW_Left;
       //Tworzenie korzenia drzewa
-			TrNode = CommData::CDataMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
+			TrNode = GlGsMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
 			if(!TrNode) throw(Exception("Błąd inicjalizacji klasy AddObject"));
 			pGsChild->_TreeNodeChild = TrNode;
 		}
@@ -538,30 +542,30 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 				else if(pDataToOpen->RW_Left > (pPrevChild->Left + ciReference)) pGsChild->Left = pDataToOpen->RW_Left + ciShiftLeftRight;
 				else pGsChild->Left = pDataToOpen->RW_Left;
 				//Tworzenie potomków w drzewie
-				TrNode = CommData::CDataMaster->_pTreeView->Items->AddChildObject(pPrevChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
+				TrNode = GlGsMaster->_pTreeView->Items->AddChildObject(pPrevChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
 				pGsChild->_TreeNodeChild = TrNode;
       }
 		}
 
 		this->_pMainChildrenList->Add(pGsChild); //Dodanie do głównej listy objektów
 	}
-	CommData::CDataMaster->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
-	CommData::CDataMaster->_pTreeView->Items->GetFirstNode()->MakeVisible();
+	GlGsMaster->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
+	GlGsMaster->_pTreeView->Items->GetFirstNode()->MakeVisible();
 
 	pGsChild = static_cast<GsChild *>(this->_pMainChildrenList->Last());
 	if(pGsChild)
 	// Aktywacja i selekcja ostatniego elementu
 	{
 		this->_pSelectObject = pGsChild; // Ostatni object aktywnym
-		CommData::CDataMaster->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
-		CommData::CDataMaster->_pMultiSelectTreeNodes->Add(TrNode); // Dodanie do listy multiselect dla objektu, klasy TTreeView
-		CommData::CDataMaster->FSelectText = this->_pSelectObject->Text; // Tekst na pozycji, pole typy __property
-		CommData::CDataMaster->FSelectItem = this->_pSelectObject; // Wskażnik na GsChild, pole typy __property
+		GlGsMaster->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
+		GlGsMaster->_pMultiSelectTreeNodes->Add(TrNode); // Dodanie do listy multiselect dla objektu, klasy TTreeView
+		GlGsMaster->FSelectText = this->_pSelectObject->Text; // Tekst na pozycji, pole typy __property
+		GlGsMaster->FSelectItem = this->_pSelectObject; // Wskażnik na GsChild, pole typy __property
 		this->_CalculateNewDimension(pGsChild);
 		this->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
 		pGsChild->_IsActive = true;
 	}
-	CommData::CDataMaster->_pTreeView->Visible = true;
+	GlGsMaster->_pTreeView->Visible = true;
 
 	if(pDataToOpen) {delete pDataToOpen; pDataToOpen = nullptr;}
 	return bReturn;
@@ -603,7 +607,7 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 		{
 			this->_pRootObject = pGsChild;		// To jest korzeń
       //Tworzenie korzenia drzewa
-			TrNode = CommData::CDataMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
+			TrNode = GlGsMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
 			if(!TrNode) throw(Exception("Błąd inicjalizacji klasy AddObject"));
 			pGsChild->_TreeNodeChild = TrNode;
 		}
@@ -617,7 +621,7 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
         pGsChild->_Level = pPrevChild->_Level + 1;
 				pPrevChild->_pListChildren->Add(pGsChild); //Dodanie aktualnego objektu, do list potomków, przodka
         //Tworzenie potomków w drzewie
-				TrNode = CommData::CDataMaster->_pTreeView->Items->AddChildObject(pPrevChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
+				TrNode = GlGsMaster->_pTreeView->Items->AddChildObject(pPrevChild->_TreeNodeChild, pGsChild->_ustrNameVers, pGsChild);
 				pGsChild->_TreeNodeChild = TrNode;
 			}
 		}
@@ -625,23 +629,23 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 		this->_pMainChildrenList->Add(pGsChild); //Dodanie do głównej listy objektów
 	}
 
-  CommData::CDataMaster->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
-	CommData::CDataMaster->_pTreeView->Items->GetFirstNode()->MakeVisible();
+  GlGsMaster->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
+	GlGsMaster->_pTreeView->Items->GetFirstNode()->MakeVisible();
 
   pGsChild = static_cast<GsChild *>(this->_pMainChildrenList->Last());
 	if(pGsChild)
 	// Aktywacja i selekcja ostatniego elementu
 	{
 		this->_pSelectObject = pGsChild; // Ostatni object aktywnym
-		CommData::CDataMaster->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
-    CommData::CDataMaster->_pMultiSelectTreeNodes->Add(TrNode); // Dodanie do listy multiselect dla objektu, klasy TTreeView
-    CommData::CDataMaster->FSelectText = this->_pSelectObject->Text; // Tekst na pozycji, pole typy __property
-		CommData::CDataMaster->FSelectItem = this->_pSelectObject; // Wskażnik na GsChild, pole typy __property
+		GlGsMaster->_pTreeView->Select(TrNode); // Zaznaczenie pozycji w objekcie klasy TTreeView
+    GlGsMaster->_pMultiSelectTreeNodes->Add(TrNode); // Dodanie do listy multiselect dla objektu, klasy TTreeView
+    GlGsMaster->FSelectText = this->_pSelectObject->Text; // Tekst na pozycji, pole typy __property
+		GlGsMaster->FSelectItem = this->_pSelectObject; // Wskażnik na GsChild, pole typy __property
 		this->_CalculateNewDimension(pGsChild);
     this->_DeactivationAllItems(); // Dezaktywacja wszystkich pozycji
 		pGsChild->_IsActive = true;
 	}
-	CommData::CDataMaster->_pTreeView->Visible = true;
+	GlGsMaster->_pTreeView->Visible = true;
 
 	if(pDataToOpen) {delete pDataToOpen; pDataToOpen = nullptr;}
   return bReturn;
@@ -717,7 +721,7 @@ __fastcall GsMaster::GsMaster(TComponent* Owner, TTreeView *pTrView)
 	this->VertScrollBar->Tracking = true;
 
 	// Wspólny wskaźnik na główną klase
-	CommData::CDataMaster = this;
+	GlGsMaster = this;
 }
 //---------------------------------------------------------------------------
 __fastcall GsMaster::~GsMaster()
@@ -864,6 +868,7 @@ bool __fastcall GsMaster::OpenProject()
 				if(pOpenFile) {delete pOpenFile; pOpenFile = nullptr;}
 				bReturn = true;
 			}
+			else bReturn = false;
 		}
 		catch(const Exception& e)
 		{
@@ -1135,7 +1140,6 @@ void __fastcall GsMaster::AddNewObjectScheme(const UnicodeString &custrAdr, cons
 
 	this->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
 	this->_pTreeView->Items->GetFirstNode()->MakeVisible();
-
 }
 //---------------------------------------------------------------------------
 void __fastcall GsMaster::NewProject()
@@ -1148,6 +1152,7 @@ void __fastcall GsMaster::NewProject()
 {
 	this->_pTreeView->Items->Clear();
 	this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
+	this->_pGsDrawChildren->_pCutCopyObject = nullptr; // Wyzerowanie objektu do wstawienia
 	//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
 	if(this->_pGsDrawChildren->_pRootObject) {delete this->_pGsDrawChildren->_pRootObject; this->_pGsDrawChildren->_pRootObject = nullptr;} //Niszczenie rozpoczyna się od korzenia
 	this->_pGsDrawChildren->_pSelectObject = nullptr;
@@ -1196,11 +1201,97 @@ void __fastcall GsMaster::SaveToGfx(const UnicodeString &ustrPathSave)
   if(pWICImage) {delete pWICImage; pWICImage = nullptr;}
 	if(bmp) {delete bmp; bmp = nullptr;}
 }
+//---------------------------------------------------------------------------
+void __fastcall GsMaster::CutCopyToPaste()
+/**
+	OPIS METOD(FUNKCJI): Skopiowanie zaznaczonego elementu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->_pGsDrawChildren->_pCutCopyObject = this->_pGsDrawChildren->_pSelectObject;
+}
+//---------------------------------------------------------------------------
+bool __fastcall GsMaster::PasteFromCopy()
+/**
+	OPIS METOD(FUNKCJI): Wstawienie skopiowanego elementu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TList *pListCutCopyObject = this->_pGsDrawChildren->_pCutCopyObject->_pListChildren; // Wskaźnik na liste potomków objektu wstawianego
+	GsChild *pChild=nullptr;
+	// Błąd gdy spełniony jest jeden z warunków:
+	// 1. Objekt do przeniesienia jest pusty(nullptr)
+	// 2.Objekt do przeniesienia jest tym samym objektem co objekt przeznaczenia.
+	// 3.Objekt do przeniesienia jest potomkiem objektu przeznaczenia
+	if(!this->_pGsDrawChildren->_pCutCopyObject ||
+		 (this->_pGsDrawChildren->_pSelectObject == this->_pGsDrawChildren->_pCutCopyObject) ||
+		 (this->_pGsDrawChildren->_pSelectObject == this->_pGsDrawChildren->_pCutCopyObject->_pPrevChild))
+	{
+//    #if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug("Taki sam!");
+//		#endif
+		this->_pGsDrawChildren->_pCutCopyObject = nullptr;
+		return false;
+	}
+	// Zabezpieczenie by nowym przodkiem nie był potomek
+	bool bIsFind = this->_FindObjectInTree( this->_pGsDrawChildren->_pSelectObject, this->_pGsDrawChildren->_pCutCopyObject);
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("bIsFind: %d", ARRAYOFCONST(( (int)bIsFind))));
+//	#endif
+	if(bIsFind)
+	{
+		this->_pGsDrawChildren->_pCutCopyObject = nullptr;
+		return false;
+	}
+	//---
+	if(this->_pGsDrawChildren->_pCutCopyObject)
+	{
+		GsChild *pGsChildCutCopyParent = this->_pGsDrawChildren->_pCutCopyObject->_pPrevChild, // Wskażnik na przodka
+						*pGsChildNewParentSelect = this->_pGsDrawChildren->_pSelectObject; // Nowy przodek, to objekt wybrany
+		if(!pGsChildCutCopyParent) return false;
+		TList *pListParent = pGsChildCutCopyParent->_pListChildren; // Lista potomków, przodka
+		int iIndex = pListParent->IndexOf(this->_pGsDrawChildren->_pCutCopyObject); // Wyszukanie na tej liście objektu do wstawienia
+		if(iIndex == -1) return false;
+    //return;
+		pListParent->Delete(iIndex); // Wykasowanie z listy potomków, poprzedniego przodka
+		//---
+		TList *pListNew = pGsChildNewParentSelect->_pListChildren; // Wskaźnik na listę potomków, nowego przodka
+		pListNew->Add(this->_pGsDrawChildren->_pCutCopyObject); // Dodanie do listy potomków, nowego przodka
+		this->_pGsDrawChildren->_pCutCopyObject->_pPrevChild = pGsChildNewParentSelect; // Ustawienie wskaźnika na przodka, na nowego przodka
+		// Nowe położenia
+		int iLeftMove = pGsChildNewParentSelect->Left - pGsChildCutCopyParent->Left,
+				iTopMove = pGsChildNewParentSelect->Top - pGsChildCutCopyParent->Top;
+
+		this->_pGsDrawChildren->_pCutCopyObject->Left += iLeftMove;
+		this->_pGsDrawChildren->_pCutCopyObject->Top += iTopMove;
+		for(int i=0; i<pListCutCopyObject->Count; ++i)
+		{
+			pChild = static_cast<GsChild *>(pListCutCopyObject->Items[i]);
+			if(pChild)
+			{
+				pChild->Left += iLeftMove;
+				pChild->Top += iTopMove;
+			}
+    }
+
+		TTreeNode *pTNode = this->_pGsDrawChildren->_pCutCopyObject->_TreeNodeChild;
+		pTNode->MoveTo(pGsChildNewParentSelect->_TreeNodeChild, naAddChild);
+		this->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
+
+		this->_pGsDrawChildren->Invalidate(); //Całe odświerzenie
+		return true;
+	}
+	return false;
+}
 //----------------------------- Metody prywatne -----------------------------
-void __fastcall GsMaster::_CreateHierarchyText(GsChild *pChild, TStrings *pStrings)
+void __fastcall GsMaster::_CreateHierarchyText(const GsChild *pChild, TStrings *pStrings)
 /**
 	OPIS METOD(FUNKCJI): Tworzenie zchierarchizowanego tekstu. Metoda działa wywołując sama siebie
-                       idąc po kolejnych gałęziach hierarchii
+											 idąc po kolejnych gałęziach hierarchii
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -1217,6 +1308,36 @@ void __fastcall GsMaster::_CreateHierarchyText(GsChild *pChild, TStrings *pStrin
 			this->_CreateHierarchyText(pChildChild, pStrings);
 		}
 	}
+}
+//---------------------------------------------------------------------------
+bool __fastcall GsMaster::_FindObjectInTree(const GsChild *pChildForComparison, GsChild *pChild)
+/**
+	OPIS METOD(FUNKCJI): Wyszukiwanie objektu zaczynająć w hierarchi od pChild,
+											 Metoda idzie po drzewie i gałęziach wywołując sama siebie, porównując
+											 object pChildForComparison, z kolejnymi objektami w drzewie. Jeśli
+											 objekt zostanie znaleziony, metoda przerywa poszukiwania i zwraca true.
+	OPIS ARGUMENTÓW: const GsChild *pChildForComparison - objekt wyszukiwany
+									 GsChild *pChild - Gałąż , w której wyszukuje się objektu pChildForComparison
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	static int iLevel; // Głębokość wyszukiwania
+	GsChild *pChildChild=nullptr;
+	bool bWasItFound=false; // Czy znaleziono taki sam objekt?
+	// Szukanie w objektach potomnych
+	for(int i=0; i<pChild->_pListChildren->Count; ++i)
+	{
+    pChildChild = static_cast<GsChild *>(pChild->_pListChildren->Items[i]);
+		if(pChildChild)
+		{
+			if(pChildChild == pChildForComparison) return true;
+      iLevel++;
+			this->_FindObjectInTree(pChildForComparison, pChildChild); // Szukaj w gałęzich potomka
+		}
+  }
+
+	return bWasItFound;
 }
 //----------------------- Metody prywatne właściwości------------------------
 void __fastcall GsMaster::FSetChildSelect(GsChild *pGsChild)

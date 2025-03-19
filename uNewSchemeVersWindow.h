@@ -40,6 +40,8 @@ __published:	// IDE-managed Components
 	TAction *Act_SaveAtGfx;
 	TImageList *ImageListSmall;
 	TAction *Act_CreateAllText;
+	TAction *Act_CutCopyToPaste;
+	TAction *Act_PasteFromCopy;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -55,6 +57,8 @@ __published:	// IDE-managed Components
 	void __fastcall TrViewMainGetImageIndex(TObject *Sender, TTreeNode *Node);
 	void __fastcall TrViewMainClick(TObject *Sender);
 	void __fastcall Act_CreateAllTextExecute(TObject *Sender);
+	void __fastcall Act_CutCopyToPasteExecute(TObject *Sender);
+	void __fastcall Act_PasteFromCopyExecute(TObject *Sender);
 private:	// User declarations
   void __fastcall _InitHintsAndTags();
 	GsMaster *_pGsMasterRel=nullptr;
@@ -66,6 +70,7 @@ private:	// User declarations
   TCheckBox *pCBoxIsTransparent=nullptr;
 	TListBox *pLBox=nullptr;
 	TStringList *_SListOldConfig=nullptr;
+	bool _IsSelectToCopyCut=false; // Zaznaczono wybrany objekt, i wykonano akcje Act_CutCopyToPasteExecute()
 	//unsigned char _ucTranslate=0;
 	void __fastcall _OpenSetupsVisualScheme();
 	void __fastcall _OpenSelectTranslate();
