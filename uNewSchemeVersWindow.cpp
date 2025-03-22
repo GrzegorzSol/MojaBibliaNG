@@ -3,7 +3,6 @@
 
 #include "uNewSchemeVersWindow.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
-
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -17,8 +16,27 @@ TNewSchemeVersWindow *NewSchemeVersWindow;
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
-enum {// Ikony 32x32
-			enImage_Add, // Dodanie nowej pozycji
+// Teksty pomocy
+UnicodeString ustrHelpText[] = {
+	"Stwórz nowe drzewo wybierając przycisk \"Nowy projekt\", lub zacznij dodawać objekty do pustego widoku.", // enTagHelp_Start
+	UnicodeString("Po otwarciu lub stworzeniu nowego drzewa możesz zrobić następujące czynności:\n") +
+									"- Przesuwać pojedyńcze elementy\n" +
+									"- Zaznacz wiele objektów trzymając klawisz Ctr, by przesunąć naraz więcej objektów\n"+
+									"- Usunąć zaznaczony objekt\n" +
+									"- Skopiować wybraną gałąż, by ją wkleić w inne miejsce (do innego objektu)\n"+
+									"- Zapisać układ wersetów do projektu, by je później odtworzyć\n"+
+									"- Zapisać drzewo wersetów jako grafikę\n"+
+									"- Rozbudowywać drzewo\n"+
+									"- Zmienić w wybranej pozycji werset objektu\n", // enTagHelp_Exist
+	"Rozpocząłeś prace od nowa, projekt jest pusty, więc możesz zacząć tworzyć nowe drzewo zależnośći między wersetami."}; // enTagHelp_New};
+const UnicodeString custrTextWindow = "Wykres logicznego powiązania wersetów.";
+
+enum {// Numery pomocy
+			enTagHelp_Start=0,
+			enTagHelp_Exist,
+			enTagHelp_New,
+			// Ikony 32x32
+			enImage_Add=0, // Dodanie nowej pozycji
 			enImage_Del, // Skasowanie wybranej pozycji
 			enImage_SetupsColors, // Konfiguracja kolorów
 			enImage_SelectTrans,  // Wybór tłumaczenia
@@ -50,6 +68,7 @@ enum {// Ikony 32x32
 			enTag_ConfigAccept = 200,
 			enTag_ConfigNoAccept
 			};
+
 //---------------------------------------------------------------------------
 __fastcall TNewSchemeVersWindow::TNewSchemeVersWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -60,6 +79,7 @@ __fastcall TNewSchemeVersWindow::TNewSchemeVersWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, custrProjectNameDefault)));
 	// Narzędzia wyboru wersetu
 	this->_pGsBarSelectVers = new GsBarSelectVers(this);
 	if(!this->_pGsBarSelectVers) throw(Exception("Błąd inicjalizacji objektu GsBarSelectVers"));
@@ -72,6 +92,13 @@ __fastcall TNewSchemeVersWindow::TNewSchemeVersWindow(TComponent* Owner)
 	this->_pGsMasterRel->Parent = this;
 	this->_pGsMasterRel->Align = alClient;
 	this->_pGsMasterRel->OnMouseDown = this->_OnMouseDown;
+	//this->_pGsMasterRel->Visible = false;
+  // Utworzenie objektu pomocy
+	this->_pGsHelp = new GsHelp(this->PanelTreeAndHelp);
+	if(!this->_pGsHelp) throw(Exception("Błąd inicjalizacji objektu GsHelp"));
+	this->_pGsHelp->Parent = this->PanelTreeAndHelp;
+	this->_pGsHelp->Align = alBottom;
+	this->_pGsHelp->HelpText = ustrHelpText[enTagHelp_Start];
 
 	this->_InitHintsAndTags();
   this->_ReadConfig();
@@ -607,6 +634,8 @@ void __fastcall TNewSchemeVersWindow::Act_AddItemExecute(TObject *Sender)
 	this->Act_Save->Enabled = true;
 	this->Act_CreateAllText->Enabled = true;
 	this->Act_CutCopyToPaste->Enabled = true;
+
+	this->_pGsHelp->HelpText = ustrHelpText[enTagHelp_Exist];
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_DelItemExecute(TObject *Sender)
@@ -666,7 +695,9 @@ void __fastcall TNewSchemeVersWindow::Act_OpenExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
-	bool bReturn = this->_pGsMasterRel->OpenProject();
+	UnicodeString ustrNameProject;
+	bool bReturn = this->_pGsMasterRel->OpenProject(ustrNameProject);
+  this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, TPath::GetFileName(ustrNameProject))));
 
 	if(!bReturn) return;
 
@@ -676,6 +707,8 @@ void __fastcall TNewSchemeVersWindow::Act_OpenExecute(TObject *Sender)
 	this->Act_Save->Enabled = true;
 	this->Act_CreateAllText->Enabled = true;
 	this->Act_CutCopyToPaste->Enabled = true;
+
+	this->_pGsHelp->HelpText = ustrHelpText[enTagHelp_Exist];
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SaveExecute(TObject *Sender)
@@ -690,7 +723,9 @@ void __fastcall TNewSchemeVersWindow::Act_SaveExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
-	this->_pGsMasterRel->SaveProject();
+	UnicodeString ustrNameProject;
+	this->_pGsMasterRel->SaveProject(ustrNameProject);
+	this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, TPath::GetFileName(ustrNameProject))));
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_RenameItemExecute(TObject *Sender)
@@ -744,6 +779,9 @@ void __fastcall TNewSchemeVersWindow::Act_NewProjectExecute(TObject *Sender)
 	this->Act_CreateAllText->Enabled = false;
 	this->Act_CutCopyToPaste->Enabled = false;
 	this->Act_PasteFromCopy->Enabled = false;
+
+	this->_pGsHelp->HelpText = ustrHelpText[enTagHelp_New];
+	this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, custrProjectNameDefault)));
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SaveAtGfxExecute(TObject *Sender)

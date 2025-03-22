@@ -1,6 +1,7 @@
 object SearchTextWindow: TSearchTextWindow
   Left = 0
   Top = 0
+  ActiveControl = STW_CBoxHistorySearchText
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Zaawansowane wyszukiwanie tekstu.'
@@ -61,10 +62,10 @@ object SearchTextWindow: TSearchTextWindow
         AlignWithMargins = True
         Left = 9
         Top = 68
-        Width = 451
+        Width = 491
         Height = 17
         Margins.Left = 9
-        Margins.Right = 720
+        Margins.Right = 680
         CustomHint = BalloonHintSearch
         Align = alTop
         Caption = 
@@ -76,6 +77,7 @@ object SearchTextWindow: TSearchTextWindow
         ShowHint = True
         TabOrder = 0
         OnClick = STW_ChBoxIsRegExClick
+        ExplicitWidth = 480
       end
       object STW_ButtonHelpRegExp: TButton
         Left = 981
@@ -111,25 +113,27 @@ object SearchTextWindow: TSearchTextWindow
         AlignWithMargins = True
         Left = 9
         Top = 91
-        Width = 451
+        Width = 491
         Height = 17
         Margins.Left = 9
-        Margins.Right = 720
+        Margins.Right = 680
         Align = alTop
         Caption = 'Czy podczas wyszukiwania uwzgl'#281'dnia'#263' wielko'#347#263' liter?'
         TabOrder = 3
+        ExplicitWidth = 500
       end
       object STW_ChBoxMemoSetupsSearch: TCheckBox
         AlignWithMargins = True
         Left = 9
         Top = 114
-        Width = 451
+        Width = 491
         Height = 17
         Margins.Left = 9
-        Margins.Right = 720
+        Margins.Right = 680
         Align = alTop
         Caption = 'Czy zapami'#281'ta'#263' parametry wyszukiwania?'
         TabOrder = 4
+        ExplicitWidth = 500
       end
     end
     object STW_TabSheetStatistick: TTabSheet

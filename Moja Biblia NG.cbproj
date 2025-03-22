@@ -179,8 +179,8 @@
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <BCC_InstructionSet>5</BCC_InstructionSet>
     <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
-    <VerInfo_Build>77</VerInfo_Build>
-    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.77;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+    <VerInfo_Build>79</VerInfo_Build>
+    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.79;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
     <DynamicRTL>false</DynamicRTL>
     <UsePackages>false</UsePackages>
     <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
@@ -197,9 +197,9 @@
     <UsePackages>false</UsePackages>
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
-    <VerInfo_Build>77</VerInfo_Build>
+    <VerInfo_Build>79</VerInfo_Build>
     <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.77;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.79;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
     <Icon_MainIcon>Moja Biblia NG_Icon2.ico</Icon_MainIcon>
     <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
     <BCC_EnableLSPIndexing>false</BCC_EnableLSPIndexing>
@@ -217,6 +217,10 @@
     <None Include="GsComponents\GsEditorDataImages.h">
       <BuildOrder>15</BuildOrder>
     </None>
+    <CppCompile Include="GsComponents\GsHelp.cpp">
+      <DependentOn>GsComponents\GsHelp.h</DependentOn>
+      <BuildOrder>26</BuildOrder>
+    </CppCompile>
     <CppCompile Include="GsComponents\GsSearchFavFilesClass.cpp">
       <DependentOn>GsComponents\GsSearchFavFilesClass.h</DependentOn>
       <BuildOrder>28</BuildOrder>
@@ -340,16 +344,16 @@
     <FormResources Include="uMainWindow.dfm" />
     <FormResources Include="uDictGrecPolWindow.dfm" />
     <FormResources Include="uHistoryChaptersOpen.dfm" />
-    <FormResources Include="uReadingPlanWindow.dfm" />
+    <FormResources Include="uNewSchemeVersWindow.dfm" />
     <FormResources Include="uSendingMailWindow.dfm" />
     <FormResources Include="uSetupsWindow.dfm" />
     <FormResources Include="uStrongWindow.dfm" />
+    <FormResources Include="uReadingPlanWindow.dfm" />
     <FormResources Include="uSearchTextWindow.dfm" />
     <FormResources Include="uSelectVersWindow.dfm" />
     <FormResources Include="uAllMultimediaView.dfm" />
     <FormResources Include="uBooksSpecjalistWindow.dfm" />
     <FormResources Include="uChapterEditWindow.dfm" />
-    <FormResources Include="uNewSchemeVersWindow.dfm" />
     <BuildConfiguration Include="Base">
       <Key>Base</Key>
     </BuildConfiguration>
@@ -480,7 +484,7 @@
         <DeployFile LocalName=".\Win32\Release\Moja Biblia NG.exe" Configuration="Release" Class="ProjectOutput" />
         <DeployFile LocalName=".\Win32\Release\Moja Biblia NG.exe" Configuration="Release" Class="ProjectOutput">
           <Platform Name="Win32">
-            <RemoteName>Moja_Biblia_NG.exe</RemoteName>
+            <RemoteName>Moja Biblia NG.exe</RemoteName>
             <Overwrite>true</Overwrite>
           </Platform>
         </DeployFile>

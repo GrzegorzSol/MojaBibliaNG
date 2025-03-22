@@ -39,20 +39,31 @@ object NewSchemeVersWindow: TNewSchemeVersWindow
     ShowHint = True
     Spacing = 0
   end
-  object TrViewMain: TTreeView
+  object PanelTreeAndHelp: TPanel
     Left = 0
     Top = 42
-    Width = 193
+    Width = 185
     Height = 819
     Align = alLeft
-    Images = ImageListSmall
-    Indent = 19
-    MultiSelect = True
-    ReadOnly = True
+    BevelOuter = bvNone
+    Caption = 'PanelTreeAndHelp'
+    ShowCaption = False
     TabOrder = 1
-    Visible = False
-    OnClick = TrViewMainClick
-    OnGetImageIndex = TrViewMainGetImageIndex
+    object TrViewMain: TTreeView
+      Left = 0
+      Top = 0
+      Width = 185
+      Height = 819
+      Align = alClient
+      Images = ImageListSmall
+      Indent = 19
+      MultiSelect = True
+      ReadOnly = True
+      TabOrder = 0
+      Visible = False
+      OnClick = TrViewMainClick
+      OnGetImageIndex = TrViewMainGetImageIndex
+    end
   end
   object ActionManagerMain: TActionManager
     ActionBars = <

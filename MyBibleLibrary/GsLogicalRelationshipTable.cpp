@@ -813,7 +813,7 @@ bool __fastcall GsMaster::DoMouseWheel(System::Classes::TShiftState Shift, int W
 	return true;
 }
 //---------------------------------------------------------------------------
-bool __fastcall GsMaster::OpenProject()
+bool __fastcall GsMaster::OpenProject(UnicodeString &ustrGetFileName)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -850,8 +850,9 @@ bool __fastcall GsMaster::OpenProject()
       if(pFileOpenDialog->Execute()) //Element został wybrany
 			{
 				this->_pTreeView->Items->Clear();
-        this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
+				this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
 				UnicodeString ustrExt = TPath::GetExtension(pFileOpenDialog->FileName);
+				ustrGetFileName = pFileOpenDialog->FileName;
 				//Wykasowanie całej zawartości schematu, ze wszystkimi aktualnymi objektami
 				delete this->_pGsDrawChildren->_pRootObject; this->_pGsDrawChildren->_pRootObject = nullptr; //Niszczenie rozpoczyna się od korzenia
 				this->_pGsDrawChildren->_pSelectObject = nullptr;
@@ -883,7 +884,7 @@ bool __fastcall GsMaster::OpenProject()
 	return bReturn;
 }
 //---------------------------------------------------------------------------
-bool __fastcall GsMaster::SaveProject()
+bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 /**
 	OPIS METOD(FUNKCJI): Zapisanie projektu
 	OPIS ARGUMENTÓW:
@@ -913,7 +914,7 @@ bool __fastcall GsMaster::SaveProject()
 	}
 	pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
 	pFileSaveDialog->DefaultFolder = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
-	pFileSaveDialog->FileName = Format("Bez nazwy%s", ARRAYOFCONST((custrNewExtFileScheme)));
+	pFileSaveDialog->FileName = Format("%s%s", ARRAYOFCONST((custrProjectNameDefault, custrNewExtFileScheme)));
 	pFileSaveDialog->DefaultExtension = custrNewExtFileScheme;
 
 	try
@@ -926,6 +927,7 @@ bool __fastcall GsMaster::SaveProject()
 				if(pFileSaveDialog->Execute())
 				{
 					ustrPathSave = pFileSaveDialog->FileName;
+					ustrGetFileName = pFileSaveDialog->FileName;
 
 					pSaveFile = new TFileStream(ustrPathSave, fmCreate);
 					if(!pSaveFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));

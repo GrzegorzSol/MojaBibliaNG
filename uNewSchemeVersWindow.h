@@ -8,6 +8,7 @@
 
 #include "MyBibleLibrary\GsLogicalRelationshipTable.h"
 #include "MyBibleLibrary\MyBibleLibrary.h"
+#include "GsHelp.h"
 #include <Vcl.ExtCtrls.hpp>
 #include <System.Actions.hpp>
 #include <System.ImageList.hpp>
@@ -42,6 +43,7 @@ __published:	// IDE-managed Components
 	TAction *Act_CreateAllText;
 	TAction *Act_CutCopyToPaste;
 	TAction *Act_PasteFromCopy;
+	TPanel *PanelTreeAndHelp;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -60,7 +62,8 @@ __published:	// IDE-managed Components
 	void __fastcall Act_CutCopyToPasteExecute(TObject *Sender);
 	void __fastcall Act_PasteFromCopyExecute(TObject *Sender);
 private:	// User declarations
-  void __fastcall _InitHintsAndTags();
+	void __fastcall _InitHintsAndTags();
+  GsHelp *_pGsHelp=nullptr;
 	GsMaster *_pGsMasterRel=nullptr;
 	GsBarSelectVers *_pGsBarSelectVers=nullptr; //Panel sterowania i wyboru wersetów dla drzewa
 	TPanel *_pPanelSetups=nullptr, // Panel ustawień wykresu

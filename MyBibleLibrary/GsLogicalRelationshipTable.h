@@ -21,7 +21,8 @@ const int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
 					SIZE_CHILD_COMMENT = 255, //Długość komentarza do pojedyńczego elementu
 					NSIZE_TEXT = 255; // Długość tekstu pozycji, w nowej wersji danych do zapisu
 const UnicodeString custrOldExtFilesScheme = ".nsvp", // Stare rozszerzenie plików projektu
-										custrNewExtFileScheme = ".lsvc"; // "logical scheme of verse connection"
+										custrNewExtFileScheme = ".lsvc", // "logical scheme of verse connection"
+										custrProjectNameDefault = "Bez nazwy" + custrNewExtFileScheme;
 typedef struct _ReadWriteDataObject
 {
 	int RW_ID,															// Numer identyfikacyjny
@@ -143,15 +144,15 @@ class GsMaster : public TScrollingWinControl
     inline static UnicodeString sustrVersionLogicalRelationshipTable = "0.9.9235.8529";
 		// Pola typu __property
 		__property TMouseEvent OnMouseDown = {read = FGetSetOnMouseDown, write = FGetSetOnMouseDown};
-			// Inne właściwości
+		// Inne właściwości
 		__property GsChild *SelectChildItem {read = FSelectItem, write = FSetChildSelect, default = 0}; // Wskaźnik na aktywną pozycję.
 		__property UnicodeString GetSelectText {read = FSelectText, nodefault}; // Tekst w aktywnej pozycji.
 		__property TList *GetSelectList {read = FGsChildrensSelectList, nodefault}; // Lista zaznaczonych elementów
 		// Metody inline
 		void __fastcall AddNewObjectScheme(const UnicodeString &custrAdr, const UnicodeString &custrVers);
 		void __fastcall NewProject();
-		bool __fastcall OpenProject();
-		bool __fastcall SaveProject();
+		bool __fastcall OpenProject(UnicodeString &ustrGetFileName);
+		bool __fastcall SaveProject(UnicodeString &ustrGetFileName);
 		void __fastcall RenameTextItem(const UnicodeString &custrNewAdr, const UnicodeString &custrNewVers); // Zmiana tekstu w wybranej pozycji
 		void __fastcall DeleteObject();
 		void __fastcall SaveToGfx(const UnicodeString &ustrPathSave);
