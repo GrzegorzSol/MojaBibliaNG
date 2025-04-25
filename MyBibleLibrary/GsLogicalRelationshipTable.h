@@ -23,6 +23,7 @@ const int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
 const UnicodeString custrOldExtFilesScheme = ".nsvp", // Stare rozszerzenie plików projektu
 										custrNewExtFileScheme = ".lsvc", // "logical scheme of verse connection"
 										custrProjectNameDefault = "Bez nazwy" + custrNewExtFileScheme;
+
 typedef struct _ReadWriteDataObject
 {
 	int RW_ID,															// Numer identyfikacyjny
@@ -54,30 +55,10 @@ typedef struct _NewReadWriteDataObject
 } NewReadWriteDataObject, *PNewReadWriteDataObject;
 
 /****************************************************************************
-*				       Klasa całkowicie PRYWATNA GsCoreChild,								        *
-*										 pochodna TCustomPanel.																	*
-*    Klasa jest klasą bazową dla wszystkich pozycji w "drzewie"             *
-*****************************************************************************/
-class GsCoreChild : public TGraphicControl
-{
-	friend class GsChild;
-  // Kontruktory i destruktor
-	__fastcall GsCoreChild(TComponent* Owner);
-	__fastcall virtual ~GsCoreChild();
-	protected:
-		int _TypeObj=enTypeChild_Normal; // Typ objektu
-		TList *_pListChildren=nullptr; // Lista potomków
-		int _IDChild=-1, // Numer identyfikacyjny pozycji
-				_GetStartX=-1, _GetStartY=-1;	// Współrzędne kliknięcia na objekt klasy
-		unsigned char _Level=0; // Poziom
-		bool _StartMove=false,	// Rozpoczıcie przesuwania
-         _IsActive=false; // Czy aktywny element
-};
-/****************************************************************************
 *				         Klasa całkowicie PRYWATNA GsChild,								          *
-*										   pochodna GsCoreChil.														      *
+*										  pochodna TGraphicControl.												      *
 *****************************************************************************/
-class GsChild : public GsCoreChild
+class GsChild : public TGraphicControl
 {
 	friend class GsDrawChildren;
 	friend class GsMaster;
@@ -96,6 +77,16 @@ class GsChild : public GsCoreChild
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		DYNAMIC void __fastcall MouseUp(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 		DYNAMIC void __fastcall MouseMove(System::Classes::TShiftState Shift, int X, int Y);
+
+		void __fastcall _RefreshText(bool bPosition=false); // Pozycjonowanie tekstu w objekcie
+    int _TypeObj=enTypeChild_Normal; // Typ objektu
+		TList *_pListChildren=nullptr; // Lista potomków
+		int _IDChild=-1, // Numer identyfikacyjny pozycji
+				_GetStartX=-1, _GetStartY=-1;	// Współrzędne kliknięcia na objekt klasy
+		unsigned char _Level=0; // Poziom
+		bool _StartMove=false,	// Rozpoczıcie przesuwania
+				 _IsActive=false; // Czy aktywny element
+    TRect _RectText; // Obszar tekstu
 };
 /****************************************************************************
 *				        Klasa całkowicie PRYWATNA GsDrawChildren,	      						*
@@ -118,6 +109,7 @@ class GsDrawChildren : public TCustomPanel
 		virtual void __fastcall Paint();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 	private:
+    Graphics::TBitmap *_pBrushBitmap=nullptr;
 		GsChild *_pSelectObject=nullptr,	// Aktualnie aktywny objekt, potrzebny do jego odryswania
 																			// (rozpoczecie przesuwania) w metodzie MouseDown() klasy GsChild
 						*_pRootObject=nullptr,		// Objekt głównego korzenia

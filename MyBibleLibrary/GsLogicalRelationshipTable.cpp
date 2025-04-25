@@ -25,43 +25,16 @@ if(pGsChild && (pGsChild != this))
 
 static GsDrawChildren *GlGsDrawChildren=nullptr;
 static GsMaster *GlGsMaster=nullptr;
+const UnicodeString custrNameBackground = "BackGroundScheme.bmp",
+										custrPathBackground = TPath::Combine(GlobalVar::Global_custrGetDataDir, custrNameBackground);
 
 /****************************************************************************
-*				Klasa całkowicie PRYWATNA GsCoreLogicalRelationship,								*
-*										 pochodna TCustomPanel.																	*
-*    Klasa jest klasą bazową dla wszystkich pozycji w "drzewie"             *
+*								Klasa całkowicie PRYWATNA GsChild,													*
+*										 pochodna TGraphicControl.															*
 *****************************************************************************/
-__fastcall GsCoreChild::GsCoreChild(TComponent* Owner) : TGraphicControl(Owner)
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-  this->Cursor = crSizeAll;
-}
-//---------------------------------------------------------------------------
-__fastcall GsCoreChild::~GsCoreChild()
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-
-}
-/****************************************************************************
-*				Klasa całkowicie PRYWATNA GsChildLogicalRelationship,								*
-*										 pochodna GsCoreBibleScheme.														*
-*****************************************************************************/
-const int ciAddHeight = 6, // Dodanie wysokości do pozycji by tekst zaczynał sie od górnego marginesu = ciAddHeight / 2
-					ciAddWidth = 12; // Dodanie szerokosci do pozycji by tekst zaczynał sie od lewego marginesu = ciAddWidth / 2
-
 //======================== KONSTRUKTORY KLASY GsChild =======================
 __fastcall GsChild::GsChild(TComponent* Owner, const UnicodeString &custrAdr, const UnicodeString &custrVers)
-	: GsCoreChild(Owner), _ustrNameVers(custrAdr), _ustrTextVers(custrVers)
+	: TGraphicControl(Owner), _ustrNameVers(custrAdr), _ustrTextVers(custrVers)
 /**
 	OPIS METOD(FUNKCJI): Pierwszy konstruktor, który nie używa struktury PReadWriteDataObject, lecz argumenty są
                        wprowadzone pojedyńczo
@@ -70,6 +43,7 @@ __fastcall GsChild::GsChild(TComponent* Owner, const UnicodeString &custrAdr, co
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->Cursor = crSizeAll;
 	this->_IDChild = reinterpret_cast<int>(this);
 	//Inicjalizacja listy potomków
 	this->_pListChildren = new TList();
@@ -82,15 +56,12 @@ __fastcall GsChild::GsChild(TComponent* Owner, const UnicodeString &custrAdr, co
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST(( _ustrNameVers, _ustrTextVers )));
 	this->Hint = this->_ustrNameVers;
   this->ShowHint = true;
-	this->Width = 200;
 
-	TRect MyRect = this->ClientRect;
-	this->ClientHeight = DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &MyRect, DT_WORDBREAK | DT_CALCRECT) + ciAddHeight;
-	this->Width += ciAddWidth;
+  this->_RefreshText();
 }
 //---------------------------------------------------------------------------
 __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteDataObject)
-	: GsCoreChild(Owner)
+	: TGraphicControl(Owner)
 /**
 	OPIS METOD(FUNKCJI): Drugi konstruktor, który używa struktury PReadWriteDataObject, w celu prawidłowego
 											 odczytu zapisanej starej wersji projektu.
@@ -101,6 +72,7 @@ __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteD
 {
 	unsigned char _ucBook, _ucChapt, _ucVers, _ucTempTrans;
 
+	this->Cursor = crSizeAll;
 	//Inicjalizacja listy potomków
 	this->_pListChildren = new TList();
 	if(!this->_pListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
@@ -121,15 +93,12 @@ __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteD
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
   this->ShowHint = true;
 	this->Hint = this->_ustrNameVers;
-	this->Width = 200;
 
-	TRect MyRect = this->ClientRect;
-	this->ClientHeight = DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &MyRect, DT_WORDBREAK | DT_CALCRECT) + ciAddHeight;
-	this->Width += ciAddWidth;
+	this->_RefreshText();
 }
 //---------------------------------------------------------------------------
 __fastcall GsChild::GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewReadWriteDataObject)
-	: GsCoreChild(Owner)
+	: TGraphicControl(Owner)
 /**
 	OPIS METOD(FUNKCJI): Trzeci konstruktor, który używa struktury PNewReadWriteDataObject, w celu prawidłowego
 											 odczytu zapisanej nowej wersji projektu.
@@ -138,6 +107,7 @@ __fastcall GsChild::GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewRead
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  this->Cursor = crSizeAll;
 	//Inicjalizacja listy potomków
 	this->_pListChildren = new TList();
 	if(!this->_pListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
@@ -155,11 +125,8 @@ __fastcall GsChild::GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewRead
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
 	this->ShowHint = true;
   this->Hint = this->_ustrNameVers;
-  this->Width = 200;
 
-	TRect MyRect = this->ClientRect;
-	this->ClientHeight = DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &MyRect, DT_WORDBREAK | DT_CALCRECT) + ciAddHeight;
-	this->Width += ciAddWidth;
+  this->_RefreshText();
 }
 //===========================================================================
 __fastcall GsChild::~GsChild()
@@ -203,14 +170,15 @@ void __fastcall GsChild::Paint()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  GsCoreChild::Paint();
+	TGraphicControl::Paint();
 	//Własny kod
 	// Kolor pozycji zależnie od jej stanu
 	TColor clFrameColor=clRed;
 	int iWidth=1;
-	const int ciDefaultWidthSelect=5;
+	const int ciDefaultWidthSelect=3;
+
 	if(this == GlGsDrawChildren->_pRootObject)
-		// Root nie zmienia koloru?
+	// Root nie zmienia koloru?
 	{
 		this->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_Rot];
 		// Przy zaznaczaniu objektu typu "korzeń", będzie zmieniana tylko obwódka
@@ -255,9 +223,9 @@ void __fastcall GsChild::Paint()
   this->Canvas->Pen->Color = clFrameColor;
 	this->Canvas->Rectangle(this->ClientRect); //Obwódka o kolorze zależnym od zaznaczenia, lub nie
 	// By nie rysować tekstu z podkładem, oraz by metoda Rectangle nie rysowała tła.
+  //this->Canvas->Rectangle(this->_RectText);
 	this->Canvas->Brush->Style = bsClear;
-	TRect MyRect(this->ClientRect); MyRect.Top = ciAddHeight / 2; MyRect.Left = ciAddWidth / 2;
-	DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &MyRect, DT_WORDBREAK);
+	DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &this->_RectText, DT_WORDBREAK);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsChild::MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y)
@@ -343,6 +311,32 @@ void __fastcall GsChild::MouseMove(System::Classes::TShiftState Shift, int X, in
 	GlGsDrawChildren->Invalidate();
 }
 //---------------------------------------------------------------------------
+void __fastcall GsChild::_RefreshText(bool bPosition)
+/**
+	OPIS METOD(FUNKCJI): Pozycjonowanie tekstu w objekcie
+	OPIS ARGUMENTÓW: Zapamiętanie i pozycjonowanie całego objektu, względem objektu nadrzędnego
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	int l=0, t=0;
+	if(bPosition) {l = this->Left; t = this->Top;}
+	const int ciAddWidthHeight=12;
+	this->Width = 200;
+
+	this->_RectText = this->ClientRect;
+	this->ClientHeight = DrawText(this->Canvas->Handle, this->Text.c_str(), -1, &this->_RectText, DT_WORDBREAK | DT_CALCRECT);
+	this->BoundsRect = this->_RectText;
+
+	if(bPosition)
+	{
+		this->Left = l; this->Top = t; // Odtworzenie zapamiętanej pozycji objektu, po zmienieniu jego wymiarów
+																	 // dostosowanych do nowego  tekstu
+  }
+
+	this->Width += ciAddWidthHeight, this->Height += ciAddWidthHeight;
+	this->_RectText.Inflate(-ciAddWidthHeight / 2, -ciAddWidthHeight / 2, ciAddWidthHeight / 2, ciAddWidthHeight / 2);
+}
 /****************************************************************************
 *				 Klasa całkowicie PRYWATNA GsDrawLogicalRelationship,								*
 *										 pochodna TCustomPanel.																	*
@@ -358,8 +352,15 @@ __fastcall GsDrawChildren::GsDrawChildren(TComponent* Owner) : TCustomPanel(Owne
 	this->DoubleBuffered = true;
 	this->_pMainChildrenList = new TList();
 	if(!this->_pMainChildrenList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	//---
+	this->_pBrushBitmap = new Graphics::TBitmap();
+	if(!this->_pBrushBitmap) throw(Exception("Nie dokonano inicjalizacji objektu TBitmap"));
+	if(TFile::Exists(custrPathBackground)) this->_pBrushBitmap->LoadFromFile(custrPathBackground);
 	// Wspólny wskaźnik na klase do rysowania
-  GlGsDrawChildren = this;
+	GlGsDrawChildren = this;
+
+//	/**/this->BorderStyle = bsSingle;
+//	/**/this->AutoSize = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsDrawChildren::~GsDrawChildren()
@@ -377,6 +378,8 @@ __fastcall GsDrawChildren::~GsDrawChildren()
 		delete this->_pRootObject; this->_pRootObject = nullptr;
 	}
 	if(this->_pMainChildrenList) {delete this->_pMainChildrenList; this->_pMainChildrenList = nullptr;}
+	// Usuwanie bitmapy podkładu
+  if(this->_pBrushBitmap) {delete this->_pBrushBitmap; this->_pBrushBitmap = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsDrawChildren::_WMErasebackground(TWMEraseBkgnd &Message)
@@ -423,16 +426,27 @@ void __fastcall GsDrawChildren::Paint()
 */
 {
 	TCustomPanel::Paint();
-  //Własny kod
+	//Własny kod
 	GsChild *pGsChild=nullptr, *pPrevChild=nullptr;
+	const int ciWidthEl=6;
+
+	this->Canvas->Brush->Bitmap = this->_pBrushBitmap;
+	this->Canvas->FillRect(this->ClientRect);
+	this->Canvas->Brush->Bitmap = nullptr;
 
 	this->Canvas->Brush->Color = clFuchsia;
-  this->Canvas->Pen->Width = GlGsMaster->Global_iWidthLineScheme;//iWidthLine;
-	this->Canvas->Pen->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];//ColorObject[enColorNum_Line];
+	this->Canvas->Pen->Width = GlGsMaster->Global_iWidthLineScheme;
+	this->Canvas->Pen->Color = GlGsMaster->Global_ColorsSchemeTable[enColorSchemeNum_Line];
 
 	for(int i=0; i<this->_pMainChildrenList->Count; ++i)
 	{
 		pGsChild = static_cast<GsChild *>(this->_pMainChildrenList->Items[i]);
+
+//		TRect ShadowRect = TRect(pGsChild->Left + 4, pGsChild->Top - 4,
+//														 pGsChild->Left + pGsChild->Width + 4,
+//														 pGsChild->Top + pGsChild->Height - 4);
+//		FillRectAlpha(this->Canvas, ShadowRect, clGray, 150);
+
 		if(pGsChild)
 		{
 			pPrevChild = pGsChild->_pPrevChild;
@@ -445,7 +459,8 @@ void __fastcall GsDrawChildren::Paint()
 				this->Canvas->MoveTo(iChildLeft, pGsChild->Top);
 				this->Canvas->LineTo(iPrevChild, pPrevChild->Top + pPrevChild->Height);
 
-				this->Canvas->Ellipse(TRect(iChildLeft - 6, pGsChild->Top - 6, iChildLeft + 6, pGsChild->Top + 6));
+				this->Canvas->Ellipse(TRect(iChildLeft - ciWidthEl, pGsChild->Top - ciWidthEl,
+																		iChildLeft + ciWidthEl, pGsChild->Top + ciWidthEl));
 			}
 		}
 	}
@@ -653,12 +668,13 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 //---------------------------------------------------------------------------
 void __fastcall GsDrawChildren::_CalculateNewDimension(GsChild *pGsChild)
 /**
-	OPIS METOD(FUNKCJI): Obliczanie nowego rozmiaru
+	OPIS METOD(FUNKCJI): Obliczanie nowego rozmiaru i połorzenia
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	//return;
 	if((pGsChild->Left + pGsChild->Width) > this->Width)
 		{this->Width = pGsChild->Left + pGsChild->Width + 2;}
 	if((pGsChild->Top + pGsChild->Height) > this->Height)
@@ -1021,11 +1037,8 @@ void __fastcall GsMaster::RenameTextItem(const UnicodeString &custrNewAdr, const
 		pGsChild->_ustrNameVers = custrNewAdr;
 		pGsChild->_ustrTextVers = custrNewVers;
 		pGsChild->Text = Format("%s \"%s\"", ARRAYOFCONST(( custrNewAdr, custrNewVers )));
-		pGsChild->Width = 200;
 
-		TRect MyRect = pGsChild->ClientRect;
-		pGsChild->ClientHeight = DrawText(pGsChild->Canvas->Handle, pGsChild->Text.c_str(), -1, &MyRect, DT_WORDBREAK | DT_CALCRECT) + ciAddHeight;
-		pGsChild->Width += ciAddWidth;
+		pGsChild->_RefreshText(true);
 	}
 }
 //---------------------------------------------------------------------------
