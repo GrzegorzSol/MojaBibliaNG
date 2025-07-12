@@ -28,7 +28,7 @@ enum {enHelpTextIndex_CloseSheet=0,		//0.Zamknięcie aktywnej zakładki
 			enHelpTextIndex_MailChapt,			//14.Wyśli emailem rozdział
 			enHelpTextIndex_ImageAndText,		//15.Tworzenie grafiki z tekstem
 			enHelpTextIndex_Help,						//16.Pomocnik
-			enHelpTextIndex_Count					  //17.
+			enHelpTextIndex_Count						//17.
 };
 /*
 	Całkowicie publiczna i statyczna klasa globalnych zmiennych, dostępnych wszystkim modułom
@@ -39,10 +39,10 @@ struct GlobalVar
 	//****************** STAŁE STATYCZNE ZE ŚCIERZKAMI DOSTĘPU ******************
 	const static UnicodeString Global_custrNameIVerFile, // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 														 Global_custrGetExeDir, // Ścieżka dostępu do pliku ze słownikiem stronga
-														 Global_custrGetDataDir,  // Ścieżka dostępu do katalogu z danymi aplikacji
+														 Global_custrGetDataDir,	// Ścieżka dostępu do katalogu z danymi aplikacji
 														 Global_custrGetVersionUpdate, // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 														 Global_custrPathStrongDict, // Ścieżka dostępu do pliku ze słownikiem stronga
-														 Global_custrPathImagesStyles,  // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
+														 Global_custrPathImagesStyles,	// Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 														 Global_custrPathAllReadingPlan, // Ścieżka dostępu do katalogu z planami czytania biblii
 														 GlobalPath_CurrentActivePlan, // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 														 Global_custrPathSearchFavorities, // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
@@ -66,17 +66,17 @@ struct GlobalVar
 														 Global_ustrMutexName; //Mutekst główny aplikacji
 
 	//=======================================
-	inline const static UnicodeString Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";
+	inline const static UnicodeString Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania	= "*.fsv";
 																		Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
 																		Global_custrExtendCommentsFiles=".bfc", //Rozszerzenie plików z komentarzami
-                                    Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
+																		Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
 														//----- Syle
 																		Global_DefaultStyleName="Windows", //Domyślny styl
 																		//----- Nazwa domyślnego tłumaczenia używanego do modułu konkordancji greckiej i słownika grecko-polskiego (nie w module Stronga!)
-                                    // Tłumaczenie będzie można wybrać [02-06-2024]
+																		// Tłumaczenie będzie można wybrać [02-06-2024]
 																		Global_DefaultNameTranslateToDictionary="ELZEVIR TEXTUS RECEPTUS (1624)",// "TRO+"
 																		/*****************************************************************************
-																		*       Stałe dla pliku informacyjnego dla zapisu ulubionego wyszukiwania    *
+																		*				Stałe dla pliku informacyjnego dla zapisu ulubionego wyszukiwania		 *
 																		******************************************************************************/
 																		GlobalInfoSearch_Header="INFOFILESEARCH", //Nagłówek
 																				GlobalInfoSearch_Name="Name", //Wyrażenie do wyszukiwania
@@ -136,8 +136,8 @@ struct GlobalVar
 																				GlobalIni_FontNameAdress="FontNameAdress",				 //Nazwa czcionki adresu wersetu
 																				GlobalIni_FontNameTranslators="FontNameTranslators",		//Nazwa czcionki nazwy tłymaczenia
 																				GlobalIni_SelectStyleName="SelectStyleName",				//Nazwa wybranego z listy tematu dla aplikacji
-																				GlobalIni_GrahicsBackground="GrahicsBackground",  //Ścieżka dostępu do podkładu graficznego dla głównego okna.
-                                                                                          //Grafika będzie widoczna tylko gdy nie będzie wczytana żadna księga biblijna  //[11-12-2023]
+																				GlobalIni_GrahicsBackground="GrahicsBackground",	//Ścieżka dostępu do podkładu graficznego dla głównego okna.
+																																													//Grafika będzie widoczna tylko gdy nie będzie wczytana żadna księga biblijna	 //[11-12-2023]
 																		//----- Sekcje Translates
 																		GlobalIni_TranslatesSection_Main="TRANSLATES",								//Główna sekcja TRANSLATES pliku ini
 																				GlobalIni_ExcludeTranslates="ExcludeTranslates",		//Tłumaczenia nie wyświetlane
@@ -152,13 +152,13 @@ struct GlobalVar
 																				GlobalIni_SizeFontPlan="FontSizeDisplayReadingPlan",//Wielkość czcionki w planie
 																				GlobalIni_SetRate="SetRateSpeakText",								//Szybkość czytania tekstu
 																				GlobalIni_SetVolume="SetVolumeSpeakText",						//Głośność czytania
-																		GlobalIni_SetupsSchemeVers="SETUPSSCHEMEVERS",          //Główna sekcja modułu ustawień powiązań wersetów
+																		GlobalIni_SetupsSchemeVers="SETUPSSCHEMEVERS",					//Główna sekcja modułu ustawień powiązań wersetów
 																				GlobalIni_SetSchemeNumTranslate="SetupSchemeNumTranslate", // Numer tłumaczenia
 																				GlobalIni_SetSchemeColorLine="SetupSchemeColorLine", // Kolor lini
-																				GlobalIni_SetSchemeColorRot="SetupSchemeColorRot",   // Kolor głównego węzła
+																				GlobalIni_SetSchemeColorRot="SetupSchemeColorRot",	 // Kolor głównego węzła
 																				GlobalIni_SetSchemeColorSelect="SetupSchemeColorSelect", // Kolor wybranej pozycji
 																				GlobalIni_SetSchemeWidthLine="SetupSchemeWidthLine", // Szerokość lini
-                                        GlobalIni_SetIsTransparent="SetupIsTransparent", // Czy objekty maja być przezroczyste
+																				GlobalIni_SetIsTransparent="SetupIsTransparent", // Czy objekty maja być przezroczyste
 																		Global_ustrFileReadingPlanExtend=".rpf";	 //Zmienić na stałą!? Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
 	inline static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
@@ -173,7 +173,7 @@ struct GlobalVar
 	static const int Global_MaxlengthVers = 10240; //Maksymalna długość pojedyńczego wersetu
 //***************************************************************************
 	inline static TStringList *Global_SListPathMultiM=nullptr,	//Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
-														*Global_ItemsColor=nullptr;       //Lista kolorów do wyboru, dla objektu klasy TColorBox
+														*Global_ItemsColor=nullptr;				//Lista kolorów do wyboru, dla objektu klasy TColorBox
 	inline static TMemIniFile *Global_ConfigFile=nullptr;			 //Globalny wskażnik na plik konfiguracyjny
 	inline static TStringDynArray SDirTranslatesList;		//Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
 	inline static THashedStringList *Global_HSListAllFavoritiesVers=nullptr, //String lista do wszystkich ulubionych wesrsetów

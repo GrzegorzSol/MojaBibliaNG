@@ -128,14 +128,14 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 							if(this->_iGetTranslate == 0)
 							//Wybrano wszystkie tłumaczenia
 							{
-								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s [%s]%s" ,ARRAYOFCONST((GlobalAdressVersRtf, GsReadBibleTextData::GsInfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
+								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s [%s]%s" ,ARRAYOFCONST((GlobalAdressVersRtf, AppCTable_InfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
 									this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
 									GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, GlobalSizeFontText))));
 							}
 							else if (this->_iGetTranslate > 0)
 							//Wybrano konkretne tłumaczenie
 							{
-								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s %s" ,ARRAYOFCONST((GlobalAdressVersRtf, GsReadBibleTextData::GsInfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
+								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s %s" ,ARRAYOFCONST((GlobalAdressVersRtf, AppCTable_InfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
 								this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
 								GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, GlobalSizeFontText))));
 							}

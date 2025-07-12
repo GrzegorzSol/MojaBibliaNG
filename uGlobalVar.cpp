@@ -24,7 +24,7 @@ const UnicodeString GlobalVar::Global_custrNameIVerFile="MBibleNG.iver",				 //N
 	const UnicodeString GlobalVar::Global_custrGetDataDir= "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\";					 // Ścieżka dostępu do katalogu z danymi aplikacji
 #else
 	//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
-	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data");  // Ścieżka dostępu do katalogu z danymi aplikacji
+	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data");	 // Ścieżka dostępu do katalogu z danymi aplikacji
 #endif
 const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),	 // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 										GlobalVar::Global_custrPathStrongDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "StrongDict.strdi"), // Ścieżka dostępu do pliku ze słownikiem stronga
@@ -49,8 +49,8 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		// Ścieżka dostępu do pliku z listą ulubionych wersetów
 										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów
 										GlobalVar::Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
-										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
-                    //----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
+										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),	// Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
+										//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 										GlobalVar::Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName);	//Mutekst główny aplikacji
 
 void __fastcall GlobalVar::Global_InitGlobalVariables()
@@ -72,7 +72,7 @@ void __fastcall GlobalVar::Global_InitGlobalVariables()
 //			GsDebugClass::WriteDebug("BCC64C Standart");
 //		#endif
 //	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32) && !defined(_WIN64)
-//    #if defined(_DEBUGINFO_)
+//		#if defined(_DEBUGINFO_)
 //			// Tradycyjny kompilator dla Win32
 //			GsDebugClass::WriteDebug("BCC32C i BCC32X Standart");
 //		#endif

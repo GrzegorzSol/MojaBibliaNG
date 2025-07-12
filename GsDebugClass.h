@@ -6,7 +6,7 @@
 class GsDebugClass
 {
 	public:
-		static void __fastcall InitDebug(short int _Bottom = 26, short int _Right = 100)
+		inline static void __fastcall InitDebug(int iX=100, int iY=100, int iWidth=800, int iHeight=400, bool bTopMost=false)
 		/**
 			OPIS METOD(FUNKCJI):
 			OPIS ARGUMENTÓW:
@@ -14,38 +14,29 @@ class GsDebugClass
 			OPIS WYNIKU METODY(FUNKCJI):
 		*/
 		{
-			if(AllocConsole())
+			// Utwórz lub przypnij konsolę
+			if(!AttachConsole(ATTACH_PARENT_PROCESS)) {AllocConsole();}
+
+			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
+			HWND hConsole = GetConsoleWindow();
+			if(hConsole && hOut)
 			{
-				AttachConsole(GetCurrentProcessId()); //Identyfikator procesu, którego konsola ma być używana.
-				SMALL_RECT srctWindow; //Wymiary okna konsoli
-				HMENU hMenuWindow;		 //Menu systemowe okna konsoli
-				HWND hConsoleWindow;				 //Uchwyt do okna konsoli
-				HANDLE _hMyDebugConsole=NULL;
+				// Usuń menu systemowe z paska okna
+				LONG style = GetWindowLong(hConsole, GWL_STYLE);
+				style &= ~WS_SYSMENU; // Wyczyść flagę WS_SYSMENU
+				style &= ~WS_SIZEBOX; // Usuń możliwość przeciągania krawędzi
+				SetWindowLong(hConsole, GWL_STYLE, style);
 
-				_hMyDebugConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
-				if(_hMyDebugConsole)
-				{
-					hConsoleWindow = GetConsoleWindow();
-					if(hConsoleWindow)
-					{
-						//Dezaktywacja przycisku systemowego zamykania okna konsoli
-						hMenuWindow = GetSystemMenu(hConsoleWindow, false);
-						if(hMenuWindow) DeleteMenu(hMenuWindow, SC_CLOSE, MF_BYCOMMAND);
-						//Ustalenie wymiarów okna konsoli
-						srctWindow.Top = 0; srctWindow.Left = 0;
-						srctWindow.Bottom = _Bottom; srctWindow.Right = _Right;
-						//---
-						SetConsoleTitle(TEXT("Debug Console")); //Tytuł konsoli
-						SetConsoleTextAttribute(_hMyDebugConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY); //Tekst konsoli
-						SetConsoleWindowInfo(_hMyDebugConsole, true, &srctWindow); //Ustawienie rozmiarów konsoli
+				SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_INTENSITY); //Tekst konsoli
 
-						SetWindowPos(hConsoleWindow, HWND_TOP, 10, 40, 0, 0, SWP_NOSIZE); //Zmienia położenie okna konsoli debugowania
-					}
-				}
+				MoveWindow(hConsole, iX, iY, iWidth, iHeight, TRUE);
+				if(bTopMost) SetWindowPos(hConsole, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_FRAMECHANGED);
 			}
-		};
+
+			SetConsoleTitle(TEXT("Debug Console"));
+		}
 		//-----------------------------------------------------------------------
-		inline static void __fastcall CloseDebug()
+		inline static void __fastcall SetConsoleFontSize(short width, short height)
 		/**
 			OPIS METOD(FUNKCJI):
 			OPIS ARGUMENTÓW:
@@ -53,8 +44,23 @@ class GsDebugClass
 			OPIS WYNIKU METODY(FUNKCJI):
 		*/
 		{
-			FreeConsole();
-		};
+      HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+			if(hOut == INVALID_HANDLE_VALUE) return;
+
+      CONSOLE_FONT_INFOEX cfi;
+			cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+    	GetCurrentConsoleFontEx(hOut, FALSE, &cfi);
+
+      cfi.nFont = 0;
+      cfi.dwFontSize.X = width;   // szerokość (zwykle ignorowana)
+			cfi.dwFontSize.Y = height;  // wysokość znaków
+      cfi.FontFamily = FF_DONTCARE;
+			cfi.FontWeight = FW_NORMAL;
+
+			std::wcscpy_s(cfi.FaceName, LF_FACESIZE, L"Consolas"); // lub np. L"Lucida Console"
+
+			SetCurrentConsoleFontEx(hOut, FALSE, &cfi);
+    }
 		//-----------------------------------------------------------------------
 		inline static void __fastcall WriteDebug(UnicodeString _inStrWrite)
 		/**
@@ -64,12 +70,43 @@ class GsDebugClass
 			OPIS WYNIKU METODY(FUNKCJI):
 		*/
 		{
-			HANDLE _hMyDebugConsole=NULL;
-			_hMyDebugConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
-			if(_hMyDebugConsole == NULL) return;
-			_inStrWrite += "\n";
-			WriteConsole(_hMyDebugConsole, _inStrWrite.c_str(), _inStrWrite.Length(), 0, 0);
-		};
+			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
+			if(hOut)
+			{
+				_inStrWrite += "\n";
+				WriteConsole(hOut, _inStrWrite.c_str(), _inStrWrite.Length(), 0, 0);
+      }
+		}
+		//-----------------------------------------------------------------------
+		inline static void __fastcall ClearDebug()
+    /**
+			OPIS METOD(FUNKCJI):
+			OPIS ARGUMENTÓW:
+			OPIS ZMIENNYCH:
+			OPIS WYNIKU METODY(FUNKCJI):
+		*/
+		{
+      COORD topLeft = {0, 0};
+			CONSOLE_SCREEN_BUFFER_INFO screen;
+			DWORD written;
+
+			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
+			GetConsoleScreenBufferInfo(hOut, &screen);
+			FillConsoleOutputCharacter(hOut, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
+			FillConsoleOutputAttribute(hOut, screen.wAttributes, screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
+			SetConsoleCursorPosition(hOut, topLeft);
+    }
+		//-----------------------------------------------------------------------
+    inline static void __fastcall CloseDebug()
+		/**
+			OPIS METOD(FUNKCJI):
+			OPIS ARGUMENTÓW:
+			OPIS ZMIENNYCH:
+			OPIS WYNIKU METODY(FUNKCJI):
+		*/
+		{
+			FreeConsole();
+		}
 };
 //---------------------------------------------------------------------------
 #endif

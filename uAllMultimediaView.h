@@ -48,18 +48,18 @@ __published:	// IDE-managed Components
 	void __fastcall CListTranlatesBeforeDrawItem(int AIndex, TCanvas *ACanvas,
 					TRect &ARect, TOwnerDrawState AState);
 	void __fastcall CListGraphicsBeforeDrawItem(int AIndex, TCanvas *ACanvas, TRect &ARect,
-          TOwnerDrawState AState);
+					TOwnerDrawState AState);
 	void __fastcall CListCommentsBeforeDrawItem(int AIndex, TCanvas *ACanvas, TRect &ARect,
-          TOwnerDrawState AState);
+					TOwnerDrawState AState);
 	void __fastcall CListFavVersesBeforeDrawItem(int AIndex, TCanvas *ACanvas,
 					TRect &ARect, TOwnerDrawState AState);
 	void __fastcall CListAllItemClick(TObject *Sender);
 	void __fastcall PanelDisplayResize(TObject *Sender);
 	void __fastcall ImageSelectDisplayDblClick(TObject *Sender);
 	void __fastcall HeaderControlAllSectionResize(THeaderControl *HeaderControl,
-          THeaderSection *Section);
+					THeaderSection *Section);
 	void __fastcall PControlAllMultimediaDrawTab(TCustomTabControl *Control, int TabIndex,
-          const TRect &Rect, bool Active);
+					const TRect &Rect, bool Active);
 
 private:	// User declarations
 	void __fastcall _SetTagsAndHints();
@@ -78,7 +78,7 @@ private:	// User declarations
 	float _fFactorProp=0;
 	TForm *_pDisplayWindow=nullptr;
 	TImage *_pImageScr=nullptr;
-  TList *_pListAllFullTranslates=nullptr;
+	TList *_pListAllFullTranslates=nullptr;
 public:		// User declarations
 	__fastcall TAllMultimediaView(TComponent* Owner);
 };

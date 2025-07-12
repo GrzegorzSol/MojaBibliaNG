@@ -38,7 +38,7 @@ __published:	// IDE-managed Components
 	void __fastcall LViewHistoryChChange(TObject *Sender, TListItem *Item, TItemChange Change);
 	void __fastcall LViewHistoryChGetImageIndex(TObject *Sender, TListItem *Item);
 	void __fastcall LViewHistoryChGetSubItemImage(TObject *Sender, TListItem *Item,
-          int SubItem, int &ImageIndex);
+					int SubItem, int &ImageIndex);
 
 
 

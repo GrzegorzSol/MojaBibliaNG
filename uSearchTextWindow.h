@@ -76,6 +76,7 @@ __published:	// IDE-managed Components
 	TCheckBox *STW_ChBoxSizeTextSearch;
 	TCheckBox *STW_ChBoxMemoSetupsSearch;
 	TButton *STW_ButtonSaveSearch;
+	TCheckBox *STW_ChBoxOnlyWord;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);
 	void __fastcall CBoxCloseUp(TObject *Sender);

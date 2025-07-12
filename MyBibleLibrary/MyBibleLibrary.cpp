@@ -60,9 +60,9 @@ __fastcall MyObjectVers::MyObjectVers(const UnicodeString &HeadVers)
 */
 {
 	this->AdressString = HeadVers.SubString(1, 9);		//Adres wersetu 001001001
-	this->ucBook = HeadVers.SubString(1, 3).ToInt() - 1,//Księgi są numerowane w pliku z tłumaczeniem od 1, a teblice od 0.
-	this->ucChapt = HeadVers.SubString(4, 3).ToInt(),
-	this->ucVers = HeadVers.SubString(7, 3).ToIntDef(0);
+	this->ucBook = HeadVers.SubString(1, 3).ToIntDef(1) - 1;//Księgi są numerowane w pliku z tłumaczeniem od 1, a teblice od 0.
+	this->ucChapt = HeadVers.SubString(4, 3).ToIntDef(1);
+	this->ucVers = HeadVers.SubString(7, 3).ToIntDef(1);
 
 	if(this->ucVers == 0)
 	{
@@ -77,7 +77,7 @@ __fastcall MyObjectVers::MyObjectVers(const UnicodeString &HeadVers)
 		}
 	}
 	//----- Tworzenie adresu wersetu
-	this->BookChaptVers = Format("%s %d:%d%s", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->ucBook].ShortNameBook, this->ucChapt, this->ucVers, this->ReplaceAdressIsNotValidNumber )));
+	this->BookChaptVers = Format("%s %d:%d%s", ARRAYOFCONST((AppCTable_InfoAllBooks[this->ucBook].ShortNameBook, this->ucChapt, this->ucVers, this->ReplaceAdressIsNotValidNumber )));
 }
 //---------------------------------------------------------------------------
 __fastcall MyObjectVers::~MyObjectVers()
@@ -136,7 +136,7 @@ void __fastcall GsHashedStringListItem::Clear()
 	THashedStringList::Clear();
 }
 	//=========================================================================
-__fastcall GsReadBibleTextItem::GsReadBibleTextItem(UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex)
+__fastcall GsReadBibleTextItem::GsReadBibleTextItem(const UnicodeString &_PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex)
 	: IsActiveTranslate(true),	//Czy tłumaczenie jest aktywne, czyli czy jest wyświetlane
 		enTypeTranslate(IdenTypeTranslate),
 		FullPathTranslate(_PathTransl) //Kompletna ścieżka do tłumaczenia
@@ -266,7 +266,7 @@ void __fastcall GsListItemTranslates::Clear()
 	TList::Clear();
 }
 //---------------------------------------------------------------------------
-void __fastcall GsListItemTranslates::Notify(void * Ptr, TListNotification Action)
+void __fastcall GsListItemTranslates::Notify(void *Ptr, TListNotification Action)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -320,7 +320,7 @@ int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
 	return 0;
 }
 //---------------------------------------------------------------------------
-GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString _PathDir)
+GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString &_PathDir)
 /**
 	OPIS METOD(FUNKCJI): Konstruktor klasy ReadBibleTextClass
 	OPIS ARGUMENTÓW: UnicodeString _PathDir - Scieżka dostępu do katalogu wszustich tłumaczeń
@@ -371,7 +371,7 @@ GsReadBibleTextClass::~GsReadBibleTextClass()
 	GsReadBibleTextData::GsFreeGlobalImageList();	 //Likwidacja zmiennych klasy
 }
 //---------------------------------------------------------------------------
-bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _PathDir)
+bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_PathDir)
 /**
 	OPIS METOD(FUNKCJI): Załadowanie wszystkich plików tłumaczeń, oprócz tłumaczeń, które zostały wykluczone w pilku konfiguracji
 	OPIS ARGUMENTÓW:
@@ -445,7 +445,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString _Pa
 	return true;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString custrPath)
+void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString &custrPath)
 /**
 	OPIS METOD(FUNKCJI): Zapisuje zawartość aktualnej zakładki
 	OPIS ARGUMENTÓW:
@@ -458,7 +458,7 @@ void __fastcall GsReadBibleTextClass::SaveCurrentSheetText(const UnicodeString c
 	//---
 	if(custrPath==0)
 	{
-		UnicodeString _custrPath = Format("%s_%u_%s.html", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].FullNameBook, pGsTabSheetClass->_ShucIndexChapt+1,
+		UnicodeString _custrPath = Format("%s_%u_%s.html", ARRAYOFCONST((AppCTable_InfoAllBooks[pGsTabSheetClass->_ShucIndexBook].FullNameBook, pGsTabSheetClass->_ShucIndexChapt+1,
 			pGsTabSheetClass->pGsTabSetClass->Tabs->Strings[pGsTabSheetClass->pGsTabSetClass->TabIndex])));
 		//Zapisanie pliku html, pod domyślna nazwą
 		TFile::WriteAllText(_custrPath, pGsTabSheetClass->ustrHtmlText, TEncoding::UTF8);
@@ -661,14 +661,14 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) throw(Exception("Nie powiodło się wyłuskanie wskaźnika na aktualną zakładkę"));
-	pGsTabSheetClass->Caption = Format("%s: %u rozdział", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iGetBook].FullNameBook, iGetChap+1)));
+	pGsTabSheetClass->Caption = Format("%s: %u rozdział", ARRAYOFCONST((AppCTable_InfoAllBooks[iGetBook].FullNameBook, iGetChap+1)));
 	//Metoda dodajaca informacje o otwartym rozdziale do listy historii
 	GsReadBibleTextData::AddItemHistoryList(pGsTabSheetClass->Caption); //TUTAJ JEST BŁĄD!!!
 	//Informacja w strukturze zakładki o numerze księgi i rozdziału
 	pGsTabSheetClass->_ShucIndexBook = iGetBook;
 	pGsTabSheetClass->_ShucIndexChapt = iGetChap;
 	//Maksymalny wskaźnik, równy ilości rozdziałów w wybranej księdze.
-	pGsTabSheetClass->pProgressBar->Max = GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].ucCountChapt-1;
+	pGsTabSheetClass->pProgressBar->Max = AppCTable_InfoAllBooks[pGsTabSheetClass->_ShucIndexBook].ucCountChapt-1;
 	pGsTabSheetClass->pProgressBar->Position = iGetChap; //Aktualna pozycja wskaźnika umiejscowienia w wybranej księdze
 	//Ustawianie objektu, klasy TTaskBar
 	if(GsReadBibleTextData::_GsTaskBar)
@@ -687,7 +687,7 @@ bool __fastcall GsReadBibleTextClass::GetAllTranslatesChapter(const int iGetBook
 	//Kontrola aktywności przycisków przewijania rozdziałów do produ i do tyłu
 	TToolButton *pGetToolButtonPrev = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_NextChapter];
 	TToolButton *pGetToolButtonNext = pGsTabSheetClass->pToolBar->Buttons[enImageIndex_ToPrevBook - enImageIndex_PrevChapter];
-	pGetToolButtonNext->Enabled = pGsTabSheetClass->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[pGsTabSheetClass->_ShucIndexBook].ucCountChapt-1;
+	pGetToolButtonNext->Enabled = pGsTabSheetClass->_ShucIndexChapt < AppCTable_InfoAllBooks[pGsTabSheetClass->_ShucIndexBook].ucCountChapt-1;
 	pGetToolButtonPrev->Enabled = pGsTabSheetClass->_ShucIndexChapt > 0;
 
 	return true;
@@ -1082,10 +1082,10 @@ void __fastcall GsTreeBibleClass::CreateWnd()
 		for(int i=0; i<GsReadBibleTextData::GsTableNameGroupBook[ucIndex]; ++i)
 		//Dodawanie poszczególnych ksiąg do gróp
 		{
-			GsTreeNodeClass *pNodeBook = this->_AddChildNodeObject(pNodeGroup, GsReadBibleTextData::GsInfoAllBooks[uiLicz].FullNameBook);
+			GsTreeNodeClass *pNodeBook = this->_AddChildNodeObject(pNodeGroup, AppCTable_InfoAllBooks[uiLicz].FullNameBook);
 			if(!pNodeBook) throw(Exception("Błąd inicjalizacji klasy GsTreeNodeClass"));
 			pNodeBook->ucIndexBook = uiLicz; //Numer księgi
-			pNodeBook->ucCountChapt = GsReadBibleTextData::GsInfoAllBooks[uiLicz].ucCountChapt; //Ilość rozdziałów
+			pNodeBook->ucCountChapt = AppCTable_InfoAllBooks[uiLicz].ucCountChapt; //Ilość rozdziałów
 			++uiLicz; //Licznik indeksu księgi
 		}
 	}
@@ -1219,7 +1219,7 @@ void __fastcall GsTreeBibleClass::_CreateNodeClass(TCustomTreeView *Sender, TTre
 	NodeClass = __classid(GsTreeNodeClass);	 //Klasa GsTreeNodeClass, odtąd zastępuje oryginalną TTreeNode
 }
 //---------------------------------------------------------------------------
-GsTreeNodeClass *__fastcall GsTreeBibleClass::_AddRootNodeObject(const UnicodeString _NameRoot, enTypeRoot _eTypeRoot, void *pObject)
+GsTreeNodeClass *__fastcall GsTreeBibleClass::_AddRootNodeObject(const UnicodeString &_NameRoot, enTypeRoot _eTypeRoot, void *pObject)
 /**
 	OPIS METOD(FUNKCJI): Tworzenie "korzenia" dla objektu
 	OPIS ARGUMENTÓW:
@@ -1235,7 +1235,7 @@ GsTreeNodeClass *__fastcall GsTreeBibleClass::_AddRootNodeObject(const UnicodeSt
 	return pGsTreeNodeClass;
 }
 //---------------------------------------------------------------------------
-GsTreeNodeClass *__fastcall GsTreeBibleClass::_AddChildNodeObject(const GsTreeNodeClass* pParent, const UnicodeString ustrNameChild, void *pObject)
+GsTreeNodeClass *__fastcall GsTreeBibleClass::_AddChildNodeObject(const GsTreeNodeClass* pParent, const UnicodeString &ustrNameChild, void *pObject)
 /**
 	OPIS METOD(FUNKCJI): Dodawanie pozycji do podpozycji
 	OPIS ARGUMENTÓW:
@@ -1790,7 +1790,7 @@ void __fastcall GsTabSheetClass::_InitCBoxChaptersSelect(TPanel *pPanelParent)
 	this->pComboBox->ShowHint = true;
 	this->pComboBox->Hint = "Wybór rozdziału|Wybór numeru rozdziału z listy rozdziałów, dostępnych dla wybranej księgi";
 			//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
-	for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; ++iChapt)
+	for(int iChapt=0; iChapt<AppCTable_InfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; ++iChapt)
 		{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
 }
 //---------------------------------------------------------------------------
@@ -1914,7 +1914,7 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
 				this->pComboBox->Clear();
-				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; ++iChapt)
+				for(int iChapt=0; iChapt<AppCTable_InfoAllBooks[this->_ShucIndexBook].ucCountChapt; ++iChapt)
 					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
 				this->pComboBox->ItemIndex = 0;
 				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
@@ -1933,7 +1933,7 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 				GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
 				//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
 				this->pComboBox->Clear();
-				for(int iChapt=0; iChapt<GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt; ++iChapt)
+				for(int iChapt=0; iChapt<AppCTable_InfoAllBooks[this->_ShucIndexBook].ucCountChapt; ++iChapt)
 					{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
 				this->pComboBox->ItemIndex = 0;
 				this->_DisplayInfosTranslates(this->pGsTabSetClass->TabIndex-1);
@@ -1943,7 +1943,7 @@ void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
 		//---
 		case enImageIndex_NextChapter:		 //Następny rozdział
 		{
-			if(this->_ShucIndexChapt < GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].ucCountChapt-1)
+			if(this->_ShucIndexChapt < AppCTable_InfoAllBooks[this->_ShucIndexBook].ucCountChapt-1)
 			{
 				++this->_ShucIndexChapt; //Następny rozdział
 				++this->pComboBox->ItemIndex;	 //Uaktywnienie odpowiedniej pozycji w liście dostępnych rozdziałów
@@ -2142,7 +2142,7 @@ void __fastcall GsTabSheetClass::_DisplayInfosTranslates(const int iTab)
 			pStringStream->WriteString("<br>");
 			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Ilość wszystkich wersetów w tłumaczeniu: </span><span class=\"styleText\">%d wersetów</span>", ARRAYOFCONST((pGsReadBibleTextItem->uiAllVersCount))));
 			pStringStream->WriteString("<br>");
-			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrana księga: </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_ShucIndexBook].FullNameBook))));
+			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrana księga: </span><span class=\"styleText\">%s</span>", ARRAYOFCONST((AppCTable_InfoAllBooks[this->_ShucIndexBook].FullNameBook))));
 			pStringStream->WriteString("<br>");
 			pStringStream->WriteString(Format("<span class=\"styleColorValue\">Wybrany rozdział: </span><span class=\"styleText\">%d</span>", ARRAYOFCONST((this->_ShucIndexChapt+1))));
 			//Informacje o wybranym tłumaczeniu
@@ -2293,7 +2293,7 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall GsTabSetClass::DrawTab(Vcl::Graphics::TCanvas* TabCanvas, const Winapi::Windows::TRect &R,
+void __fastcall GsTabSetClass::DrawTab(Vcl::Graphics::TCanvas *TabCanvas, const Winapi::Windows::TRect &R,
 	int Index, bool Selected)
 /**
 	OPIS METOD(FUNKCJI):
@@ -2499,9 +2499,9 @@ void __fastcall GsBarSelectVers::CreateWnd()
 	this->_pLabelSelect->Font->Quality = TFontQuality::fqClearType;
 	this->_pLabelSelect->Font->Style = TFontStyles() << fsBold;
 	this->_pLabelSelect->Font->Color = clRed;
-  this->_pLabelSelect->Layout = tlCenter;
-	this->_pLabelSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
-  this->_pLabelSelect->Hint = Format("Adres wersetu|Pokazuje adres wersetu, czyli księge, rozdział i werset|%u",
+	this->_pLabelSelect->Layout = tlCenter;
+	this->_pLabelSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((AppCTable_InfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
+	this->_pLabelSelect->Hint = Format("Adres wersetu|Pokazuje adres wersetu, czyli księge, rozdział i werset|%u",
 		ARRAYOFCONST((enImageIndex_InfoHelp)));
 	//Wybór wersetu
 	this->_pButVers = new TToolButton(this);
@@ -2618,7 +2618,7 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 		if(!NewItem) throw(Exception("Błąd funkcji TMenuItem"));
 
 		this->_pPMenuBooks->Items->Add(NewItem);
-		NewItem->Caption = GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook;
+		NewItem->Caption = AppCTable_InfoAllBooks[i].FullNameBook;
 		if(i==(unsigned char)this->_FucSelectBook) this->_pButBooks->Caption = NewItem->Caption; //Wybrana księga domyślnie
 		NewItem->OnClick = this->_OnClick_PMenu;
 		NewItem->Tag = i;
@@ -2626,7 +2626,7 @@ void __fastcall GsBarSelectVers::_CreatePMenuBooks()
 		if(i==33 || i==66) NewItem->Break = mbBarBreak; //08-07-2021
 	}
 	//---- Stworzenie listy rozdziałów dla księgi.
-	for(unsigned char i=0; i<GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ucCountChapt; ++i)
+	for(unsigned char i=0; i<AppCTable_InfoAllBooks[this->_FucSelectBook].ucCountChapt; ++i)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->_pPMenuChapt);
 		if(!NewItem) throw(Exception("Błąd funkcji TMenuItem"));
@@ -2956,7 +2956,7 @@ void __fastcall GsBarSelectVers::_OnClickCopyToSheet(System::TObject* Sender)
 			if(ustrText.Length() > 0)
 			{
 				pGsControlListVers->pHSListVerses->AddObject(Format("%s %u:%u=%s",
-					ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers, ustrText))), pGsReadBibleTextItem);
+					ARRAYOFCONST((AppCTable_InfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers, ustrText))), pGsReadBibleTextItem);
 			}
 		}
 	}
@@ -3001,7 +3001,7 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 			this->_FucSelectVers = 1;
 			//---
 			this->_pPMenuChapt->Items->Clear(); //Wymazanie pozycji z listy rozdziałów
-			for(unsigned char i=0; i<GsReadBibleTextData::GsInfoAllBooks[pMItem->Tag].ucCountChapt; ++i)
+			for(unsigned char i=0; i<AppCTable_InfoAllBooks[pMItem->Tag].ucCountChapt; ++i)
 			{
 				TMenuItem *NewItem = new TMenuItem(this->_pPMenuChapt);
 				if(!NewItem) throw(Exception("Błąd funkcji TMenuItem"));
@@ -3058,7 +3058,7 @@ void __fastcall GsBarSelectVers::_OnClick_PMenu(System::TObject* Sender)
 		break;
 	}
 	//
-	this->_pLabelSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
+	this->_pLabelSelect->Caption = Format("%s %u:%u", ARRAYOFCONST((AppCTable_InfoAllBooks[this->_FucSelectBook].ShortNameBook, this->_FucSelectChapt+1, this->_FucSelectVers)));
 }
 //---------------------------------------------------------------------------
 void __fastcall GsBarSelectVers::Resize()
@@ -3842,7 +3842,7 @@ ListComments::ListComments(const UnicodeString _ustrName) : LC_FileName(_ustrNam
 	this->LC_ucChapt = ustrTemp.SubString(4, 3).ToInt(),
 	this->LC_ucVers = ustrTemp.SubString(7, 3).ToIntDef(0);
 	//----- Tworzenie adresu wersetu
-	this->LC_BookChaptVers = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[this->LC_ucBook].ShortNameBook, this->LC_ucChapt, this->LC_ucVers)));
+	this->LC_BookChaptVers = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[this->LC_ucBook].ShortNameBook, this->LC_ucChapt, this->LC_ucVers)));
 }
 //---------------------------------------------------------------------------
 ListComments::~ListComments()
@@ -4228,7 +4228,7 @@ void __fastcall GsListBoxFavoritiesClass::DrawItem(int Index, const TRect &Rect,
 		ucChapt = this->Items->Strings[Index].SubString(4, 3).ToInt(),
 		ucVers = this->Items->Strings[Index].SubString(7, 3).ToIntDef(0);
 		//----- Tworzenie adresu wersetu
-		BookChaptVers = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[ucBook].ShortNameBook, ucChapt, ucVers)));
+		BookChaptVers = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[ucBook].ShortNameBook, ucChapt, ucVers)));
 		MyRect.Left += 4; MyRect.Right -= 4;
 
 		DrawText(pCanvas->Handle, BookChaptVers.c_str(), -1, &MyRect, DT_SINGLELINE | DT_VCENTER);

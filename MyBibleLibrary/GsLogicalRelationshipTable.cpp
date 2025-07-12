@@ -87,7 +87,7 @@ __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteD
 
 	GsReadBibleTextData::GetTextVersOfAdress(_PReadWriteDataObject->RW_Book, _PReadWriteDataObject->RW_Chapt+1,
 		_PReadWriteDataObject->RW_Vers, 1, ustrText);
-	this->_ustrNameVers = Format("%s %u:%u", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[_PReadWriteDataObject->RW_Book].ShortNameBook,
+	this->_ustrNameVers = Format("%s %u:%u", ARRAYOFCONST((AppCTable_InfoAllBooks[_PReadWriteDataObject->RW_Book].ShortNameBook,
 			_PReadWriteDataObject->RW_Chapt+1, _PReadWriteDataObject->RW_Vers)));
 	this->_ustrTextVers = ustrText;
 	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));

@@ -50,7 +50,7 @@ __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 
 	this->pImageList16 = GsReadBibleTextData::GetImageList();
 	this->WebBrowserSpecText->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
-  // Licznik okien tlumaczeń specjalistycznych
+	// Licznik okien tlumaczeń specjalistycznych
 	if(TBooksSpecjalistWindow::_siIndexSpecWindow < (GlobalVar::Global_cucMaxTranslatesSpecjalist - 1))
 	{
 		TBooksSpecjalistWindow::_siIndexSpecWindow++;
@@ -120,7 +120,7 @@ void __fastcall TBooksSpecjalistWindow::FormClose(TObject *Sender, TCloseAction 
 */
 {
 	Action = caFree;
-  // Licznik okien tlumaczeń specjalistycznych
+	// Licznik okien tlumaczeń specjalistycznych
 	TBooksSpecjalistWindow::_siIndexSpecWindow--;
 }
 //---------------------------------------------------------------------------
@@ -164,11 +164,11 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 					int iMaxBook = this->_pGsReadBibleTextItem->ucStartBook + this->_pGsReadBibleTextItem->ucCountBooks;
 					for(int i=this->_pGsReadBibleTextItem->ucStartBook; i<iMaxBook; ++i)
 					{
-						this->CBoxBoksList->AddItem(GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook, nullptr);
+						this->CBoxBoksList->AddItem(AppCTable_InfoAllBooks[i].FullNameBook, nullptr);
 					}
 					this->CBoxBoksList->Items->EndUpdate();
 					this->CBoxBoksList->ItemIndex = 0;
-          this->CBoxSelectAllChange(this->CBoxBoksList);
+					this->CBoxSelectAllChange(this->CBoxBoksList);
 				}
 			}
 			break;
@@ -179,7 +179,7 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 			if(this->_pGsReadBibleTextItem)
 			{
 				this->_iSelectBoks = this->_pGsReadBibleTextItem->ucStartBook + pCBox->ItemIndex;
-				unsigned char ucTempMaxChapt = GsReadBibleTextData::GsInfoAllBooks[this->_iSelectBoks].ucCountChapt; //[10-08-2024]
+				unsigned char ucTempMaxChapt = AppCTable_InfoAllBooks[this->_iSelectBoks].ucCountChapt; //[10-08-2024]
 				// Translinearne tłumaczenie hebrajskiej bibli (IBHP+) posiada w ksiedze Malachiasza czwarty rozdział,
 				// który zawiera końcowe wersety trzeciego rozdziału w tłumaczeniach polskich. Dlatego zmienna
 				// w wypadku wyboru tłumaczenia hebrajskiego i jednoczesnym wyborze ksiegi Malachiasza, jest
@@ -193,7 +193,7 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 				this->CBoxChaptersList->ItemIndex = 0;
 				this->CBoxSelectAllChange(this->CBoxChaptersList);
 			}
-    }
+		}
 		break;
 		//---
 		case enCBoxSelect_Chapter:
@@ -209,10 +209,10 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 					if(iSelectChapt == pCBox->ItemIndex + 1)
 						{this->_pListSelectChapt->AddObject(HSList->Strings[i].Delete0(0, 10), HSList->Objects[i]);}
 				}
-        this->_pListSelectChapt->EndUpdate();
+				this->_pListSelectChapt->EndUpdate();
 
 				this->STextInfoLoaded->Caption = Format("%s - %s, rozdział: %d", ARRAYOFCONST(( this->_pGsReadBibleTextItem->NameTranslate,
-						 GsReadBibleTextData::GsInfoAllBooks[this->_iSelectBoks].FullNameBook, pCBox->ItemIndex + 1)));
+						 AppCTable_InfoAllBooks[this->_iSelectBoks].FullNameBook, pCBox->ItemIndex + 1)));
 
 				DataDisplayTextAnyBrowser SetDataDisplay;
 				SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
@@ -224,7 +224,7 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 
 				GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(this->WebBrowserSpecText,
 					this->_pListSelectChapt, SetDataDisplay);
-        // Stany przycisków przewijania, zależnie od wyswietlanego rozdziału //[17-05-2024]
+				// Stany przycisków przewijania, zależnie od wyswietlanego rozdziału //[17-05-2024]
 				this->ToolButtonPrevChapt->Enabled = (this->CBoxChaptersList->ItemIndex > 0);
 				this->ToolButtonNextChapt->Enabled = (this->CBoxChaptersList->ItemIndex < this->CBoxChaptersList->Items->Count - 1);
 			}
@@ -253,9 +253,9 @@ void __fastcall TBooksSpecjalistWindow::ToolButtonChaptClick(TObject *Sender)
 		{
 			if(this->CBoxChaptersList->ItemIndex < ciMaxChapt - 1)
 			{
-        this->CBoxChaptersList->ItemIndex++;
-      }
-    }
+				this->CBoxChaptersList->ItemIndex++;
+			}
+		}
 		break;
 		//---
 		case enToolButton_Prev:

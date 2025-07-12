@@ -1105,9 +1105,9 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 				if(pMyObjectStart && pMyObjectStop)
 				{
 					//Wyświetlenie zakresu na zakładkach
-					pTabSheet->Caption = Format("%s %d:%d - %s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[ustrStartVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+					pTabSheet->Caption = Format("%s %d:%d - %s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[ustrStartVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
 						pMyObjectStart->ucChapt, pMyObjectStart->ucVers,
-						GsReadBibleTextData::GsInfoAllBooks[ustrStopVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+						AppCTable_InfoAllBooks[ustrStopVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
 						pMyObjectStop->ucChapt, pMyObjectStop->ucVers)));
 				}
 			}
@@ -1143,7 +1143,7 @@ void GsReadBibleTextData::InitHistoryList()
 	}
 }
 //---------------------------------------------------------------------------
-void GsReadBibleTextData::AddItemHistoryList(const UnicodeString _ustrTextItem)
+void GsReadBibleTextData::AddItemHistoryList(const UnicodeString &_ustrTextItem)
 /**
 	OPIS METOD(FUNKCJI): Metoda dodajaca informacje o otwartym rozdziale do listy historii
 	OPIS ARGUMENTÓW:

@@ -39,10 +39,10 @@ __published:	// IDE-managed Components
 private:	// User declarations
 	void __fastcall _SelectTranslateSpecExecute(TObject *Sender);
 	GsReadBibleTextItem *_pGsReadBibleTextItem=nullptr; //Aktualnie wybrane tłumaczenie
-  int _iSelectBoks=-1;
+	int _iSelectBoks=-1;
 	TImageList *pImageList16=nullptr;
 	THashedStringList *_pListSelectChapt=nullptr; // Wybrany rozdział
-  inline static int _siIndexSpecWindow;
+	inline static int _siIndexSpecWindow;
 public:		// User declarations
 	__fastcall TBooksSpecjalistWindow(TComponent* Owner);
 };

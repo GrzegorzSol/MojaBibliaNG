@@ -43,7 +43,6 @@ object AllMultimediaView: TAllMultimediaView
         TabOrder = 0
         OnBeforeDrawItem = CListTranlatesBeforeDrawItem
         OnItemClick = CListAllItemClick
-        ExplicitHeight = 474
         object LabelNameTranlate: TLabel
           AlignWithMargins = True
           Left = 39
@@ -206,7 +205,7 @@ object AllMultimediaView: TAllMultimediaView
         Left = 0
         Top = 17
         Width = 1180
-        Height = 474
+        Height = 472
         Align = alClient
         ItemMargins.Left = 0
         ItemMargins.Top = 0
@@ -259,6 +258,7 @@ object AllMultimediaView: TAllMultimediaView
     Width = 1182
     Height = 179
     Align = alClient
+    ParentFont = False
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 1

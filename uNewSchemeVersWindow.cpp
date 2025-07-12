@@ -39,7 +39,7 @@ enum {// Numery pomocy
 			enImage_Add=0, // Dodanie nowej pozycji
 			enImage_Del, // Skasowanie wybranej pozycji
 			enImage_SetupsColors, // Konfiguracja kolorów
-			enImage_SelectTrans,  // Wybór tłumaczenia
+			enImage_SelectTrans,	// Wybór tłumaczenia
 			enImage_Save, // Zapisz projekt
 			enImage_Open, // Otwórz projekt
 			enImage_Rename,// Zmiana wersetu w objekcie
@@ -52,10 +52,10 @@ enum {// Numery pomocy
 			enImageSmall_Root=0,
 			enImageSmall_Child,
 			// Tagi dla głównych przycisków
-			enTag_Add = 100,   // Dodanie nowej pozycji
-			entag_Del,         // Skasowanie wybranej pozycji
+			enTag_Add = 100,	 // Dodanie nowej pozycji
+			entag_Del,				 // Skasowanie wybranej pozycji
 			enTag_SetupsColors, // Konfiguracja kolorów
-			enTag_SelectTrans,  // Wybór tłumaczenia
+			enTag_SelectTrans,	// Wybór tłumaczenia
 			enTag_Save, // Zapisz projekt
 			enTag_Open,// Otwórz projekt
 			enTag_Rename,// Zmiana wersetu w objekcie
@@ -86,14 +86,14 @@ __fastcall TNewSchemeVersWindow::TNewSchemeVersWindow(TComponent* Owner)
 	this->_pGsBarSelectVers->Parent = this;
 	this->_pGsBarSelectVers->Align = alTop;
 	this->ActionToolBarMain->Top = 0; // Narzędzia na samej górze
-  // Utworzenie głównego objektu klasy GsLogicalRelationshipTable
+	// Utworzenie głównego objektu klasy GsLogicalRelationshipTable
 	this->_pGsMasterRel = new GsMaster(this, this->TrViewMain);
 	if(!this->_pGsMasterRel) throw(Exception("Błąd inicjalizacji objektu GsMaster"));
 	this->_pGsMasterRel->Parent = this;
 	this->_pGsMasterRel->Align = alClient;
 	this->_pGsMasterRel->OnMouseDown = this->_OnMouseDown;
 	//this->_pGsMasterRel->Visible = false;
-  // Utworzenie objektu pomocy
+	// Utworzenie objektu pomocy
 	this->_pGsHelp = new GsHelp(this->PanelTreeAndHelp);
 	if(!this->_pGsHelp) throw(Exception("Błąd inicjalizacji objektu GsHelp"));
 	this->_pGsHelp->Parent = this->PanelTreeAndHelp;
@@ -101,7 +101,7 @@ __fastcall TNewSchemeVersWindow::TNewSchemeVersWindow(TComponent* Owner)
 	this->_pGsHelp->HelpText = ustrHelpText[enTagHelp_Start];
 
 	this->_InitHintsAndTags();
-  this->_ReadConfig();
+	this->_ReadConfig();
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::FormCreate(TObject *Sender)
@@ -112,7 +112,7 @@ void __fastcall TNewSchemeVersWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  //--- Zachowanie pierwotnych ustawień z bufora pliku ini, do TStringListy
+	//--- Zachowanie pierwotnych ustawień z bufora pliku ini, do TStringListy
 	this->_SListOldConfig = new TStringList(); //Przechowywanie ustawień, podczas uruchomienia okna konfiguracji
 	if(!this->_SListOldConfig) throw(Exception("Błąd funkcji TStringList"));
 	GlobalVar::Global_ConfigFile->GetStrings(this->_SListOldConfig);
@@ -193,7 +193,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSetupsVisualScheme()
 			if(pControl->Action->Tag == enTag_SetupsColors)
 			{
 				iLeft = pControl->Left + this->ActionToolBarMain->Left;
-				iTop  = this->ActionToolBarMain->Top + this->ActionToolBarMain->Height;
+				iTop	= this->ActionToolBarMain->Top + this->ActionToolBarMain->Height;
 			}
 		}
 
@@ -286,7 +286,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSetupsVisualScheme()
 		pPanelColLine->AlignWithMargins = true;
 		pPanelColLine->AutoSize = true;
 
-		TLabel *pLabelColLine =  new TLabel(pPanelColLine);
+		TLabel *pLabelColLine =	 new TLabel(pPanelColLine);
 		if(!pLabelColLine) throw(Exception("Błąd inicjalizacji objektu TLabel"));
 		pLabelColLine->Parent = pPanelColLine;
 		pLabelColLine->Align = alTop;
@@ -308,7 +308,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSetupsVisualScheme()
 		pPanelWidLine->AlignWithMargins = true;
 		pPanelWidLine->AutoSize = true;
 
-		TLabel *pLabelWidLine =  new TLabel(pPanelWidLine);
+		TLabel *pLabelWidLine =	 new TLabel(pPanelWidLine);
 		if(!pLabelWidLine) throw(Exception("Błąd inicjalizacji objektu TLabel"));
 		pLabelWidLine->Parent = pPanelWidLine;
 		pLabelWidLine->Align = alTop;
@@ -330,7 +330,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSetupsVisualScheme()
 		pTransparent->AlignWithMargins = true;
 		pTransparent->AutoSize = true;
 
-		TLabel *pLabelTr =  new TLabel(pTransparent);
+		TLabel *pLabelTr =	new TLabel(pTransparent);
 		if(!pLabelTr) throw(Exception("Błąd inicjalizacji objektu TLabel"));
 		pLabelTr->Parent = pTransparent;
 		pLabelTr->Align = alTop;
@@ -362,7 +362,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSelectTranslate()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  int iTop, iLeft;
+	int iTop, iLeft;
 	// Wyszukanie akcji konfiguracji
 	for(int i=0; i<this->ActionToolBarMain->ControlCount; ++i)
 	{
@@ -370,7 +370,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSelectTranslate()
 		if(pControl->Action->Tag == enTag_SelectTrans)
 		{
 			iLeft = pControl->Left + this->ActionToolBarMain->Left;
-			iTop  = this->ActionToolBarMain->Top + this->ActionToolBarMain->Height;
+			iTop	= this->ActionToolBarMain->Top + this->ActionToolBarMain->Height;
 		}
 	}
 
@@ -439,7 +439,7 @@ void __fastcall TNewSchemeVersWindow::_CloseSetupsPanels()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  this->_pPanelSetups->Visible = false;
+	this->_pPanelSetups->Visible = false;
 	this->_pPanelSelectTranslate->Visible = false;
 	this->Act_SetupsColors->Checked = false;
 	this->Act_SelectTranslate->Checked = false;
@@ -467,7 +467,7 @@ void __fastcall TNewSchemeVersWindow::_OnAllButtonSetups(System::TObject* Sender
 {
 	TButton *pButt = dynamic_cast<TButton *>(Sender);
 	if(!pButt) return;
-  //---
+	//---
 	this->Act_SetupsColors->Checked = false;
 	this->_pPanelSetups->Visible = false;
 	this->Act_SelectTranslate->Checked = false;
@@ -488,7 +488,7 @@ void __fastcall TNewSchemeVersWindow::_OnAllButtonSetups(System::TObject* Sender
 		break;
 		//---
 		case enTag_ConfigNoAccept:
-      //Odczytanie starych ustawień do bufora, pliku ini, z TStringListy
+			//Odczytanie starych ustawień do bufora, pliku ini, z TStringListy
 			GlobalVar::Global_ConfigFile->SetStrings(this->_SListOldConfig);
 
 			this->_ReadConfig(); // Ponowny odczyt zmienionej konfiguracji
@@ -501,7 +501,7 @@ void __fastcall TNewSchemeVersWindow::_OnAllButtonSetups(System::TObject* Sender
 			this->pCBoxIsTransparent->Checked = this->_pGsMasterRel->Global_IsTransparent;
 		break;
 	}
-  this->_pGsMasterRel->Refresh();
+	this->_pGsMasterRel->Refresh();
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::_OnMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
@@ -517,8 +517,8 @@ void __fastcall TNewSchemeVersWindow::_OnMouseDown(TObject *Sender, TMouseButton
 	if(Sender->ClassNameIs("GsChild") && this->_IsSelectToCopyCut)
 	// Aktywacja akcji wklejania skopiowanej gałęzi jeśli wybrano element docelowy i jest nim objekt klasy GsChild
 	{
-    this->Act_PasteFromCopy->Enabled = true;
-  }
+		this->Act_PasteFromCopy->Enabled = true;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::_ReadConfig()
@@ -650,9 +650,9 @@ void __fastcall TNewSchemeVersWindow::Act_DelItemExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
-  int iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz skasować objekt razem ze wszystkimi jego pochodnymi?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
+	int iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz skasować objekt razem ze wszystkimi jego pochodnymi?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 	if(iResult == IDNO) return;
-  this->_pGsMasterRel->DeleteObject();
+	this->_pGsMasterRel->DeleteObject();
 }
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::Act_SetupsColorsExecute(TObject *Sender)
@@ -691,13 +691,13 @@ void __fastcall TNewSchemeVersWindow::Act_OpenExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
 	UnicodeString ustrNameProject;
 	bool bReturn = this->_pGsMasterRel->OpenProject(ustrNameProject);
-  this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, TPath::GetFileName(ustrNameProject))));
+	this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, TPath::GetFileName(ustrNameProject))));
 
 	if(!bReturn) return;
 
@@ -746,7 +746,7 @@ void __fastcall TNewSchemeVersWindow::Act_RenameItemExecute(TObject *Sender)
 
 	int iResult = MessageBox(NULL, TEXT("Czy jesteś pewny, że chcesz zmienić zawartość zaznaczonej pozycji?"),
 													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
-  if(iResult == IDNO) return;
+	if(iResult == IDNO) return;
 	//Wypełnianie pól adresu wersetu
 	unsigned char _ucBook, _ucChapt, _ucVers, _ucTrans;
 	UnicodeString ustrText;
@@ -767,7 +767,7 @@ void __fastcall TNewSchemeVersWindow::Act_NewProjectExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-  this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
+	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
 	int iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz porzucić aktualny projekt i rozpocząć nowy?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 	if(iResult == IDNO) return;
 	this->_pGsMasterRel->NewProject();
@@ -792,13 +792,13 @@ void __fastcall TNewSchemeVersWindow::Act_SaveAtGfxExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	const UnicodeString ustrFileTypes[] = {"Pliki PNG", "*.png",
 																				 "Plik JPG", "*.jpg"};
 	UnicodeString ustrPathSave;
-  TFileSaveDialog *pFileSaveDialog = new TFileSaveDialog(this);
+	TFileSaveDialog *pFileSaveDialog = new TFileSaveDialog(this);
 	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog"));
 	pFileSaveDialog->Title = "Podaj nazwę pliku graficznego do zapisu";
 	for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
@@ -860,7 +860,7 @@ void __fastcall TNewSchemeVersWindow::Act_CreateAllTextExecute(TObject *Sender)
 	pFileSaveDialog->DefaultExtension = ".txt"; // Automatyczne dodawanie rozrzeżenia
 	pFileSaveDialog->FileName = "Bez nazwy";
 
-  try
+	try
 	{
 		try
 		{
@@ -870,12 +870,12 @@ void __fastcall TNewSchemeVersWindow::Act_CreateAllTextExecute(TObject *Sender)
 				this->_pGsMasterRel->SaveToAllText(ustrPathSave);
 			}
 		}
-    catch(const Exception& e)
+		catch(const Exception& e)
 		{
 			MessageBox(NULL, Format("Błąd: \"%s\"", ARRAYOFCONST((ustrPathSave))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
 	}
-  __finally
+	__finally
 	{
 		if(pFileSaveDialog) {delete pFileSaveDialog; pFileSaveDialog = nullptr;}
 	}
@@ -889,7 +889,7 @@ void __fastcall TNewSchemeVersWindow::Act_CutCopyToPasteExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	this->_pGsMasterRel->CutCopyToPaste();
@@ -904,14 +904,14 @@ void __fastcall TNewSchemeVersWindow::Act_PasteFromCopyExecute(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TAction *pAction = dynamic_cast<TAction *>(Sender);
+	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
 	UnicodeString ustrText = UnicodeString("Chcesz pszenieść gałąź do tej samej lokalizacji, lub do własnego potomka.") +
 																				 "Wybierz inna lokalizację dla przenoszonej gałęzi objektów" +
 																				 "Powtórz całą operacje od początku, zaznaczająć prawidłowo miejsce przeznaczenie dla przeniesionej gałęzi objektów";
 	bool bRet = this->_pGsMasterRel->PasteFromCopy();
-  if(!bRet)
+	if(!bRet)
 	{
 		MessageBox(NULL, ustrText.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 	}

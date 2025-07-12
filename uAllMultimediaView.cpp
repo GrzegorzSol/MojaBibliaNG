@@ -78,20 +78,20 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 
 	this->_pHListGraphics = new THashedStringList();
 	if(!this->_pHListGraphics) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
-	this->_pHListComments  = new THashedStringList();
+	this->_pHListComments	 = new THashedStringList();
 	if(!this->_pHListComments) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
-	this->_pHListFavVerses  = new THashedStringList();
+	this->_pHListFavVerses	= new THashedStringList();
 	if(!this->_pHListFavVerses) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	this->_pListAllFullTranslates = new TList();
 	if(!this->_pListAllFullTranslates) throw(Exception("Błąd inicjalizacji objektu TList"));
 
 	this->_SetTagsAndHints();
 	this->_LoadAllTraslates(); //Tworzenie listy katalogów z grafiką
-	this->_LoadAllGraphics();  //Tworzenie listy grafik
-	this->_LoadAllComments();  //Tworzenie listy komentarzy
-  this->_LoadAllFavVerses(); //Tworzenie listy ulubionych
+	this->_LoadAllGraphics();	 //Tworzenie listy grafik
+	this->_LoadAllComments();	 //Tworzenie listy komentarzy
+	this->_LoadAllFavVerses(); //Tworzenie listy ulubionych
 
-  this->_pDisplayWindow = new TForm(this);
+	this->_pDisplayWindow = new TForm(this);
 	if(!this->_pDisplayWindow) throw(Exception("Błąd inicjalizacji objektu TForm"));
 
 	this->_pDisplayWindow->Width = Screen->Width;
@@ -118,7 +118,7 @@ void __fastcall TAllMultimediaView::FormDestroy(TObject *Sender)
 */
 {
 	if(this->_pHListGraphics) {delete this->_pHListGraphics; this->_pHListGraphics = nullptr;}
-  if(this->_pHListComments) {delete this->_pHListComments; this->_pHListComments = nullptr;}
+	if(this->_pHListComments) {delete this->_pHListComments; this->_pHListComments = nullptr;}
 	if(this->_pDisplayWindow) {delete this->_pDisplayWindow; this->_pDisplayWindow = nullptr;}
 	if(this->_pHListFavVerses) {delete this->_pHListFavVerses; this->_pHListFavVerses = nullptr;}
 	if(this->_pListAllFullTranslates) {delete this->_pListAllFullTranslates; this->_pListAllFullTranslates = nullptr;}
@@ -173,7 +173,7 @@ void __fastcall TAllMultimediaView::_LoadAllTraslates()
 	for(int i=0; i<pListAllTranslates->Count; ++i)
 	{
 		pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(pListAllTranslates->Items[i]);
-		if((pGsReadBibleTextItem)  && (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full))
+		if((pGsReadBibleTextItem)	 && (pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full))
 		{
 			this->_pListAllFullTranslates->Add(pGsReadBibleTextItem);
 		}
@@ -183,7 +183,7 @@ void __fastcall TAllMultimediaView::_LoadAllTraslates()
 	this->CListTranlates->ItemCount = this->_pListAllFullTranslates->Count;
 	this->CListTranlates->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Translates, this->ImageTranslates->Picture->Icon);
-  //THeaderControlTranslates
+	//THeaderControlTranslates
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderTranslates); ++i)
 	{
 		Section = this->HeaderControlTranslates->Sections->Add();
@@ -202,7 +202,7 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 	TStringDynArray SDirMultiMList;
 	UnicodeString ustrExt, ustrTempLowerName;
 	THeaderSection *Section=nullptr;
-  NativeUInt nuiFile=0;
+	NativeUInt nuiFile=0;
 	int iSize=0;
 
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
@@ -238,11 +238,11 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 		}
 		SDirMultiMList.Length = 0;
 	}
-  //Parametry listy grafik
+	//Parametry listy grafik
 	this->CListGraphics->ItemCount = this->_pHListGraphics->Count;
 	this->CListGraphics->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Graphics, this->ImageGraphics->Picture->Icon);
-  //THeaderControlGraphics
+	//THeaderControlGraphics
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderGraphics); ++i)
 	{
 		Section = this->HeaderControlGraphics->Sections->Add();
@@ -261,9 +261,9 @@ void __fastcall TAllMultimediaView::_LoadAllComments()
 */
 {
 	TStringDynArray SDCommentFile;
-  THeaderSection *Section=nullptr;
+	THeaderSection *Section=nullptr;
 
-  //Lista komentarzy
+	//Lista komentarzy
 	SDCommentFile = TDirectory::GetFiles(GlobalVar::Global_custrPathDirComments);
 	for(int i=0; i<SDCommentFile.Length; ++i)
 	{
@@ -290,18 +290,18 @@ void __fastcall TAllMultimediaView::_LoadAllFavVerses()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  THeaderSection *Section=nullptr;
+	THeaderSection *Section=nullptr;
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
 	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
 
-  //Lista ulubionych wersetów
+	//Lista ulubionych wersetów
 	if(TFile::Exists(GlobalVar::Global_custrPathFileFavoriteVers))
 	{
 		SListTemp->LoadFromFile(GlobalVar::Global_custrPathFileFavoriteVers);
 		for(int i=0; i<SListTemp->Count; ++i)
 		{
 			this->_pHListFavVerses->Add( SListTemp->Strings[i]);
-    }
+		}
 	}
 	//Parametry listy ulubionych
 	this->CListFavVerses->ItemCount = this->_pHListFavVerses->Count;
@@ -314,7 +314,7 @@ void __fastcall TAllMultimediaView::_LoadAllFavVerses()
 		Section->Text = cstrNameHeaderFav[i];
 	}
 
-  if(SListTemp) {delete SListTemp; SListTemp = nullptr;}
+	if(SListTemp) {delete SListTemp; SListTemp = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeString ustrCodeVers)
@@ -338,7 +338,7 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 											GlobalNameTransRtf = "\\cf5\\f1",
 											GlobalSizeNameTransRtf = "\\fs26";
 
-  this->ImageSelectDisplay->Picture->Assign(nullptr);
+	this->ImageSelectDisplay->Picture->Assign(nullptr);
 	this->ImageSelectDisplay->Visible = false;
 
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
@@ -347,7 +347,7 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 	iBook = ustrCodeVers.SubString(1, 3).ToInt()-1;
 	iChapt = ustrCodeVers.SubString(4, 3).ToInt();
 	iVers = ustrCodeVers.SubString(7, 3).ToInt();
-	ustrAdress = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
+	ustrAdress = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
 	pStringStream->WriteString(GlobalHeaderRtf);
 
@@ -367,7 +367,7 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 		}
 	}
 
-  pStringStream->WriteString("}");
+	pStringStream->WriteString("}");
 	pStringStream->Position = 0;
 	this->RichEditInfo->Lines->LoadFromStream(pStringStream);
 
@@ -385,23 +385,23 @@ void __fastcall TAllMultimediaView::_DisplayImage(const UnicodeString _pathImage
 	UnicodeString	 ustrSelectItem;
 	TWICImage *pWICImage=nullptr;
 
-  this->ImageSelectDisplay->Visible = true;
+	this->ImageSelectDisplay->Visible = true;
 	try
 	{
 		try
 		{
-  		pWICImage = new TWICImage();
-  		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
-  		//---
-  		pWICImage->LoadFromFile(_pathImages);
+			pWICImage = new TWICImage();
+			if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			//---
+			pWICImage->LoadFromFile(_pathImages);
 			this->_fFactorProp = (float)pWICImage->Width / (float)pWICImage->Height;
 			this->ImageSelectDisplay->Picture->Assign(pWICImage);
-  		this->PanelDisplay->OnResize(this->PanelDisplay);
+			this->PanelDisplay->OnResize(this->PanelDisplay);
 
 			ustrSelectItem = Format("Ścieżka dostępu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
 			this->RichEditInfo->Lines->Text = ustrSelectItem;
 		}
-    catch(Exception &e)
+		catch(Exception &e)
 		{
 			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
@@ -491,7 +491,7 @@ void __fastcall TAllMultimediaView::CListCommentsBeforeDrawItem(int AIndex, TCan
 	iVers = ustrComm.SubString(7, 3).ToInt();
 
 	this->ImageComments->Width = this->ImageComments->Height;
-	this->LabelComments->Caption = Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChap, iVers)));
+	this->LabelComments->Caption = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChap, iVers)));
 
 	for(int i=0; i<this->HeaderControlComments->Sections->Count; ++i)
 	{
@@ -519,7 +519,7 @@ void __fastcall TAllMultimediaView::CListFavVersesBeforeDrawItem(int AIndex,
 	iVers = _ustrFavCodeVers.SubString(7, 3).ToInt();
 
 	this->ImageFavVerses->Width = this->ImageFavVerses->Height;
-	this->LabelFavVerses->Caption =  Format("%s %d:%d", ARRAYOFCONST((GsReadBibleTextData::GsInfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
+	this->LabelFavVerses->Caption =	 Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
 	for(int i=0; i<this->HeaderControlFavVerses->Sections->Count; ++i)
 	{
@@ -573,7 +573,7 @@ void __fastcall TAllMultimediaView::CListAllItemClick(TObject *Sender)
 		case enCList_FavVerses:
 			this->_DisplaySelectVersAllTrans(this->_pHListFavVerses->Strings[pCList->ItemIndex]);
 			break;
-    //---
+		//---
 	}
 }
 //---------------------------------------------------------------------------
@@ -593,7 +593,7 @@ void __fastcall TAllMultimediaView::PanelDisplayResize(TObject *Sender)
 	this->ImageSelectDisplay->Left = pPanel->Width / 2 - (this->ImageSelectDisplay->Width / 2);
 	this->ImageSelectDisplay->Top = 4;//(pPanel->Height / 2 - (this->ImageSelectDisplay->Height / 2)) + 4;
 
-//  #if defined(_DEBUGINFO_)
+//	#if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug(Format("H: %d, W: %d", ARRAYOFCONST((this->ImageSelectDisplay->Height, this->ImageSelectDisplay->Width ))));
 //	#endif
 }
@@ -614,7 +614,7 @@ void __fastcall TAllMultimediaView::HeaderControlAllSectionResize(THeaderControl
 				{this->LabelNameTranlate->Width = Section->Width - this->ImageTranslates->Width;}
 			else if(Section->Index == enHeaderTranslates_Type)
 				{this->LabelTypeTranslate->Width = Section->Width;}
-      this->CListTranlates->Invalidate();
+			this->CListTranlates->Invalidate();
 			break;
 		//---
 		case enCList_Graphics:
@@ -631,7 +631,7 @@ void __fastcall TAllMultimediaView::HeaderControlAllSectionResize(THeaderControl
 			this->CListFavVerses->Invalidate();
 			break;
 		//---
-  }
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::PControlAllMultimediaDrawTab(TCustomTabControl *Control,
@@ -649,10 +649,10 @@ void __fastcall TAllMultimediaView::PControlAllMultimediaDrawTab(TCustomTabContr
 	TRect MyRect(Rect);
 	TColor ColorBackG=clBtnFace, ColorSelect=clRed, ColorFont=clWindowText;
 
-  if(TStyleManager::Enabled)
+	if(TStyleManager::Enabled)
 	{
 		ColorBackG = TStyleManager::ActiveStyle->GetStyleColor((TStyleColor)clBackground);
-		pPControl->Canvas->Font->Color =  TStyleManager::ActiveStyle->GetStyleFontColor((TStyleFont)sfTabTextActiveNormal);
+		pPControl->Canvas->Font->Color =	TStyleManager::ActiveStyle->GetStyleFontColor((TStyleFont)sfTabTextActiveNormal);
 	}
 	//pPControl->Canvas->Font->Color = clGreen;
 	if(Active)
@@ -680,37 +680,37 @@ void __fastcall TAllMultimediaView::ImageSelectDisplayDblClick(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TImage *pImg = dynamic_cast<TImage *>(Sender);
+	TImage *pImg = dynamic_cast<TImage *>(Sender);
 	if(!pImg) return;
 	//---
 	TWICImage *pWICImg=nullptr;
 	UnicodeString _ustrCurrentPathImage = this->_pHListGraphics->Names[this->CListGraphics->ItemIndex];
-  //---
+	//---
 	try
 	{
 		try
 		{
-  		pWICImg = new TWICImage();
-  		if(!pWICImg) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			pWICImg = new TWICImage();
+			if(!pWICImg) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
 
-  		pWICImg->LoadFromFile(_ustrCurrentPathImage);
-  		float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokości do wysokości, wczytanej grafiki
-  					fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokości do szerokości, wczytanej grafiki
-  		//--- Sprawdzanie wysokości grafiki
-  		if(pWICImg->Height > this->_pDisplayWindow->ClientHeight)
-  			{this->_pImageScr->Height = this->_pDisplayWindow->ClientHeight;}
-  		else
-  			{this->_pImageScr->Height = pWICImg->Height;}
-  		this->_pImageScr->Width = fSizeFactorWH * this->_pImageScr->Height;
+			pWICImg->LoadFromFile(_ustrCurrentPathImage);
+			float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokości do wysokości, wczytanej grafiki
+						fSizeFactorHW = (float)pWICImg->Height / (float)pWICImg->Width; //Proporcje wysokości do szerokości, wczytanej grafiki
+			//--- Sprawdzanie wysokości grafiki
+			if(pWICImg->Height > this->_pDisplayWindow->ClientHeight)
+				{this->_pImageScr->Height = this->_pDisplayWindow->ClientHeight;}
+			else
+				{this->_pImageScr->Height = pWICImg->Height;}
+			this->_pImageScr->Width = fSizeFactorWH * this->_pImageScr->Height;
 			//---
 
-  		this->_pImageScr->Left = this->_pDisplayWindow->ClientWidth / 2 - (this->_pImageScr->Width / 2);
-  		this->_pImageScr->Top = this->_pDisplayWindow->ClientHeight / 2 - (this->_pImageScr->Height / 2);
-  		this->_pImageScr->Picture->Assign(pWICImg); //Skopiwanie bitmapy wczytanej grafiki do bitmapy objektu, klasy TImage
+			this->_pImageScr->Left = this->_pDisplayWindow->ClientWidth / 2 - (this->_pImageScr->Width / 2);
+			this->_pImageScr->Top = this->_pDisplayWindow->ClientHeight / 2 - (this->_pImageScr->Height / 2);
+			this->_pImageScr->Picture->Assign(pWICImg); //Skopiwanie bitmapy wczytanej grafiki do bitmapy objektu, klasy TImage
 
 			this->_pDisplayWindow->Show();
 		}
-    catch(Exception &e)
+		catch(Exception &e)
 		{
 			MessageBox(NULL, e.Message.c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
@@ -730,7 +730,7 @@ void __fastcall TAllMultimediaView::_OnKeyPress(TObject *Sender, System::WideCha
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  TForm *pForm = dynamic_cast<TForm *>(Sender);
+	TForm *pForm = dynamic_cast<TForm *>(Sender);
 	if(!pForm) return;
 	//---
 	if(this->CListGraphics->ItemIndex == -1) return;
@@ -741,7 +741,7 @@ void __fastcall TAllMultimediaView::_OnKeyPress(TObject *Sender, System::WideCha
 			pForm->Hide(); //Schowanie okna
 		break;
 		//---
-    case vkSpace: //Następna grafika
+		case vkSpace: //Następna grafika
 			if(this->CListGraphics->ItemIndex < this->CListGraphics->ItemCount)
 			{
 				++this->CListGraphics->ItemIndex;

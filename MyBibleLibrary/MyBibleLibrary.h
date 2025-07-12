@@ -36,7 +36,7 @@
 #include <System.Contnrs.hpp>
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
-
+#include "MyBibleLibrary\InitMBAppConst.h"
 static UnicodeString sustrVersionGsReadBibleTextClass = "1.1.82632.96566";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
@@ -86,27 +86,27 @@ class GsPanelSelectVers;
 const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 class GsListBoxFavoritiesClass;
 class GsLViewCommentsAllClass;
-/*============================================================================
- =													STRUKTURA InfoAllBooks													 =
- ============================================================================*/
-typedef struct _InfoAllBooks
-				{
-					const unsigned char ucIndex;					//Numer księgi
-					const UnicodeString FullNameBook;			//Pełna nazwa księgi
-					const UnicodeString ShortNameBook;	 //Skrót księgi
-					const unsigned char ucCountChapt;			//Ilość rozdziałów
-					_InfoAllBooks(unsigned char _ucIndex, UnicodeString _FullNameBook, UnicodeString _ShortNameBook, unsigned char _ucCountChapt) : ucIndex(_ucIndex),
-						FullNameBook(_FullNameBook), ShortNameBook(_ShortNameBook), ucCountChapt(_ucCountChapt)
-					/**
-						OPIS METOD(FUNKCJI): Konstruktor klasy _InfoAllBooks
-						OPIS ARGUMENTÓW:
-						OPIS ZMIENNYCH:
-						OPIS WYNIKU METODY(FUNKCJI):
-					*/
-					{
-
-					};
-				} InfoAllBooks, *PInfoAllBooks;
+///*============================================================================
+// =													STRUKTURA InfoAllBooks													 =
+// ============================================================================*/
+//typedef struct _InfoAllBooks
+//				{
+//					const unsigned char ucIndex;					//Numer księgi
+//					const UnicodeString FullNameBook;			//Pełna nazwa księgi
+//					const UnicodeString ShortNameBook;	 //Skrót księgi
+//					const unsigned char ucCountChapt;			//Ilość rozdziałów
+//					_InfoAllBooks(unsigned char _ucIndex, UnicodeString _FullNameBook, UnicodeString _ShortNameBook, unsigned char _ucCountChapt) : ucIndex(_ucIndex),
+//						FullNameBook(_FullNameBook), ShortNameBook(_ShortNameBook), ucCountChapt(_ucCountChapt)
+//					/**
+//						OPIS METOD(FUNKCJI): Konstruktor klasy _InfoAllBooks
+//						OPIS ARGUMENTÓW:
+//						OPIS ZMIENNYCH:
+//						OPIS WYNIKU METODY(FUNKCJI):
+//					*/
+//					{
+//
+//					};
+//				} InfoAllBooks, *PInfoAllBooks;
 /*============================================================================
  =													STRUKTURA PairsGroupBooks												 =
  ============================================================================*/
@@ -211,7 +211,7 @@ class GsReadBibleTextItem : public TObject
 	friend class GsBarSelectVers;
 	friend class GsListItemTranslates; //Przyjaźń - GsListItemTranslates wywołuje destruktor
 	//---
-	__fastcall GsReadBibleTextItem(const UnicodeString _PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
+	__fastcall GsReadBibleTextItem(const UnicodeString &_PathTransl, EnTypeTranslate IdenTypeTranslate, const unsigned char cucIndex);
 	__fastcall virtual ~GsReadBibleTextItem();
 	//---
 	//Tablica wskaźników do klasy THashedStringList wszystkich ksiąg tłumaczenia, o wielkości równej ilości ksiąg bibli
@@ -244,7 +244,7 @@ class GsListItemTranslates : public TList //[08-08-2023]
 	//---
 	virtual void __fastcall Clear(); //Tylko wywołanie TList::Clear();
 	protected:
-		virtual void __fastcall Notify(void * Ptr, TListNotification Action);
+		virtual void __fastcall Notify(void *Ptr, TListNotification Action);
 };
 //Stałe dla metody GetCountTranslates, informującą czy zwracana ilość przekładów będzie dotyczyła wszystkich tłumaczeń,
 //tylko polskich, czy oryginalnych
@@ -263,13 +263,13 @@ class GsReadBibleTextClass : public TObject
   friend class GsBarSelectVers; //[16-06-2024]
   friend class TBooksSpecjalistWindow;
 	//---
-	GsReadBibleTextClass(const UnicodeString _PathDir);
+	GsReadBibleTextClass(const UnicodeString &_PathDir);
 	virtual ~GsReadBibleTextClass();
 		//---
 	inline static UnicodeString __fastcall GetVersionClass() {return Format("Biblioteka: \"GsReadBibleTextClass\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
 	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich przekładów
 	void __fastcall DisplayAllTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate=-1); //Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
-	void __fastcall SaveCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki
+	void __fastcall SaveCurrentSheetText(const UnicodeString &custrPath); //Zapisuje zawartość aktualnej zakładki
 	inline TList *__fastcall GetListAllTranslates() {return this->_GsListItemsTranslates;}; //Metoda zwraca wskaźnik na listę wszystkich tłumaczeń
 	inline unsigned int __fastcall GetCountTranslates() {return (unsigned int)this->_GsListItemsTranslates->Count;};
 	GsReadBibleTextItem *__fastcall GetTranslateClass(const int iNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
@@ -279,7 +279,7 @@ class GsReadBibleTextClass : public TObject
 	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
 	inline THashedStringList *GetListInterlinearGrec() {return this->_SListInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
 	void __fastcall _ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
-	bool __fastcall _LoadAllTranslates(const UnicodeString _PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.
+	bool __fastcall _LoadAllTranslates(const UnicodeString &_PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.
 	void __fastcall _ClearListAllTrChap(const bool bIsRemoveList=false);	//Zwolnienie zawartości listy _ListAllTrChap.
 
 	void __fastcall _GlobalTextDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept);
@@ -334,8 +334,8 @@ class GsTreeBibleClass : public TCustomTreeView //Klasa cała jest prywatna
 	__fastcall virtual ~GsTreeBibleClass();
 	//---
 	void __fastcall _CreateNodeClass(TCustomTreeView *Sender, TTreeNodeClass &NodeClass);
-	GsTreeNodeClass *__fastcall _AddRootNodeObject(const UnicodeString _NameRoot, enTypeRoot _eTypeRoot, void *pObject=0);	//Dodawanie korzenia
-	GsTreeNodeClass *__fastcall _AddChildNodeObject(const GsTreeNodeClass* pParent, const UnicodeString ustrNameChild, void *pObject=0); //Dodawanie pozycji do podpozycji
+	GsTreeNodeClass *__fastcall _AddRootNodeObject(const UnicodeString &_NameRoot, enTypeRoot _eTypeRoot, void *pObject=0);	//Dodawanie korzenia
+	GsTreeNodeClass *__fastcall _AddChildNodeObject(const GsTreeNodeClass* pParent, const UnicodeString &ustrNameChild, void *pObject=0); //Dodawanie pozycji do podpozycji
 	void __fastcall _OnHint(System::TObject* Sender, TTreeNode* const Node, System::UnicodeString &Hint); //Wyświetlanie podpowiedzi dla poszczególnych pozycji drzewa
 	void __fastcall _SelectPopupTreeBooksExecute(TObject *Sender);	//Metoda wywoływana podczas wybranie pozycji w menu podręcznym
 	void __fastcall _SectionHeaderResize(THeaderControl* HeaderControl, THeaderSection* Section);
@@ -350,7 +350,7 @@ class GsTreeBibleClass : public TCustomTreeView //Klasa cała jest prywatna
 		DYNAMIC void __fastcall DragOver(System::TObject* Source, int X, int Y, System::Uitypes::TDragState State, bool &Accept);
 		DYNAMIC void __fastcall Resize(void);
 		DYNAMIC void __fastcall Delete(TTreeNode* Node);
-		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczarólnym gałęziom
+		virtual void __fastcall GetImageIndex(TTreeNode* Node); //Przyporządkowywanie ikon poszczególnym gałęziom
 		//---
 		void __fastcall _OnMouseLeave(TObject *Sender);
 };
@@ -396,7 +396,7 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnSaveComments(System::TObject* Sender);
 	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 	void __fastcall _GetText(UnicodeString &_ustrText); //Metoda wypełnią tekstem, zmienną UnicodeString, z aktualnej zakładki
-	void __fastcall _GetListText(THashedStringList *_pHSListChapt);//Metoda wypełnia lstę listą z aktualnej zakładki [25-08-2023]
+	void __fastcall _GetListText(THashedStringList *_pHSListChapt);//Metoda wypełnia listę listą z aktualnej zakładki [25-08-2023]
 	void __fastcall _DisplayInfosTranslates(const int iTab=-1); //Metoda wyświetla informacje o przekładach i wybranym rozdziale
 
 	void __fastcall _InitToolBarAllButtons(TPanel *pPanelParent); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami

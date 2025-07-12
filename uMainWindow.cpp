@@ -89,10 +89,10 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage_ReadingPlan,						 //17.Plan czytania bibli
 			enImage_HistoryTextOpen,				 //18.Historia otwieranych rozdziałów
 			enImage_OpenInWord,							 //19.Otwarcie wybranego rozdziału w Ms Wordzie
-			enImage_BooksSpec,               //20.Okno z tłumaczeniami specjalistycznymi
-			enImage_StrongDictionary,        //21.Okno ze słownikiem Stronga
-			enImage_HelpVideo,               //22.Pomocnicy video na kanale.
-			enImageMainIndex_Count,          //Ilość ikon
+			enImage_BooksSpec,							 //20.Okno z tłumaczeniami specjalistycznymi
+			enImage_StrongDictionary,				 //21.Okno ze słownikiem Stronga
+			enImage_HelpVideo,							 //22.Pomocnicy video na kanale.
+			enImageMainIndex_Count,					 //Ilość ikon
 			//Małe ikony
 			enImage16_Books=0,							 //0.Księgi biblijne
 			enImage16_Media,								 //1.Multimedia
@@ -130,11 +130,11 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagImage_ReadingPlan,//117.Plan czytania bibli
 			enTagImage_HistoryTextOpen,//118.Historia otwieranych rozdziałów
 			enTagImage_OpenInWord,		//119.Otwarcie wybranego rozdziału w Ms Wordzie
-			enTagImage_BooksSpec,     //120.Okno z tłumaczeniami specjalistycznymi
+			enTagImage_BooksSpec,			//120.Okno z tłumaczeniami specjalistycznymi
 			enTagImage_StrongDictionary,//121.Okno ze słownikiem Stronga
-			enTagImage_HelpVideo,       //122.Pomocnicy video na kanale.
+			enTagImage_HelpVideo,				//122.Pomocnicy video na kanale.
 			//Tagi dla komponentów TImage
-			enTagPic_Backgound,       //120.Komponent typu TImage podkładu
+			enTagPic_Backgound,				//120.Komponent typu TImage podkładu
 			//
 			enTagPageControlBibleText = 200, //Zakładki z tekstem
 			enTagPageControlTools,						//Zakładka z narzędziami
@@ -147,9 +147,9 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 		 };
 
 const UnicodeString Gl_custrNameAppReload = "MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
-                    // Zmiana makr ze względu na nazwe projektu //08-07-2024
+										// Zmiana makr ze względu na nazwe projektu //08-07-2024
 //										Gl_custrModuleTestings = "Moja Biblia NG Testing.exe",
-//                    Gl_custrModuleRelease = "Moja Biblia NG.exe";
+//										Gl_custrModuleRelease = "Moja Biblia NG.exe";
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -163,13 +163,13 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	Application->OnException = this->_AppException; //Ustawienie obsługi błędów dla całej aplikacji
 
 	#if defined(_DEBUGINFO_) //Ewentualne tworzenie konsoli TMemo dla prywatnego debugera
-		GsDebugClass::InitDebug();
+		GsDebugClass::InitDebug(10, 10);
 	#endif
 	//----- Sprawdzenie czy aktualnym systemem jest Windows 10
 	GlobalVar::IsWindows10 = TOSVersion::Check(10); //???
 	//----- Sprawdzanie istnienia odpowiednich katalogów
 	if(!TDirectory::Exists(GlobalVar::Global_custrPathMultimediaFilesData)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathMultimediaFilesData);
-    //----- Katalog z nieuzywanymi tłumaczeniami [31-05-2024]
+		//----- Katalog z nieuzywanymi tłumaczeniami [31-05-2024]
 	//if(!TDirectory::Exists(GlobalVar::Global_custrPathTranslatesNotUse)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathTranslatesNotUse);
 	//----- Tworzenie globalnego wskaźnika, do pliku konfiguracyjnego
 	GlobalVar::Global_ConfigFile = new TMemIniFile(GlobalVar::Global_custrGetConfigFile, TEncoding::UTF8);
@@ -246,7 +246,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 
 	if(TFile::Exists(ustrGraphicsBackground)) //29-04-2021 //[11-12-2023]
 	{
-    try
+		try
 		{
 			try //[12-12-2023]
 			{
@@ -471,7 +471,7 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	{
 		GlobalVar::Global_ConfigFile->UpdateFile();	//Zrzut pliku ini z pamięci, do pliku ini
 	}
-//  #if defined(_DEBUGINFO_)
+//	#if defined(_DEBUGINFO_)
 //		GsDebugClass::WriteDebug(Format("FormClose -> GlobalIni_IsDisplayBackgroundImage: \"%s\"", ARRAYOFCONST((GlobalVar::GlobalIni_IsDisplayBackgroundImage))));
 //	#endif
 }
@@ -687,7 +687,7 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 		TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
 		if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));
 		this->PMenuTray->Items->Add(NewItem);
-		NewItem->Caption = GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook;
+		NewItem->Caption = AppCTable_InfoAllBooks[i].FullNameBook;
 		NewItem->OnClick = this->_OnClick_PMenuTray;
 		NewItem->Tag = enPMenuTray + i;
 		NewItem->ImageIndex = enImageIndex_Book;
@@ -995,12 +995,12 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
 
 	if(GlobalVar::IsRunReload)
 	{
-    int iResult = MessageBox(NULL, TEXT("Została zmieniona konfiguracja dostępnych tłumaczeń. Potrzebny jest restart aplikacji, Czy chcesz zamknąć i ponownie otworzyć aplikacje, by zmiany zostały wprowadzone?"),
+		int iResult = MessageBox(NULL, TEXT("Została zmieniona konfiguracja dostępnych tłumaczeń. Potrzebny jest restart aplikacji, Czy chcesz zamknąć i ponownie otworzyć aplikacje, by zmiany zostały wprowadzone?"),
 													 TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 		if(iResult == IDNO)
 		{
 			GlobalVar::IsRunReload = false;
-      return;
+			return;
 		}
 		//Sprawdzanie czy aplikacja do przeładowania istnieje i uruchomienie jej
 		if(TFile::Exists(Gl_custrNameAppReload))
@@ -1064,7 +1064,7 @@ void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
 //	TSchemeVersWindow *pTSchemeVersWindow = new TSchemeVersWindow(this);
 //	if(!pTSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSchemeVersWindow"));
 //	pTSchemeVersWindow->ShowModal();
-  TNewSchemeVersWindow *pNewSchemeVersWindow = new TNewSchemeVersWindow(this);
+	TNewSchemeVersWindow *pNewSchemeVersWindow = new TNewSchemeVersWindow(this);
 	if(!pNewSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TNewSchemeVersWindow"));
 	pNewSchemeVersWindow->ShowModal();
 }
@@ -1358,7 +1358,7 @@ void __fastcall TMainBibleWindow::Act_SpecBooksExecute(TObject *Sender)
 	//---
 	TBooksSpecjalistWindow *pBooksSpecjalistWindow = new TBooksSpecjalistWindow(this);
 	if(!pBooksSpecjalistWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TBooksSpecjalistWindow"));
-  pBooksSpecjalistWindow->Show();
+	pBooksSpecjalistWindow->Show();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_StrongDictionaryExecute(TObject *Sender)

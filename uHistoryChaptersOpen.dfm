@@ -61,7 +61,6 @@ object HistoryOpenChaptersWindow: THistoryOpenChaptersWindow
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
-    ExplicitWidth = 978
   end
   object ActionManagerHistoryCh: TActionManager
     ActionBars = <

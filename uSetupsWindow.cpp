@@ -518,19 +518,19 @@ void __fastcall TSetupsWindow::_DisplaySelectPlan()
 						//Formatowanie wyświetlania zależnie od dłygości zcalonej pary (pozbawionej spacji zakresu)
 						{
 							case ciOneChapt:
-								ustrItemText += Format("%s %d", ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook,	 ustrTemp.SubString(4, 3).ToInt() )));
+								ustrItemText += Format("%s %d", ARRAYOFCONST((AppCTable_InfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook,	 ustrTemp.SubString(4, 3).ToInt() )));
 								break;
 
 							case ciTwoChapt:
 								ustrItemText += Format("%s %d - %s %d",
-									ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(4, 3).ToInt(),
-										GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(7, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(10, 3).ToInt())));
+									ARRAYOFCONST((AppCTable_InfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(4, 3).ToInt(),
+										AppCTable_InfoAllBooks[ustrTemp.SubString(7, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(10, 3).ToInt())));
 								break;
 
 							case ciFullAdres:
 								ustrItemText += Format("%s %d:%d - %s %d:%d",
-									ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(4, 3).ToInt(), ustrTemp.SubString(7, 3).ToInt(),
-										GsReadBibleTextData::GsInfoAllBooks[ustrTemp.SubString(10, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(13, 3).ToInt(), ustrTemp.SubString(16, 3).ToInt() )));
+									ARRAYOFCONST((AppCTable_InfoAllBooks[ustrTemp.SubString(1, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(4, 3).ToInt(), ustrTemp.SubString(7, 3).ToInt(),
+										AppCTable_InfoAllBooks[ustrTemp.SubString(10, 3).ToInt()-1].ShortNameBook, ustrTemp.SubString(13, 3).ToInt(), ustrTemp.SubString(16, 3).ToInt() )));
 								break;
 
 							default:

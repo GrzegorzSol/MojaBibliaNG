@@ -77,7 +77,6 @@ object SearchTextWindow: TSearchTextWindow
         ShowHint = True
         TabOrder = 0
         OnClick = STW_ChBoxIsRegExClick
-        ExplicitWidth = 480
       end
       object STW_ButtonHelpRegExp: TButton
         Left = 981
@@ -120,7 +119,6 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Czy podczas wyszukiwania uwzgl'#281'dnia'#263' wielko'#347#263' liter?'
         TabOrder = 3
-        ExplicitWidth = 500
       end
       object STW_ChBoxMemoSetupsSearch: TCheckBox
         AlignWithMargins = True
@@ -133,7 +131,21 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Czy zapami'#281'ta'#263' parametry wyszukiwania?'
         TabOrder = 4
-        ExplicitWidth = 500
+      end
+      object STW_ChBoxOnlyWord: TCheckBox
+        AlignWithMargins = True
+        Left = 9
+        Top = 137
+        Width = 491
+        Height = 17
+        Margins.Left = 9
+        Margins.Right = 680
+        Align = alTop
+        Caption = 'Wyszukiwanie tylko ca'#322'ych s'#322#243'w'
+        TabOrder = 5
+        ExplicitLeft = 16
+        ExplicitTop = 152
+        ExplicitWidth = 97
       end
     end
     object STW_TabSheetStatistick: TTabSheet

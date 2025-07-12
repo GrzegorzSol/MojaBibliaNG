@@ -1,1 +1,0 @@
-﻿C++Builder 12.1 = true

@@ -151,8 +151,8 @@ object StrongWindow: TStrongWindow
         AlignWithMargins = True
         Left = 28
         Top = 3
-        Width = 144
-        Height = 19
+        Width = 4
+        Height = 21
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -163,8 +163,6 @@ object StrongWindow: TStrongWindow
         ParentFont = False
         Layout = tlCenter
         StyleElements = []
-        ExplicitWidth = 4
-        ExplicitHeight = 21
       end
       object ImageVers: TImage
         Left = 0

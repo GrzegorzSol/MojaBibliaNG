@@ -367,7 +367,7 @@ void __fastcall TStrongWindow::ControlListVersesBeforeDrawItem(int AIndex, TCanv
 	iVers = ustrAdress.SubString(7, 3).ToIntDef(0);
 
 	this->LabelItemAdresVers->Caption = Format("%s %d:%d",
-		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
+		ARRAYOFCONST((AppCTable_InfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
 
 	this->ImageListSmall->GetIcon(0, this->ImageVers->Picture->Icon);
 }
@@ -394,12 +394,12 @@ void __fastcall TStrongWindow::ControlListVersesItemClick(TObject *Sender)
 //	#endif
   TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
-  // Wypisanie adresu wersetu w formie czytelnej
+	// Wypisanie adresu wersetu w formie czytelnej
 	iBook = ustrSelectVers.SubString(1, 3).ToIntDef(0);
 	iChapt = ustrSelectVers.SubString(4, 3).ToIntDef(0);
 	iVers = ustrSelectVers.SubString(7, 3).ToIntDef(0);
 	ustrAdress = Format("%s %d:%d",
-		ARRAYOFCONST(( GsReadBibleTextData::GsInfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
+		ARRAYOFCONST((AppCTable_InfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
 
 		// Wypisanie tekstu, zależnie od tłumaczenia // [31-07-2024]
 	if(this->CBoxSelectDict->ItemIndex == enSelect_Grec) // [31-07-2024]

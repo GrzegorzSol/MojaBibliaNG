@@ -126,7 +126,7 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 	//Wstępne ustawienia zawartości komponentów
 		//Definiowanie komponentów wyboru ksiąg biblijnych
 	for(int i=0; i<GlobalVar::Global_NumberBooks; ++i)
-		{this->STW_CBoxStartSelectRange->Items->Add(GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook);}
+		{this->STW_CBoxStartSelectRange->Items->Add(AppCTable_InfoAllBooks[i].FullNameBook);}
 	this->STW_CBoxStopSelectRange->Items->Assign(this->STW_CBoxStartSelectRange->Items);
 		//Definiowanie komponentu zakresu wyszukiwania
 	for(unsigned int i=0; i<ARRAYSIZE(GsReadBibleTextData::GsNameAllRanges); ++i)
@@ -215,7 +215,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TListItem *NewItem = this->STW_LViewStatistic->Items->Add();
-		NewItem->Caption = GsReadBibleTextData::GsInfoAllBooks[i].FullNameBook;
+		NewItem->Caption = AppCTable_InfoAllBooks[i].FullNameBook;
 		if(i<cucLimitGroupBooks[enLimit_OldTestament]) NewItem->GroupID = 0;
 		else if(i>=cucLimitGroupBooks[enLimit_OldTestament] && i<cucLimitGroupBooks[enLimit_NewTestament]) NewItem->GroupID = 1;
 		else if(i>=cucLimitGroupBooks[enLimit_NewTestament]) NewItem->GroupID = 2;
@@ -331,10 +331,12 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	//Przełączenie na pierwszą zakładkę
 	this->STW_PControlViewsText->TabIndex = enIndexResultListHtml;
 	//---
-	THashedStringList *pBookListText;//=0;
+	THashedStringList *pBookListText=nullptr;
+	bool bIsSameWord=false;
 	int iPositionSearch,//=0,
 			iIndexTable;//=0;	 //Numer księgi liczony od 0.
-	const int ciSizeCutString=512; //Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
+	const int ciSizeCutString=512, // Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem),
+						ciStartVers = 11;		 // Początek wersetu
 	UnicodeString ustrTemp, ustrReplaced;
 	const UnicodeString custrStyleF = "<span class=\"styleFound\">",
 											custrStyleEnd = "</span>";
@@ -374,6 +376,7 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 	{
 		pBookListText = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, scIndex);
 		TListItem *MyItem = this->STW_LViewStatistic->Items->Item[scIndex];
+
 		//Wyłuskanie danych dla pozycji, która reprezentuje księgę. W tej danej będzie przechowywana ilość wystąpień szukanego słowa dla każdej księgi
 		if(MyItem)
 		{
@@ -388,30 +391,31 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 		{
 			for(int i=0; i<pBookListText->Count; ++i)
 			{
-				iIndexTable = pBookListText->Strings[i].SubString(1, 3).ToInt() - 1; //Numer księgi liczony od 0.
+				ustrTemp = pBookListText->Strings[i];
+				iIndexTable = ustrTemp.SubString(1, 3).ToInt() - 1; //Numer księgi liczony od 0.
 				//---
 				if(this->STW_ChBoxIsRegEx->Checked) //Wyszukiwanie za pomocą wyrażeń regularnych
 				{
 					try
 					{
-				  	try
-				  	{
-				  		if(System::Regularexpressions::TRegEx::IsMatch(pBookListText->Strings[i], this->STW_CBoxHistorySearchText->Text, regOptions))
-				  		{
-				  			this->_pHSListSearchResult->AddObject(pBookListText->Strings[i].SubString(10, ciSizeCutString), pBookListText->Objects[i]);
-				  			//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
-				  			++MyDataStatistic->uiCountFind;
-				  		}
+						try
+						{
+							if(System::Regularexpressions::TRegEx::IsMatch(ustrTemp, this->STW_CBoxHistorySearchText->Text, regOptions))
+							{
+								this->_pHSListSearchResult->AddObject(ustrTemp.SubString(10, ciSizeCutString), pBookListText->Objects[i]);
+								//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
+								++MyDataStatistic->uiCountFind;
+							}
 						}
-				  	catch(Exception &e) //[11-12-2024]
-				  	{
-				  		MessageBox(NULL, e.Message.c_str() , TEXT("Błąd wyszukiwania za pomocą wyrażeń regularnych.\nPrawdopodobnie zastosowano niewłaściwy wzorzec"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+						catch(Exception &e) //[11-12-2024]
+						{
+							MessageBox(NULL, e.Message.c_str() , TEXT("Błąd wyszukiwania za pomocą wyrażeń regularnych.\nPrawdopodobnie zastosowano niewłaściwy wzorzec"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 						}
 					}
 					__finally
 					{
 
-          }
+					}
 				}
 				else //Wyszukiwanie tradycyjne
 				{
@@ -419,18 +423,41 @@ void __fastcall TSearchTextWindow::STW_ButtonSearchStartClick(TObject *Sender)
 					if(this->STW_ChBoxSizeTextSearch->Checked) //Uwzględniana wielkość liter
 					{
 						ustrSearchString = this->STW_CBoxHistorySearchText->Text;
-						iPositionSearch = pBookListText->Strings[i].Pos(ustrSearchString);
+						iPositionSearch = ustrTemp.Pos(ustrSearchString);
 					}
 					else
 					{
 						ustrSearchString = System::Sysutils::AnsiLowerCase(this->STW_CBoxHistorySearchText->Text);
-						iPositionSearch = System::Sysutils::AnsiLowerCase(pBookListText->Strings[i]).Pos(ustrSearchString);
+						iPositionSearch = System::Sysutils::AnsiLowerCase(ustrTemp).Pos(ustrSearchString);
 					}
 
 					if(iPositionSearch > 0)
 					{
+//            #if defined(_DEBUGINFO_)
+//							GsDebugClass::WriteDebug(Format("iPositionSearch: %d", ARRAYOFCONST((iPositionSearch))));
+//						#endif
+//            #if defined(_DEBUGINFO_)
+//							GsDebugClass::WriteDebug(Format("iPositionSearch: %d, Nast: \"%s\"",
+//								ARRAYOFCONST((iPositionSearch, ustrTemp[iPositionSearch + ustrSearchString.Length()] ))));
+//						#endif
+						bIsSameWord = // Wyszukiwanie tylko całych słów // 12-07-2025
+						( ( (iPositionSearch == ciStartVers) && (ustrTemp[iPositionSearch + ustrSearchString.Length()] == 32) ) || // Początek
+							( (iPositionSearch > ciStartVers) && ((ustrTemp[iPositionSearch + ustrSearchString.Length()] == 32) ||
+								(ustrTemp[iPositionSearch + ustrSearchString.Length()] == ',') ||
+								(ustrTemp[iPositionSearch + ustrSearchString.Length()] == '.') ||
+								(ustrTemp[iPositionSearch + ustrSearchString.Length()] == ';') ||
+								(ustrTemp[iPositionSearch + ustrSearchString.Length()] == ':') ) &&
+								(ustrTemp[iPositionSearch - 1] == 32) ) || // Środek
+							(iPositionSearch == (ustrTemp.Length() - ustrSearchString.Length()) ) // Koniec
+						);
+
+            if(this->STW_ChBoxOnlyWord->Checked)
+						// Wyszukiwanie tylko całych słów // 11-07-2025
+						{
+							if(!bIsSameWord) continue;
+						}
+
 						//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia //[19-06-2024]
-						ustrTemp = pBookListText->Strings[i];
 						ustrReplaced = Format("%s%s%s", ARRAYOFCONST((custrStyleF, this->STW_CBoxHistorySearchText->Text, custrStyleEnd )));
 						ustrTemp = StringReplace(ustrTemp, this->STW_CBoxHistorySearchText->Text, ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 
@@ -1041,32 +1068,32 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 	{
 		try
 		{
-	  	for(int i=0; i<_pHListAnyVers->Count; ++i)
-	  	{
-	  		if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
-	  		pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
-	  		if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
-	  		//Dodawanie kolejnego wersetu
-	  		ustrTemp = Format(UnicodeString("<p>\n") +
-	  			"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
-	  			ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i])));
-	  		pStringStream->WriteString(ustrTemp);
-	  		//pStringStream->WriteString("<br>");
-	  		pStringStream->WriteString("</p>\n\n");
+			for(int i=0; i<_pHListAnyVers->Count; ++i)
+			{
+				if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
+				pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
+				if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
+				//Dodawanie kolejnego wersetu
+				ustrTemp = Format(UnicodeString("<p>\n") +
+					"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
+					ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i])));
+				pStringStream->WriteString(ustrTemp);
+				//pStringStream->WriteString("<br>");
+				pStringStream->WriteString("</p>\n\n");
 			}
-	  	pStringStream->WriteString("</body>\n</html>\n");
-	  	//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
-	  	pStringStream->Position = 0;
-	  	//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
-	  	if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
-	  	{
-	  		this->_ustrResultSearchHTML = ""; //[10-10-2023]
-	  		this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
-	  	}
-	  	//---
-	  	IPersistStreamInit *psi;
-	  	_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
-	  	if(SUCCEEDED(_pWebBrowser->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
+			pStringStream->WriteString("</body>\n</html>\n");
+			//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
+			pStringStream->Position = 0;
+			//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
+			if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
+			{
+				this->_ustrResultSearchHTML = ""; //[10-10-2023]
+				this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
+			}
+			//---
+			IPersistStreamInit *psi;
+			_di_IStream sa(*(new TStreamAdapter(pStringStream, soReference)));
+			if(SUCCEEDED(_pWebBrowser->Document->QueryInterface(IID_IPersistStreamInit, (void **)&psi)))
 				{psi->Load(sa);}
 		}
 		catch(Exception &e)

@@ -56,7 +56,7 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 
 	this->_pStartAction->Enabled = false;
 	//---
-  this->Act_DeleteSelectItemHistoryCh->Hint = Format("%s|Skasowanie z listy historii zaznaczonej pozycji, operacja jest nieodwracalna.|%u", ARRAYOFCONST((this->Act_DeleteSelectItemHistoryCh->Caption, this->Act_DeleteSelectItemHistoryCh->ImageIndex)));
+	this->Act_DeleteSelectItemHistoryCh->Hint = Format("%s|Skasowanie z listy historii zaznaczonej pozycji, operacja jest nieodwracalna.|%u", ARRAYOFCONST((this->Act_DeleteSelectItemHistoryCh->Caption, this->Act_DeleteSelectItemHistoryCh->ImageIndex)));
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -197,7 +197,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 
 	for(int i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
-		pInfobook = const_cast<PInfoAllBooks>(&GsReadBibleTextData::GsInfoAllBooks[i]);
+		pInfobook = const_cast<PInfoAllBooks>(&AppCTable_InfoAllBooks[i]);
 		if(!pInfobook) return;
 
 		if(pInfobook->FullNameBook == ustrName)

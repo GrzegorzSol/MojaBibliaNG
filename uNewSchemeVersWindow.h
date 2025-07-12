@@ -63,22 +63,22 @@ __published:	// IDE-managed Components
 	void __fastcall Act_PasteFromCopyExecute(TObject *Sender);
 private:	// User declarations
 	void __fastcall _InitHintsAndTags();
-  GsHelp *_pGsHelp=nullptr;
+	GsHelp *_pGsHelp=nullptr;
 	GsMaster *_pGsMasterRel=nullptr;
 	GsBarSelectVers *_pGsBarSelectVers=nullptr; //Panel sterowania i wyboru wersetów dla drzewa
 	TPanel *_pPanelSetups=nullptr, // Panel ustawień wykresu
 				 *_pPanelSelectTranslate=nullptr; // Panel wyboru tłumaczenia
 	TColorBox *_pCBSelect=nullptr, *_pCBRoot=nullptr, *_pCBLine=nullptr;
 	TSpinEdit *_pSpinEdit=nullptr;
-  TCheckBox *pCBoxIsTransparent=nullptr;
+	TCheckBox *pCBoxIsTransparent=nullptr;
 	TListBox *pLBox=nullptr;
 	TStringList *_SListOldConfig=nullptr;
 	bool _IsSelectToCopyCut=false; // Zaznaczono wybrany objekt, i wykonano akcje Act_CutCopyToPasteExecute()
 	//unsigned char _ucTranslate=0;
 	void __fastcall _OpenSetupsVisualScheme();
 	void __fastcall _OpenSelectTranslate();
-  void __fastcall _CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
-  //void __fastcall _OpenSelectTranslate();
+	void __fastcall _CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
+	//void __fastcall _OpenSelectTranslate();
 	void __fastcall _OnGetColors(TCustomColorBox *Sender, TStrings *Items);
 	void __fastcall _OnAllButtonSetups(System::TObject* Sender);
 	void __fastcall _OnMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);

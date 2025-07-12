@@ -16,9 +16,9 @@ USEFORM("uStrongWindow.cpp", StrongWindow);
 USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
 USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
-USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
 USEFORM("uBooksSpecjalistWindow.cpp", BooksSpecjalistWindow);
+USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------

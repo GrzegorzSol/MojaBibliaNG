@@ -31,8 +31,6 @@ object SetupsWindow: TSetupsWindow
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitLeft = 186
-    ExplicitWidth = 999
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -41,7 +39,7 @@ object SetupsWindow: TSetupsWindow
         Left = 3
         Top = 391
         Width = 1285
-        Height = 32
+        Height = 16
         CustomHint = SW_BalloonHint
         Align = alTop
         Caption = 
@@ -58,7 +56,7 @@ object SetupsWindow: TSetupsWindow
         Layout = tlCenter
         WordWrap = True
         StyleElements = [seClient, seBorder]
-        ExplicitWidth = 985
+        ExplicitWidth = 1030
       end
       object GrBoxSetColors: TGroupBox
         AlignWithMargins = True
@@ -307,12 +305,13 @@ object SetupsWindow: TSetupsWindow
       end
       object WebBrowserPreview: TWebBrowser
         Left = 0
-        Top = 426
+        Top = 410
         Width = 1291
-        Height = 211
+        Height = 227
         CustomHint = SW_BalloonHint
         Align = alClient
         TabOrder = 1
+        ExplicitTop = 426
         ExplicitWidth = 991
         ExplicitHeight = 213
         ControlData = {
@@ -767,7 +766,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 12
         Top = 12
-        Width = 1267
+        Width = 338
         Height = 20
         Margins.Left = 12
         Margins.Top = 12
@@ -788,13 +787,12 @@ object SetupsWindow: TSetupsWindow
         TabOrder = 1
         Transparent = False
         StyleElements = [seFont]
-        ExplicitWidth = 967
       end
       object SW_STextInfoSelectTrToDict: TStaticText
         AlignWithMargins = True
         Left = 3
         Top = 509
-        Width = 1285
+        Width = 615
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alBottom
@@ -814,7 +812,6 @@ object SetupsWindow: TSetupsWindow
         TabOrder = 2
         Transparent = False
         StyleElements = [seFont]
-        ExplicitWidth = 985
       end
       object SW_RGroupSelectTransDict: TRadioGroup
         Left = 0
@@ -874,7 +871,6 @@ object SetupsWindow: TSetupsWindow
             Align = alTop
             TabOrder = 0
             TextHint = 'Wybierz t'#322'umaczenie'
-            ExplicitWidth = 373
           end
         end
         object GrBoxSelectReadingPlan: TGroupBox
@@ -892,8 +888,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 51
-            Width = 550
-            Height = 67
+            Width = 4
+            Height = 16
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -905,9 +901,6 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
-            ExplicitTop = 45
-            ExplicitWidth = 4
-            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -921,7 +914,6 @@ object SetupsWindow: TSetupsWindow
             TabOrder = 0
             TextHint = 'Wybierz plan czytania'
             OnChange = CBoxSelectPlanChange
-            ExplicitWidth = 373
           end
         end
         object GrBoxSelectFont: TGroupBox
@@ -948,7 +940,6 @@ object SetupsWindow: TSetupsWindow
             Sorted = True
             TabOrder = 0
             Text = 'Wybierz czcionke'
-            ExplicitWidth = 373
           end
         end
         object GrBoxSizeFont: TGroupBox
@@ -974,7 +965,6 @@ object SetupsWindow: TSetupsWindow
             Align = alTop
             TabOrder = 0
             Text = 'Wybierz wysoko'#347#263' czcionki'
-            ExplicitWidth = 128
           end
         end
         object GrBoxSelectDate: TGroupBox
@@ -1090,7 +1080,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 705
+          Width = 232
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1107,7 +1097,6 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = True
           Layout = tlCenter
-          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           AlignWithMargins = True
@@ -1161,9 +1150,6 @@ object SetupsWindow: TSetupsWindow
           BorderStyle = bsNone
           TabOrder = 0
           OnClick = SW_LBoxSelectThemeClick
-          ExplicitLeft = 8
-          ExplicitTop = 3
-          ExplicitWidth = 177
         end
       end
       object PanelDisplaySelectTheme: TPanel
