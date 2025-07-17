@@ -102,7 +102,7 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 	this->pTRichEdit = new TRichEdit(this);
 	if(!this->pTRichEdit) throw(Exception("Nie dokonano inicjalizacji objektu TRichEdit"));
 	this->pTRichEdit->Parent = this;
-  this->pTRichEdit->ParentFont = true;
+	this->pTRichEdit->ParentFont = true;
 	this->pTRichEdit->Align = alClient;
 	this->pTRichEdit->Font->Quality = TFontQuality::fqClearType;
 	this->pTRichEdit->StyleElements = TStyleElements();
@@ -573,7 +573,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		//---
 		case EnImage_SaveAs:	 //Zapis pod zmienioną nazwą
 		{
-			TFileSaveDialog  *pFileSaveDialog = new TFileSaveDialog (this);
+			TFileSaveDialog	 *pFileSaveDialog = new TFileSaveDialog (this);
 			if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
 			pFileSaveDialog->Title = "Podaj nazwę pliku do zapisu";
 			for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
@@ -584,7 +584,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 			}
 
 			pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
-			pFileSaveDialog->DefaultExtension  = "rtf";
+			pFileSaveDialog->DefaultExtension	 = "rtf";
 			pFileSaveDialog->FileName = "Bez nazwy";
 
 			try

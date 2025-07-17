@@ -14,7 +14,7 @@ enum {
 			enTypeChild_Comment
 };
 /****************************************************************************
-*      Stara struktura _ReadWriteDataObject do zapisu i odczytu objektu     *
+*			 Stara struktura _ReadWriteDataObject do zapisu i odczytu objektu			*
 *****************************************************************************/
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
 const int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
@@ -37,11 +37,11 @@ typedef struct _ReadWriteDataObject
 	wchar_t wchComment[SIZE_CHILD_COMMENT]; //Komentarz do pozycji
 } ReadWriteDataObject, *PReadWriteDataObject;
 /****************************************************************************
-*      Nowa struktura _NewReadWriteDataObject do zapisu i odczytu objektu   *
+*			 Nowa struktura _NewReadWriteDataObject do zapisu i odczytu objektu		*
 *****************************************************************************/
 typedef struct _NewReadWriteDataObject
 {
-	int NRW_Type;                           // Typ objektu
+	int NRW_Type;														// Typ objektu
 	int NRW_ID,															// Numer identyfikacyjny
 			NRW_IDList,													// Pozycja w globalnej liście objektu _GsChildBibleSchemeList, klasy TList
 			NRW_Left,														//
@@ -55,8 +55,8 @@ typedef struct _NewReadWriteDataObject
 } NewReadWriteDataObject, *PNewReadWriteDataObject;
 
 /****************************************************************************
-*				         Klasa całkowicie PRYWATNA GsChild,								          *
-*										  pochodna TGraphicControl.												      *
+*								 Klasa całkowicie PRYWATNA GsChild,													*
+*											pochodna TGraphicControl.															*
 *****************************************************************************/
 class GsChild : public TGraphicControl
 {
@@ -68,10 +68,10 @@ class GsChild : public TGraphicControl
 	__fastcall GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewReadWriteDataObject);
 	__fastcall virtual ~GsChild();
 	//---
-  TTreeNode *_TreeNodeChild=nullptr;
+	TTreeNode *_TreeNodeChild=nullptr;
 	GsChild *_pPrevChild=nullptr, // Wskaźnik na przodka
 					*_pNextChild=nullptr; // Wskaźnik na następny objekt
-  UnicodeString _ustrNameVers, _ustrTextVers;
+	UnicodeString _ustrNameVers, _ustrTextVers;
 	protected:
 		virtual void __fastcall Paint();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
@@ -79,18 +79,18 @@ class GsChild : public TGraphicControl
 		DYNAMIC void __fastcall MouseMove(System::Classes::TShiftState Shift, int X, int Y);
 
 		void __fastcall _RefreshText(bool bPosition=false); // Pozycjonowanie tekstu w objekcie
-    int _TypeObj=enTypeChild_Normal; // Typ objektu
+		int _TypeObj=enTypeChild_Normal; // Typ objektu
 		TList *_pListChildren=nullptr; // Lista potomków
 		int _IDChild=-1, // Numer identyfikacyjny pozycji
 				_GetStartX=-1, _GetStartY=-1;	// Współrzędne kliknięcia na objekt klasy
 		unsigned char _Level=0; // Poziom
 		bool _StartMove=false,	// Rozpoczıcie przesuwania
 				 _IsActive=false; // Czy aktywny element
-    TRect _RectText; // Obszar tekstu
+		TRect _RectText; // Obszar tekstu
 };
 /****************************************************************************
-*				        Klasa całkowicie PRYWATNA GsDrawChildren,	      						*
-*										      pochodna TCustomPanel.														*
+*								Klasa całkowicie PRYWATNA GsDrawChildren,										*
+*													pochodna TCustomPanel.														*
 *****************************************************************************/
 class GsDrawChildren : public TCustomPanel
 {
@@ -109,19 +109,19 @@ class GsDrawChildren : public TCustomPanel
 		virtual void __fastcall Paint();
 		DYNAMIC void __fastcall MouseDown(System::Uitypes::TMouseButton Button, System::Classes::TShiftState Shift, int X, int Y);
 	private:
-    Graphics::TBitmap *_pBrushBitmap=nullptr;
+		Graphics::TBitmap *_pBrushBitmap=nullptr;
 		GsChild *_pSelectObject=nullptr,	// Aktualnie aktywny objekt, potrzebny do jego odryswania
 																			// (rozpoczecie przesuwania) w metodzie MouseDown() klasy GsChild
 						*_pRootObject=nullptr,		// Objekt głównego korzenia
-						*_pCutCopyObject=nullptr;    // Objekt aktualnie skopiowany
-		TList *_pMainChildrenList=nullptr;   // Płaska lista wszystkich pozycji
+						*_pCutCopyObject=nullptr;		 // Objekt aktualnie skopiowany
+		TList *_pMainChildrenList=nullptr;	 // Płaska lista wszystkich pozycji
 		void __fastcall _DeactivationAllItems(); // Kasowanie wszystkich aktywności
 		bool __fastcall _OpenOldProject(TFileStream *pFileStream);
 		bool __fastcall _OpenNewProject(TFileStream *pFileStream);
 		void __fastcall _CalculateNewDimension(GsChild *pGsChild); // Obliczanie nowego rozmiaru
 };
 /****************************************************************************
-*							           Główna klasa GsMaster,											        *
+*												 Główna klasa GsMaster,															*
 *											pochodna TScrollingWinControl.												*
 *****************************************************************************/
 class GsMaster : public TScrollingWinControl
@@ -133,7 +133,7 @@ class GsMaster : public TScrollingWinControl
 		// Kontruktory i destruktor
 		__fastcall GsMaster(TComponent* Owner, TTreeView *pTrView=nullptr);
 		__fastcall virtual ~GsMaster();
-    inline static UnicodeString sustrVersionLogicalRelationshipTable = "0.9.9235.8529";
+		inline static UnicodeString sustrVersionLogicalRelationshipTable = "0.9.9235.8529";
 		// Pola typu __property
 		__property TMouseEvent OnMouseDown = {read = FGetSetOnMouseDown, write = FGetSetOnMouseDown};
 		// Inne właściwości

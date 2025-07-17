@@ -30,7 +30,6 @@ class TSearchTextWindow : public TForm
 __published:	// IDE-managed Components
 	TPageControl *STW_PControlSetupsSearch;
 	TTabSheet *STW_TabSheetInputText;
-	TCheckBox *STW_ChBoxIsRegEx;
 	TTabSheet *STW_TabSheetStatistick;
 	TGroupBox *STW_GroBoxSetupSearchText;
 	TGroupBox *STW_GroBoxViewSearchText;
@@ -42,11 +41,8 @@ __published:	// IDE-managed Components
 	TStatusBar *STW_StBarInfos;
 	TListView *STW_LViewResultSearch;
 	TWebBrowser *STW_WBrowserSelectItemResult;
-	TButton *STW_ButtonHelpRegExp;
 	TBalloonHint *BalloonHintSearch;
 	TListView *STW_LViewStatistic;
-	TComboBox *STW_CBoxHistorySearchText;
-	TLabel *STW_InfoSearchTextLabel;
 	TPanel *STW_PanelButtons;
 	TButton *STW_ButtonSearchStart;
 	TPanel *STW_PanelImage;
@@ -73,10 +69,25 @@ __published:	// IDE-managed Components
 	TGroupBox *STW_GrBoxSetupsStatistic;
 	TGroupBox *STW_GrBoxSetupsAllSearchResult;
 	TGroupBox *STW_GrBoxSetupsSelectVer;
+	TButton *STW_ButtonSaveSearch;
+	TGroupBox *STW_GrBoxFlags;
 	TCheckBox *STW_ChBoxSizeTextSearch;
 	TCheckBox *STW_ChBoxMemoSetupsSearch;
-	TButton *STW_ButtonSaveSearch;
 	TCheckBox *STW_ChBoxOnlyWord;
+	TGroupBox *STW_GrBoxListGroupSearchedTexts;
+	TListBox *STW_LBoxSearchTexts;
+	TGroupBox *STW_GrBoxRegularExpressions;
+	TCheckBox *STW_ChBoxIsRegEx;
+	TButton *STW_ButtonHelpRegExp;
+	TGroupBox *STW_GrBoxSearchText;
+	TComboBox *STW_CBoxHistorySearchText;
+	TButton *STW_ButtAddListTextSearch;
+	TGroupBox *STW_GrBoxNormalSearch;
+	TCheckBox *STW_ChBoxAllSearchTexts;
+	TImageList *ImgListLargeSearch;
+	TPanel *STW_PanelListButtons;
+	TButton *STW_ButtClearAllListSearch;
+	TButton *STW_DeleteSelectPos;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);
 	void __fastcall CBoxCloseUp(TObject *Sender);
@@ -106,6 +117,9 @@ __published:	// IDE-managed Components
 					TStrings *Items);
 	void __fastcall STW_ColorBoxChange(TObject *Sender);
 	void __fastcall STW_ButtonSaveSearchClick(TObject *Sender);
+	void __fastcall STW_ChBoxAllSearchTextsClick(TObject *Sender);
+	void __fastcall STW_ButtAddListTextSearchClick(TObject *Sender);
+	void __fastcall STW_ButtAllListSearchClick(TObject *Sender);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety
@@ -114,6 +128,12 @@ private:	// User declarations
 	int _iEnd_index;		//Końcowy index dla TListView
 	void __fastcall _DisplayListTextHTML(TWebBrowser *_pWebBrowser, THashedStringList *_pHListAnyVers,
 		const EnTypeDisplayHTML _TypeDisplayHTML, const int iSelectDisplayVerset=-1);
+	void __fastcall _IsMatchRegSearch(const UnicodeString &custrFullVers, const UnicodeString &custrTextSearch,
+		THashedStringList *_pBookListText, const int ciIndexVers, PStatisticFindView MyDataStatistic); // 13-07-2025
+	bool __fastcall _IsMatchNormalSearch(const UnicodeString &custrFullVers, const UnicodeString &custrTextSearch, // 13-07-2005
+		THashedStringList *_pBookListText, const int ciIndexVers, PStatisticFindView _pMyDataStatistic);
+	bool __fastcall _IsMatchSearchListTexts(const UnicodeString &custrFullVers, THashedStringList *_pBookListText,
+		const int ciIndexVers, PStatisticFindView _pMyDataStatistic); // 14-07-2025
 public:		// User declarations
 	__fastcall TSearchTextWindow(TComponent* Owner);
 };
