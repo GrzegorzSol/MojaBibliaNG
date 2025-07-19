@@ -12,6 +12,9 @@
 #include <SHDocVw.hpp>
 #include <Vcl.OleCtrls.hpp> //Główna klasa do pracy z tekstem biblijnym
 #include <System.IniFiles.hpp>
+#include <Vcl.Buttons.hpp>
+#include <Vcl.CheckLst.hpp>
+#include <Vcl.ButtonGroup.hpp>
 //---------------------------------------------------------------------------
 typedef struct _StatisticFindView //struktura informacyjna o statystyce wyszukiwania
 {
@@ -45,17 +48,6 @@ __published:	// IDE-managed Components
 	TListView *STW_LViewStatistic;
 	TPanel *STW_PanelButtons;
 	TButton *STW_ButtonSearchStart;
-	TPanel *STW_PanelImage;
-	TPanel *STW_PanelSelectSearchParam;
-	TComboBox *STW_CBoxStopSelectRange;
-	TLabel *STW_LabelInfoTo;
-	TComboBox *STW_CBoxStartSelectRange;
-	TComboBox *STW_CBoxSelectTranslates;
-	TLabel *STW_LabelInfoSelectTranslates;
-	TComboBox *STW_CBoxSelectRangeSearch;
-	TLabel *STW_LabelInfoRange;
-	TImage *STW_ImageLogoSearch;
-	TStaticText *STW_STextLogoSearch;
 	TWebBrowser *STW_WebBrowserSelectBookStatistic;
 	TPanel *STW_PanelDisplaySearchBook;
 	TStaticText *STW_STextInfoSelectBookSearch;
@@ -88,6 +80,20 @@ __published:	// IDE-managed Components
 	TPanel *STW_PanelListButtons;
 	TButton *STW_ButtClearAllListSearch;
 	TButton *STW_DeleteSelectPos;
+	TPanel *STW_PanelListWords;
+	TButtonGroup *STW_ButtGrSelectActionList;
+	TPanel *STW_PanelInfosSelectActionSearch;
+	TLabel *STW_LabelInfosSelectActionSearch;
+	TPanel *STW_PanelLogo;
+	TImage *STW_ImageLogoSearch;
+	TStaticText *STW_STextLogoSearch;
+	TLabel *STW_LabelInfoTo;
+	TLabel *STW_LabelInfoSelectTranslates;
+	TLabel *STW_LabelInfoRange;
+	TComboBox *STW_CBoxStopSelectRange;
+	TComboBox *STW_CBoxStartSelectRange;
+	TComboBox *STW_CBoxSelectTranslates;
+	TComboBox *STW_CBoxSelectRangeSearch;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall STW_ButtonSearchStartClick(TObject *Sender);
 	void __fastcall CBoxCloseUp(TObject *Sender);
@@ -120,6 +126,7 @@ __published:	// IDE-managed Components
 	void __fastcall STW_ChBoxAllSearchTextsClick(TObject *Sender);
 	void __fastcall STW_ButtAddListTextSearchClick(TObject *Sender);
 	void __fastcall STW_ButtAllListSearchClick(TObject *Sender);
+	void __fastcall STW_ButtGrSelectActionListClick(TObject *Sender);
 
 private:	// User declarations
 	THashedStringList *_pHSListSearchResult; //Lista zawierające wszystkie znalezione wersety

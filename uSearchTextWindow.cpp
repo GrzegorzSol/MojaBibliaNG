@@ -26,18 +26,18 @@ catch(Exception &e)
 }
 */
 //---
-enum {	//Numery zakładek w ustawieniach wyszukiwania
+enum {	// Numery zakładek w ustawieniach wyszukiwania
 				enIndexSetInputSearch, enIndexStatisticSearch, enIndexSetupsSearch,
 				enIndexResultListHtml=0, enIndexResultListSelect,
-				//Numery idyntyfikacyjne kontrolek
+				// Numery idyntyfikacyjne kontrolek
 				enIdent_CBoxSelectRangeSearch = 0x100,
 				enIdent_CBoxStartSelectRange,
 				enIdent_CBoxStopSelectRange,
 				enIdent_CBoxSelectTranslate,
-				//Numery identyfikacyjne kontrolek do ustawiania kolorów
+				// Numery identyfikacyjne kontrolek do ustawiania kolorów
 				enIdent_ColorBBackGroundStatisticList = 0x200,
 				enIdent_ColorBBockGroundSearchList,
-				//Numery indeksów małych ikon
+				// Numery indeksów małych ikon
 				enImageSearch_ButtonSearchStart=0,	 //0.Rozpoczęcie wyszukiwania
 				enImageSearch_ViewResultSearch,		 //1.Przegląd wyników wyszukiwania
 				enImageSearch_HelpReg,						 //2.Pomoc w wyszukiwaniu za pomocą wyrażeń regularnych
@@ -56,29 +56,38 @@ enum {	//Numery zakładek w ustawieniach wyszukiwania
 				enImageLarge_SelectRegHelp=0,      //0.Wybranie pomocy dla wyszukiwania za pomocą wyrażeń regularnych
 				enImageLarge_ClearListSearch,      //1.Czyszczenie całej zawartości list wyrażeń do wyszukania
 				enImageLarge_DeleteSelectItem,     //2.Usunięcie z list wyrażeń do wyszukania wybranej pozycji
+				enImageLarge_ANDSearchList,
+				enImageLarge_ORSearchList,
 				enImageLarge_Count,
-				//Stałe numerów kolumn dla listy statystyki
+				// Indeksy akcji wyszukiwania z listy
+				enIndexSearchActionList_AND=0,     //0.Wszystkie wyrażenia z listy musza wystepować
+				enIndexSearchActionList_OOR,       //1.Tylko jedno wyrażenie z list musi istnieć
+				// Stałe numerów kolumn dla listy statystyki
 				enColumn_NameBook=0, enColumn_CountFind, enColumn_Progres, enColumn_Count,
-				//Tagi dla kontrolek
+				// Tagi dla kontrolek
 				enTag_PControlSetupsSearch=100, //Zakładki wprowadzanie danych do przeszukiwań i statystyki wyszukiwania
 				enTag_PControlSearchViewText, //Zakładki wyników wyszukiwania
-				//Tagi dla objektów, klasy TListView
+				// Tagi dla objektów, klasy TListView
 				enTag_LViewResultSearch, //Objekt klasy TListView z listą znalezionych wersetów
 				enTag_LViewStatistic,		 //Objekt klasy TListView z listą statystyki występowania szukanego tekstu dla poszczególnych ksiąg
-				//Tagi dla objektów, klasy TCheckBox
+				// Tagi dla objektów, klasy TCheckBox
 				enTag_CBoxIsReg,				 //Czy używać w wyszukiwaniu wyrażeń regularnych?
 				enTag_CBoxIsSizeText,		 //Czy podczas wyszukiwań rozróżniać wielkość liter?
 				enTag_CBoxIsMemorySetupsSearch,	//Czy zapamiętać parametry wuszukiwania?
-				//Tagi dla przycisków do sterowania lista wyrażeń do wyszukania
+				// Tagi dla przycisków do sterowania lista wyrażeń do wyszukania
 				enTagListSearch_ClearAll=200, // Czyszcenie całej zawartości
-				enTagListSearch_DeleteSelect  // Usunięcie zaznaczonej pozycji
+				enTagListSearch_DeleteSelect, // Usunięcie zaznaczonej pozycji
+				// Numery akcji zastosowania listy wyrażeń
+				enTypeAction_ANDWordSearch=0,
+				enTypeAction_ORWordSearch
 		 };
 // Stałe do zaznaczania kolorem szukanego tekstu w wersecie
 const UnicodeString Gl_custrStyleF = "<span class=\"styleFound\">",
 										Gl_custrStyleEnd = "</span>";
 // Stałe potrzebne do wyszukiwania
 const int Gl_ciSizeCutString=512, // Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
-					Gl_ciStartVers = 11;		 // Początek wersetu
+					Gl_ciStartVers = 11,		// Początek wersetu
+					Gl_ciOffsetTextVers = 10; // Od tej pozycji wersetu zaczyna sie tekst
 //Tekst opisu dla skłdni wyrażeń regularnych
 const static UnicodeString Gl_ustrInoRegSearch = UnicodeString(". - (kropka)=dowolny znak\n") +
 		"^ - dopasuj występujące po operatorze wyrażenie do początku wiersza (początek linii)\n" +
@@ -104,7 +113,10 @@ const static UnicodeString Gl_ustrInoRegSearch = UnicodeString(". - (kropka)=dow
 		"\"(a|b|r)* \" – ciąg, który składa się z samych liter \"a\" lub \"b\" lub \"r\" i kończy się spacją\n",
 													ustrTextLogoSearch = "DzAp 17:11\n\"...przyjęli oni Słowo z całą gotowością i codziennie BADALI Pisma, czy tak się rzeczy mają\"";
 //Nazwy kolumn dla listy statystyki
-const static UnicodeString Gl_ustrNameColumn[] = {"Nazwa księgi", "Ilość wystąpień", "Wskaźnik"};
+const static UnicodeString Gl_ustrNameColumn[] = {"Nazwa księgi", "Ilość wystąpień", "Wskaźnik"},
+													 Gl_ustrTypeActionSearchList[] = {"Wszystkie wyrażenia", "Dowolne wyażenie"},
+													 Gl_ustrInfosTypesActionSearch[] = {"Podczas wyszukiwanie w poszczególnuch wersetach, muszą być znalezine wszystkie wyrażenia z listy",
+																															"Podczas wyszukiwania w poszczególnych wersetach, musi wytąpić dowolne wyrażenie z listy"};
 //---------------------------------------------------------------------------
 __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner)
 /**
@@ -176,11 +188,27 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 		delete pWICImage; pWICImage = nullptr;
 		this->STW_STextLogoSearch->Caption = ustrTextLogoSearch;
 	}
-
+	// Zastosowanie stylu do panelów
 	this->STW_PanelListButtons->Color = TStyleManager::ActiveStyle->GetSystemColor(clBtnFace);
-
+	this->STW_PanelListWords->Color = TStyleManager::ActiveStyle->GetSystemColor(clBtnFace);
+	this->STW_PanelInfosSelectActionSearch->Color = TStyleManager::ActiveStyle->GetSystemColor(clBtnFace);
+  // Tagi dla przycisków, dla listy wyrażeń szukanych
 	this->STW_ButtClearAllListSearch->Tag = enTagListSearch_ClearAll;
 	this->STW_DeleteSelectPos->Tag = enTagListSearch_DeleteSelect;
+	// Akcje zastosowania dla listy szukanych wyrażeń
+		// Wysokość objektu klasy TButtonGroup, this->STW_ButtGrSelectActionList
+	this->STW_ButtGrSelectActionList->Margins->Bottom =
+		STW_LBoxSearchTexts->Height - (2 * this->STW_ButtGrSelectActionList->ButtonHeight) + this->STW_ButtGrSelectActionList->Margins->Top;
+	TGrpButtonItem *pGrpButtonItem=nullptr;
+	for(int i=0; i<ARRAYSIZE(Gl_ustrTypeActionSearchList); ++i)
+	{
+		pGrpButtonItem = this->STW_ButtGrSelectActionList->Items->Add();
+		pGrpButtonItem->Caption = Gl_ustrTypeActionSearchList[i];
+    pGrpButtonItem->ImageIndex = enImageLarge_ANDSearchList + i;
+	}
+	// Domyślna akcja zastosowania do listy szukanych wyrażen
+	this->STW_ButtGrSelectActionList->ItemIndex = enIndexSearchActionList_AND;
+	this->STW_LabelInfosSelectActionSearch->Caption = Gl_ustrInfosTypesActionSearch[this->STW_ButtGrSelectActionList->ItemIndex];
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
@@ -499,7 +527,7 @@ void __fastcall TSearchTextWindow::_IsMatchRegSearch(const UnicodeString &custrF
 				}while(MyMatch.Success);
 
 				// Dodanie wersetu do listy znalezionych
-				this->_pHSListSearchResult->AddObject(ustrFullVersReplaced.SubString(10, Gl_ciSizeCutString), _pBookListText->Objects[ciIndexVers]);
+				this->_pHSListSearchResult->AddObject(ustrFullVersReplaced.SubString(Gl_ciOffsetTextVers, Gl_ciSizeCutString), _pBookListText->Objects[ciIndexVers]);
 				//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
 				++_MyDataStatistic->uiCountFind;
 			}
@@ -565,7 +593,7 @@ bool __fastcall TSearchTextWindow::_IsMatchNormalSearch(const UnicodeString &cus
 		ustrAddingFullVers = StringReplace(custrFullVers, custrTextSearch, ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 
 		// Dodanie wersetu do listy znalezionych
-		this->_pHSListSearchResult->AddObject(ustrAddingFullVers.SubString(10, Gl_ciSizeCutString), _pBookListText->Objects[ciIndexVers]);
+		this->_pHSListSearchResult->AddObject(ustrAddingFullVers.SubString(Gl_ciOffsetTextVers, Gl_ciSizeCutString), _pBookListText->Objects[ciIndexVers]);
 		//Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
 		++_pMyDataStatistic->uiCountFind;
 	} //if(iPositionSearch > 0)
@@ -584,18 +612,38 @@ bool __fastcall TSearchTextWindow::_IsMatchSearchListTexts(const UnicodeString &
 	int _iPositionSearch=0;
 	UnicodeString ustrFullVersReplaced=custrFullVers, ustrReplaced;
 
-  if(this->STW_LBoxSearchTexts->Count == 0) return false;
-	for(int i=0; i<this->STW_LBoxSearchTexts->Count; ++i)
+	if(this->STW_LBoxSearchTexts->Count == 0) return false;
+  //---
+	if(this->STW_ButtGrSelectActionList->ItemIndex == enTypeAction_ANDWordSearch)
+	// Wszystkie wyrażenia z listy muszą być znalezione
 	{
-		_iPositionSearch = custrFullVers.Pos(this->STW_LBoxSearchTexts->Items->Strings[i]);
-		if(_iPositionSearch == 0) return false;
+		for(int i=0; i<this->STW_LBoxSearchTexts->Count; ++i)
+		{
+			_iPositionSearch = custrFullVers.Pos(this->STW_LBoxSearchTexts->Items->Strings[i]);
+			if(_iPositionSearch == 0) return false;
 
-		ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->STW_LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
-		ustrFullVersReplaced = StringReplace(ustrFullVersReplaced, this->STW_LBoxSearchTexts->Items->Strings[i],
-			ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
+			ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->STW_LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
+			ustrFullVersReplaced = StringReplace(ustrFullVersReplaced, this->STW_LBoxSearchTexts->Items->Strings[i],
+				ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
+		}
+	}
+	else if(this->STW_ButtGrSelectActionList->ItemIndex == enTypeAction_ORWordSearch)
+	// Które kolwiek wyrażenie z listy ma byc znalezione
+	{
+		bool bIsSearch=false;
+    for(int i=0; i<this->STW_LBoxSearchTexts->Count; ++i)
+		{
+			_iPositionSearch = custrFullVers.Pos(this->STW_LBoxSearchTexts->Items->Strings[i]);
+			if(_iPositionSearch > 0) bIsSearch = true;
+
+      ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->STW_LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
+			ustrFullVersReplaced = StringReplace(ustrFullVersReplaced, this->STW_LBoxSearchTexts->Items->Strings[i],
+				ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
+		}
+		if(!bIsSearch) return false;
 	}
 	// Dodanie wersetu do listy znalezionych
-	this->_pHSListSearchResult->AddObject(ustrFullVersReplaced.SubString(10, Gl_ciSizeCutString), _pBookListText->Objects[ciIndexVers]);
+	this->_pHSListSearchResult->AddObject(ustrFullVersReplaced.SubString(Gl_ciOffsetTextVers, Gl_ciSizeCutString), _pBookListText->Objects[ciIndexVers]);
   //Wypełnienie odpowiedniej pozycji tablicy statystyki wyszukiwania. iIndexTable to numer księgi liczony od 0.
 	++_pMyDataStatistic->uiCountFind;
 	return true;
@@ -723,6 +771,7 @@ void __fastcall TSearchTextWindow::STW_ChBoxAllSearchTextsClick(TObject *Sender)
 	this->STW_ButtAddListTextSearch->Enabled = pChBox->Checked;
 	this->STW_LBoxSearchTexts->Enabled = pChBox->Checked;
 	this->STW_ChBoxIsRegEx->Enabled = !pChBox->Checked;
+	this->STW_ButtGrSelectActionList->Enabled = pChBox->Checked;
 
   //Wyczyszczenie objektu klasy TWebBrowser, po wyszukaniu nowego słowa
 	this->STW_WBrowserResultSearch->Navigate(WideString("about:blank").c_bstr());
@@ -1361,9 +1410,13 @@ void __fastcall TSearchTextWindow::STW_ButtAddListTextSearchClick(TObject *Sende
 	this->STW_LBoxSearchTexts->Items->BeginUpdate();
 	if(!this->STW_CBoxHistorySearchText->Text.IsEmpty() && this->STW_LBoxSearchTexts->Enabled)
 	{
-		this->STW_LBoxSearchTexts->AddItem(this->STW_CBoxHistorySearchText->Text, nullptr);
-		this->STW_DeleteSelectPos->Enabled = true;
-		this->STW_ButtClearAllListSearch->Enabled = true;
+		if(this->STW_LBoxSearchTexts->Items->IndexOf(this->STW_CBoxHistorySearchText->Text) == -1)
+		// Jeśli wyrażenie nie jest już na liście
+		{
+			this->STW_LBoxSearchTexts->AddItem(this->STW_CBoxHistorySearchText->Text, nullptr);
+			this->STW_DeleteSelectPos->Enabled = true;
+			this->STW_ButtClearAllListSearch->Enabled = true;
+		}
 	}
 	this->STW_LBoxSearchTexts->Items->EndUpdate();
 
@@ -1397,6 +1450,20 @@ void __fastcall TSearchTextWindow::STW_ButtAllListSearchClick(TObject *Sender)
 			this->STW_ButtClearAllListSearch->Enabled = this->STW_LBoxSearchTexts->Count > 0;
 		break;
   }
+}
+//---------------------------------------------------------------------------
+void __fastcall TSearchTextWindow::STW_ButtGrSelectActionListClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButtonGroup *pButtGroup = dynamic_cast<TButtonGroup *>(Sender);
+	if(!pButtGroup) return;
+	//---
+	this->STW_LabelInfosSelectActionSearch->Caption = Gl_ustrInfosTypesActionSearch[pButtGroup->ItemIndex];
 }
 //---------------------------------------------------------------------------
 

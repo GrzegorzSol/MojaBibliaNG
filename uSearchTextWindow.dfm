@@ -4,7 +4,7 @@ object SearchTextWindow: TSearchTextWindow
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Zaawansowane wyszukiwanie tekstu.'
-  ClientHeight = 901
+  ClientHeight = 951
   ClientWidth = 1194
   Color = clBtnFace
   DoubleBuffered = True
@@ -26,9 +26,9 @@ object SearchTextWindow: TSearchTextWindow
   object STW_PControlSetupsSearch: TPageControl
     AlignWithMargins = True
     Left = 3
-    Top = 3
+    Top = 80
     Width = 1188
-    Height = 348
+    Height = 437
     ActivePage = STW_TabSheetInputText
     Align = alTop
     Images = ImgListSmallSearch
@@ -36,6 +36,7 @@ object SearchTextWindow: TSearchTextWindow
     TabOrder = 0
     OnChanging = STW_PControlChanging
     OnDrawTab = STW_PControlViewsTextDrawTab
+    ExplicitTop = 3
     object STW_TabSheetInputText: TTabSheet
       Caption = 'Szukany tekst'
       ImageIndex = 8
@@ -43,8 +44,8 @@ object SearchTextWindow: TSearchTextWindow
         AlignWithMargins = True
         Left = 3
         Top = 66
-        Width = 694
-        Height = 248
+        Width = 646
+        Height = 337
         Align = alLeft
         Caption = 'Wszystkie parametry dla wyszukiwania'
         Font.Charset = DEFAULT_CHARSET
@@ -59,12 +60,12 @@ object SearchTextWindow: TSearchTextWindow
           AlignWithMargins = True
           Left = 5
           Top = 21
-          Width = 684
+          Width = 636
           Height = 92
           Align = alTop
           Caption = 
             'Ustawienia dotycz'#261'ce wyszukiwania za pomoc'#261' wyra'#380'e'#324' regularnych ' +
-            '(tylko dla zaawansowanych)'
+            '(dla zaawansowanych)'
           Color = clBtnFace
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -76,12 +77,14 @@ object SearchTextWindow: TSearchTextWindow
           ParentColor = False
           ParentFont = False
           TabOrder = 0
+          ExplicitWidth = 579
           object STW_ChBoxIsRegEx: TCheckBox
             AlignWithMargins = True
-            Left = 5
+            Left = 14
             Top = 21
-            Width = 674
+            Width = 617
             Height = 17
+            Margins.Left = 12
             CustomHint = BalloonHintSearch
             Align = alTop
             Caption = 
@@ -100,12 +103,14 @@ object SearchTextWindow: TSearchTextWindow
             ShowHint = True
             TabOrder = 0
             OnClick = STW_ChBoxIsRegExClick
+            ExplicitLeft = 5
+            ExplicitWidth = 569
           end
           object STW_ButtonHelpRegExp: TButton
             AlignWithMargins = True
             Left = 5
             Top = 44
-            Width = 674
+            Width = 626
             Height = 45
             Cursor = crHandPoint
             CustomHint = BalloonHintSearch
@@ -129,16 +134,17 @@ object SearchTextWindow: TSearchTextWindow
             TabOrder = 1
             WordWrap = True
             OnClick = STW_ButtonHelpRegExpClick
+            ExplicitWidth = 569
           end
         end
         object STW_GrBoxNormalSearch: TGroupBox
           AlignWithMargins = True
           Left = 5
           Top = 119
-          Width = 684
-          Height = 90
+          Width = 636
+          Height = 202
           Align = alTop
-          Caption = 'Ustawienia dotycz'#261'ce normalnego wyszukiwania'
+          Caption = 'Wsp'#243'lne parametry wyszukiwania'
           Color = clBtnFace
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -152,10 +158,12 @@ object SearchTextWindow: TSearchTextWindow
           TabOrder = 1
           object STW_ChBoxMemoSetupsSearch: TCheckBox
             AlignWithMargins = True
-            Left = 5
+            Left = 14
             Top = 21
-            Width = 674
+            Width = 420
             Height = 17
+            Margins.Left = 12
+            Margins.Right = 200
             Align = alTop
             Caption = 'Czy zapami'#281'ta'#263' parametry wyszukiwania?'
             Font.Charset = DEFAULT_CHARSET
@@ -166,13 +174,16 @@ object SearchTextWindow: TSearchTextWindow
             Font.Quality = fqClearType
             ParentFont = False
             TabOrder = 0
+            ExplicitLeft = 5
+            ExplicitWidth = 492
           end
           object STW_ChBoxSizeTextSearch: TCheckBox
             AlignWithMargins = True
-            Left = 5
+            Left = 14
             Top = 44
-            Width = 477
+            Width = 420
             Height = 17
+            Margins.Left = 12
             Margins.Right = 200
             Align = alTop
             Caption = 'Czy podczas wyszukiwania uwzgl'#281'dnia'#263' wielko'#347#263' liter?'
@@ -184,13 +195,17 @@ object SearchTextWindow: TSearchTextWindow
             Font.Quality = fqClearType
             ParentFont = False
             TabOrder = 1
+            ExplicitLeft = 7
+            ExplicitWidth = 429
           end
           object STW_ChBoxOnlyWord: TCheckBox
             AlignWithMargins = True
-            Left = 5
+            Left = 14
             Top = 67
-            Width = 674
+            Width = 420
             Height = 17
+            Margins.Left = 12
+            Margins.Right = 200
             Align = alTop
             Caption = 'Wyszukiwanie tylko ca'#322'ych s'#322#243'w'
             Font.Charset = DEFAULT_CHARSET
@@ -201,15 +216,179 @@ object SearchTextWindow: TSearchTextWindow
             Font.Quality = fqClearType
             ParentFont = False
             TabOrder = 2
+            ExplicitLeft = 5
+            ExplicitWidth = 627
+          end
+          object STW_GroBoxSetupSearchText: TGroupBox
+            AlignWithMargins = True
+            Left = 5
+            Top = 90
+            Width = 626
+            Height = 106
+            Align = alTop
+            Caption = 'Ustawianie wsp'#243'lne, zakres'#243'w wyszukiwania tekstu biblijnego.'
+            Color = clCream
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            Font.Quality = fqClearType
+            ParentBackground = False
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 3
+            ExplicitLeft = 2
+            ExplicitTop = 87
+            ExplicitWidth = 632
+            object STW_LabelInfoRange: TLabel
+              Left = 9
+              Top = 23
+              Width = 139
+              Height = 22
+              AutoSize = False
+              Caption = 'Zakres wyszukiwania:'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentFont = False
+              Layout = tlCenter
+            end
+            object STW_LabelInfoSelectTranslates: TLabel
+              Left = 9
+              Top = 51
+              Width = 139
+              Height = 22
+              AutoSize = False
+              Caption = 'Wybierz t'#322'umaczenie:'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentFont = False
+              Layout = tlCenter
+            end
+            object STW_LabelInfoTo: TLabel
+              Left = 268
+              Top = 79
+              Width = 23
+              Height = 22
+              AutoSize = False
+              Caption = 'do:'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentFont = False
+              Layout = tlCenter
+            end
+            object STW_CBoxSelectRangeSearch: TComboBox
+              Left = 154
+              Top = 23
+              Width = 201
+              Height = 22
+              CustomHint = BalloonHintSearch
+              Style = csOwnerDrawFixed
+              Ctl3D = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentCtl3D = False
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 0
+              OnCloseUp = CBoxCloseUp
+              OnDrawItem = STW_CBoxSearchDrawItem
+            end
+            object STW_CBoxSelectTranslates: TComboBox
+              Left = 154
+              Top = 51
+              Width = 241
+              Height = 22
+              CustomHint = BalloonHintSearch
+              Style = csOwnerDrawFixed
+              Ctl3D = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentCtl3D = False
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 1
+              OnCloseUp = CBoxCloseUp
+              OnDrawItem = STW_CBoxSearchDrawItem
+            end
+            object STW_CBoxStartSelectRange: TComboBox
+              Left = 9
+              Top = 79
+              Width = 232
+              Height = 22
+              Hint = 'Pocz'#261'tkowa ksi'#281'ga w wyszukiwaniu u'#380'ytkownika'
+              CustomHint = BalloonHintSearch
+              Style = csOwnerDrawFixed
+              Ctl3D = True
+              Enabled = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentCtl3D = False
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 2
+              OnCloseUp = CBoxCloseUp
+              OnDrawItem = STW_CBoxSearchDrawItem
+            end
+            object STW_CBoxStopSelectRange: TComboBox
+              Left = 316
+              Top = 79
+              Width = 219
+              Height = 22
+              CustomHint = BalloonHintSearch
+              Style = csOwnerDrawFixed
+              Ctl3D = True
+              Enabled = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Font.Quality = fqClearType
+              ParentCtl3D = False
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 3
+              OnCloseUp = CBoxCloseUp
+              OnDrawItem = STW_CBoxSearchDrawItem
+            end
           end
         end
       end
       object STW_GrBoxListGroupSearchedTexts: TGroupBox
         AlignWithMargins = True
-        Left = 703
+        Left = 655
         Top = 66
-        Width = 474
-        Height = 248
+        Width = 522
+        Height = 337
         Align = alClient
         Caption = 'Lista wszystkich jednocze'#347'nie  wyszukiwanych tekst'#243'w'
         Font.Charset = DEFAULT_CHARSET
@@ -220,29 +399,13 @@ object SearchTextWindow: TSearchTextWindow
         Font.Quality = fqClearType
         ParentFont = False
         TabOrder = 1
-        object STW_LBoxSearchTexts: TListBox
-          AlignWithMargins = True
-          Left = 5
-          Top = 59
-          Width = 464
-          Height = 134
-          Align = alClient
-          Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          Font.Quality = fqClearType
-          ParentFont = False
-          Sorted = True
-          TabOrder = 0
-        end
+        ExplicitLeft = 598
+        ExplicitWidth = 579
         object STW_ChBoxAllSearchTexts: TCheckBox
           AlignWithMargins = True
           Left = 5
           Top = 21
-          Width = 464
+          Width = 512
           Height = 32
           Align = alTop
           Caption = 
@@ -255,31 +418,36 @@ object SearchTextWindow: TSearchTextWindow
           Font.Style = []
           Font.Quality = fqClearType
           ParentFont = False
-          TabOrder = 1
+          TabOrder = 0
           WordWrap = True
           OnClick = STW_ChBoxAllSearchTextsClick
+          ExplicitWidth = 569
         end
         object STW_PanelListButtons: TPanel
           AlignWithMargins = True
           Left = 8
-          Top = 199
-          Width = 458
-          Height = 44
+          Top = 279
+          Width = 506
+          Height = 53
           Margins.Left = 6
           Margins.Right = 6
           Align = alBottom
           BevelOuter = bvLowered
           ParentColor = True
           ShowCaption = False
-          TabOrder = 2
+          TabOrder = 1
+          ExplicitTop = 264
+          ExplicitWidth = 563
           object STW_ButtClearAllListSearch: TButton
             AlignWithMargins = True
             Left = 4
-            Top = 4
-            Width = 181
-            Height = 36
+            Top = 7
+            Width = 185
+            Height = 39
+            Margins.Top = 6
+            Margins.Bottom = 6
             Align = alLeft
-            Caption = 'Usu'#324' ca'#322#261' zawarto'#347#263
+            Caption = 'Usu'#324' ca'#322#261' zawarto'#347#263' listy wyra'#380'e'#324
             Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -291,16 +459,19 @@ object SearchTextWindow: TSearchTextWindow
             Images = ImgListLargeSearch
             ParentFont = False
             TabOrder = 0
+            WordWrap = True
             OnClick = STW_ButtAllListSearchClick
           end
           object STW_DeleteSelectPos: TButton
             AlignWithMargins = True
-            Left = 191
-            Top = 4
-            Width = 178
-            Height = 36
+            Left = 195
+            Top = 7
+            Width = 182
+            Height = 39
+            Margins.Top = 6
+            Margins.Bottom = 6
             Align = alLeft
-            Caption = 'Usu'#324' wybrana pozycje'
+            Caption = 'Usu'#324' wybrana pozycje z listy wyra'#380'e'#324
             Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -312,7 +483,112 @@ object SearchTextWindow: TSearchTextWindow
             Images = ImgListLargeSearch
             ParentFont = False
             TabOrder = 1
+            WordWrap = True
             OnClick = STW_ButtAllListSearchClick
+          end
+        end
+        object STW_PanelListWords: TPanel
+          Left = 2
+          Top = 56
+          Width = 518
+          Height = 173
+          Align = alClient
+          Caption = 'STW_PanelListWords'
+          ShowCaption = False
+          TabOrder = 2
+          ExplicitWidth = 575
+          ExplicitHeight = 158
+          object STW_LBoxSearchTexts: TListBox
+            AlignWithMargins = True
+            Left = 4
+            Top = 4
+            Width = 309
+            Height = 165
+            Align = alClient
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Font.Quality = fqClearType
+            ParentFont = False
+            Sorted = True
+            TabOrder = 0
+            ExplicitWidth = 366
+            ExplicitHeight = 150
+          end
+          object STW_ButtGrSelectActionList: TButtonGroup
+            AlignWithMargins = True
+            Left = 319
+            Top = 4
+            Width = 195
+            Height = 165
+            Align = alRight
+            BorderStyle = bsNone
+            ButtonHeight = 42
+            ButtonOptions = [gboFullSize, gboGroupStyle, gboShowCaptions]
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Font.Quality = fqClearType
+            Images = ImgListLargeSearch
+            Items = <>
+            TabOrder = 1
+            OnClick = STW_ButtGrSelectActionListClick
+            ExplicitLeft = 376
+            ExplicitHeight = 150
+          end
+        end
+        object STW_PanelInfosSelectActionSearch: TPanel
+          AlignWithMargins = True
+          Left = 5
+          Top = 232
+          Width = 512
+          Height = 41
+          Align = alBottom
+          BevelOuter = bvNone
+          Caption = 'STW_PanelInfosSelectActionSearch'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Font.Quality = fqClearType
+          ParentFont = False
+          ShowCaption = False
+          TabOrder = 3
+          ExplicitTop = 217
+          ExplicitWidth = 569
+          object STW_LabelInfosSelectActionSearch: TLabel
+            AlignWithMargins = True
+            Left = 3
+            Top = 3
+            Width = 506
+            Height = 35
+            Align = alClient
+            Alignment = taCenter
+            AutoSize = False
+            Caption = 'Test'
+            Color = clWindow
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            Font.Quality = fqClearType
+            ParentColor = False
+            ParentFont = False
+            Transparent = True
+            Layout = tlCenter
+            WordWrap = True
+            ExplicitLeft = 288
+            ExplicitTop = 24
+            ExplicitWidth = 37
+            ExplicitHeight = 16
           end
         end
       end
@@ -365,7 +641,7 @@ object SearchTextWindow: TSearchTextWindow
         Left = 0
         Top = 0
         Width = 579
-        Height = 317
+        Height = 406
         CustomHint = BalloonHintSearch
         Align = alLeft
         Columns = <>
@@ -382,26 +658,28 @@ object SearchTextWindow: TSearchTextWindow
         ViewStyle = vsReport
         OnDrawItem = STW_LViewStatisticDrawItem
         OnSelectItem = STW_LViewAllSelectItem
+        ExplicitHeight = 391
       end
       object STW_PanelDisplaySearchBook: TPanel
         Left = 579
         Top = 0
         Width = 601
-        Height = 317
+        Height = 406
         Align = alClient
         BorderStyle = bsSingle
         ShowCaption = False
         TabOrder = 1
+        ExplicitHeight = 391
         object STW_WebBrowserSelectBookStatistic: TWebBrowser
           Left = 1
           Top = 18
           Width = 595
-          Height = 294
+          Height = 383
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 203
           ControlData = {
-            4C0000007F3D0000631E00000000000000000000000000000000000000000000
+            4C0000007F3D0000962700000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -498,12 +776,13 @@ object SearchTextWindow: TSearchTextWindow
         Left = 0
         Top = 150
         Width = 1180
-        Height = 167
+        Height = 256
         Align = alClient
         Caption = 
           'Ustawienia dotycz'#261'ce zak'#322'adki wybory pojedy'#324'czego wersetu z list' +
           'y wyszukanych tekst'#243'w'
         TabOrder = 2
+        ExplicitHeight = 241
         object STW_LabelBackGroundSelectVers: TLabel
           Left = 12
           Top = 17
@@ -527,191 +806,25 @@ object SearchTextWindow: TSearchTextWindow
       end
     end
   end
-  object STW_GroBoxSetupSearchText: TGroupBox
-    Left = 0
-    Top = 354
-    Width = 1194
-    Height = 124
-    Align = alTop
-    Caption = 'Ustawianie parametr'#243'w wyszukiwania tekstu biblijnego.'
-    Color = clCream
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    Font.Quality = fqClearType
-    ParentBackground = False
-    ParentColor = False
-    ParentFont = False
-    TabOrder = 1
-    object STW_PanelImage: TPanel
-      Left = 840
-      Top = 18
-      Width = 352
-      Height = 104
-      Align = alRight
-      BevelOuter = bvNone
-      Color = clWindow
-      ParentBackground = False
-      ShowCaption = False
-      TabOrder = 0
-      object STW_ImageLogoSearch: TImage
-        Left = 0
-        Top = 0
-        Width = 116
-        Height = 104
-        Align = alLeft
-        Transparent = True
-        ExplicitTop = -4
-        ExplicitHeight = 109
-      end
-      object STW_STextLogoSearch: TStaticText
-        AlignWithMargins = True
-        Left = 119
-        Top = 3
-        Width = 230
-        Height = 98
-        Align = alClient
-        AutoSize = False
-        Caption = 'STW_STextLogoSearch'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clMaroon
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        Font.Quality = fqClearType
-        ParentFont = False
-        TabOrder = 0
-      end
-    end
-    object STW_PanelSelectSearchParam: TPanel
-      Left = 2
-      Top = 18
-      Width = 838
-      Height = 104
-      Align = alClient
-      BevelOuter = bvNone
-      Color = clWindow
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      Font.Quality = fqClearType
-      ParentBackground = False
-      ParentFont = False
-      ShowCaption = False
-      TabOrder = 1
-      object STW_LabelInfoTo: TLabel
-        Left = 257
-        Top = 72
-        Width = 23
-        Height = 17
-        AutoSize = False
-        Caption = 'do:'
-        Layout = tlCenter
-      end
-      object STW_LabelInfoSelectTranslates: TLabel
-        Left = 482
-        Top = 26
-        Width = 103
-        Height = 13
-        AutoSize = False
-        Caption = 'Wybierz t'#322'umaczenie:'
-        Layout = tlCenter
-      end
-      object STW_LabelInfoRange: TLabel
-        Left = 11
-        Top = 26
-        Width = 103
-        Height = 13
-        AutoSize = False
-        Caption = 'Zakres wyszukiwania:'
-        Layout = tlCenter
-      end
-      object STW_CBoxStopSelectRange: TComboBox
-        Left = 289
-        Top = 71
-        Width = 219
-        Height = 22
-        CustomHint = BalloonHintSearch
-        Style = csOwnerDrawFixed
-        Ctl3D = True
-        Enabled = False
-        ParentCtl3D = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 0
-        OnCloseUp = CBoxCloseUp
-        OnDrawItem = STW_CBoxSearchDrawItem
-      end
-      object STW_CBoxStartSelectRange: TComboBox
-        Left = 11
-        Top = 71
-        Width = 232
-        Height = 22
-        Hint = 'Pocz'#261'tkowa ksi'#281'ga w wyszukiwaniu u'#380'ytkownika'
-        CustomHint = BalloonHintSearch
-        Style = csOwnerDrawFixed
-        Ctl3D = True
-        Enabled = False
-        ParentCtl3D = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-        OnCloseUp = CBoxCloseUp
-        OnDrawItem = STW_CBoxSearchDrawItem
-      end
-      object STW_CBoxSelectTranslates: TComboBox
-        Left = 591
-        Top = 23
-        Width = 241
-        Height = 22
-        CustomHint = BalloonHintSearch
-        Style = csOwnerDrawFixed
-        Ctl3D = False
-        ParentCtl3D = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 2
-        OnCloseUp = CBoxCloseUp
-        OnDrawItem = STW_CBoxSearchDrawItem
-      end
-      object STW_CBoxSelectRangeSearch: TComboBox
-        Left = 120
-        Top = 23
-        Width = 201
-        Height = 22
-        CustomHint = BalloonHintSearch
-        Style = csOwnerDrawFixed
-        Ctl3D = True
-        ParentCtl3D = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 3
-        OnCloseUp = CBoxCloseUp
-        OnDrawItem = STW_CBoxSearchDrawItem
-      end
-    end
-  end
   object STW_GroBoxViewSearchText: TGroupBox
     Left = 0
-    Top = 478
+    Top = 520
     Width = 1194
-    Height = 375
+    Height = 383
     Align = alClient
     Caption = 'R'#243#380'ne widoki wyniku wyszukiwania tekstu biblijnego.'
     Color = clBtnFace
     ParentBackground = False
     ParentColor = False
-    TabOrder = 2
+    TabOrder = 1
+    ExplicitTop = 513
+    ExplicitHeight = 340
     object STW_PControlViewsText: TPageControl
       AlignWithMargins = True
       Left = 5
       Top = 21
       Width = 1184
-      Height = 349
+      Height = 357
       ActivePage = STW_TabSheetViewListSearch
       Align = alClient
       Images = ImgListSmallSearch
@@ -719,6 +832,7 @@ object SearchTextWindow: TSearchTextWindow
       TabOrder = 0
       OnChanging = STW_PControlChanging
       OnDrawTab = STW_PControlViewsTextDrawTab
+      ExplicitHeight = 314
       object STW_TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9
@@ -726,11 +840,12 @@ object SearchTextWindow: TSearchTextWindow
           Left = 0
           Top = 0
           Width = 1176
-          Height = 318
+          Height = 326
           Align = alClient
           TabOrder = 0
+          ExplicitTop = 3
           ControlData = {
-            4C0000008B790000DE2000000000000000000000000000000000000000000000
+            4C0000008B790000B12100000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -764,11 +879,12 @@ object SearchTextWindow: TSearchTextWindow
           Left = 0
           Top = 81
           Width = 1176
-          Height = 237
+          Height = 245
           Align = alClient
           TabOrder = 1
+          ExplicitHeight = 237
           ControlData = {
-            4C0000008B7900007F1800000000000000000000000000000000000000000000
+            4C0000008B790000521900000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
             2B2E126209000000000000004C0000000114020000000000C000000000000046
             8000000000000000000000000000000000000000000000000000000000000000
@@ -779,7 +895,7 @@ object SearchTextWindow: TSearchTextWindow
   end
   object STW_StBarInfos: TStatusBar
     Left = 0
-    Top = 882
+    Top = 932
     Width = 1194
     Height = 19
     Anchors = []
@@ -788,16 +904,18 @@ object SearchTextWindow: TSearchTextWindow
     SimplePanel = True
     SizeGrip = False
     UseSystemFont = False
+    ExplicitTop = 882
   end
   object STW_PanelButtons: TPanel
     Left = 0
-    Top = 853
+    Top = 903
     Width = 1194
     Height = 29
     Align = alBottom
     ParentColor = True
     ShowCaption = False
-    TabOrder = 4
+    TabOrder = 3
+    ExplicitTop = 853
     object STW_ButtonSearchStart: TButton
       AlignWithMargins = True
       Left = 10
@@ -839,139 +957,177 @@ object SearchTextWindow: TSearchTextWindow
       OnClick = STW_ButtonSaveSearchClick
     end
   end
+  object STW_PanelLogo: TPanel
+    Left = 0
+    Top = 0
+    Width = 1194
+    Height = 77
+    Align = alTop
+    BevelOuter = bvNone
+    Caption = 'STW_PanelLogo'
+    ShowCaption = False
+    TabOrder = 4
+    object STW_ImageLogoSearch: TImage
+      AlignWithMargins = True
+      Left = 335
+      Top = 5
+      Width = 69
+      Height = 69
+      Margins.Left = 12
+      Transparent = True
+    end
+    object STW_STextLogoSearch: TStaticText
+      AlignWithMargins = True
+      Left = 411
+      Top = 5
+      Width = 448
+      Height = 111
+      Margins.Left = 12
+      AutoSize = False
+      Caption = 'STW_STextLogoSearch'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      Font.Quality = fqClearType
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
   object ImgListSmallSearch: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
-    Left = 72
-    Top = 641
+    Left = 56
+    Top = 713
     Bitmap = {
-      494C01010D009801040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010E009801040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
       0000000000000000000000000000000000000000000031313233696992AA5454
       AFDE626197C269697A9358585B6539393A3D1F1F1F200D0D0D0E030303040000
       0001000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000100000001030303040A0A0A0B131313141414141510101011121212131E1E
+      1E1F343434374A4A4A534B4B4B55303030320000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000020202036A69909D4340EBFE4C4C
       F1FF4645EEFF6463D4FE9094BDF88383A1EA79788CD371707FB168676E875252
-      545D3838383B3C3C3D403B3B3C3F0909090A0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      545D3838383B3C3C3D403B3B3C3F0909090A0000000000000000040404051313
+      13141E1E1E1F262626273737373B4747474F48484850414141474545454C5F5F
+      607E6C6969D5989695E8717170A54747474F0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000070707086D6CA5B55150F1FF5152
       F1FF4B4BF1FF7372D7FF9D9DC9FFCFBAB0FFB3A193FF8B8788FF7A7984FD5962
-      81F6435680EA3F618DF047668EE963666C860000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      81F6435680EA3F618DF047668EE963666C8600000000000000011A1A1A1B4545
+      464C53535362737272968F8E8ECC8D8B8AD1747474AF7C7C7CBD828180D9433A
+      3DFA643D43FFB9969AFFA7A7A7DB3B3B3B3F0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000E0E0E0F706EB4C65C5DF2FF5658
       F2FF5051F1FF7D7DD1FFC8B3B2FFFDE5BAFFEBD6B1FFA39C96FF86898FFF3B5F
-      91FF3565A2FF3F7ABEFF4181C4FF475789E10000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      91FF3565A2FF3F7ABEFF4181C4FF475789E1000000000606060768818F9E419F
+      C6E98C939AE4D6C6BEFFF2B79BFFF9B897FFE3B7A4FFB1AEADFFC3C5C4FFC6B3
+      B5FFB86C75FF986C72FF7D7D7D95171717180000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000161616177373C0D46567F3FF5B5E
       F2FF5557F1FF8E8CCCFFE0BEA5FFFFDCACFFF9D8A9FFB8ADA1FFA3A7ADFF4C7D
-      B6FF4487CDFF4A94DDFF488CDCFF535E93D50000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      B6FF4487CDFF4A94DDFF488CDCFF535E93D5000000002D2D2E2F1FAAE5F474B2
+      C8FFD3CECBFFECBAA0FFFFCB97FFFFD19EFFFFB989FFE8B39CFFB7B8B8FFD7D1
+      CFFF625557E46060607915151516030303040000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000212121227877CCE06C70F4FF6065
       F3FF5A5DF1FF8280D2FFE1BAA5FFFED2A7FFFACB9EFFC9B9ABFFC4C4C4FF889F
-      BEFF4C72C5FF3751D6FF313CDDFF5D5C99C20000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      BEFF4C72C5FF3751D6FF313CDDFF5D5C99C2000000016677818A0BBDF9FF9CBD
+      CAFFDBD7D5FFEEC2A2FFFFEAB8FFFFE7B7FFFFD7A4FFFFB58AFFC9B4ADFF8C95
+      9DF2606060834A4A4A5323232324070707080000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000002D2D2E2F7F7FD6EA7278F4FF676D
       F3FF7687F5FF889CE9FFD3B4AFFFFEDBC4FFF8D4BDFFD9CEC6FFD6D5D6FF7473
-      BDFF3D3ADBFF322DECFF2E29ECFF65638EAE0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      BDFF3D3ADBFF322DECFF2E29ECFF65638EAE0707070854A1C2D10DC6FDFF96C6
+      D8FFECE5E3FFE6C4B0FFFFEBBDFFFFF2C5FFFFE0AEFFFFBA8AFFD0B8ABFF57B2
+      CDF35A889CCE62676A8C40404046111111120000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000003B3B3C3E888AE0F27881F5FF7381
       F2FFB8DFFCFFC4F5FAFFC4C1BBFFF8E1D7FFEFDBD2FFE8E3E1FFDDE1E2FF8CBA
-      E0FF76AEF9FF5169F3FF312CE9FF676681980000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      E0FF76AEF9FF5169F3FF312CE9FF676681982B2C2C2D2FBEF0F919CDFFFF68C7
+      E6FFF5F2F1FFEAE3E2FFEBC1A2FFFFD9A7FFFFCF9CFFFFAD84FFC5C0BBFF6AED
+      FCFF69F2FFFF5F889BCB4C4C4C56171717180000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000048484C4E9093E7F87189F2FF3F94
       E2FF99D2E3FFC6EBEEFFB9D1D1FFBEADA5FFC4B5AFFFD1D1D0FFB9D2D4FFA9EF
-      F4FFA5F6FCFF80BBF9FF3736E5FD636372820000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      F4FFA5F6FCFF80BBF9FF3736E5FD6363728254595C6033D3FDFF2AD2FFFF50D3
+      F2FFD9E9E4FFFBFDFFFFE5E0DFFFE4BEADFFF0B69BFFDEBDB0FF9DDCE0FF77F7
+      FEFF85FBFFFF6697A8D44E4E4E591919191A0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000057575D61999EEEFC5B92F2FF12C7
       FAFF2ED7EAFF81C9D8FF9FD6E0FFA8D2D9FFBDE0E2FFBADFE2FFB7E5E8FFB4E7
-      EAFFAFE9EDFF84B4F8FF3A38E0FB5B5B636E0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      EAFFAFE9EDFF84B4F8FF3A38E0FB5B5B636E697C858D43DFFFFF37D5FEFF65D7
+      F0FFE3E4D5FFF1D9CDFFDFD8D4FFCCCBC9FFA6C3CCFF85D5E6FF88F2FCFF8FF8
+      FFFF9FF5F5FB72A1AFD74E4F4F5A1919191A0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000666670769DA6F0FE3E9BF1FF10D4
       FEFF17EBFEFF1DE3F7FF24DFF2FF73CCDDFFC9EFF1FFC6F1F4FFC1F1F4FFBDF1
-      F5FFB8F4F9FF83A9F8FF403DDAF74F4F545A0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      F5FFB8F4F9FF83A9F8FF403DDAF74F4F545A6E93A2AD56EAFFFF47DAFDFF85E5
+      F8FFDFD0BAFFF5D1C1FFFBD7C7FFDDCCBFFF86D4E2FF83E4FBFF7CD9F2FF81DB
+      F3FFA3E2E8F878A2B0D74C4D4D57181818190000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000007073828C54A8EBFF11B8F9FF10D5
       FFFF12DEFFFF14E3FFFF1CDCF7FF9CD7E5FFD2F0F2FFCDEFF1FFC8EDF0FFC4ED
-      EFFFC0F0F4FF809CF7FF4645D0F2434345490000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      EFFFC0F0F4FF809CF7FF4645D0F24343454970A8BCC76FFAFFFF5FE7FDFF7DDD
+      F8FFB8E6E7FFDCE4DDFFF1F3EEFFE7E5DCFFABEAF1FF96E1F6FF92DEF4FF8ED9
+      F1FFA4D5E2F7799CABD14747474F141414150000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000006C7F94A315BFF6FF09C5FEFF0CC9
       FFFF0DCEFFFF0FD4FFFF18CEF5FF9ACEDDFFD6EEF0FFD2EEF0FFCEEEF0FFCAEE
-      F0FFC8F4F8FF7A90F5FF4F4EC8EB363636390000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      F0FFC8F4F8FF7A90F5FF4F4EC8EB363636395C64686B75A9B8C26BC7DEE95EDB
+      F6FF62DEFAFF6BDEF9FF86E2F4FF9DE4F4FFAEEBFBFFC9F8FEFFCAF7FEFFC4EC
+      F5FDD4EAEBF6788F9CB9323232350D0D0D0E0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000888BA9B97CB5F1FF1BADF2FF07BF
       FEFF09BFFFFF0EC3FDFF1BC5F8FF7DC5DEFFDEF2F3FFDCF3F4FFD8F2F4FFD3F2
-      F4FFCFF4FAFF7687EDFF5959B9E129292A2B0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      F4FFCFF4FAFF7687EDFF5959B9E129292A2B0000000000000000141414153434
+      3536575E62656F868E946F9FB1BD5DC7E3F067E6FBFF68DCF7FF78DCF7FF8FC3
+      DAF0ABC5D3E46C757A8412121213040404050000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000009597BBCFB4C0F7FF67A5EEFF0FC2
       FBFF11AFFAFF76CCF2FFBCE6F8FFD9F1FAFFEBFBFEFFE7F9FDFFE2F7FCFFDDF6
       FCFFD2ECF9FE7982E0F66C6C97AC121212130000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000626C727677F4FEFF76F9FFFF6AF0FEFF6779
+      83942F2F2F311010101101010102000000010000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000007E7F94A3979AC0D48A94B8CD58A2
       C1CF698EAFC08F92A4B28E8F9EAB898A97A2848490997E7E8890787882897273
       7A806A6B71774C4C4F5214141415000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000E0E0E0F575D606370858B916E828C951919
+      191A050505060000000100000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1361,11 +1517,11 @@ object SearchTextWindow: TSearchTextWindow
       8DD678658DD678658DD678658DD68D719FC07C6C8A93676785A06065809F6065
       809F6065809F6065809F5F616D8100000000424D3E000000000000003E000000
       2800000040000000400000000100010000000000000200000000000000000000
-      000000000000000000000000FFFFFF00800F0000000000000000000000000000
+      000000000000000000000000FFFFFF00800FE000000000000000C00000000000
+      0000800000000000000080000000000000008000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000001000000000000F80000000000FFFDC00000000000FC78
+      0000000000000000000000000000000000000000000000000000C00000000000
+      0000FE00000000000001FE0300000000F80000000000FFFDC00000000000FC78
       8000000000000000800000000000000080000000000000010000000000000001
       0000000000000001000000000000000000000000000000000000000000000000
       0000000000000000000000000000000100000000000000018000000000000001
@@ -1383,19 +1539,531 @@ object SearchTextWindow: TSearchTextWindow
   object BalloonHintSearch: TBalloonHint
     Images = ImgListSmallSearch
     HideAfter = 750
-    Left = 195
-    Top = 641
+    Left = 187
+    Top = 713
   end
   object ImgListLargeSearch: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Height = 32
     Width = 32
-    Left = 312
-    Top = 641
+    Left = 296
+    Top = 705
     Bitmap = {
-      494C010103000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
-      0000000000003600000028000000800000002000000001002000000000000040
+      494C010105000800040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000800000004000000001002000000000000080
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000040404051E1E1E1F2F2F2F3126262628181818190909090A0303
+      0304000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000010E0E0E0F2020
+      20212A2A2A2C1D1D1D1E06060607000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000001010102353535388B7D76AE887B74B46F6C69905958586A424242483131
+      31341B1B1B1C0D0D0D0E03030304000000000000000000000000000000000000
+      000000000000000000000000000000000000060606071B1B1B1C5B5E62735E6D
+      82A9606976A15A5A5B702D2D2D2F070707080000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000034333336C59A86D7F4AB84FFF5B18EFFF5AF88FEE2A685F7B0907ED98A7C
+      74BC6D6A68925F5E5D734545454C323232351E1E1E1F11111112060606070101
+      0102030303040F0F0F101919191A212121225A5B5C6E55637ECB1A55A0FF0881
+      DCFF00ABFFFF1D87C6EE5D5E5F78232323240000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00018B7D779BEDA179FDF8D5C3FFFCEBE1FFFADDCEFFF8C9B0FFF6B894FFF5B0
+      88FEE0A886F3C99B82E6928079C86E7074A95D5E60784F4F505C3B3B3B3F2626
+      2628343434375A5C5F705E60637C656871A9395279EF2A4B7EFE2F568DFF2D63
+      A1FF03C2EBFF00E5FFFF5C707DB0323232350000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000003A3A
+      3A3DED9C75FDF6C6B1FFFFFFFFFFFFFEFEFFFFFEFEFFFFFFFFFFFFFEFDFFF0E8
+      E7FFB4BDC1FF54BECAFF02D9F2FF00E0FFFF00C4F6FE19A0D1F154778EC9676E
+      78AF267FC4E900A0FEFF0098F0FF0F6DB3FF2D538DFF3363A0FF3C79BBFF488D
+      D4FF33A9D6FF20F8FAFF558692C12B2B2B2D0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000005050506897A
+      749AF0A886FFFBEEE8FFFFFEFDFFFFFEFDFFFFFEFEFFFFFFFDFFBBD1F0FF4DA2
+      F0FF19E2F7FF00E4FFFF46BDD3FF7BB2B7FF7DB5B7FF57C2CBFF0CC7F4FE0E99
+      E3FD0098E3FF00C4F7FF00CBFFFF00D5F7FF2482BFFF417DC4FF4C99E6FF50A3
+      F1FF4A99D5FF67ECF2FF646E7692141414150000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000003737373ACE91
+      76E2F6CFBEFFFFFFFEFFFDFCFBFFFEF0EAFFFAE2D8FF96A8CDFF0081F5FF12CD
+      FEFF19DEF7FF8DA0ABFFFFA474FFFFB082FFFFAE81FFFFA676FFDAA586FF53C6
+      CEFF00A1F1FF007BE0FF04D4F8FF04DCFEFF4DD9F1FF4D9DE9FF4B96E0FF3E79
+      BDFF426A9BF66E8397B618181819000000010000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000006D666476E790
+      6BFCFCF3F1FFFFFDFBFFFEFCFAFFFCC1ABFFD39083FF248ADEFF01A6FEFF22EB
+      FEFF44B1D7FFEA9171FFFA9E74FFFAAC82FFFCBB8DFFFCBE91FFFEB085FFEBA4
+      7CFF3DC4D9FF009BEBFF37C2E5FF15E0FAFF42DEF9FF419BD5FF2C5E9EFF3A57
+      80ED5E6063761C1C1C1D00000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000004040405C38C75D6F0AE
+      95FFFFFEFEFFFFFBF8FFFEF1EBFFFFC6AFFF8CA0BDFF00A8FAFF08C2FEFF21EE
+      FFFF8996ADFFFD8F67FFF8906AFFF88F69FFF8906AFFF8956EFFF99F76FFFAA1
+      76FFDDA280FF2EC5E4FF0E95E2FF05C0EEFF00D1FFFF1E93BCFF928485EF5B5B
+      5A69050505060000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000027272728E38563FBF5CF
+      C1FFFFFCFBFFFFFBF7FFFCE2D7FFFFBCA1FF63A6CEFF00BFFEFF0AD6FEFF24EE
+      FFFFA196A1FFFCA074FFF8936CFFF88C67FFF88E69FFF8906AFFF8906AFFF991
+      6BFFFA916AFF87B7AEFF00A5F2FF009FE6FF00AAFDFF72A0BEFF837C76991B1B
+      1B1C000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000066605E70EA8D69FFFAE8
+      E1FFFFF9F3FFFFFAF6FFFAC5B1FFFFB698FF60B2CEFF00DDFEFF05EDFEFF2AF7
+      FFFF81A3BCFFFFD6A5FFFEE7BBFFFDD7AEFFFABA92FFF9A57DFFF8976FFFF891
+      6BFFFA8F68FFE09A78FF01C1F8FF0886DFFF658DBFFDA19087CA1B1B1B1C0000
+      0001000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000006060607937B72A5EB9B7CFFFCF3
+      F0FFFFF7F0FFFFF8F2FFF9A88CFFFF966EFF78A4AEFF00EEFDFF06FCFEFF30FF
+      FDFF59AFD4FFEEC79FFFFFF8CDFFFFF6CBFFFEECBFFFFEE2B3FFFDCEA0FFFCBA
+      8EFFFB9F76FFFB946CFF0FC6F2FF699DC0FFD8A88BEE5F5D5C6D060606070000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000020202021B9816DCEEFB6A2FFFEFB
+      F7FFFFF3EBFFFFF7F0FFFDDACDFFFEB79BFFB9A8A4FF1EE7F1FF27FEFDFF3DFE
+      FCFF3BDEF6FFA7A7AAFFFFEEBEFFFFF5CAFFFFEDC0FFFFE6B7FFFFDDACFFFED3
+      A1FFFDB88BFFF7A177FF0BC8F4FF7AA5B9FF918178B022222223000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000033323235C9785EE2F4C9BBFFFFF7
+      F2FFFFF1E8FFFFF5ECFFFDE5D8FFFBBCA4FFE4B2A4FF51CBDCFF47FFFDFF57FD
+      FAFF4FF9FCFF3EB9E4FFE8B896FFFFE6B4FFFFE8B8FFFFE2B2FFFFDAA7FFFCCC
+      9BFFFEAF82FFD3A288FF00CEFAFF90A6AEFE595757650B0B0B0C000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000514E4D55D96D4BF7F8E2DBFFFFF4
+      ECFFFDF0E4FFFCDACAFFFDDCCBFFFAC2ACFFFDB89EFFB9ABAEFF60EDF7FF81FD
+      FAFF8CFCF8FF59FCFDFF43B3DFFFC2A698FFFEC795FFFFCD99FFFEC593FFFEB5
+      86FFEA9F7CFF4FBCCFFF18CCE9FF988B87D72626262801010102000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000072676479DD6B48FEFBF1EDFFFFF1
+      E5FFFEEEE0FFFAC1AAFFF99D7AFFF89A76FFFAA07DFFF7A98DFF8BB2C7FF92F5
+      F9FF96FCF9FF79FDF9FF41F5FCFF3BCAEBFF83A0B6FFC39E94FFD69F8AFFBC9B
+      93FF47B8D4FF01EAFCFF66A4B6FE837772A91515151600000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000008D756E9ADF704DFFFEFBF8FFFFEB
+      DCFFFFEADBFFFFEFE2FFFEECDEFFFDDECCFFFAB79DFFF99B77FFED9072FF93A1
+      AFFF54EDF5FF42FDFDFF2AFEFDFF27FFFDFF24F5FFFF17E5FFFF0BE3FFFF01E3
+      FEFF19E4F6FF64B0C3FFD79073F0615F5E740808080900000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000A27D72B0E68363FFFEF5F0FFFFEA
+      D9FFFFEADAFFFFEBDBFFFFECDDFFFFEEE0FFFEEBDDFFFBCBB6FFFBAF92FFF1A8
+      8EFF91A9B5FF27D1E7FF00F5FFFF00EFFFFF04DAFEFF0ACBFFFF1CBBF1FF63CA
+      E6FFC9E3F2FFEFB9A5FFBC8973E14D4C4C550202020300000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000AA7F70B7ED8864FFFBBCA1FFFBBE
+      A1FFFCC8AEFFFCC5ACFFFDD5C0FFFEE2D1FFFFEBDCFFFFF0E3FFFDD8C5FFFBC0
+      A8FFFFB89CFFF0AD99FFA4A5AEFF76A6C1FF69A1CDFF8E8FAEFFE6C4C0FFFFFA
+      F0FFFEF5F2FFF1AA8DFF967C70C3333333360000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000004A48484FD59781E7F7B996FFFCBF
+      99FFF8AC89FFF69974FFF99974FFFAA281FFFCB99CFFFBCCB5FFFEE4D4FFFEEA
+      DBFFFDDDCBFFFDD2BDFFFECEB7FFFFD6C3FFFCE7DAFFFFEBDBFFFFF0E5FFFFF5
+      EEFFFBEEE9FFEFA07DFF85766EAC262626270000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000005857575AF3EEEBF5FEF2
+      E8FFFCDEC9FFF6C2A7FFED9B78FFE9845FFFEE8661FFF89670FFF99A76FFF9A3
+      82FFFAB99EFFFDD0BBFFFEE4D4FFFEEDDFFFFFF2E5FFFFF2E6FFFFF0E7FFFFF4
+      ECFFFAE6DEFFED9571FF706A678A1919191A0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000001010102918A8591FAEE
+      E4FBFFFDFDFFFEF9F5FFFAE8E1FFF0BCA8FFE16D49FFF6A485FFFDD1B9FFFBCC
+      B4FFFAB698FFF9A484FFF89C7AFFF9A688FFFBC3ABFFFCDDCBFFFFEFE3FFFFF4
+      EAFFF8DFD5FFEB8D66FF605E5D73121212130000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000F0F0F109089
+      8397FFF7F1FFFFF3EAFFFFECDEFFFFFFFFFFEA926FFFF6A382FFFED8BFFFFFE5
+      CFFFFFE8D4FFFFE9D5FFFEE0CCFFFBCEB7FFFAB093FFFAAB8BFFFFEADBFFFFF6
+      EFFFF5D0C2FFE2845FFC5352525F0C0C0C0D0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001111
+      1112CBBBAFCBFFFAF5FFFFF4EBFFFFFDFCFFF0A584FFF6A684FFFED5BBFFFFE1
+      C9FFFFE1C9FFFFE2CCFFFFE6D2FFFFE7D5FFFEE7D5FFFEE6D5FFFFE9D8FFFFF6
+      EFFFF4CABCFFD17E5EF4494948510909090A0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000024242425C4B6ACC5FFFDFCFFFFFEFDFFF6B996FFF8AA86FFFED2B3FFFFDD
+      C0FFFFDDC2FFFFE0C5FFFFE0C8FFFFE3CBFFFFE3CFFFFFE6D2FFFFE6D3FFFFF8
+      F1FFF1BBA9FFC4775DEC40404046060606070000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000135343436F4E6DDF4FFFFFFFFFBC6A4FFF9AA85FFFECEADFFFFD9
+      BAFFFFDBBEFFFFDCC0FFFFDEC4FFFFDEC5FFFFE2CAFFFFE3CCFFFFE3CDFFFFF7
+      F0FFEFB19CFFB8745BE43D3D3D42060606070000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000056555459EAE8E6ECFCCAA8FFFBB494FFFED4B8FFFFD8
+      B8FFFFD5B5FFFFD6B6FFFFD8BAFFFFDABFFFFFDCC3FFFFDFC4FFFFE0C7FFFFF6
+      EEFFEEAF9BFFB77059E53D3D3D42060606070000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000070707087372727AF3AB8AFFF5A385FFF9DDD3FFFEF6
+      EFFFFFF2E5FFFFE5CFFFFFD9BDFFFFD7B7FFFFD8B9FFFFDABEFFFFDDC4FFFFF6
+      F0FFEA9F87FFB76E57E53D3D3D42060606070000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000776B6882CC846DDAD45A39F8DA64
+      45FEE89A86FFF0C0B4FFF8E1DCFFFBEFE8FFFFEEE0FFFFE6D2FFFFDFC5FFFFF7
+      F0FFE79175FFB66C54E53D3D3D42060606070000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000070707082B2B2B2D5852515B8C71
+      6A96BE6B53D9D55635FCDD6647FFE38165FFEDB0A0FFF4D3C9FFFDF7F3FFFAEE
+      E9FFE17251FFB56C55E43B3B3B3F050505060000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000011F1F1F205F5A58688E726A9EBA725CD1CA6448EADA623FFEDB5F
+      3CFFDC5F3BFFAC7361D123232324010101020000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000003030304232323243D3C3B3F7A6B6680A57A
+      6CB6B97863D1645E5B6D08080809000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000001010102141414152727
@@ -1411,8 +2079,8 @@ object SearchTextWindow: TSearchTextWindow
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000050505061A1A1A1B2A2A
+      2A2C2C2C2C2E2020202106060607000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000001C1C1C1D756D698B8775
       6FAE7B6F6BA0676463824C4C4C56363636391717171805050506000000000000
@@ -1427,8 +2095,8 @@ object SearchTextWindow: TSearchTextWindow
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000F0F0F103B3B3B3F7474729F7675
+      75B2707070A65C5C5C742D2D2D2F070707080000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000011919191AAC8D81B7FFCBA9FFFFCF
       ABFFFEBB97FFFAA784FEC38971E587736DB96260607B4444444B1A1A1A1B0404
@@ -1442,9 +2110,9 @@ object SearchTextWindow: TSearchTextWindow
       6CFCA36756DF716462A4535252612828282A0606060700000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000002020203080808090E0E0E0F0E0E0E0F0909090A04040405000000000000
+      0000070707080C0C0C0D131313143737373B6565669F414142EE595757FF9F9F
+      9EFFBFBDBBFF969593ED605F5F7B262626270000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000060606071C1C1C1D4F4E4E58CD9D89DEFFDCBBFFFFD9
       B8FFFED5B4FFFECFACFFFCBC98FFF6AA86FCBF8A72E484716CB35050505D2828
@@ -1457,10 +2125,10 @@ object SearchTextWindow: TSearchTextWindow
       97FFF8C29CFFF5BF99FFF4BE97FFF2BE98FFF2BE98FFF4C9A5FFF9E0BDFFFEEE
       C6FFFFDDB5FFF19B75FD995F50DB646060843232323504040405000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000002020203000000010000000000000000010101020B0B
+      0B0C2828282A4646464D525252605252525F4444444B31313134161616171515
+      1516434343495050505C62626287555457CD302D30FB352B2FFF473438FF594D
+      4FFFC8C8C7FFD5D4D3FF757574B8353535380000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000006060607605D5C6DA9887CC6D49D86EBEEA98AF9FCB592FFFAB4
       93FFFED1B0FFFFD7B6FFFFD5B4FFFECCA9FFFCB894FFFDAE89FFA87E6ED76462
@@ -1473,10 +2141,10 @@ object SearchTextWindow: TSearchTextWindow
       A1FFF2BF99FFF2BA94FFF3BC96FFF2BD97FFEEB38DFFEBA882FFE6956DFFE386
       5FFFE99972FFF9BF99FFFFB48DFFB2604AEA6360608023232324000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000001202020214343444A3737373B1E1E1E1F1A1A1A1B4545454C6D6D
+      6C8E939191DEAFAEADF8B4B4B3FCAAA9A8F8878585DD717070B4646464847F7F
+      7EB8A3A19FF99D9B9AFA6A6768FF3D3438FF4B373BFF614348FF85555BFF9C5E
+      64FF988C8EFFECEEECFF858584CA333333360000000000000000000000000000
       0000000000000000000000000000040404050909090A05050506000000000000
       0000020202035251505AE8B196F1FDD5B9FEFFDDC2FFFFDBC0FFFED8BBFFFCD0
       B2FFFDD3B5FFFFD8BAFFFFD7B7FFFFD7B5FFFDCAA7FFFCB995FFF6AA87FC9879
@@ -1489,10 +2157,10 @@ object SearchTextWindow: TSearchTextWindow
       8EFFFBBB95FFFDC6A0FFFDD2ACFFFEDEB8FFFEEFC7FFFFFBD4FFFDF6CFFFF7D0
       AAFFEB9C75FFDE6E4AFFEA8962FFFD9B72FF906256CF4545454C050505060000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000017171718677D8AA054809ED162727CAB6061617B6E6E6D96969494DEC1BF
+      BEFAD0D2D2FFD9CBC6FFE0C9C0FFE0CBC2FFD6CFCDFFB8BBBCFB8A8988EDA2A0
+      9FFCCFCECCFFD0CECDFFBFBDBCFF928A8BFF71484EFF925C62FFBB7179FFD480
+      87FF987277FFE6E7E6FF7F7E7EB8222222230000000000000000000000000000
       000000000000020202032D2D2D2F555353605B59596B494949522E2E2E301B1B
       1B1C4746464CD7A591E2FFE5CEFFFFE1C8FFFFE0C6FFFFDFC5FFFFDEC3FFFFDD
       C2FFFFDCBFFFFFDBBDFFFDD7B8FFFECBAAFFFDC3A1FFFBBB98FFFCB995FFD294
@@ -1505,10 +2173,10 @@ object SearchTextWindow: TSearchTextWindow
       8BFFFBBB96FFFCC6A0FFFCD0AAFFFDDCB5FFFDE9C2FFFFF8CFFFFFFCD5FFFFEE
       C7FFFFE1B9FFF9BF9AFFE37A56FFE9724EFFC66A4FF055545363080808090000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00005F666B762D9BD9F80DC1FDFF24ABE2FF8B9399FBB2B0ADFFDCDBDBFFD2CE
+      CBFFEAA98FFFF9A077FFFBA578FFFBA277FFF9A27BFFF4B9A2FFD8CDC9FFA5A5
+      A4FF8E8B8AFFB8B6B4FFD9D8D7FFDBDDDCFFB58D90FFCB7882FFC37580FF9D62
+      69FF695357FFADACACEC43434349060606070000000000000000000000000000
       00000000000028282829A9897DC4CEA693E7C59A88E49F7E72CD726B67976461
       607BA38579C4FBD3BAFDFFE3CCFFFFE1CBFFFFE0C8FFFFE1C8FFFFE0C5FFFFDF
       C5FFFFDCC1FFFFDDC0FFFDDABDFFFECAAAFFFBB895FFFCB794FFFDB794FFB18B
@@ -1520,11 +2188,11 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A57F73B5FEE4BDFFFA9F78FFFA966FFFFAA27CFFFAA984FFFBB2
       8CFFFBBB96FFFCC6A0FFFCD0AAFFFDDCB5FFFDE9C2FFFFF7CFFFFFFAD2FFFDE9
       C2FFFDD8B1FFFCCBA4FFFDBD98FFEB7B57FFBF563AF255555464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000A0A
+      0A0B4E97C1D91DA1E8FF1CBCF2FF69A4B3FFB6B0ACFFC8C7C6FFD8D7D5FFDEAF
+      9CFFFCAA7CFFFCBB8EFFFBC092FFFCBD90FFFAB286FFFBA679FFF6AD8EFFDDCD
+      C8FF959593FF9B9998FFDDDCDBFFDFE0DEFFD9C7C9FFAF6E74FF774F54FF4333
+      37FF6B6A6BCA5353535D04040405000000000000000000000000000000000000
       000011111112AC8D82B6FFE4CFFFFFEBD8FFFFEBD8FFFFE6D2FFFDCFB6FEFEC1
       A5FFFFDDC7FFFFE7D2FFFFE4D0FFFFE3CFFFFFE4CDFFFFE3CCFFFFE2CAFFFFE1
       C8FFFFE0C6FFFFDDC4FFFFDDC2FFFED8BBFFFBBC9AFFFAA582FFB28270D94D4C
@@ -1536,11 +2204,11 @@ object SearchTextWindow: TSearchTextWindow
       000006060607A68174B6FCAD89FFF9916BFFFA9C75FFFAA17BFFFAA984FFFBB2
       8CFFFBBB96FFFCC6A0FFFCD0AAFFFDDCB5FFFDE9C2FFFFF7CFFFFFFAD2FFFDE9
       C2FFFDD8B2FFFCC8A2FFFCBA95FFFEA984FFC56549F155545464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000000000575B
+      5E6612B1F3FF0CB3F5FF45A3CEFFADAFAFFFBEBCBBFFD8D7D8FFD3C4C0FFF2A6
+      83FFFDCB9BFFFED7A4FFFFD8A6FFFED5A3FFFECB9BFFFBBE90FFFBA97CFFFAA7
+      86FFD0CBC8FFA1A09FFFC3C3C2FFD4D3D2FFD4D1D0FF5A4F52FD585859CD5B5B
+      5B70080808090000000000000000000000000000000000000000000000000000
       000028282829D0A998D5FFEDDCFFFFE7D5FFFFE7D5FFFFE9D7FFFFEAD8FFFFE9
       D7FFFFE9D6FFFFE6D3FFFFE7D2FFFFE6D2FFFFE4CFFFFFE5CDFFFFE4CDFFFFE3
       CAFFFFE0C8FFFFE0C6FFFFDFC5FFFFDCC2FFFDC4A3FFFDBF9EFFA47F70D24D4D
@@ -1552,11 +2220,11 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A5796CB5FA936DFFF99771FFFA9B75FFFAA17BFFFAA984FFFBB2
       8CFFFBBB96FFFCC6A0FFFCD0AAFFFDDCB5FFFDE9C2FFFFF7CFFFFFFAD2FFFDE9
       C2FFFDD8B2FFFCC8A2FFFBB893FFFFAE88FFCC7055F155545464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000F0F0F106685
+      99B10ABFFCFF07BDFDFF6198B9FFBEBBB8FFC5C4C2FFDCDBDCFFD6BFB5FFF6B2
+      89FFFEDAA8FFFFE0AFFFFFE0B0FFFFDEADFFFDD8A6FFFECD9CFFFBB98CFFFBA3
+      77FFEFBEABFFAFAEAEFF9C9B9AFFCAC9C8FFB8B7B6F96E6E6EB52E2E2E300404
+      0405000000000000000000000000000000000000000000000000000000000000
       00000B0B0B0CA78C82A9FEE8D8FFFFECDCFFFFEBDBFFFFEBDBFFFFE9D9FFFFE9
       D9FFFFEAD7FFFFE8D8FFFFE9D7FFFFE8D6FFFFE7D3FFFFE5D3FFFFE4D1FFFFE3
       D0FFFFE3CDFFFFE2CBFFFFE1C7FFFFDFC6FFFCC8A9FFFDC5A5FFCC9780E95D5B
@@ -1568,10 +2236,10 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A5786CB5FA946EFFF99771FFFA9B75FFFAA17BFFFAA984FFFBB2
       8CFFFBBB96FFFCC6A0FFFCD0AAFFFDDCB5FFFDE9C2FFFFF7CFFFFFFAD2FFFDE9
       C2FFFDD8B2FFFCC8A2FFFBB893FFFFAD87FFCB7054F155545464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000004445454A3AA4
+      D6EC0BC5FFFF05C3FFFF79A1B6FFCCC7C4FFCECDCBFFE1E0E1FFD6BFB5FFF6BA
+      8FFFFFE4B5FFFFE9BBFFFFE8BAFFFFE5B6FFFFDEAEFFFFD9A7FFFDC797FFFBB4
+      87FFF8A787FFD7CBC8FF9D9A99FFB3AFACFE8B8A87D041414147040404050000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000031303032E4B09AE8FEE5D4FFFFEEDFFFFFEEDFFFFFEEDFFFFFF0
       E1FFFFECDCFFFFEBDAFFFFE9DAFFFFE8D7FFFFE9D8FFFFE8D6FFFFE7D2FFFFE6
@@ -1584,11 +2252,11 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A5796CB5FA946EFFF99771FFFA9B75FFFAA27CFFFAAA86FFFBB4
       8FFFFDBE99FFFECAA4FFFED6AEFFFFE2B9FFFFEEC6FFFFFCD3FFFFFED6FFFDEB
       C5FFFDD8B2FFFCC8A2FFFBB893FFFFAD87FFCB7054F155545464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000006777818C19B5
+      F2FE10C6FFFF09C6FFFF71A8BEFFD1CCCAFFD5D4D3FFE2E1E1FFD6C8C3FFF2B6
+      90FFFFEBBCFFFFF0C5FFFFEEC2FFFFE9BBFFFFE2B1FFFFDCABFFFECF9EFFFCBB
+      8EFFFAA37BFFE7CBC0FF999B9CFF6E8A9FFA6A6D70A54F4F4F5B303030321919
+      191A040404050000000000000000000000000000000000000000000000000000
       0000000000000000000021212122776D697DA28A82A6A28A81A7AD8F85B1DAAB
       98E0FEEBDCFFFFEDDFFFFFEDDCFFFFECDDFFFFEBDBFFFFEAD9FFFFE9D7FFFFE8
       D6FFFFE7D3FFFFE4D1FFFFE4CEFFFFE2CBFFFCCBADFFFDCBACFFB78B7AD94544
@@ -1600,11 +2268,11 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A5796CB5FA946EFFF99771FFFA9D76FFFDA47DFFFFAB7DFFFFAE
       7CFFFFAE7DFFFFAF7BFFF9B284FFF4B68DFFFFC895FFFFDEAAFFFFEDBAFFFFE9
       B9FFFFDDB4FFFCCBA6FFFBB994FFFFAD87FFCB7054F155545464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000004040405529BC2D919C4
+      FAFF17C8FFFF10CAFFFF54A8CBFFD3CFCDFFDEDDDDFFE3E3E2FFDDDBDAFFE1AC
+      93FFFFE8B8FFFFF9CFFFFFF3C8FFFFEDBFFFFFE3B6FFFFDEAEFFFED2A0FFFCBF
+      91FFFAA479FFE8C4B6FF9FB0B4FF49C8EAFF3CB0E1F9498EB3E461727DB26064
+      6684333333360707070800000000000000000000000000000000000000000000
       00000000000000000000000000000000000102020203030303040A0A0A0B5955
       535DFED7C4FFFFF0E3FFFFEDDFFFFFECDEFFFFEBDEFFFFECDCFFFFE9D8FFFFE8
       D8FFFFE7D4FFFFE7D3FFFFE4D0FFFFE3CCFFFCCCADFFFECAABFF997E73C02E2E
@@ -1616,11 +2284,11 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A5796CB5FB9670FFFF9C71FFFF9966FFF1875FFFC26964FF8F4F
       73FF683E86FF563894FF47339EFF3C30A6FF533C9CFF5B4299FF875C8CFFB67A
       80FFE39E7CFFFFB886FFFFBB8FFFFFB18BFFCB6F54F155545464080808090000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000262626272BABE6FB1CCA
+      FEFF1CC9FFFF18CBFFFF39A8D8FFC5C7CAFFE6E5E5FFE8E8E6FFE7E8E7FFD2BB
+      B4FFFBC598FFFFF4C9FFFFF3C7FFFFECBFFFFFE4B5FFFFDEADFFFED1A0FFFCBD
+      90FFFAA47AFFE6C6B9FFA5B3B4FF60DEEAFF5CE9FDFF57E0FAFF4BC3E9FB4891
+      B9E8545555641616161700000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000000000000000000001635E
       5C6CFEE0D0FFFFF2E6FFFFF0E2FFFFEFE2FFFFEEDFFFFFECDFFFFFECDDFFFFEB
       DBFFFFEAD8FFFFE7D6FFFFE7D3FFFFE1CBFFFECDAFFFFEC2A1FF736B698D1616
@@ -1632,11 +2300,11 @@ object SearchTextWindow: TSearchTextWindow
       000005050506A5796CB5FF9665FFE0755AFF834271FF2E1F9FFF0816C0FF0016
       D5FF001CE2FF001FEAFF0024F0FF0026F7FF0026F8FF0027FDFF0024F5FF001D
       DCFF181FB9FF603A8BFFC16F6AFFFFA472FFD07254F155545363070707080000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000005C62657026BEF5FF24CF
+      FFFF22CCFFFF1FCEFFFF26AFE9FF8CADBCFFF2EFEEFFEFF0F0FFF2F2F2FFE3E7
+      E7FFD7AF9FFFF8C396FFFFE5B5FFFFE5B5FFFFDFAEFFFFD9A7FFFEC898FFFCB4
+      87FFF6A382FFDCCDC7FF96B1B4FF67E5F2FF68EEFFFF68EEFFFF69F1FEFF4DC7
+      F1FF636A6F902525252600000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000000000000023232324AE92
       87C3FFF2E9FFFFF2E7FFFFF0E4FFFFEFE4FFFFEEE1FFFFEFE1FFFFECDFFFFFEC
       DDFFFFEBD9FFFFEAD8FFFFE8D6FFFFDFC8FFFECFB1FFF7B090FC4F4E4E590A0A
@@ -1648,11 +2316,11 @@ object SearchTextWindow: TSearchTextWindow
       000004040405AA7A69B3A55265FF251AA0FF0011C9FF0519D6FF0921DCFF0923
       E1FF0724E4FF0725E5FF0725E5FF0626E6FF0428EDFF022BF3FF0031FEFF0033
       FFFF002EFFFF0020F0FF0B1AC2FF6F3F83FFC06048F1575656670A0A0A0B0000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000006060607698191A52ACCFBFF2AD1
+      FFFF27CEFFFF25D0FFFF29B7F0FF61C0D6FFD8D4D3FFF8F9F9FFF9FAF9FFF5F6
+      F5FFDBD9D7FFD7AF9DFFFCB688FFFFCD9BFFFED1A0FFFEC999FFFDB588FFFCA0
+      72FFE8B6A4FFD0C9C9FF86BCBFFF6DF0FBFF6EF2FFFF6EF2FFFF73F1FCFE62D6
+      F1FD63727DA82F2F2F3100000000000000000000000000000000000000000000
       00000000000003030304040404050000000000000000030303049085809DFAD3
       C2FDFFF5EDFFFFF2E8FFFFF3E9FFFFF2E6FFFFF1E6FFFFEEE4FFFFEFE0FFFFEC
       DFFFFFECDDFFFFE9D9FFFFE9D7FFFDDAC1FFFDCFB2FFBC8F7DDB2A2A2A2C0202
@@ -1664,11 +2332,11 @@ object SearchTextWindow: TSearchTextWindow
       0000101010117F637CC50D11B6FF0614CCFF0C1DD3FF0922DEFF0823DDFF0B1F
       D0FF0D1BC5FF0D1ABFFF0E19BDFF0F18BBFF0F18BAFF1017BAFF1017BEFF0D1B
       CAFF0921DCFF0528EEFF0027F2FF0019DAFF3D2889F76462648C2929292B0101
-      0102000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      010200000000000000000000000000000000202020215B99BACE32D6FFFF31D4
+      FFFF2FD2FFFF2CD4FFFF2DB7EEFF62E4F8FF9BBFBBFFE5E0DFFFFEFEFEFFFEFE
+      FEFFF4F4F4FFE0E5E4FFD0BCB5FFE1A891FFEFA584FFF2A380FFECA589FFDFB8
+      AAFFD0CFCFFFA9AEADFF75EBEFFF76F7FFFF78F6FFFF77F5FFFF7EEDF5FC7BDC
+      E4F55C798BBE3838383C00000000000000000000000000000000000000000000
       0000040404052222222331313134141414150000000136363639EFBBA7F5FEF3
       EBFFFFF5EDFFFFF3EAFFFFF3EBFFFFF4EAFFFFF1E7FFFFF1E6FFFFEEE2FFFFEF
       E0FFFFEDDFFFFFECDDFFFFE8D6FFFED7BDFFFCC5A8FE8E7B74B0171717180000
@@ -1680,11 +2348,11 @@ object SearchTextWindow: TSearchTextWindow
       000058595F6B0910B3FF0F16C8FF0823E0FF0625E1FF0C1BC4FF1314ACFF0B15
       ACFF0419BAFF021DC6FF0120CDFF0121D2FF0123D7FF0323D5FF0620CBFF0B1A
       BBFF1213ACFF1413B3FF0F1ACCFF0A21DDFF071BD5FF454581D64F4F4F5B1111
-      1112000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      1112000000000000000000000000000000003232333550A6CEE239DBFFFF36D6
+      FFFF34D5FFFF32D8FFFF30B6EDFF6AE4F7FFADD5CBFFD0B9ACFFE8E9EAFFFDFD
+      FCFFF4F4F4FFEDEDEDFFE3E4E5FFDCDBDAFFD6CDCAFFD7CAC4FFD6D2D0FFD2CE
+      CCFFAAB3B3FF85D1D4FF81F9FFFF81F6FFFF81F7FFFF81F5FEFF88E5ECF88CDD
+      DFF0587E96CB3E3F3F4401010102000000000000000000000000000000000000
       0000353536384F9FC8D161717CA95555556536363639A88F87BBFEF3ECFFFFF8
       F2FFFFF5F0FFFFF4EDFFFFF6EEFFFCE3D6FFFBCCB8FFFFF2E8FFFFF1E6FFFFF0
       E4FFFEEADCFFFDECDEFFFDE4CFFFFED9BEFFE0A890F1605D5C71070707080000
@@ -1696,11 +2364,11 @@ object SearchTextWindow: TSearchTextWindow
       0000504D9CD11017C5FF0428ECFF0822D1FF1213ACFF1313B8FF1314B6FF0512
       A7FF0015B1FF0015B4FF0017B9FF0019BDFF001AC1FF001CC7FF001FCDFF0021
       D3FF0020D0FF0919B8FF1312A9FF1212BAFF0E1AD0FF1217B3FE63626B952020
-      2021000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      2021000000000000000000000000000000004D50525641BCE8F741DDFFFF3FDC
+      FFFF3DD9FFFF3BDCFFFF38B4EBFF7DECF8FFB2E0D9FFFDDEC9FFCFC3B8FFCBC8
+      C6FFE0DFDEFFDEDEDDFFD7D7D6FFD1D1D0FFD0CECDFFC7C5C6FFABBBBDFF94C8
+      C7FF8AF2F3FF8BFAFFFF8BF6FFFF8BF6FFFF8DF7FEFF8CF3FCFF94DDE0F195DB
+      DCED5786A3D54A4B4B5404040405000000000000000000000000000000000000
       00003A3A3B3E2DC2E8EA21BBE6F657778DC0776F6D9FEAC2B2F2FFFBF7FFFFF6
       F1FFFFF6F0FFFFF7F0FFFFF6EFFFFAC1AAFFFCE3D6FFFFF4EBFFFFF1E7FFFFF2
       E7FFFAC3ADFFFEEADCFFFEDCC4FFFEDABFFFB78D7DD63F3F3F44000000010000
@@ -1712,11 +2380,11 @@ object SearchTextWindow: TSearchTextWindow
       00002B2CABEF0329F1FF0822CFFF150FA6FF1313BEFF0F18CCFF1018BFFF060C
       96FF000B97FF010D9BFF010D9FFF010FA2FF0110A6FF0112AAFF0013AEFF0014
       B1FF0016B8FF001AC0FF0318B6FF1211A4FF1313BCFF1315C0FF605F74AD2222
-      2223000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      222300000000000000000000000000000000616B727941C9F3FE48E0FFFF45DF
+      FFFF42DCFFFF42DEFFFF3BB4EAFF86EDF9FFC3D5CBFFFEE8D9FFFCE7D6FFE8CC
+      BCFFCCC6BEFFBEBEBAFFB6B6B4FFB2ADA9FF9BA09EFF72AABEFF40A0D4FF5DC5
+      E9FF85E7F6FF96F8FDFF9AFDFFFF96F9FFFF94F7FEFF94EFF7FD9BD8D9ED9EDB
+      DAEC5A91AEDB4E4F505A05050506000000000000000000000000000000000000
       00002728282951B0D0D628E7FFFF2CDAFAFFD1AEA5FBFFF4EDFFFFF9F5FFFFF9
       F3FFFFF9F4FFFFF8F3FFFCE6DCFFFAC6B1FFFFF9F2FFFFF3EAFFFFF4EBFFFCD3
       C1FFFCD1BEFFFFE9D9FFFEDBC1FFFEC8ABFF736B688912121213000000000000
@@ -1728,11 +2396,11 @@ object SearchTextWindow: TSearchTextWindow
       00002B3CC2EB022AEAFF1411AAFF1313BCFF0F18C6FF0C1DD2FF0E1BC6FF0708
       8BFF000484FF010689FF01078CFF01088EFF010990FF010A94FF010B97FF010C
       9AFF010D9DFF010FA1FF0111A5FF11119FFF1313B0FF1413BEFF5F5F74AE2222
-      2223000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      2223000000000000000000000000000000006A84939F4BD5F8FF51E3FFFF4FE1
+      FFFF4CE2FFFF48E0FEFF48B7E9FF95F4FCFFD2D2C0FFDFBBA5FFCDB6ABFFF7C7
+      B4FFFEC2A9FFFDC4ABFFF5C8B3FFFADFCCFF9DABA2FF99F6F8FF93ECF8FF71CF
+      ECFF4EB1E2FF45AADEFF58BAE5FF70D0EDFF8AE4F5FF9CE4EBF9A4D7D6ECA6DC
+      DBED5B91AFDC4C4C4D5603030304000000000000000000000000000000000000
       00001C1C1C1D5FA3C1C93CEBFFFF74CDCFFFFFD6C6FFFFFCFAFFFFF9F6FFFFFA
       F6FFFFF8F4FFFFFDF9FFFCCEBBFFFDE2D5FFFFF7EFFFFFF5EDFFFEEEE3FFFBBD
       A6FFFEEDDFFFFFE1C9FFFFD9BEFFCD9986DF2C2C2C2E02020203000000000000
@@ -1744,11 +2412,11 @@ object SearchTextWindow: TSearchTextWindow
       00002B3DC3EB0920CDFF1510AFFF1115C2FF0D1ACCFF0A20D9FF0D1ECBFF0704
       7DFF010070FF030076FF040178FF04027AFF03027CFF02037DFF010381FF0004
       85FF00068AFF01088EFF020990FF1110A3FF1513AFFF1315BCFF605F74AD2323
-      2324000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000303
+      2324000000000000000000000000000000006891AABA54E0F9FF58E7FFFF55E6
+      FFFF52E5FFFF4EE1FDFF51B9E9FFA4F9FDFFBBE9E1FFF2CAA4FFD2BDB1FFF8F8
+      F5FFFEF3ECFFFEE9DEFFFEE1D2FFFFE5D5FFA0B1AAFF94E9F7FF96E8F7FFADFC
+      FEFFAEFBFDFFA1EFF9FF85DCF2FF6AC6E9FF4FACDFFE4AA4D6FB90C6D4EFABDC
+      DCEE5886A2D24242424800000001000000000000000000000000000000000303
       03044A4B4D5351BCDEE959E9F9FFC5BBAFFFFFFAF7FFFFFCFAFFFFFCF9FFFFFA
       F7FFFFFBF8FFFEF0E9FFEAA890F5FAE3D9FDFEF1E9FFFDEADFFFDDAA96E6D7A5
       92DEF8CBB4FBF4C6ACF8B29083C23D3D3D410101010200000000000000000000
@@ -1760,11 +2428,11 @@ object SearchTextWindow: TSearchTextWindow
       0000273AC2ED0C1CC3FF1410B5FF0F17C7FF0C1CD1FF0822DFFF0B1FCEFF0E0C
       94FF0B12A4FF0C18B5FF0B1DC4FF0B1CC4FF0C18B7FF0C14AAFF0C0E9AFF0908
       88FF05037BFF00017AFF01037DFF100FA2FF1413B3FF1216C0FF606074AC1E1E
-      1E1F000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000020202033131
+      1E1F000000000000000000000000000000005F9FC0D460E8FBFF61EBFFFF5FE9
+      FFFF5DEBFFFF4ED8F7FF68C5ECFFB8FDFEFFB3FDFFFFC2E8E0FFE9C4B0FFF4DF
+      D6FFFAEAE3FFFEF0EAFFFFF8F4FFFDDED3FFA0BDBBFF94E3F6FF4FACDFFF4AA9
+      DFFF5CB7E4FF79CDECFF99E5F5FFACF1F9FFB6F5F9FDAED6DDF1ADD4D8EDB1DC
+      DEEE5B7F96C93838383C00000000000000000000000000000000020202033131
       32345C92AEC849E1FCFD6DE4EEFFDBC5B8FFFFFFFEFFFFFBF9FFFFFBFAFFFFFC
       FAFFFFFDFAFFF3C4B1FA6F68657F897A758FAB9288B08C7D77923C3B3B3F3131
       31335955535A54514F561F1F1F20020202030000000000000000000000000000
@@ -1776,11 +2444,11 @@ object SearchTextWindow: TSearchTextWindow
       00003A46B5E10D1CC4FF1411B7FF0F19C9FF0A1ED6FF0624E5FF0A1ECCFF0922
       D3FF022DF9FF012DF9FF012DF8FF022CF7FF022BF4FF0429EFFF0726E6FF0C20
       D3FF0F17B6FF0C0B91FF040276FF100D9EFF1414B6FF1117BCFF63636F920D0D
-      0D0E000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000003333333445A6
+      0D0E000000000000000000000000000000005EA2C3D869ECFCFF69EFFFFF67EE
+      FFFF65EEFFFF5BE3FBFF4DB0E6FF8AD5F0FFACEDF9FFBCFBFFFFC8F4EFFFCBEC
+      E7FFD2E1D9FFDBDACEFFE9D4C7FFEFC2B1FFB2E6E7FFBBFBFFFFB8F9FCFFADEF
+      F8FF95DDF2FF7ACBEBFF5DB5E3FF52ADE0FF5EB1DEFD86BDD7F5B2D3D7EDB0D8
+      E0F15F7B8EBE31313134000000000000000000000000000000003333333445A6
       D1DC2FE6FFFF4BE9FFFF76E5EEFFDEC5B7FFFFFFFFFFFFFCFCFFFFFDFAFFFFFD
       FCFFFDE6DEFF9E827CCF35353538050505060000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1792,11 +2460,11 @@ object SearchTextWindow: TSearchTextWindow
       00006464798A1214ABFF1312BAFF0E19CAFF0A1ED8FF0525E9FF0B1EC8FF0527
       E1FF002EFAFF002EF8FF002EF7FF012CF6FF012BF3FF0329EFFF0427EAFF0625
       E5FF0922DFFF0D1ED1FF1113A8FF1310A2FF1413B5FF393997E53A3A3A3E0000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000494B4B4C17C7
+      0000000000000000000000000000000000005DA1C5D75FD9F3FF6BEAF9FF6DEF
+      FCFF6FF2FEFF6EF4FFFF62E6F9FF4ACAEFFF42BAEAFF45B3E8FF5FBEEAFF77CB
+      EFFF97DEF5FFAAE9F8FFBCF4FCFFC4FAFCFFC9FEFFFFC8FCFFFFC5FBFFFFC4FB
+      FFFFC5FBFFFFC9FCFFFFCAFEFFFFC3F8FDFFA6D5E8FA87B9D5F4A7C8D5EEACD5
+      E2F4637580A92626262800000000000000000000000000000000494B4B4C17C7
       F8FA29E8FFFF48E9FFFF6EEAF8FFD0BCADFFFFFAF8FFFFFEFDFFFFFEFDFFFFFF
       FFFFE7C2B2FF64859EDB5151515E1C1C1C1D0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1808,11 +2476,11 @@ object SearchTextWindow: TSearchTextWindow
       000015151516545298CB1312B7FF0E19CBFF0920DAFF0723E1FF0D1BBEFF022C
       F0FF002FFBFF0030FBFF002FFBFF002EF9FF012CF4FF032AF0FF0428EAFF0624
       E3FF0921DBFF0B1ED4FF0F19C8FF1312AEFF1916A4FC5C5C6173020202030000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000080808094345
+      000000000000000000000000000000000000393A3B3D687882886A94ACBA60A4
+      C6D84CBDE8FC56D0F2FF64E2F7FF6CEEFBFF6EF4FEFF69F0FBFF5EE3F8FF54D5
+      F4FF4CC5EFFF4ABBEBFF53B5E8FF67BDEAFF8FD1EFFFADE3F5FFCAF7FDFFD3FD
+      FEFFD5FDFFFFD0FCFFFFCDFBFFFFCBF8FDFFC8E4E9F7C9D8D7ECCAD7D7EAA1CF
+      E5F7646F76961E1E1E1F00000000000000000000000000000000080808094345
       46496890A7AA53BEE0E45DECFEFF8DDDE0FFF3C1AEFFFEEEE9FFFFF9F6FFFDD4
       C5FF96C8C3FF3DE0FFFF5D7586B95050505D0F0F0F1000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1824,11 +2492,11 @@ object SearchTextWindow: TSearchTextWindow
       00000000000041404346211FABF71018C8FF0A20DAFF0D1BC2FF0920CEFF002F
       FBFF0030FDFF0030FEFF0030FDFF002FFAFF012CF4FF032AF0FF0427E9FF0724
       E2FF0920DAFF0B1CD2FF1016C0FF1512AFFF5A5981BD1A1A1A1B000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000202
+      02031D1D1D1E4244454860686E786A8697A26799B4C362AAC9DA5CC1E0F15BD5
+      F1FD63E5F8FF69EEFAFF66EDFDFF5FE5FAFF4BCEF2FF41BFEDFF43B3E9FF54B8
+      E9FF76C4ECFF94D3F1FFB3E3F6FFC5EDF9FFCDDFE1F3CFD7D7EBD2DAD9EB82BD
+      DFF85C5E61721010101100000000000000000000000000000000000000000000
       00000A0A0A0B38393B3C61ABCFD462ECFEFF9ED5D4FFD4C3B4FFE5C2B2FFB9C5
       BBFF5AEBFAFF41EBFFFF32B5E0F3636C749F2D2D2D2F03030304000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1841,10 +2509,10 @@ object SearchTextWindow: TSearchTextWindow
       F5FF002FFBFF0031FEFF0030FCFF002EF9FF012BF3FF0329EEFF0526E7FF0823
       DFFF0B1ED7FF0D1ACEFF1314B2FF26229FF55050525D00000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000005050506181818192B2B2B2D46494B4D5D66
+      6C706C8A9CA7669CB9C850B3DDF150C6ECFD6DF3FEFF6AF0FEFF64EAFCFF5BE2
+      F9FF52D6F6FF4CCCF1FF48BCECFF4BAAE1FD6BACD5F28EBFDFF4B1D2E5F762AC
+      DDF63C3C3C400606060700000000000000000000000000000000000000000000
       000000000000000000002222222366A7C7CB5DF0FFFF64EFFFFF67EEFEFF59E6
       FEFE53C7E9EF4AC6E6EB22D2F9FA4F9BC2D22323232402020203000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1858,9 +2526,9 @@ object SearchTextWindow: TSearchTextWindow
       D9FF0C1DD2FF1016BAFF1512A4FF62616B830404040500000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000F0F0F10688292A46DEAFAFF75F6FFFF71F3FFFF6FF2
+      FFFF6DF1FFFF6BF1FFFF69F1FDFF45ACDBF74A4B4C543737383A5B62676F555A
+      5D63050505060000000000000000000000000000000000000000000000000000
       00000000000000000000000000005F686F7642E5FFFF4DEAFFFF4DD2F3F96789
       A0B54446464B3A3A3B3E4F545759404243450404040500000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1874,8 +2542,8 @@ object SearchTextWindow: TSearchTextWindow
       D2FF1116BDFF2220A1F75E5E6678020202030000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000005B60646E6AE1F6FF86FDFFFF7CF9FFFF79F7
+      FFFF75F5FFFF73F4FFFF64E4F9FF5495B9DC2121212201010102000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000101010113CBAE9EC2AE8FFFF638397B42525
       2526000000000000000000000000000000000000000000000000000000000000
@@ -1890,8 +2558,8 @@ object SearchTextWindow: TSearchTextWindow
       AFF75C5B8ABC3F3F404400000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000028282829659DBCCC65B2D0E064C9E4F467DB
+      F3FE70E9F8FF74EDFAFF549EC3E24D4E4F570303030400000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000677D8B8E41AEDCE23A3A3B3E0606
       0607000000000000000000000000000000000000000000000000000000000000
@@ -1906,27 +2574,43 @@ object SearchTextWindow: TSearchTextWindow
       3B3E040404050000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000001D1D1D1E31313133474A4C4E606A
+      70756C8797A26A91A7B65154565C0C0C0C0D0000000000000000000000000000
       000000000000000000000000000000000000424D3E000000000000003E000000
-      2800000080000000200000000100010000000000000200000000000000000000
-      000000000000000000000000FFFFFF00FFFF80FFF80FFFFFFFC007FF00000000
-      FFFF803FF801FFFFFF8001FF00000000FFFE000FF0000FFFFE00007F00000000
-      FFFC0007F00001FFFC00003F00000000FFF80003E000001FFC00003F00000000
-      FE300003E000000FF800001F00000000F8000003C0000007F800001F00000000
-      F8000003C0000003F000001F00000000F0000007C0000003F000001F00000000
-      F000000780000001F000001F00000000F000000780000001F000001F00000000
-      F800000780000001F000001F00000000FC00000700000003F000001F00000000
-      FE00000F0000000FF000001F00000000FFC0000F0000001FF000001F00000000
-      FFC0000F0000000FF000001F00000000F980000F0000000FF000000F00000000
-      F000001F00000007F000000F00000000F000001F00000003F000000F00000000
-      F000001F00000001F000000F00000000F000003F80000001F000000F00000000
-      F000003FC0000001F000000F00000000E000007FC0000003F000000F00000000
-      C00000FFE0000007F000000F00000000C000FFFFF000001FF000001F00000000
-      C000FFFFF800007FF000001F00000000C0007FFFFC0000FFF800003F00000000
-      F0003FFFFC0000FFF800007F00000000FC003FFFFF0000FFFC00007F00000000
-      FE007FFFFF0000FFFE0000FF00000000FE0FFFFFFFF800FFFF0003FF00000000
-      FF0FFFFFFFFF01FFFFC007FF0000000000000000000000000000000000000000
+      2800000080000000400000000100010000000000000400000000000000000000
+      000000000000000000000000FFFFFF00F80FFF81000000000000000000000000
+      F001FF00000000000000000000000000F0000000000000000000000000000000
+      E0000000000000000000000000000000E0000000000000000000000000000000
+      C0000000000000000000000000000000C0000000000000000000000000000000
+      C000000300000000000000000000000080000007000000000000000000000000
+      8000000F0000000000000000000000008000000F000000000000000000000000
+      0000001F0000000000000000000000000000003F000000000000000000000000
+      0000003F0000000000000000000000000000003F000000000000000000000000
+      0000007F0000000000000000000000000000007F000000000000000000000000
+      0000007F000000000000000000000000000000FF000000000000000000000000
+      000000FF000000000000000000000000800000FF000000000000000000000000
+      800000FF000000000000000000000000C00000FF000000000000000000000000
+      E00000FF000000000000000000000000F00000FF000000000000000000000000
+      F00000FF000000000000000000000000FC0000FF000000000000000000000000
+      FC0000FF000000000000000000000000FF0000FF000000000000000000000000
+      FF0000FF000000000000000000000000FFF000FF000000000000000000000000
+      FFFE01FF000000000000000000000000FFFF80FFF80FFFFFFFC007FFFFFFFF81
+      FFFF803FF801FFFFFF8001FFFFFFFF00FFFE000FF0000FFFFE00007FFFF03000
+      FFFC0007F00001FFFC00003FFCC00000FFF80003E000001FFC00003FF0000000
+      FE300003E000000FF800001FF0000000F8000003C0000007F800001FF0000000
+      F8000003C0000003F000001FE0000001F0000007C0000003F000001FE0000007
+      F000000780000001F000001FC000000FF000000780000001F000001FC000001F
+      F800000780000001F000001FC0000007FC00000700000003F000001F80000003
+      FE00000F0000000FF000001F80000003FFC0000F0000001FF000001F80000003
+      FFC0000F0000000FF000001F00000003F980000F0000000FF000000F00000003
+      F000001F00000007F000000F00000001F000001F00000003F000000F00000001
+      F000001F00000001F000000F00000001F000003F80000001F000000F00000001
+      F000003FC0000001F000000F00000001E000007FC0000003F000000F00000003
+      C00000FFE0000007F000000F00000003C000FFFFF000001FF000001F00000003
+      C000FFFFF800007FF000001F00000003C0007FFFFC0000FFF800003FE0000003
+      F0003FFFFC0000FFF800007FFE000003FC003FFFFF0000FFFC00007FFFFC0007
+      FE007FFFFF0000FFFE0000FFFFFE003FFE0FFFFFFFF800FFFF0003FFFFFE007F
+      FF0FFFFFFFFF01FFFFC007FFFFFF00FF00000000000000000000000000000000
       000000000000}
   end
 end
