@@ -23,24 +23,23 @@ object SearchTextWindow: TSearchTextWindow
   OnDeactivate = FormDeactivate
   OnKeyUp = FormKeyUp
   TextHeight = 16
-  object STW_PControlSetupsSearch: TPageControl
+  object PControlSetupsSearch: TPageControl
     AlignWithMargins = True
     Left = 3
     Top = 80
     Width = 1188
     Height = 437
-    ActivePage = STW_TabSheetInputText
+    ActivePage = TabSheetInputText
     Align = alTop
     Images = ImgListSmallSearch
     OwnerDraw = True
     TabOrder = 0
-    OnChanging = STW_PControlChanging
-    OnDrawTab = STW_PControlViewsTextDrawTab
-    ExplicitTop = 3
-    object STW_TabSheetInputText: TTabSheet
+    OnChanging = PControlChanging
+    OnDrawTab = PControlViewsTextDrawTab
+    object TabSheetInputText: TTabSheet
       Caption = 'Szukany tekst'
       ImageIndex = 8
-      object STW_GrBoxFlags: TGroupBox
+      object GrBoxFlags: TGroupBox
         AlignWithMargins = True
         Left = 3
         Top = 66
@@ -56,7 +55,7 @@ object SearchTextWindow: TSearchTextWindow
         Font.Quality = fqClearType
         ParentFont = False
         TabOrder = 0
-        object STW_GrBoxRegularExpressions: TGroupBox
+        object GrBoxRegularExpressions: TGroupBox
           AlignWithMargins = True
           Left = 5
           Top = 21
@@ -77,8 +76,7 @@ object SearchTextWindow: TSearchTextWindow
           ParentColor = False
           ParentFont = False
           TabOrder = 0
-          ExplicitWidth = 579
-          object STW_ChBoxIsRegEx: TCheckBox
+          object ChBoxIsRegEx: TCheckBox
             AlignWithMargins = True
             Left = 14
             Top = 21
@@ -102,11 +100,9 @@ object SearchTextWindow: TSearchTextWindow
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
-            OnClick = STW_ChBoxIsRegExClick
-            ExplicitLeft = 5
-            ExplicitWidth = 569
+            OnClick = ChBoxIsRegExClick
           end
-          object STW_ButtonHelpRegExp: TButton
+          object ButtonHelpRegExp: TButton
             AlignWithMargins = True
             Left = 5
             Top = 44
@@ -133,11 +129,10 @@ object SearchTextWindow: TSearchTextWindow
             ShowHint = True
             TabOrder = 1
             WordWrap = True
-            OnClick = STW_ButtonHelpRegExpClick
-            ExplicitWidth = 569
+            OnClick = ButtonHelpRegExpClick
           end
         end
-        object STW_GrBoxNormalSearch: TGroupBox
+        object GrBoxNormalSearch: TGroupBox
           AlignWithMargins = True
           Left = 5
           Top = 119
@@ -156,7 +151,7 @@ object SearchTextWindow: TSearchTextWindow
           ParentColor = False
           ParentFont = False
           TabOrder = 1
-          object STW_ChBoxMemoSetupsSearch: TCheckBox
+          object ChBoxMemoSetupsSearch: TCheckBox
             AlignWithMargins = True
             Left = 14
             Top = 21
@@ -174,10 +169,8 @@ object SearchTextWindow: TSearchTextWindow
             Font.Quality = fqClearType
             ParentFont = False
             TabOrder = 0
-            ExplicitLeft = 5
-            ExplicitWidth = 492
           end
-          object STW_ChBoxSizeTextSearch: TCheckBox
+          object ChBoxSizeTextSearch: TCheckBox
             AlignWithMargins = True
             Left = 14
             Top = 44
@@ -195,10 +188,8 @@ object SearchTextWindow: TSearchTextWindow
             Font.Quality = fqClearType
             ParentFont = False
             TabOrder = 1
-            ExplicitLeft = 7
-            ExplicitWidth = 429
           end
-          object STW_ChBoxOnlyWord: TCheckBox
+          object ChBoxOnlyWord: TCheckBox
             AlignWithMargins = True
             Left = 14
             Top = 67
@@ -216,10 +207,8 @@ object SearchTextWindow: TSearchTextWindow
             Font.Quality = fqClearType
             ParentFont = False
             TabOrder = 2
-            ExplicitLeft = 5
-            ExplicitWidth = 627
           end
-          object STW_GroBoxSetupSearchText: TGroupBox
+          object GroBoxSetupSearchText: TGroupBox
             AlignWithMargins = True
             Left = 5
             Top = 90
@@ -238,10 +227,7 @@ object SearchTextWindow: TSearchTextWindow
             ParentColor = False
             ParentFont = False
             TabOrder = 3
-            ExplicitLeft = 2
-            ExplicitTop = 87
-            ExplicitWidth = 632
-            object STW_LabelInfoRange: TLabel
+            object LabelInfoRange: TLabel
               Left = 9
               Top = 23
               Width = 139
@@ -257,7 +243,7 @@ object SearchTextWindow: TSearchTextWindow
               ParentFont = False
               Layout = tlCenter
             end
-            object STW_LabelInfoSelectTranslates: TLabel
+            object LabelInfoSelectTranslates: TLabel
               Left = 9
               Top = 51
               Width = 139
@@ -273,7 +259,7 @@ object SearchTextWindow: TSearchTextWindow
               ParentFont = False
               Layout = tlCenter
             end
-            object STW_LabelInfoTo: TLabel
+            object LabelInfoTo: TLabel
               Left = 268
               Top = 79
               Width = 23
@@ -289,7 +275,7 @@ object SearchTextWindow: TSearchTextWindow
               ParentFont = False
               Layout = tlCenter
             end
-            object STW_CBoxSelectRangeSearch: TComboBox
+            object CBoxSelectRangeSearch: TComboBox
               Left = 154
               Top = 23
               Width = 201
@@ -309,9 +295,9 @@ object SearchTextWindow: TSearchTextWindow
               ShowHint = True
               TabOrder = 0
               OnCloseUp = CBoxCloseUp
-              OnDrawItem = STW_CBoxSearchDrawItem
+              OnDrawItem = CBoxSearchDrawItem
             end
-            object STW_CBoxSelectTranslates: TComboBox
+            object CBoxSelectTranslates: TComboBox
               Left = 154
               Top = 51
               Width = 241
@@ -331,9 +317,9 @@ object SearchTextWindow: TSearchTextWindow
               ShowHint = True
               TabOrder = 1
               OnCloseUp = CBoxCloseUp
-              OnDrawItem = STW_CBoxSearchDrawItem
+              OnDrawItem = CBoxSearchDrawItem
             end
-            object STW_CBoxStartSelectRange: TComboBox
+            object CBoxStartSelectRange: TComboBox
               Left = 9
               Top = 79
               Width = 232
@@ -355,9 +341,9 @@ object SearchTextWindow: TSearchTextWindow
               ShowHint = True
               TabOrder = 2
               OnCloseUp = CBoxCloseUp
-              OnDrawItem = STW_CBoxSearchDrawItem
+              OnDrawItem = CBoxSearchDrawItem
             end
-            object STW_CBoxStopSelectRange: TComboBox
+            object CBoxStopSelectRange: TComboBox
               Left = 316
               Top = 79
               Width = 219
@@ -378,12 +364,12 @@ object SearchTextWindow: TSearchTextWindow
               ShowHint = True
               TabOrder = 3
               OnCloseUp = CBoxCloseUp
-              OnDrawItem = STW_CBoxSearchDrawItem
+              OnDrawItem = CBoxSearchDrawItem
             end
           end
         end
       end
-      object STW_GrBoxListGroupSearchedTexts: TGroupBox
+      object GrBoxListGroupSearchedTexts: TGroupBox
         AlignWithMargins = True
         Left = 655
         Top = 66
@@ -399,9 +385,7 @@ object SearchTextWindow: TSearchTextWindow
         Font.Quality = fqClearType
         ParentFont = False
         TabOrder = 1
-        ExplicitLeft = 598
-        ExplicitWidth = 579
-        object STW_ChBoxAllSearchTexts: TCheckBox
+        object ChBoxAllSearchTexts: TCheckBox
           AlignWithMargins = True
           Left = 5
           Top = 21
@@ -420,10 +404,9 @@ object SearchTextWindow: TSearchTextWindow
           ParentFont = False
           TabOrder = 0
           WordWrap = True
-          OnClick = STW_ChBoxAllSearchTextsClick
-          ExplicitWidth = 569
+          OnClick = ChBoxAllSearchTextsClick
         end
-        object STW_PanelListButtons: TPanel
+        object PanelListButtons: TPanel
           AlignWithMargins = True
           Left = 8
           Top = 279
@@ -436,9 +419,7 @@ object SearchTextWindow: TSearchTextWindow
           ParentColor = True
           ShowCaption = False
           TabOrder = 1
-          ExplicitTop = 264
-          ExplicitWidth = 563
-          object STW_ButtClearAllListSearch: TButton
+          object ButtClearAllListSearch: TButton
             AlignWithMargins = True
             Left = 4
             Top = 7
@@ -460,9 +441,9 @@ object SearchTextWindow: TSearchTextWindow
             ParentFont = False
             TabOrder = 0
             WordWrap = True
-            OnClick = STW_ButtAllListSearchClick
+            OnClick = ButtAllListSearchClick
           end
-          object STW_DeleteSelectPos: TButton
+          object DeleteSelectPos: TButton
             AlignWithMargins = True
             Left = 195
             Top = 7
@@ -484,21 +465,19 @@ object SearchTextWindow: TSearchTextWindow
             ParentFont = False
             TabOrder = 1
             WordWrap = True
-            OnClick = STW_ButtAllListSearchClick
+            OnClick = ButtAllListSearchClick
           end
         end
-        object STW_PanelListWords: TPanel
+        object PanelListWords: TPanel
           Left = 2
           Top = 56
           Width = 518
           Height = 173
           Align = alClient
-          Caption = 'STW_PanelListWords'
+          Caption = 'PanelListWords'
           ShowCaption = False
           TabOrder = 2
-          ExplicitWidth = 575
-          ExplicitHeight = 158
-          object STW_LBoxSearchTexts: TListBox
+          object LBoxSearchTexts: TListBox
             AlignWithMargins = True
             Left = 4
             Top = 4
@@ -515,10 +494,8 @@ object SearchTextWindow: TSearchTextWindow
             ParentFont = False
             Sorted = True
             TabOrder = 0
-            ExplicitWidth = 366
-            ExplicitHeight = 150
           end
-          object STW_ButtGrSelectActionList: TButtonGroup
+          object ButtGrSelectActionList: TButtonGroup
             AlignWithMargins = True
             Left = 319
             Top = 4
@@ -538,12 +515,10 @@ object SearchTextWindow: TSearchTextWindow
             Images = ImgListLargeSearch
             Items = <>
             TabOrder = 1
-            OnClick = STW_ButtGrSelectActionListClick
-            ExplicitLeft = 376
-            ExplicitHeight = 150
+            OnClick = ButtGrSelectActionListClick
           end
         end
-        object STW_PanelInfosSelectActionSearch: TPanel
+        object PanelInfosSelectActionSearch: TPanel
           AlignWithMargins = True
           Left = 5
           Top = 232
@@ -551,7 +526,7 @@ object SearchTextWindow: TSearchTextWindow
           Height = 41
           Align = alBottom
           BevelOuter = bvNone
-          Caption = 'STW_PanelInfosSelectActionSearch'
+          Caption = 'PanelInfosSelectActionSearch'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -561,9 +536,7 @@ object SearchTextWindow: TSearchTextWindow
           ParentFont = False
           ShowCaption = False
           TabOrder = 3
-          ExplicitTop = 217
-          ExplicitWidth = 569
-          object STW_LabelInfosSelectActionSearch: TLabel
+          object LabelInfosSelectActionSearch: TLabel
             AlignWithMargins = True
             Left = 3
             Top = 3
@@ -592,7 +565,7 @@ object SearchTextWindow: TSearchTextWindow
           end
         end
       end
-      object STW_GrBoxSearchText: TGroupBox
+      object GrBoxSearchText: TGroupBox
         AlignWithMargins = True
         Left = 3
         Top = 3
@@ -603,7 +576,7 @@ object SearchTextWindow: TSearchTextWindow
           'Wprowad'#378' tekst, do wyszukania w ksi'#281'gach Biblijnych. Wielko'#347#263' li' +
           'ter nie jest brana pod uwag'#281'.'
         TabOrder = 2
-        object STW_CBoxHistorySearchText: TComboBox
+        object CBoxHistorySearchText: TComboBox
           AlignWithMargins = True
           Left = 5
           Top = 21
@@ -612,9 +585,9 @@ object SearchTextWindow: TSearchTextWindow
           Align = alClient
           TabOrder = 0
           TextHint = 'Wpisz szukany tekst'
-          OnChange = STW_CBoxHistorySearchTextChange
+          OnChange = CBoxHistorySearchTextChange
         end
-        object STW_ButtAddListTextSearch: TButton
+        object ButtAddListTextSearch: TButton
           AlignWithMargins = True
           Left = 968
           Top = 21
@@ -628,16 +601,16 @@ object SearchTextWindow: TSearchTextWindow
           ImageMargins.Left = 6
           Images = ImgListSmallSearch
           TabOrder = 1
-          OnClick = STW_ButtAddListTextSearchClick
+          OnClick = ButtAddListTextSearchClick
         end
       end
     end
-    object STW_TabSheetStatistick: TTabSheet
+    object TabSheetStatistick: TTabSheet
       Caption = 'Statystyka wyszukiwania'
       ImageIndex = 7
       ParentShowHint = False
       ShowHint = False
-      object STW_LViewStatistic: TListView
+      object LViewStatistic: TListView
         Left = 0
         Top = 0
         Width = 579
@@ -656,11 +629,11 @@ object SearchTextWindow: TSearchTextWindow
         RowSelect = True
         TabOrder = 0
         ViewStyle = vsReport
-        OnDrawItem = STW_LViewStatisticDrawItem
-        OnSelectItem = STW_LViewAllSelectItem
+        OnDrawItem = LViewStatisticDrawItem
+        OnSelectItem = LViewAllSelectItem
         ExplicitHeight = 391
       end
-      object STW_PanelDisplaySearchBook: TPanel
+      object PanelDisplaySearchBook: TPanel
         Left = 579
         Top = 0
         Width = 601
@@ -670,7 +643,7 @@ object SearchTextWindow: TSearchTextWindow
         ShowCaption = False
         TabOrder = 1
         ExplicitHeight = 391
-        object STW_WebBrowserSelectBookStatistic: TWebBrowser
+        object WebBrowserSelectBookStatistic: TWebBrowser
           Left = 1
           Top = 18
           Width = 595
@@ -685,7 +658,7 @@ object SearchTextWindow: TSearchTextWindow
             8000000000000000000000000000000000000000000000000000000000000000
             00000000000000000100000000000000000000000000000000000000}
         end
-        object STW_STextInfoSelectBookSearch: TStaticText
+        object STextInfoSelectBookSearch: TStaticText
           Left = 1
           Top = 1
           Width = 595
@@ -709,10 +682,10 @@ object SearchTextWindow: TSearchTextWindow
         end
       end
     end
-    object STW_TabSheetSettings: TTabSheet
+    object TabSheetSettings: TTabSheet
       Caption = 'Dodatkowe ustawienia'
       ImageIndex = 11
-      object STW_GrBoxSetupsStatistic: TGroupBox
+      object GrBoxSetupsStatistic: TGroupBox
         Left = 0
         Top = 0
         Width = 1180
@@ -720,7 +693,7 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Ustawienia dotycz'#261'ce zak'#322'adki statystyki'
         TabOrder = 0
-        object STW_LabelBackGroundSearchList: TLabel
+        object LabelBackGroundSearchList: TLabel
           Left = 12
           Top = 17
           Width = 394
@@ -735,18 +708,18 @@ object SearchTextWindow: TSearchTextWindow
           Font.Quality = fqClearType
           ParentFont = False
         end
-        object STW_ColorBoxBackGroundSearchList: TColorBox
+        object ColorBoxBackGroundSearchList: TColorBox
           Left = 12
           Top = 36
           Width = 145
           Height = 22
           Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
           TabOrder = 0
-          OnChange = STW_ColorBoxChange
-          OnGetColors = STW_ColorBoxGetColors
+          OnChange = ColorBoxChange
+          OnGetColors = ColorBoxGetColors
         end
       end
-      object STW_GrBoxSetupsAllSearchResult: TGroupBox
+      object GrBoxSetupsAllSearchResult: TGroupBox
         Left = 0
         Top = 75
         Width = 1180
@@ -754,25 +727,25 @@ object SearchTextWindow: TSearchTextWindow
         Align = alTop
         Caption = 'Ustawienia dotycz'#261'ce zak'#322'adki wyniku wyszukiwa'#324
         TabOrder = 1
-        object STW_LabelBackGroundStatisticList: TLabel
+        object LabelBackGroundStatisticList: TLabel
           Left = 12
           Top = 16
           Width = 305
           Height = 16
           Caption = 'Kolor podk'#322'adu listy statystyki wyszukanych werset'#243'w'
         end
-        object STW_ColorBoxBackGroundSelectVers: TColorBox
+        object ColorBoxBackGroundSelectVers: TColorBox
           Left = 12
           Top = 35
           Width = 145
           Height = 22
           Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
           TabOrder = 0
-          OnChange = STW_ColorBoxChange
-          OnGetColors = STW_ColorBoxGetColors
+          OnChange = ColorBoxChange
+          OnGetColors = ColorBoxGetColors
         end
       end
-      object STW_GrBoxSetupsSelectVer: TGroupBox
+      object GrBoxSetupsSelectVer: TGroupBox
         Left = 0
         Top = 150
         Width = 1180
@@ -783,7 +756,7 @@ object SearchTextWindow: TSearchTextWindow
           'y wyszukanych tekst'#243'w'
         TabOrder = 2
         ExplicitHeight = 241
-        object STW_LabelBackGroundSelectVers: TLabel
+        object LabelBackGroundSelectVers: TLabel
           Left = 12
           Top = 17
           Width = 437
@@ -793,20 +766,20 @@ object SearchTextWindow: TSearchTextWindow
             'Kolor podk'#322'adu wybranego wersetu z listy wszystkich znalezionych' +
             ' tekst'#243'w'
         end
-        object STW_ColorBoxBackGroundStatisticList: TColorBox
+        object ColorBoxBackGroundStatisticList: TColorBox
           Left = 12
           Top = 36
           Width = 145
           Height = 22
           Style = [cbStandardColors, cbExtendedColors, cbPrettyNames, cbCustomColors]
           TabOrder = 0
-          OnChange = STW_ColorBoxChange
-          OnGetColors = STW_ColorBoxGetColors
+          OnChange = ColorBoxChange
+          OnGetColors = ColorBoxGetColors
         end
       end
     end
   end
-  object STW_GroBoxViewSearchText: TGroupBox
+  object GroBoxViewSearchText: TGroupBox
     Left = 0
     Top = 520
     Width = 1194
@@ -817,33 +790,29 @@ object SearchTextWindow: TSearchTextWindow
     ParentBackground = False
     ParentColor = False
     TabOrder = 1
-    ExplicitTop = 513
-    ExplicitHeight = 340
-    object STW_PControlViewsText: TPageControl
+    object PControlViewsText: TPageControl
       AlignWithMargins = True
       Left = 5
       Top = 21
       Width = 1184
       Height = 357
-      ActivePage = STW_TabSheetViewListSearch
+      ActivePage = TabSheetViewListSearch
       Align = alClient
       Images = ImgListSmallSearch
       OwnerDraw = True
       TabOrder = 0
-      OnChanging = STW_PControlChanging
-      OnDrawTab = STW_PControlViewsTextDrawTab
-      ExplicitHeight = 314
-      object STW_TabSheetViewListSearch: TTabSheet
+      OnChanging = PControlChanging
+      OnDrawTab = PControlViewsTextDrawTab
+      object TabSheetViewListSearch: TTabSheet
         Caption = 'Lista wszystkich wynik'#243'w wyszukiwania w formia przegl'#261'darki'
         ImageIndex = 9
-        object STW_WBrowserResultSearch: TWebBrowser
+        object WBrowserResultSearch: TWebBrowser
           Left = 0
           Top = 0
           Width = 1176
           Height = 326
           Align = alClient
           TabOrder = 0
-          ExplicitTop = 3
           ControlData = {
             4C0000008B790000B12100000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -852,12 +821,12 @@ object SearchTextWindow: TSearchTextWindow
             00000000000000000100000000000000000000000000000000000000}
         end
       end
-      object STW_TabSheetViewListView: TTabSheet
+      object TabSheetViewListView: TTabSheet
         Caption = 
           'Lista wszystkich wynik'#243'w wyszukiwania, w formie wybieralnej list' +
           'y'
         ImageIndex = 10
-        object STW_LViewResultSearch: TListView
+        object LViewResultSearch: TListView
           Left = 0
           Top = 0
           Width = 1176
@@ -870,12 +839,12 @@ object SearchTextWindow: TSearchTextWindow
           SmallImages = ImgListSmallSearch
           TabOrder = 0
           ViewStyle = vsList
-          OnData = STW_LViewResultSearchData
-          OnDataHint = STW_LViewResultSearchDataHint
-          OnGetImageIndex = STW_LViewResultSearchGetImageIndex
-          OnSelectItem = STW_LViewAllSelectItem
+          OnData = LViewResultSearchData
+          OnDataHint = LViewResultSearchDataHint
+          OnGetImageIndex = LViewResultSearchGetImageIndex
+          OnSelectItem = LViewAllSelectItem
         end
-        object STW_WBrowserSelectItemResult: TWebBrowser
+        object WBrowserSelectItemResult: TWebBrowser
           Left = 0
           Top = 81
           Width = 1176
@@ -893,7 +862,7 @@ object SearchTextWindow: TSearchTextWindow
       end
     end
   end
-  object STW_StBarInfos: TStatusBar
+  object StBarInfos: TStatusBar
     Left = 0
     Top = 932
     Width = 1194
@@ -904,9 +873,8 @@ object SearchTextWindow: TSearchTextWindow
     SimplePanel = True
     SizeGrip = False
     UseSystemFont = False
-    ExplicitTop = 882
   end
-  object STW_PanelButtons: TPanel
+  object PanelButtons: TPanel
     Left = 0
     Top = 903
     Width = 1194
@@ -915,8 +883,7 @@ object SearchTextWindow: TSearchTextWindow
     ParentColor = True
     ShowCaption = False
     TabOrder = 3
-    ExplicitTop = 853
-    object STW_ButtonSearchStart: TButton
+    object ButtonSearchStart: TButton
       AlignWithMargins = True
       Left = 10
       Top = 3
@@ -934,9 +901,9 @@ object SearchTextWindow: TSearchTextWindow
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      OnClick = STW_ButtonSearchStartClick
+      OnClick = ButtonSearchStartClick
     end
-    object STW_ButtonSaveSearch: TButton
+    object ButtonSaveSearch: TButton
       AlignWithMargins = True
       Left = 109
       Top = 3
@@ -954,20 +921,20 @@ object SearchTextWindow: TSearchTextWindow
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      OnClick = STW_ButtonSaveSearchClick
+      OnClick = ButtonSaveSearchClick
     end
   end
-  object STW_PanelLogo: TPanel
+  object PanelLogo: TPanel
     Left = 0
     Top = 0
     Width = 1194
     Height = 77
     Align = alTop
     BevelOuter = bvNone
-    Caption = 'STW_PanelLogo'
+    Caption = 'PanelLogo'
     ShowCaption = False
     TabOrder = 4
-    object STW_ImageLogoSearch: TImage
+    object ImageLogoSearch: TImage
       AlignWithMargins = True
       Left = 335
       Top = 5
@@ -976,7 +943,7 @@ object SearchTextWindow: TSearchTextWindow
       Margins.Left = 12
       Transparent = True
     end
-    object STW_STextLogoSearch: TStaticText
+    object STextLogoSearch: TStaticText
       AlignWithMargins = True
       Left = 411
       Top = 5
@@ -984,7 +951,7 @@ object SearchTextWindow: TSearchTextWindow
       Height = 111
       Margins.Left = 12
       AutoSize = False
-      Caption = 'STW_STextLogoSearch'
+      Caption = 'STextLogoSearch'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clMaroon
       Font.Height = -13
