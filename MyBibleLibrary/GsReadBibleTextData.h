@@ -66,10 +66,14 @@ class GsReadBibleTextData : public TObject
 													 GsExtendNoAsteriskFileTranslateHbrOrg =".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
 													 GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
 		static UnicodeString inline //--- Nagłówki dla plików html
-															 GsHTMLHeaderText="",	//Tekst nagłówka dla tekstu zwykłego
-															 GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", //[03-08-2023]
-															 GsHTMLHeaderSearch="",//Tekst nagłówka dla tekstu, wyniku wyszukiwania
-															 GsHTMLHeaderDisplayVer="";//Tekst nagłówka dla tekstu wybranego wersetu
+															 GsHTMLHeaderText="",	// Tekst nagłówka dla tekstu zwykłego
+															 GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", // [03-08-2023]
+															 GsHTMLHeaderSearch="",// Tekst nagłówka dla tekstu, wyniku wyszukiwania
+															 GsHTMLHeaderDisplayVer="",// Tekst nagłówka dla tekstu wybranego wersetu
+															 GsHTMLJavaScripts="", // Kody Java Script
+															 // --- Skrypty Java Script
+															 GsHTML_FileJavaSc_SelectWord=""; // Funkcja java script umożliwiająca klikalność słów [25-08-2025]
+															 // ---
 		static const unsigned char inline GsNumberAllGroups = en_GrSearch_Count,//Ilość grup biblii, do wyszukiwania
 															 GsNumberGroups = 3,	//Ilość grup w drzewie struktury bibli
 															 //Ilość ksiąg w poszczególnych grupach
@@ -103,6 +107,7 @@ class GsReadBibleTextData : public TObject
 		static void __fastcall SetupVariables(); //Ustawienie zmiennych dla klasy
 
 		static unsigned char __fastcall CountTranslates();	//Metoda zwraca ilość tłumaczeń
+		static unsigned char __fastcall CountPolTranslates(); //Metoda zwraca ilość tłumaczeń polskich // [30-08-2025]
 		static void __fastcall GetInfoNameTranslate(const unsigned char i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia o numerze i
 		static void __fastcall GetNameIndependentTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023]
 		static void __fastcall WriteCurrentSheetText(const UnicodeString custrPath=0); //Zapisuje zawartość aktualnej zakładki

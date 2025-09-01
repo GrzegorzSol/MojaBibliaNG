@@ -26,11 +26,8 @@
 #include "MyBibleLibrary\MyBibleLibrary.h"
 #include <System.IOUtils.hpp>
 #include <System.StrUtils.hpp>
-//#include <Vcl.Themes.hpp>
 #include "MyBibleLibrary\GsReadBibleTextData.h"
 #include "MyBibleLibrary\MyBibleCoreDataImages.h" //Dane dla grafiki (Pojedyńcch obrazów i list obrazów)
-//#include <Mshtml.h> //[31-07-2023]
-//#include <Vcl.Graphics.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 /*
@@ -697,7 +694,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 /**
 	OPIS METOD(FUNKCJI): Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
 											 Daną z tekstem jest lista this->_ListAllTrChap
-	OPIS ARGUMENTÓW: //UnicodeString &JoinText - Referencja do stringu, w którym zostanie umieszczony połączony tekst
+	OPIS ARGUMENTÓW: UnicodeString &JoinText - Referencja do stringu, w którym zostanie umieszczony połączony tekst
 									 TWebBrowser *_pWebBrowser - Wskaźnik na objekt typy TWebBrowse, na którym ma być wyświetlony tekst
 									 int iSelectTranslate - Numer konkretnego tłumaczenia, domyślnie -1, czyli wszystkie tłumaczenie. Trzeba odjąć 1 gdyż w zakładce
 																					objektu klasy GsTabSetClass, konkretne tłumaczenia nie zaczynają się od indeksu 0 (wszystkie tłumaczenia), tylko 1 (pierwsze tłumaczenie)!!!.
@@ -713,7 +710,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	//---
 	MyObjectVers *pMyOjectVers=nullptr;
 	THashedStringList *pTempHSList=nullptr;
-	int iIndex=0, //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
+	int iIndexVers=0, //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
 			iIndexFav=-1;//Indeks na globalnej liście wersetów ulubionych
 	unsigned char uiTranslatesIndex;//=0;
 	UnicodeString _Style_FavoriteStyle = "", //Styl zaznaczania ulubionego wersetu
@@ -745,17 +742,18 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 			if(iSelectTranslate>-1) uiTranslatesIndex = 1;
 			else uiTranslatesIndex = static_cast<unsigned char>(this->_ListAllTrChap->Count);//W przeciwnym przypadku ilość tłumaczeń równa ilością wszystkich załadowanych!
 			//---
-			for(int i=0; i<this->_ListAllTrChap->Count; ++i)
+			for(int iIndexChapt=0; iIndexChapt<this->_ListAllTrChap->Count; ++iIndexChapt)
 			//Dodawanie pokolei równoległych wersetów ze wszystkich tłumaczeń
 			{
-				if((iSelectTranslate>-1) && (i!=iSelectTranslate))
+				if((iSelectTranslate>-1) && (iIndexChapt!=iSelectTranslate))
 					//Jeśli ma być wyświetlone konkretne tłumaczenie
 					//iSelectTranslate>-1, czyli nie wszyskie tłumaczenia (iSelectTranslate==-1)
 					//i!=iSelectTranslate, pętla jest w niewybranym tłumaczeniu
 					{continue;}
-				GsReadBibleTextItem *pGsReadBibleTextItem = this->GetTranslateClass(i); //Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+        // Wyłuskanie wskaźnika GsReadBibleTextItem konkretnego tłumaczenia, w celu sprawdzenia typu tłumaczenia
+				GsReadBibleTextItem *pGsReadBibleTextItem = this->GetTranslateClass(iIndexChapt);
 				//Wyłuskanie THashedStringListy konkretnego tłumaczenia, dla wybranego rozdziału
-				pTempHSList = static_cast<THashedStringList *>(this->_ListAllTrChap->Items[i]);
+				pTempHSList = static_cast<THashedStringList *>(this->_ListAllTrChap->Items[iIndexChapt]);
 				if(!pTempHSList || !pGsReadBibleTextItem) throw(Exception("Błąd metody łączenia wszystkich tłumaczeń"));
 				//Nazwa tlumaczenia wyłuskana z GsReadBibleTextItem->NameTranslate.
 				//W wypadku wybrania pojedyńczego tłumaczenia bedzie pusta //[30-08-2023]
@@ -770,17 +768,17 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					continue;
 				}
 
-				if(iIndex < pTempHSList->Count)
+				if(iIndexVers < pTempHSList->Count)
 				//Istnieją jeszcze wersety dla aktualnego tłumaczenia
 				{
-					pMyOjectVers = static_cast<MyObjectVers *>(pTempHSList->Objects[iIndex]);
+					pMyOjectVers = static_cast<MyObjectVers *>(pTempHSList->Objects[iIndexVers]);
 					if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
 					//Dodawanie kolejnego wersetu
-					if(!pTempHSList->Strings[iIndex].IsEmpty())
+					if(!pTempHSList->Strings[iIndexVers].IsEmpty())
 					{
 						//Lista surowa aktualnie przegladanego rozdziału [25-08-2021]; [20-08-2023]
 						//pGsTabSheetClass->pHSListActualText->AddObject(Format("%s %s", ARRAYOFCONST(( pMyOjectVers->BookChaptVers, pTempHSList->Strings[iIndex] ))), pMyOjectVers);
-						pGsTabSheetClass->pHSListActualText->AddObject(Format("%s", ARRAYOFCONST((pTempHSList->Strings[iIndex] ))), pMyOjectVers);
+						pGsTabSheetClass->pHSListActualText->AddObject(Format("%s", ARRAYOFCONST((pTempHSList->Strings[iIndexVers] ))), pMyOjectVers);
 
 						if(pGsTabSheetClass->pLBoxSelectText->Items->IndexOf(pMyOjectVers->AdressString) == -1)
 						//Jeśli nie istnieje jeszcze adres wersetu
@@ -817,26 +815,28 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 								_Style_CommentStyle = "";	 //Styl zaznaczania wersetu skomentowanego
 								_StyleComm_End = "";
 							}
-							//[14-04-2024] //[17-08-2024] //[17-08-2024]
+							//[14-04-2024] //[17-08-2024]
 							pStringStream->WriteString(Format(UnicodeString("<p>\n") +	//[21-09-2023] //[14-04-2024] //[17-08-2024]
 							//"<p>\n" +
 							_Style_FavoriteStyle +
-							"%s" +	//_Style_CommentStyle
-							"%s" +	"<span class=\"styleColorAdressTranslates\">\n\t" + //_StyleComm_End,
-							"%s\n</span>\n"+ //pMyOjectVers->BookChaptVers,
-							"<span class=\"styleText\">\n\t" + "%s\n</span>\n", //pTempHSList->Strings[iIndex]
+							"%s" +	// _Style_CommentStyle
+							"%s" +	"<span class=\"styleColorAdressTranslates\">\n\t" + // _StyleComm_End,
+							"%s\n</span>\n"+ // pMyOjectVers->BookChaptVers,
+							"<span class=\"styleText\"; id=tekst%d_%d>\n\t" +  // iIndex, i
+							"%s\n</span>\n", // pTempHSList->Strings[iIndex]
 							ARRAYOFCONST((_Style_CommentStyle,
 														_StyleComm_End,
 														pMyOjectVers->BookChaptVers,
-														pTempHSList->Strings[iIndex]
+														iIndexChapt, iIndexVers, // tłumaczenie_werset [24-08-2025]
+														pTempHSList->Strings[iIndexVers]
 														))));
-							//Nazwa tłumaczenia
+							// Nazwa tłumaczenia
 							pStringStream->WriteString(Format(UnicodeString("<span class=\"styleTranslates\">\n\t%s\n</span>\n"),
 								ARRAYOFCONST((DisplaySelectNameTranslate))));
 							pStringStream->WriteString(_StyleFav_End); //[14-04-2024] //[17-08-2024]
 							pStringStream->WriteString("</p>\n");
 						}
-						else //Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
+						else // Częściowe oryginalne, lub polskie tłumaczenie tłumaczenie
 						{ // Usunięte z powody tworzenia przeglądy tłumaczeń specjalistycznych //[11-05-2024]
 							// Więc tłumaczenia nie będą wyswietlane w głównym oknie, tylko w oknie do przeglądy
 							// tego typu tłumaczeń. Jedna warunek "else" zostanie zachowany //[12-05-2024]
@@ -850,7 +850,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 					uiTranslatesIndex--;
 				}
 			}
-			++iIndex;
+			++iIndexVers;
 			if(uiTranslatesIndex >= GlobalVar::Global_cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 			if((iSelectTranslate == -1) && (uiTranslatesIndex > 0))
 			{
@@ -859,7 +859,27 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 
 		}while(uiTranslatesIndex > 0);
 		pGsTabSheetClass->pLBoxSelectText->Items->EndUpdate();
-		//---
+		//--- Uzupełnienie kodu Java script o indeksy wersetów // [30-08-2025]
+    // Kod Java script. // [24-08-2025] // [30-08-2025]
+		GsReadBibleTextData::GsHTMLJavaScripts = UnicodeString // Rozpoczęcie kodu Java script // [30-08-2025]
+																						("<script type=\"text/javascript\">\n") +
+  																					// Wczytanie kody java script, który umożliwia klikalność słów
+																						TFile::ReadAllText(GsReadBibleTextData::GsHTML_FileJavaSc_SelectWord, TEncoding::UTF8) +
+																						"\n\n// Wywołanie z poziomu window.onload() z podanymi identyfikatorami\n" +
+																						"window.onload = function()\n{\n";
+		// Tworzenie wywoływania funkcji Java script z ineksem wersetów
+		// dla wybranego tłumaczenia i wersetu z wybranego rozdziału // [30-08-2025]
+		for(int iIndexTrans=0; iIndexTrans<this->uiCountPol; ++iIndexTrans)
+		{
+			for(int iVers=0; iVers<iIndexVers; ++iVers)
+			{
+				GsReadBibleTextData::GsHTMLJavaScripts += Format("\tprzetworzTekst(\"tekst%d_%d\");\n",
+					ARRAYOFCONST((iIndexTrans, iVers)));
+			}
+		}
+		GsReadBibleTextData::GsHTMLJavaScripts += "}\n</script>\n";
+
+		pStringStream->WriteString(GsReadBibleTextData::GsHTMLJavaScripts); // [24-08-2025]
 		pStringStream->WriteString("</body>\n</html>\n");
 		pStringStream->Position = 0;
 		//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
@@ -1352,7 +1372,7 @@ __fastcall GsListBoxSelectedVersClass::GsListBoxSelectedVersClass(TComponent* Ow
 	this->Color = clCream;
 	this->iRIndex = -1;	 //Aktywna pozycja, po kliknięciu prawym przyciskiem myszy, lub -1
 	this->Font->Quality = TFontQuality::fqClearType;
-  this->ParentFont = true;
+	this->ParentFont = true;
 }
 //---------------------------------------------------------------------------
 __fastcall GsListBoxSelectedVersClass::~GsListBoxSelectedVersClass()
@@ -1363,6 +1383,7 @@ __fastcall GsListBoxSelectedVersClass::~GsListBoxSelectedVersClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+
 }
 //---------------------------------------------------------------------------
 void __fastcall GsListBoxSelectedVersClass::CreateWnd()
@@ -1491,7 +1512,7 @@ void __fastcall GsListBoxSelectedVersClass::MouseUp(System::Uitypes::TMouseButto
 	if(pGsTabSheetClass)
 	{
 		//Uruchomienie edycji
-		pGsTabSheetClass->pToolButtonEdit->Down = true; pGsTabSheetClass->_OnClickButton(pGsTabSheetClass->pToolButtonEdit);
+		pGsTabSheetClass->pToolButtonEdit->Down = true; pGsTabSheetClass->_OnClickToolButton(pGsTabSheetClass->pToolButtonEdit);
 		pGsTabSheetClass->pGsEditorClass->LoadEditorFromFile(ustrPathComm);
 	}
 	if(!TFile::Exists(ustrPathComm)) pGsTabSheetClass->pGsEditorClass->ClearEditor(); //Wyczyszczenie edytora
@@ -1521,6 +1542,8 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
 	this->pHSListActualText = new THashedStringList();
 	if(!this->pHSListActualText) throw(Exception("Błąd inicjalizacji klasy THashedStringList"));
+	this->pHSlistResultSearchSelectWord = new THashedStringList(); // Lista wyszkanych miejsc wystepowania zaznaczonego słowa
+	if(!this->pHSlistResultSearchSelectWord) throw(Exception("Błąd inicjalizacji klasy THashedStringList"));
 	//---
 	this->PageControl = GsReadBibleTextData::_GsPageControl; //Umieszczanie objektu klasy na objekcie typu TPageControl
 	this->PageControl->ActivePage = this; //Nowostworzona zakładka, staje się zakładką aktualną
@@ -1538,6 +1561,7 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	pPanelBox->ShowCaption = false;
 	pPanelBox->Font->Quality = TFontQuality::fqClearType;
 
+	this->_InitControlsSelectWord(pPanelBox); // Kontrolka(i) do wyświetlania i podejmowania akcji z wybranym słowem z rozdziału // [30-08-2025]
 	this->_InitCBoxChaptersSelect(pPanelBox); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
 	this->_InitToolBarAllButtons(pPanelBox); //Inicjalizacja głównego objektu klasy TToolBar ze wszystkimi przyciskami
 	this->_InitToolBarViewText(pPanelBox); //Inicjalizacja objektu klasy TToolbar do zmieniania widoków wyświetlanych wersetów
@@ -1566,8 +1590,8 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 	this->pSplitterEd->MinSize = this->pGsEditorClass->Height / 2;
 	this->pSplitterEd->Visible = false;
 	//Aktywacja wczytanego tekstu
-	//this->SetFocus();
 	this->pWebBrowser->SetFocus();
+	this->_InitPanelSearchSelectWordResult(); // Panel z wynikami wyszukiwania
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_InitPanelInfoTranslation()
@@ -1629,6 +1653,7 @@ void __fastcall GsTabSheetClass::_InitPanelTextBible(TPanel *pPanelParent)
 	this->pWebBrowser->OnDragDrop = pPanelParent->OnDragDrop;
 	this->pWebBrowser->OnDragOver = pPanelParent->OnDragOver;
 	this->pWebBrowser->OnDocumentComplete = this->_OnDocumentComplete; //[31-07-2023]
+	this->pWebBrowser->OnBeforeNavigate2 = this->_OnBeforeNavigate2; // [29-08-2025]
 	//Wybieralny tekst rozdziału
 	this->pLBoxSelectText = new GsListBoxSelectedVersClass(pPanelParent);
 	if(!this->pLBoxSelectText) throw(Exception("Błąd inicjalizacji klasy GsListBoxSelectedVersClass"));
@@ -1645,6 +1670,88 @@ void __fastcall GsTabSheetClass::_InitPanelTextBible(TPanel *pPanelParent)
 	this->pGsEditorClass->Height = 160;
 	this->pGsEditorClass->Visible = false;
 	this->pGsEditorClass->OnSave = this->_OnSaveComments;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitPanelSearchSelectWordResult()
+/**
+	OPIS METOD(FUNKCJI): Otwarcie panelu z wynikami wyszukiwania zaznaczonego słowa // [31-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TForm *pMainWindow = Application->MainForm;
+	if(!pMainWindow) throw(Exception("Błąd wyłuskania wskaźnika do głównego okna"));
+	//---
+	this->pPanelSelectWordResult = new TPanel(this);
+	if(!this->pPanelSelectWordResult) throw(Exception("Błąd inicjalizacji klasy TPanel"));
+	this->pPanelSelectWordResult->Parent = this;
+	this->pPanelSelectWordResult->Left = this->pButtSearchSelectWord->Left;
+	this->pPanelSelectWordResult->Top = this->pButtSearchSelectWord->Parent->Top;// + this->pButtSearchSelectWord->Parent->Height + 1;
+	this->pPanelSelectWordResult->Width = 400; this->pPanelSelectWordResult->Height = 700;
+	this->pPanelSelectWordResult->Visible = false;
+	this->pPanelSelectWordResult->OnMouseLeave = this->_OnMouseLeave;
+	//---
+	this->pCListResultSearchSelectWord = new TControlList(this->pPanelSelectWordResult);
+	if(!this->pCListResultSearchSelectWord) throw(Exception("Błąd inicjalizacji klasy TControlList"));
+	this->pCListResultSearchSelectWord->Parent = this->pPanelSelectWordResult;
+	this->pCListResultSearchSelectWord->Align = alClient;
+	this->pCListResultSearchSelectWord->AlignWithMargins = true;
+	this->pCListResultSearchSelectWord->ItemHeight = 32;
+	this->pCListResultSearchSelectWord->OnBeforeDrawItem = this->_OnBeforeDrawItem;
+	//---
+	this->pLabelItemResultSearchSelectWord = new TLabel(this);
+	if(!this->pLabelItemResultSearchSelectWord) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+	this->pLabelItemResultSearchSelectWord->Align = alClient;
+	this->pLabelItemResultSearchSelectWord->AutoSize = false;
+	this->pLabelItemResultSearchSelectWord->AlignWithMargins = true;
+	this->pLabelItemResultSearchSelectWord->Layout = tlCenter;
+	//---
+	this->pLabelItemAssressResult = new TLabel(this);
+	if(!this->pLabelItemAssressResult) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+	this->pLabelItemAssressResult->Align = alLeft;
+	this->pLabelItemAssressResult->Width = 42;
+	this->pLabelItemAssressResult->AutoSize = false;
+	this->pLabelItemAssressResult->AlignWithMargins = true;
+	this->pLabelItemAssressResult->Layout = tlCenter;
+	this->pLabelItemAssressResult->StyleElements = TStyleElements() << seClient << seBorder;
+	this->pLabelItemAssressResult->Font->Style = TFontStyles() << fsBold;
+	this->pLabelItemAssressResult->Font->Color = clRed;
+
+	this->pCListResultSearchSelectWord->AddControlToItem(this->pLabelItemAssressResult);
+	this->pCListResultSearchSelectWord->AddControlToItem(this->pLabelItemResultSearchSelectWord);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+		const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState)
+/**
+	OPIS METOD(FUNKCJI): Zdarzenie listy resultatów wyszukiwania zaznaczonego słowa // [31-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if((AIndex < 0) || (AIndex >= this->pHSlistResultSearchSelectWord->Count)) return;
+
+	MyObjectVers *pMyObjectVers = static_cast<MyObjectVers *>(this->pHSlistResultSearchSelectWord->Objects[AIndex]);
+	if(!pMyObjectVers) return;
+
+	this->pLabelItemAssressResult->Caption = pMyObjectVers->BookChaptVers;
+	this->pLabelItemResultSearchSelectWord->Caption = this->pHSlistResultSearchSelectWord->Strings[AIndex].SubString(11, GlobalVar::Global_MaxlengthVers);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnMouseLeave(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI): Mysz poza objekt, klasy TControlList, list wersetów ze słowem zaznaczonym // [31-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+//	TControlList *pCList = dynamic_cast<TControlList *>(Sender);
+//	if(!pCList) return;
+	//---
+	this->pPanelSelectWordResult->Visible = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_InitToolBarViewText(TPanel *pPanelParent)
@@ -1678,7 +1785,7 @@ void __fastcall GsTabSheetClass::_InitToolBarViewText(TPanel *pPanelParent)
 		pToolButton->ImageIndex = enImageIndex_ReadOnlyText - i;
 		pToolButton->Tag = pToolButton->ImageIndex;
 		pToolButton->ShowHint = true;
-		pToolButton->OnClick = this->_OnClickButton;
+		pToolButton->OnClick = this->_OnClickToolButton;
 		pToolButton->Grouped = true;
 		pToolButton->Style = tbsCheck;
 		pToolButton->CustomHint = GsReadBibleTextData::_GsBalloonHint;
@@ -1723,7 +1830,7 @@ void __fastcall GsTabSheetClass::_InitToolBarAllButtons(TPanel *pPanelParent)
 	this->pToolButtonInfoTranslates->ImageIndex = enImageIndex_DisplayInfoTranslates;
 	this->pToolButtonInfoTranslates->ShowHint = true;
 	this->pToolButtonInfoTranslates->Tag = this->pToolButtonInfoTranslates->ImageIndex;
-	this->pToolButtonInfoTranslates->OnClick = this->_OnClickButton;
+	this->pToolButtonInfoTranslates->OnClick = this->_OnClickToolButton;
 	this->pToolButtonInfoTranslates->AllowAllUp = true;
 	this->pToolButtonInfoTranslates->Style = tbsCheck;
 	this->pToolButtonInfoTranslates->CustomHint = GsReadBibleTextData::_GsBalloonHint;
@@ -1735,7 +1842,7 @@ void __fastcall GsTabSheetClass::_InitToolBarAllButtons(TPanel *pPanelParent)
 	this->pToolButtonEdit->ImageIndex = enImageIndex_EditText;
 	this->pToolButtonEdit->ShowHint = true;
 	this->pToolButtonEdit->Tag = this->pToolButtonEdit->ImageIndex;
-	this->pToolButtonEdit->OnClick = this->_OnClickButton;
+	this->pToolButtonEdit->OnClick = this->_OnClickToolButton;
 	this->pToolButtonEdit->AllowAllUp = true;
 	this->pToolButtonEdit->Style = tbsCheck;
 	this->pToolButtonEdit->CustomHint = GsReadBibleTextData::_GsBalloonHint;
@@ -1749,7 +1856,7 @@ void __fastcall GsTabSheetClass::_InitToolBarAllButtons(TPanel *pPanelParent)
 		pToolButton->ImageIndex = i;
 		pToolButton->ShowHint = true;
 		pToolButton->Tag = pToolButton->ImageIndex;
-		pToolButton->OnClick = this->_OnClickButton;
+		pToolButton->OnClick = this->_OnClickToolButton;
 		pToolButton->CustomHint = GsReadBibleTextData::_GsBalloonHint;
 		//---
 		if(i == enImageIndex_ToNextBook)
@@ -1775,6 +1882,7 @@ void __fastcall GsTabSheetClass::_InitCBoxChaptersSelect(TPanel *pPanelParent)
 	GsTreeNodeClass *pGsTreeNodeClass = dynamic_cast<GsTreeNodeClass *>(GsReadBibleTextData::pGsTreeBibleClass->Selected);
 	if(!pGsTreeNodeClass) throw(Exception("Błąd procedury wyłuskania, objektu klasy GsTreeNodeClass"));
 	this->pComboBox = new TComboBox(pPanelParent);
+	if(!this->pComboBox) throw(Exception("Błąd inicjalizacji klasy TComboBox"));
 	this->pComboBox->Parent = pPanelParent;
 	this->pComboBox->Font->Quality = TFontQuality::fqClearType;
 	this->pComboBox->Align = alLeft;
@@ -1792,6 +1900,49 @@ void __fastcall GsTabSheetClass::_InitCBoxChaptersSelect(TPanel *pPanelParent)
 			//Tworzenie listy rozdziałów wybranej księgi, dla objektu, klasy TComboBox
 	for(int iChapt=0; iChapt<AppCTable_InfoAllBooks[pGsTreeNodeClass->ucIndexBook].ucCountChapt; ++iChapt)
 		{this->pComboBox->AddItem(Format("Rozdział %u", ARRAYOFCONST((iChapt + 1))), 0);}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_InitControlsSelectWord(TPanel *pPanelParent)
+/**
+	OPIS METOD(FUNKCJI): Kontrolka(i) do wyświetlania i podejmowania akcji
+											 z wybranym słowem z rozdziału // [30-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TForm *pMainWindow = Application->MainForm;
+	if(!pMainWindow) throw(Exception("Błąd wyłuskania wskaźnika do głównego okna"));
+	//---
+	this->pButtSearchSelectWord = new TButton(pPanelParent);
+	if(!this->pButtSearchSelectWord) throw(Exception("Błąd inicjalizacji klasy TButton"));
+	this->pButtSearchSelectWord->Parent = pPanelParent;
+	this->pButtSearchSelectWord->Align = alLeft;
+	this->pButtSearchSelectWord->AlignWithMargins = true;
+	this->pButtSearchSelectWord->Caption = "Wyszukaj zaznaczone słowo";
+	this->pButtSearchSelectWord->Width = pMainWindow->Canvas->TextWidth(this->pButtSearchSelectWord->Caption) + 34;
+	this->pButtSearchSelectWord->Enabled = false;
+	this->pButtSearchSelectWord->Images = GsReadBibleTextData::_GsImgListData;
+	this->pButtSearchSelectWord->DisabledImages = GsReadBibleTextData::_GsImgListDataDisable;
+	this->pButtSearchSelectWord->ImageIndex = enImageIndex_SearchSelectWord;
+	this->pButtSearchSelectWord->DisabledImageIndex = enImageIndex_SearchSelectWord;
+  this->pButtSearchSelectWord->OnClick = this->_OnButtonSearchSelectWord;
+	//--- Pole tekstowe z wybranym słowem
+	this->pLabeledEdit = new TLabeledEdit(pPanelParent);
+	if(!this->pLabeledEdit) throw(Exception("Błąd inicjalizacji klasy TLabeledEdit"));
+	this->pLabeledEdit->Parent = pPanelParent;
+	this->pLabeledEdit->Align = alLeft;
+	this->pLabeledEdit->AlignWithMargins = true;
+	this->pLabeledEdit->Width = 200;
+	this->pLabeledEdit->EditLabel->Caption = "Zaznaczony tekst: ";
+	this->pLabeledEdit->ReadOnly = true;
+	this->pLabeledEdit->Margins->Top = 1; this->pLabeledEdit->Margins->Bottom = 1;
+	this->pLabeledEdit->Margins->Left =  pMainWindow->Canvas->TextWidth(this->pLabeledEdit->EditLabel->Caption) + 8;
+	this->pLabeledEdit->LabelPosition = lpLeft;
+	this->pLabeledEdit->Font->Color = clBlue;
+	this->pLabeledEdit->Font->Style = TFontStyles() << fsBold;
+	this->pLabeledEdit->StyleElements = TStyleElements() << seClient << seBorder;
+	this->pLabeledEdit->OnChange = this->_OnChangeSelectWord;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_InitTabSetDisplayTranslates()
@@ -1838,7 +1989,11 @@ __fastcall GsTabSheetClass::~GsTabSheetClass()
 {
 	//Lista surowa aktualnie przegladanego rozdziału 25-08-2021
 	//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html
-	delete this->pHSListActualText; this->pHSListActualText = nullptr;
+	if(this->pHSListActualText)
+		{delete this->pHSListActualText; this->pHSListActualText = nullptr;}
+  // Lista wyszkanych miejsc wystepowania zaznaczonego słowa
+	if(this->pHSlistResultSearchSelectWord)
+		{delete this->pHSlistResultSearchSelectWord; this->pHSlistResultSearchSelectWord = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control,
@@ -1890,7 +2045,7 @@ bool __fastcall GsTabSheetClass::_PrevChapter()
 	return true;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsTabSheetClass::_OnClickButton(System::TObject* Sender)
+void __fastcall GsTabSheetClass::_OnClickToolButton(System::TObject* Sender)
 /**
 	OPIS METOD(FUNKCJI): Kliknięto na przycisk TToolBaru
 	OPIS ARGUMENTÓW:
@@ -2027,11 +2182,53 @@ void __fastcall GsTabSheetClass::_OnSaveComments(System::TObject* Sender)
 	if(!pGsEditorClass) return;
 	//--- Uaktualnienie objektu, klasy GsListBoxSelectedVersClass,
 	//		a jednocześnie ponowne wczytanie wybranego rozdziału, z odpowiednimi znacznikami
-	//Uaktualnienie wyświetlania aktualnego rozdziału, z zaznaczonymi, lub nie, wersetami z komentarzem
+	// Uaktualnienie wyświetlania aktualnego rozdziału, z zaznaczonymi, lub nie, wersetami z komentarzem
 	GsTabSheetClass *pGsTabSheetClass = dynamic_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage); //Aktualna zakładka 07-01-2019
 	if(pGsTabSheetClass) GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);//Powtórne wczytanie tekstu rozdziału 07-01-2019
-	//Odswierzenie głównej listy komentarzy w głównym oknie
+	// Odswierzenie głównej listy komentarzy w głównym oknie
 	GsReadBibleTextData::pGsLViewCommentsAllClass->ReloadAllVersComments(false);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnChangeSelectWord(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI): Zmieniono zawartość pola z wybranym słowem
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TLabeledEdit *pLEdit = dynamic_cast<TLabeledEdit *>(Sender);
+	if(!pLEdit) return;
+	//---
+	this->pButtSearchSelectWord->Enabled = !pLEdit->Text.IsEmpty();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnButtonSearchSelectWord(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI): Zdarzenie wybrania przycisku wyszukiwania zaznaczonego słowa [31-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButton *pButt = dynamic_cast<TButton *>(Sender);
+	if(!pButt) return;
+	//---
+	this->pPanelSelectWordResult->Visible = true;
+
+	this->pHSlistResultSearchSelectWord->BeginUpdate();
+	this->pHSlistResultSearchSelectWord->Clear();
+	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(0);
+	if(pGsReadBibleTextItem)
+	{
+		THashedStringList *pHSList = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, this->_ShucIndexBook);
+		if(pHSList)
+		{
+			this->pHSlistResultSearchSelectWord->Assign(pHSList);
+    }
+	}
+	this->pHSlistResultSearchSelectWord->EndUpdate();
+	this->pCListResultSearchSelectWord->ItemCount = this->pHSlistResultSearchSelectWord->Count;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL)
@@ -2067,6 +2264,27 @@ void __fastcall GsTabSheetClass::_OnDocumentComplete(System::TObject* ASender, c
 				}
 			}
 		}
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnBeforeNavigate2(System::TObject *ASender, const _di_IDispatch pDisp, const OleVariant &URL, const OleVariant &Flags,
+		const OleVariant &TargetFrameName, const OleVariant &PostData, const OleVariant &Headers, WordBool &Cancel)
+/**
+	OPIS METOD(FUNKCJI): [29-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TWebBrowser *pBrowser = dynamic_cast<TWebBrowser *>(ASender);
+	if(!pBrowser) return;
+	//---
+  UnicodeString adres = URL;
+	if (adres.Pos("app://") == 1)
+	{
+		UnicodeString ustrWordSelect = adres.SubString(7, adres.Length() - 7);
+		this->pLabeledEdit->Text = ustrWordSelect;
+		Cancel = VARIANT_TRUE; // zatrzymuje nawigację, nie pokazuje błędu
 	}
 }
 //---------------------------------------------------------------------------
@@ -2196,6 +2414,17 @@ void __fastcall GsTabSheetClass::DestroyWnd()
 {
 	//Własny kod.
 	TTabSheet::DestroyWnd();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::DoHide()
+/**
+	OPIS METOD(FUNKCJI): Ukrycie kontrolki
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->pPanelSelectWordResult->Visible = false;
 }
 //---------------------------------------------------------------------------
 TTabSet* __fastcall GsTabSheetClass::GetTabSet()

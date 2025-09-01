@@ -37,7 +37,7 @@
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 #include "MyBibleLibrary\InitMBAppConst.h"
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.1.82632.96566";
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.3.81248.9684";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
@@ -69,6 +69,7 @@ enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_ReadOnlyText,		//21.Obraz widoku tekstu biblijnego tylko do przeglądania
 			enImageIndex_EditText,				//22.Obraz rozpoczęcia edycji
 			enImageIndex_DisplayInfoTranslates, //23.Obraz wyświetlania informacji o przekładach, lub wybranym przekładzie, rozdziale
+      enImageIndex_SearchSelectWord, //24.Wyszukiwanie zaznaczonego słowa
 			enImageIndex_Count						//Ilość grafik w objekcie GsReadBibleTextData::GsImgListData, typu TImageList
 		 };
 
@@ -390,10 +391,18 @@ class GsTabSheetClass : public TTabSheet
 	//---
 	bool __fastcall _NextChapter();
 	bool __fastcall _PrevChapter();
-	void __fastcall _OnClickButton(System::TObject* Sender);
+	void __fastcall _OnClickToolButton(System::TObject* Sender);
 	void __fastcall _OnSelectBoxChapter(System::TObject* Sender);
 	void __fastcall _OnSelectChaptCBoxDrawItem(Vcl::Controls::TWinControl* Control, int Index, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
 	void __fastcall _OnSaveComments(System::TObject* Sender);
+	void __fastcall _OnChangeSelectWord(System::TObject* Sender); // Zmieniono zawartość pola z wybranym słowem
+	void __fastcall _OnButtonSearchSelectWord(System::TObject* Sender); // Zdarzenie wybrania przycisku wyszukiwania zaznaczonego słowa // [31-08-2025]
+	//void __fastcall _OnButtonSearchClose(System::TObject* Sender); // Zamknięcie panelu wyszukiwania wybranego słowa // [31-08-2025]
+	void __fastcall _OnBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+		const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState); // Zdarzenie listy resultatów wyszukiwania zaznaczonego słowa // [31-08-2025]
+	void __fastcall _OnMouseLeave(System::TObject* Sender); // Mysz poza objekt, klasy TControlList, list wersetów ze słowem zaznaczonym // [31-08-2025]
+	//void __fastcall _OnExit(System::TObject* Sender);
+
 	void __fastcall _GetHTMLText(UnicodeString &_ustrTextHTML); //Metoda wypełnią kodem html, zmienną UnicodeString, z aktualnej zakładki
 	void __fastcall _GetText(UnicodeString &_ustrText); //Metoda wypełnią tekstem, zmienną UnicodeString, z aktualnej zakładki
 	void __fastcall _GetListText(THashedStringList *_pHSListChapt);//Metoda wypełnia listę listą z aktualnej zakładki [25-08-2023]
@@ -403,9 +412,13 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _InitToolBarViewText(TPanel *pPanelParent); //Inicjalizacja objektu klasy TToolbar do zmieniania widoków wyświetlanych wersetów
 	void __fastcall _InitCBoxChaptersSelect(TPanel *pPanelParent); //Inicjalizacja objektu klasy TComboBox do wybierania rozdziałów w bierzacej zakładce
 	void __fastcall _InitPanelInfoTranslation(); //Panel z objektami informacyjnymi o wybranym tłumaczeniu
-	void __fastcall _InitPanelTextBible(TPanel *pPanelParent); //Kontrolki dotyczące tekstu biblijnego: TProgressBar,
-																															//TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
-	void __fastcall _OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL); //[31-07-2023]
+	void __fastcall _InitPanelTextBible(TPanel *pPanelParent); // Kontrolki dotyczące tekstu biblijnego: TProgressBar,
+																														 // TWebBrowser, GsListBoxSelectedVersClass, GsEditorClass
+	void __fastcall _InitPanelSearchSelectWordResult(); // Otwarcie panelu z wynikami wyszukiwania zaznaczonego słowa // [31-08-2025]
+	void __fastcall _InitControlsSelectWord(TPanel *pPanelParent); // Kontrolka(i) do wyświetlania i podejmowania akcji z wybranym słowem z rozdziału // [30-08-2025]
+	void __fastcall _OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL); // [31-07-2023]
+	void __fastcall _OnBeforeNavigate2(System::TObject *ASender, const _di_IDispatch pDisp, const OleVariant &URL, const OleVariant &Flags,
+		const OleVariant &TargetFrameName, const OleVariant &PostData, const OleVariant &Headers, WordBool &Cancel); // [29-08-2025]
 
 	void __fastcall _InitTabSetDisplayTranslates(); //Zakładki z wyborem sposobu wyświetlania tłumaczeń
 	//---Objekty na zakładce
@@ -414,16 +427,25 @@ class GsTabSheetClass : public TTabSheet
 	TWebBrowser *pWebBrowser=nullptr,
 							*pWebBrowserInfoTranslations=nullptr;
 	TComboBox *pComboBox=nullptr; //Lista do wyboru konkretnego rodziału, już bybranej księgi
+	TLabeledEdit *pLabeledEdit=nullptr; // Zaznaczone słowo // [30-08-2025]
+  TButton *pButtSearchSelectWord=nullptr; // Szukanie zaznaczonego słowa // [31-08-2025]
 	TProgressBar *pProgressBar=nullptr; //Pionowy wskaźnik, umiejscowienia pozycji w rozdziale
 
 	UnicodeString ustrHtmlText; //Tekst html aktualnie wczytanego rozdziału z wybranej księgi
 
-	THashedStringList *pHSListActualText=nullptr; //Lista surowa aktualnie przegladanego rozdziału 25-08-2021
-																				//Będzie służyła do wyświetlania w objekcie klasy TControlList, który zastąpi sposób wyświetlania w formie html ???
+	THashedStringList *pHSListActualText=nullptr, // Lista surowa aktualnie przegladanego rozdziału 25-08-2021
+																								// Będzie służyła do wyświetlania w objekcie klasy TControlList,
+																								// który zastąpi sposób wyświetlania w formie html ???
+                    *pHSlistResultSearchSelectWord=nullptr; // Lista wyszkanych miejsc wystepowania zaznaczonego słowa
 	GsListBoxSelectedVersClass *pLBoxSelectText=nullptr;	//Lista ulubionych wersetów
+	TLabel *pLabelItemResultSearchSelectWord=nullptr, // Pozycja w liście rezultatów wyszukiwania zaznaczonego słowa [31-08-2025]
+         *pLabelItemAssressResult=nullptr; // Adres wyszukiwania słowa [01-09-2025]
+
 	GsEditorClass *pGsEditorClass=nullptr;							 //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd=nullptr;
-	TPanel *pPanelInfoTraslates=nullptr;
+	TPanel *pPanelInfoTraslates=nullptr,
+				 *pPanelSelectWordResult=nullptr; // [31-08-2025]
+	TControlList *pCListResultSearchSelectWord=nullptr; // [31-08-2025]
 	//--- Niektóre przyciski na TToolbarach
 	TToolButton *pToolButtonEdit=nullptr,	//Przycisk do edycji
 							*pToolButtonInfoTranslates=nullptr;//Przycisk do informacji o przekładach
@@ -434,6 +456,7 @@ class GsTabSheetClass : public TTabSheet
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
+		DYNAMIC void __fastcall DoHide();
 };
 /****************************************************************************
  *													KLASA GsTabSetClass															*

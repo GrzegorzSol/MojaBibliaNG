@@ -24,12 +24,13 @@ const UnicodeString GlobalVar::Global_custrNameIVerFile="MBibleNG.iver",				 //N
 	const UnicodeString GlobalVar::Global_custrGetDataDir= "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\";					 // Ścieżka dostępu do katalogu z danymi aplikacji
 #else
 	//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
-	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data");	 // Ścieżka dostępu do katalogu z danymi aplikacji
+	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data");  // Ścieżka dostępu do katalogu z danymi aplikacji
 #endif
 const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),	 // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 										GlobalVar::Global_custrPathStrongDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "StrongDict.strdi"), // Ścieżka dostępu do pliku ze słownikiem stronga
 										GlobalVar::Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 										GlobalVar::Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	// Ścieżka dostępu do katalogu z planami czytania biblii
+										GlobalVar::Global_custrPathJavaScripts=TPath::Combine(GlobalVar::Global_custrGetDataDir, "JVScripts"), // Ścieżka dostępu do katalogu z plikami Java script
 										GlobalVar::GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 										GlobalVar::Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
 										GlobalVar::Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				// Ścieżka do pliku konfiguracyjnego
@@ -41,7 +42,7 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathSearchLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),// Logo w oknie wyszukiwania
 										GlobalVar::Global_custrPathSetupsLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),// Logo w oknie ustawień
 										GlobalVar::Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"), // Logo główne podkładu
-//---
+										//---
 										GlobalVar::Global_custrPathFileWordVersesExistGrec=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistGrec.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu greckiegoposzczególnych słów // [08-06-2024]
 										GlobalVar::Global_custrPathFileWordVersesExistHbr=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistHbr.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu hebrajskiego, poszczególnych słów // [31-07-2024]
 										GlobalVar::Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
@@ -49,8 +50,8 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		// Ścieżka dostępu do pliku z listą ulubionych wersetów
 										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów
 										GlobalVar::Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
-										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),	// Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
-										//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
+										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
+                    //----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 										GlobalVar::Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName);	//Mutekst główny aplikacji
 
 void __fastcall GlobalVar::Global_InitGlobalVariables()
@@ -72,7 +73,7 @@ void __fastcall GlobalVar::Global_InitGlobalVariables()
 //			GsDebugClass::WriteDebug("BCC64C Standart");
 //		#endif
 //	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32) && !defined(_WIN64)
-//		#if defined(_DEBUGINFO_)
+//    #if defined(_DEBUGINFO_)
 //			// Tradycyjny kompilator dla Win32
 //			GsDebugClass::WriteDebug("BCC32C i BCC32X Standart");
 //		#endif

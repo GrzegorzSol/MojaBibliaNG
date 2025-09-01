@@ -36,7 +36,7 @@ enum {enHelpTextIndex_CloseSheet=0,		//0.Zamknięcie aktywnej zakładki
 
 struct GlobalVar
 {
-	//****************** STAŁE STATYCZNE ZE ŚCIERZKAMI DOSTĘPU ******************
+	//****************** STAŁE STATYCZNE ZE ŚCIEŻKAMI DOSTĘPU ******************
 	const static UnicodeString Global_custrNameIVerFile, // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
 														 Global_custrGetExeDir, // Ścieżka dostępu do pliku ze słownikiem stronga
 														 Global_custrGetDataDir,  // Ścieżka dostępu do katalogu z danymi aplikacji
@@ -44,6 +44,7 @@ struct GlobalVar
 														 Global_custrPathStrongDict, // Ścieżka dostępu do pliku ze słownikiem stronga
 														 Global_custrPathImagesStyles,  // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 														 Global_custrPathAllReadingPlan, // Ścieżka dostępu do katalogu z planami czytania biblii
+														 Global_custrPathJavaScripts, // Ścieżka dostępu do katalogu z plikami java script
 														 GlobalPath_CurrentActivePlan, // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 														 Global_custrPathSearchFavorities, // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
 														 Global_custrGetConfigFile, // Ścieżka do pliku konfiguracyjnego

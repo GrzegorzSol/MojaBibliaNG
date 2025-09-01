@@ -6861,7 +6861,7 @@ object MainBibleWindow: TMainBibleWindow
   end
   object BalloonHintMain: TBalloonHint
     Images = ImageListMainActive
-    HideAfter = 3200
+    HideAfter = 1000
     Left = 146
     Top = 453
   end

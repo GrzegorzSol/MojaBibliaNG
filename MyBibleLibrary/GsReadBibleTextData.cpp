@@ -221,6 +221,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
+		//--- 24.Ikona do wyszukiwania zaznaczonego słowa
+    pMemoryStr->WriteBuffer(ID_SEARCH_SELECTWORD, ARRAYSIZE(ID_SEARCH_SELECTWORD));							//Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//************************************** WERSJA IKON NIEAKTYWNYCH **************************************
 		//--- 0.Ikona korzenia drzewiastej struktury Bibli
 		pMemoryStr->WriteBuffer(ID_ROOT_BOOKS_DIS, ARRAYSIZE(ID_ROOT_BOOKS_DIS)); //Zapis do strumienia danych
@@ -366,6 +372,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
+		//--- 24.Ikona do wyszukiwania zaznaczonego słowa
+    pMemoryStr->WriteBuffer(ID_SEARCH_SELECTWORD_DIS, ARRAYSIZE(ID_SEARCH_SELECTWORD_DIS));							//Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 	}
 	__finally
 	{
@@ -411,7 +423,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	GsReadBibleTextData::InitGlobalVariables(); //Ustawienie globalnych zmiennych dla całej aplikacji
 	GsReadBibleTextData::InitListColors(); //Inicjalizacja listy kolorów
 	GsReadBibleTextData::InitHistoryList(); //Metoda inicjuje zmienne dotyczące historii [30-07-2023]
-	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy
+	//GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy
 	//---
 	if(GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Objekt GsReadBibleTextClass jest już zainicjowany"));
 	if(GlobalVar::Global_custrGetDataDir.IsEmpty()) throw(Exception("Brak ścieżki dostępu do katalogu z tekstami biblijnymi"));
@@ -446,6 +458,7 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	else throw(Exception("Brak komponentu klasy TTaskbar"));
 	//parametr inicjalizacji biblioteki
 	GsReadBibleTextData::IsInitLibrary = true; //Czy została zainicjowana bibliteka (moduł)
+	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy // [30-08=2025]
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::InitListColors()
@@ -559,10 +572,15 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n",
 									ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
 									//Kolor adresu dla pełnych tłumaczeń
-								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n", ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress)));
+								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n",
+									ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress))),
+									// Styl wybierania slowa [24-08-2025]
+								_SelectWord = UnicodeString(".slowo {cursor: pointer; display: inline; padding: 0px; margin: 0px; border-radius: 4px;}\n") +
+									".slowo:hover {background-color: #eef;}\n";
 									//Styl dla tekstu oryginalnego
 	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
 
+  // Tekst nagłówka dla tekstu zwykłego
 	GsReadBibleTextData::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html>\n<head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
@@ -576,7 +594,9 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												_FavoriteStyle + //Kolor zaznaczenie ulubionego wersetu
 																												_CommentStyle + //Kolor zaznaczania wersetu z komentarzem
 																												_BackGroundMainText +
+																												_SelectWord +
 																												"</style>\n</head>\n\n<body>\n";
+	// Tekst nagłówka dla tekstu, wyniku wyszukiwania
 	GsReadBibleTextData::GsHTMLHeaderSearch = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html>\n<head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
@@ -589,6 +609,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												".styleFound {background-color: #FFFF00;}" +
 																												"body {background-color:#33CCCC;font-size:12pt;font-family:Times New Roman;}" +
 																												"</style>\n</head>\n<body>\n";
+	// Tekst nagłówka dla tekstu wybranego wersetu
 	GsReadBibleTextData::GsHTMLHeaderDisplayVer = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html>\n<head>" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
@@ -601,6 +622,9 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												".styleFound {background-color: #FFFF00;}" +
 																												"body {background-color:#FCD9BA;font-size:12pt;font-family:Times New Roman;}" +
 																												"</style>\n</head>\n<body>";
+	// KODY JAVA SCRIPT
+		// Kod Java script umożliwiający "klikalność" tekstu, znajduje sięd na  każdej zakładce rozdziału. // [24-08-2025]
+	GsReadBibleTextData::GsHTML_FileJavaSc_SelectWord = TPath::Combine(GlobalVar::Global_custrPathJavaScripts, "SelectWord.js");
 	//--- Aktualizacja wyglądu strony, po zmianie konfiguracji kolorów aplikacji
 	if(GsReadBibleTextData::_GsPageControl) //Istnieje zakładka
 	{
@@ -684,6 +708,18 @@ unsigned char __fastcall GsReadBibleTextData::CountTranslates()
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	return GsReadBibleTextData::pGsReadBibleTextClass->GetCountTranslates();
+}
+//---------------------------------------------------------------------------
+unsigned char __fastcall GsReadBibleTextData::CountPolTranslates()
+/**
+	OPIS METOD(FUNKCJI): Metoda zwraca ilość tłumaczeń polskich // [30-08-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	return GsReadBibleTextData::pGsReadBibleTextClass->uiCountPol;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::GetInfoNameTranslate(const unsigned char i, UnicodeString &NameTranslate)
