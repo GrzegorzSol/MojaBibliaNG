@@ -713,6 +713,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	int iIndexVers=0, //Indeks wersetów w równoległym tłumaczeniu, lub pojedyńczym
 			iIndexFav=-1;//Indeks na globalnej liście wersetów ulubionych
 	unsigned char uiTranslatesIndex;//=0;
+	bool bIsOneTranslate=false; // Wiele tłumaczeń = false, jedno = true // [04-09-2025]
 	UnicodeString _Style_FavoriteStyle = "", //Styl zaznaczania ulubionego wersetu
 								_Style_CommentStyle = "",	 //Styl zaznaczania wersetu skomentowanego
 								_StyleFav_End = "",
@@ -739,8 +740,12 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 		//Pętla obracająca się przez kolejne wersety wybranej księgi i rodziału, wszystkich dostępnych tłumaczeń (for)
 		{
 			//Jeśli chcemy tylko jedno tłumaczenie, to licznik tłumaczeń = 1
-			if(iSelectTranslate>-1) uiTranslatesIndex = 1;
-			else uiTranslatesIndex = static_cast<unsigned char>(this->_ListAllTrChap->Count);//W przeciwnym przypadku ilość tłumaczeń równa ilością wszystkich załadowanych!
+			if(iSelectTranslate>-1) {uiTranslatesIndex = 1; bIsOneTranslate = true;}
+			else // W przeciwnym przypadku ilość tłumaczeń równa ilością wszystkich załadowanych!
+			{
+				uiTranslatesIndex = static_cast<unsigned char>(this->_ListAllTrChap->Count);
+				bIsOneTranslate = false;
+			}
 			//---
 			for(int iIndexChapt=0; iIndexChapt<this->_ListAllTrChap->Count; ++iIndexChapt)
 			//Dodawanie pokolei równoległych wersetów ze wszystkich tłumaczeń
@@ -860,26 +865,31 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 		}while(uiTranslatesIndex > 0);
 		pGsTabSheetClass->pLBoxSelectText->Items->EndUpdate();
 		//--- Uzupełnienie kodu Java script o indeksy wersetów // [30-08-2025]
-    // Kod Java script. // [24-08-2025] // [30-08-2025]
-		GsReadBibleTextData::GsHTMLJavaScripts = UnicodeString // Rozpoczęcie kodu Java script // [30-08-2025]
-																						("<script type=\"text/javascript\">\n") +
-  																					// Wczytanie kody java script, który umożliwia klikalność słów
-																						TFile::ReadAllText(GsReadBibleTextData::GsHTML_FileJavaSc_SelectWord, TEncoding::UTF8) +
-																						"\n\n// Wywołanie z poziomu window.onload() z podanymi identyfikatorami\n" +
-																						"window.onload = function()\n{\n";
-		// Tworzenie wywoływania funkcji Java script z ineksem wersetów
-		// dla wybranego tłumaczenia i wersetu z wybranego rozdziału // [30-08-2025]
-		for(int iIndexTrans=0; iIndexTrans<this->uiCountPol; ++iIndexTrans)
+		// Kod Java script. // [24-08-2025] // [30-08-2025]
+//    #if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("bIsOneTranslate: %d", ARRAYOFCONST(((int)bIsOneTranslate))));
+//		#endif
+		if(bIsOneTranslate) // [04-09-2025]
 		{
-			for(int iVers=0; iVers<iIndexVers; ++iVers)
-			{
-				GsReadBibleTextData::GsHTMLJavaScripts += Format("\tprzetworzTekst(\"tekst%d_%d\");\n",
-					ARRAYOFCONST((iIndexTrans, iVers)));
-			}
+  		GsReadBibleTextData::GsHTMLJavaScripts = UnicodeString // Rozpoczęcie kodu Java script // [30-08-2025]
+  																						("<script type=\"text/javascript\">\n") +
+  																						// Wczytanie kody java script, który umożliwia klikalność słów
+  																						TFile::ReadAllText(GsReadBibleTextData::GsHTML_FileJavaSc_SelectWord, TEncoding::UTF8) +
+  																						"\n\n// Wywołanie z poziomu window.onload() z podanymi identyfikatorami\n" +
+  																						"window.onload = function()\n{\n";
+  		// Tworzenie wywoływania funkcji Java script z indeksem wersetów
+  		// dla wybranego tłumaczenia i wersetu z wybranego rozdziału // [30-08-2025]
+  		for(int iIndexTrans=0; iIndexTrans<this->uiCountPol; ++iIndexTrans)
+  		{
+  			for(int iVers=0; iVers<iIndexVers; ++iVers)
+  			{
+  				GsReadBibleTextData::GsHTMLJavaScripts += Format("\tprzetworzTekst(\"tekst%d_%d\");\n",
+  					ARRAYOFCONST((iIndexTrans, iVers)));
+  			}
+  		}
+			GsReadBibleTextData::GsHTMLJavaScripts += "}\n</script>\n";
+			pStringStream->WriteString(GsReadBibleTextData::GsHTMLJavaScripts); // [24-08-2025]
 		}
-		GsReadBibleTextData::GsHTMLJavaScripts += "}\n</script>\n";
-
-		pStringStream->WriteString(GsReadBibleTextData::GsHTMLJavaScripts); // [24-08-2025]
 		pStringStream->WriteString("</body>\n</html>\n");
 		pStringStream->Position = 0;
 		//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
@@ -1532,6 +1542,9 @@ __fastcall GsTabSheetClass::GsTabSheetClass(TComponent* Owner) : TTabSheet(Owner
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::_GsPageControl->Visible = true; //01-02-2020
 	TToolButton *pToolButton = nullptr;
+	// Odczyt domyślnego ustawienia // [01-09-2025]
+	this->iGetDefaultTranslate = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ParametersSetupsSearch_Main,
+		GlobalVar::GlobalIni_Translate, 0) + 1;
 	//---
 	//this->DoubleBuffered = true;
 	//this->StyleElements = TStyleElements();
@@ -1688,7 +1701,8 @@ void __fastcall GsTabSheetClass::_InitPanelSearchSelectWordResult()
 	this->pPanelSelectWordResult->Parent = this;
 	this->pPanelSelectWordResult->Left = this->pButtSearchSelectWord->Left;
 	this->pPanelSelectWordResult->Top = this->pButtSearchSelectWord->Parent->Top;// + this->pButtSearchSelectWord->Parent->Height + 1;
-	this->pPanelSelectWordResult->Width = 400; this->pPanelSelectWordResult->Height = 700;
+	this->pPanelSelectWordResult->Width = this->Width - this->pButtSearchSelectWord->Left - 38;
+	this->pPanelSelectWordResult->Height = 700;
 	this->pPanelSelectWordResult->Visible = false;
 	this->pPanelSelectWordResult->OnMouseLeave = this->_OnMouseLeave;
 	//---
@@ -1697,7 +1711,8 @@ void __fastcall GsTabSheetClass::_InitPanelSearchSelectWordResult()
 	this->pCListResultSearchSelectWord->Parent = this->pPanelSelectWordResult;
 	this->pCListResultSearchSelectWord->Align = alClient;
 	this->pCListResultSearchSelectWord->AlignWithMargins = true;
-	this->pCListResultSearchSelectWord->ItemHeight = 32;
+	this->pCListResultSearchSelectWord->Font->Size = 10;
+	this->pCListResultSearchSelectWord->ItemHeight = 7 * -this->pCListResultSearchSelectWord->Font->Height - 4;
 	this->pCListResultSearchSelectWord->OnBeforeDrawItem = this->_OnBeforeDrawItem;
 	//---
 	this->pLabelItemResultSearchSelectWord = new TLabel(this);
@@ -1706,19 +1721,21 @@ void __fastcall GsTabSheetClass::_InitPanelSearchSelectWordResult()
 	this->pLabelItemResultSearchSelectWord->AutoSize = false;
 	this->pLabelItemResultSearchSelectWord->AlignWithMargins = true;
 	this->pLabelItemResultSearchSelectWord->Layout = tlCenter;
+  this->pLabelItemResultSearchSelectWord->WordWrap = true;
 	//---
-	this->pLabelItemAssressResult = new TLabel(this);
-	if(!this->pLabelItemAssressResult) throw(Exception("Błąd inicjalizacji klasy TLabel"));
-	this->pLabelItemAssressResult->Align = alLeft;
-	this->pLabelItemAssressResult->Width = 42;
-	this->pLabelItemAssressResult->AutoSize = false;
-	this->pLabelItemAssressResult->AlignWithMargins = true;
-	this->pLabelItemAssressResult->Layout = tlCenter;
-	this->pLabelItemAssressResult->StyleElements = TStyleElements() << seClient << seBorder;
-	this->pLabelItemAssressResult->Font->Style = TFontStyles() << fsBold;
-	this->pLabelItemAssressResult->Font->Color = clRed;
+	this->pLabelItemAddressResult = new TLabel(this);
+	if(!this->pLabelItemAddressResult) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+	this->pLabelItemAddressResult->Align = alLeft;
+	this->pLabelItemAddressResult->Width = 68;
+	this->pLabelItemAddressResult->AutoSize = false;
+	this->pLabelItemAddressResult->AlignWithMargins = true;
+	this->pLabelItemAddressResult->Layout = tlCenter;
+	this->pLabelItemAddressResult->StyleElements = TStyleElements() << seClient << seBorder;
+	this->pLabelItemAddressResult->Font->Size = 10;
+	this->pLabelItemAddressResult->Font->Style = TFontStyles() << fsBold;
+	this->pLabelItemAddressResult->Font->Color = clRed;
 
-	this->pCListResultSearchSelectWord->AddControlToItem(this->pLabelItemAssressResult);
+	this->pCListResultSearchSelectWord->AddControlToItem(this->pLabelItemAddressResult);
 	this->pCListResultSearchSelectWord->AddControlToItem(this->pLabelItemResultSearchSelectWord);
 }
 //---------------------------------------------------------------------------
@@ -1736,7 +1753,7 @@ void __fastcall GsTabSheetClass::_OnBeforeDrawItem(int AIndex, Vcl::Graphics::TC
 	MyObjectVers *pMyObjectVers = static_cast<MyObjectVers *>(this->pHSlistResultSearchSelectWord->Objects[AIndex]);
 	if(!pMyObjectVers) return;
 
-	this->pLabelItemAssressResult->Caption = pMyObjectVers->BookChaptVers;
+	this->pLabelItemAddressResult->Caption = pMyObjectVers->BookChaptVers;
 	this->pLabelItemResultSearchSelectWord->Caption = this->pHSlistResultSearchSelectWord->Strings[AIndex].SubString(11, GlobalVar::Global_MaxlengthVers);
 }
 //---------------------------------------------------------------------------
@@ -1919,6 +1936,7 @@ void __fastcall GsTabSheetClass::_InitControlsSelectWord(TPanel *pPanelParent)
 	this->pButtSearchSelectWord->Parent = pPanelParent;
 	this->pButtSearchSelectWord->Align = alLeft;
 	this->pButtSearchSelectWord->AlignWithMargins = true;
+	this->pButtSearchSelectWord->Enabled = false;
 	this->pButtSearchSelectWord->Caption = "Wyszukaj zaznaczone słowo";
 	this->pButtSearchSelectWord->Width = pMainWindow->Canvas->TextWidth(this->pButtSearchSelectWord->Caption) + 34;
 	this->pButtSearchSelectWord->Enabled = false;
@@ -1939,9 +1957,9 @@ void __fastcall GsTabSheetClass::_InitControlsSelectWord(TPanel *pPanelParent)
 	this->pLabeledEdit->Margins->Top = 1; this->pLabeledEdit->Margins->Bottom = 1;
 	this->pLabeledEdit->Margins->Left =  pMainWindow->Canvas->TextWidth(this->pLabeledEdit->EditLabel->Caption) + 8;
 	this->pLabeledEdit->LabelPosition = lpLeft;
-	this->pLabeledEdit->Font->Color = clBlue;
+	//this->pLabeledEdit->Font->Color = clBlue;
 	this->pLabeledEdit->Font->Style = TFontStyles() << fsBold;
-	this->pLabeledEdit->StyleElements = TStyleElements() << seClient << seBorder;
+	//this->pLabeledEdit->StyleElements = TStyleElements() << seClient << seBorder;
 	this->pLabeledEdit->OnChange = this->_OnChangeSelectWord;
 }
 //---------------------------------------------------------------------------
@@ -2200,7 +2218,12 @@ void __fastcall GsTabSheetClass::_OnChangeSelectWord(System::TObject* Sender)
 	TLabeledEdit *pLEdit = dynamic_cast<TLabeledEdit *>(Sender);
 	if(!pLEdit) return;
 	//---
-	this->pButtSearchSelectWord->Enabled = !pLEdit->Text.IsEmpty();
+	// Aby przycisk wyszukiwania słowa był aktywny, pole w wybranym słowm nie może być puste,
+	// i niw może być to zakładka z równoległymi tłumaczeniami // 02-09-2025
+	this->pButtSearchSelectWord->Enabled = !pLEdit->Text.IsEmpty() && (this->pGsTabSetClass->TabIndex > 0);
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("pGsTabSetClass->TabIndex: %d", ARRAYOFCONST((pGsTabSetClass->TabIndex))));
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnButtonSearchSelectWord(System::TObject* Sender)
@@ -2214,21 +2237,32 @@ void __fastcall GsTabSheetClass::_OnButtonSearchSelectWord(System::TObject* Send
 	TButton *pButt = dynamic_cast<TButton *>(Sender);
 	if(!pButt) return;
 	//---
+	int iPos=0;
 	this->pPanelSelectWordResult->Visible = true;
 
 	this->pHSlistResultSearchSelectWord->BeginUpdate();
 	this->pHSlistResultSearchSelectWord->Clear();
-	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(0);
+
+	//GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->iGetDefaultTranslate);
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("pGsTabSetClass->TabIndex: %d", ARRAYOFCONST((this->pGsTabSetClass->TabIndex))));
+//	#endif
+  // Wyszukiwanie tylko dotyczą tłumaczenia w bierzącej zakładce // [02-09-2025]
+	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(this->pGsTabSetClass->TabIndex - 1);
 	if(pGsReadBibleTextItem)
 	{
 		THashedStringList *pHSList = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, this->_ShucIndexBook);
 		if(pHSList)
 		{
-			this->pHSlistResultSearchSelectWord->Assign(pHSList);
-    }
+			for(int i=0; i<pHSList->Count; ++i)
+			{
+				iPos = System::Sysutils::AnsiLowerCase(pHSList->Strings[i]).Pos(System::Sysutils::AnsiLowerCase(this->pLabeledEdit->Text));
+				if(iPos > 0) this->pHSlistResultSearchSelectWord->AddObject(pHSList->Strings[i], pHSList->Objects[i]);
+			}
+		}
 	}
-	this->pHSlistResultSearchSelectWord->EndUpdate();
 	this->pCListResultSearchSelectWord->ItemCount = this->pHSlistResultSearchSelectWord->Count;
+	this->pHSlistResultSearchSelectWord->EndUpdate();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnDocumentComplete(System::TObject* ASender, const _di_IDispatch pDisp, const System::OleVariant &URL)
@@ -2279,6 +2313,13 @@ void __fastcall GsTabSheetClass::_OnBeforeNavigate2(System::TObject *ASender, co
 	TWebBrowser *pBrowser = dynamic_cast<TWebBrowser *>(ASender);
 	if(!pBrowser) return;
 	//---
+	if(this->pGsTabSetClass->TabIndex == 0)
+	{
+		this->pLabeledEdit->Text = "";
+    Cancel = VARIANT_TRUE; // zatrzymuje nawigację, nie pokazuje błędu
+		return;
+  }
+
   UnicodeString adres = URL;
 	if (adres.Pos("app://") == 1)
 	{
@@ -2512,9 +2553,17 @@ void __fastcall GsTabSetClass::_OnChange(System::TObject* Sender, int NewTab, bo
 		//nie wyświetlano tekstu z sąsiedniej zakładki ksiegi i rozdziału!
 		GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pGsTabSheetClass->_ShucIndexBook, pGsTabSheetClass->_ShucIndexChapt); //Niekoniecznie potrzebne
 		//Od NewTab odejmowane jast 1, gdyż pierwsza pozycja zakładek to nie konkretne tłumaczenie, lecz wszystkie tłumaczenia
-		/*if(pGsTabSheetClass)*/ GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, NewTab-1);
+		GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, NewTab-1);
 
 		pGsTabSheetClass->_DisplayInfosTranslates(NewTab-1);
+
+//    #if defined(_DEBUGINFO_)
+//			GsDebugClass::WriteDebug(Format("NewTab: %d, TabIndex: %d", ARRAYOFCONST((NewTab, this->TabIndex))));
+//		#endif
+		// Wykasowanie zawartości pola edycji wybranego słowa, po wykasowaniu zezaktywuje sie równierz przycisk wyszukiwania.
+		// // 02-09-2025
+		//if(NewTab == 0)
+		pGsTabSheetClass->pLabeledEdit->Clear();
 	}
 	else
 	{

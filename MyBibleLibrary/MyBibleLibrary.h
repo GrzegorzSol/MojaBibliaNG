@@ -439,7 +439,7 @@ class GsTabSheetClass : public TTabSheet
                     *pHSlistResultSearchSelectWord=nullptr; // Lista wyszkanych miejsc wystepowania zaznaczonego słowa
 	GsListBoxSelectedVersClass *pLBoxSelectText=nullptr;	//Lista ulubionych wersetów
 	TLabel *pLabelItemResultSearchSelectWord=nullptr, // Pozycja w liście rezultatów wyszukiwania zaznaczonego słowa [31-08-2025]
-         *pLabelItemAssressResult=nullptr; // Adres wyszukiwania słowa [01-09-2025]
+         *pLabelItemAddressResult=nullptr; // Adres wyszukiwania słowa [01-09-2025]
 
 	GsEditorClass *pGsEditorClass=nullptr;							 //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd=nullptr;
@@ -449,6 +449,7 @@ class GsTabSheetClass : public TTabSheet
 	//--- Niektóre przyciski na TToolbarach
 	TToolButton *pToolButtonEdit=nullptr,	//Przycisk do edycji
 							*pToolButtonInfoTranslates=nullptr;//Przycisk do informacji o przekładach
+  int iGetDefaultTranslate=0; // Domyślne tłumaczenie odczytane z ustawień aplikacji // [01-09-2025]
 	public:
 		unsigned char _ShucIndexBook,				//Numer księgi
 									_ShucIndexChapt;			//Numer rozdziału
