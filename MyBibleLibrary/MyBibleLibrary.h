@@ -398,8 +398,9 @@ class GsTabSheetClass : public TTabSheet
 	void __fastcall _OnChangeSelectWord(System::TObject* Sender); // Zmieniono zawartość pola z wybranym słowem
 	void __fastcall _OnButtonSearchSelectWord(System::TObject* Sender); // Zdarzenie wybrania przycisku wyszukiwania zaznaczonego słowa // [31-08-2025]
 	//void __fastcall _OnButtonSearchClose(System::TObject* Sender); // Zamknięcie panelu wyszukiwania wybranego słowa // [31-08-2025]
-	void __fastcall _OnBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+	void __fastcall _OnBeforeDrawItemControlList(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
 		const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState); // Zdarzenie listy resultatów wyszukiwania zaznaczonego słowa // [31-08-2025]
+	void __fastcall _OnItemClickControlList(System::TObject* Sender); // [14-09-2025]
 	void __fastcall _OnMouseLeave(System::TObject* Sender); // Mysz poza objekt, klasy TControlList, list wersetów ze słowem zaznaczonym // [31-08-2025]
 	//void __fastcall _OnExit(System::TObject* Sender);
 

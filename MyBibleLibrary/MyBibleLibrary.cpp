@@ -1713,7 +1713,8 @@ void __fastcall GsTabSheetClass::_InitPanelSearchSelectWordResult()
 	this->pCListResultSearchSelectWord->AlignWithMargins = true;
 	this->pCListResultSearchSelectWord->Font->Size = 10;
 	this->pCListResultSearchSelectWord->ItemHeight = 7 * -this->pCListResultSearchSelectWord->Font->Height - 4;
-	this->pCListResultSearchSelectWord->OnBeforeDrawItem = this->_OnBeforeDrawItem;
+	this->pCListResultSearchSelectWord->OnBeforeDrawItem = this->_OnBeforeDrawItemControlList;
+	this->pCListResultSearchSelectWord->OnItemClick = this->_OnItemClickControlList;
 	//---
 	this->pLabelItemResultSearchSelectWord = new TLabel(this);
 	if(!this->pLabelItemResultSearchSelectWord) throw(Exception("Błąd inicjalizacji klasy TLabel"));
@@ -1739,7 +1740,7 @@ void __fastcall GsTabSheetClass::_InitPanelSearchSelectWordResult()
 	this->pCListResultSearchSelectWord->AddControlToItem(this->pLabelItemResultSearchSelectWord);
 }
 //---------------------------------------------------------------------------
-void __fastcall GsTabSheetClass::_OnBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+void __fastcall GsTabSheetClass::_OnBeforeDrawItemControlList(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
 		const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState)
 /**
 	OPIS METOD(FUNKCJI): Zdarzenie listy resultatów wyszukiwania zaznaczonego słowa // [31-08-2025]
@@ -1755,6 +1756,33 @@ void __fastcall GsTabSheetClass::_OnBeforeDrawItem(int AIndex, Vcl::Graphics::TC
 
 	this->pLabelItemAddressResult->Caption = pMyObjectVers->BookChaptVers;
 	this->pLabelItemResultSearchSelectWord->Caption = this->pHSlistResultSearchSelectWord->Strings[AIndex].SubString(11, GlobalVar::Global_MaxlengthVers);
+}
+//---------------------------------------------------------------------------
+void __fastcall GsTabSheetClass::_OnItemClickControlList(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI): Klikniecie na pozycję listy resultatów wyszukiwania zaznaczonego słowa // [14-09-2025]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TControlList *pCList = dynamic_cast<TControlList *>(Sender);
+	if(!pCList) return;
+	//---
+	MyObjectVers *pMyObjectVers = static_cast<MyObjectVers *>(this->pHSlistResultSearchSelectWord->Objects[pCList->ItemIndex]);
+	if(!pMyObjectVers) return;
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("Trans: %d, Book: %d, Chapt: %d",
+//			ARRAYOFCONST((this->pGsTabSetClass->TabIndex-1, pMyObjectVers->ucBook, pMyObjectVers->ucChapt))));
+//	#endif
+
+	this->pPanelSelectWordResult->Visible = false;
+
+	//GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(pMyObjectVers->ucBook, pMyObjectVers->ucChapt-1);
+	//Wyświetl tekst dla wszystkich tłumaczeń, lub wybranego.
+	//GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(this->pWebBrowser, this->pGsTabSetClass->TabIndex-1);
+	this->pComboBox->ItemIndex = pMyObjectVers->ucChapt-1;
+	this->_OnSelectBoxChapter(this->pComboBox);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsTabSheetClass::_OnMouseLeave(System::TObject* Sender)
