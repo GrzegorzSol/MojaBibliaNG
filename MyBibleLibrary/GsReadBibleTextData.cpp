@@ -227,6 +227,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
+		//--- 25.Ikona wyjścia z aplikacji
+		pMemoryStr->WriteBuffer(ID_EXIT_APPLIC, ARRAYSIZE(ID_EXIT_APPLIC));							//Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//************************************** WERSJA IKON NIEAKTYWNYCH **************************************
 		//--- 0.Ikona korzenia drzewiastej struktury Bibli
 		pMemoryStr->WriteBuffer(ID_ROOT_BOOKS_DIS, ARRAYSIZE(ID_ROOT_BOOKS_DIS)); //Zapis do strumienia danych
@@ -377,6 +383,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+    //--- 25.Ikona wyjścia z aplikacji
+		pMemoryStr->WriteBuffer(ID_EXIT_APPLIC_DIS, ARRAYSIZE(ID_EXIT_APPLIC_DIS));							//Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 	}
 	__finally

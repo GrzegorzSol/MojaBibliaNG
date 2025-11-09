@@ -69,7 +69,8 @@ enum {//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_ReadOnlyText,		//21.Obraz widoku tekstu biblijnego tylko do przeglądania
 			enImageIndex_EditText,				//22.Obraz rozpoczęcia edycji
 			enImageIndex_DisplayInfoTranslates, //23.Obraz wyświetlania informacji o przekładach, lub wybranym przekładzie, rozdziale
-      enImageIndex_SearchSelectWord, //24.Wyszukiwanie zaznaczonego słowa
+			enImageIndex_SearchSelectWord, //24.Wyszukiwanie zaznaczonego słowa
+      enImageIndex_Exit,            //25.Wyjście z aplikacji
 			enImageIndex_Count						//Ilość grafik w objekcie GsReadBibleTextData::GsImgListData, typu TImageList
 		 };
 

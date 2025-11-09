@@ -7,19 +7,18 @@
 #include <Vcl.Themes.hpp>
 USEFORM("uInformationsAppWindow.cpp", InformationsAppWindow);
 USEFORM("uMainWindow.cpp", MainBibleWindow);
-USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
-USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uDictGrecPolWindow.cpp", DictGrecPolWindow);
+USEFORM("uHistoryChaptersOpen.cpp", HistoryOpenChaptersWindow);
+USEFORM("uNewSchemeVersWindow.cpp", NewSchemeVersWindow);
 USEFORM("uSendingMailWindow.cpp", SendingMailWindow);
 USEFORM("uSetupsWindow.cpp", SetupsWindow);
 USEFORM("uStrongWindow.cpp", StrongWindow);
-USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
-USEFORM("uNewSchemeVersWindow.cpp", NewSchemeVersWindow);
 USEFORM("uReadingPlanWindow.cpp", ReadingPlanWindow);
 USEFORM("uSearchTextWindow.cpp", SearchTextWindow);
+USEFORM("uSelectVersWindow.cpp", SelectVersWindow);
+USEFORM("uChapterEditWindow.cpp", ChapterEditWindow);
 USEFORM("uAllMultimediaView.cpp", AllMultimediaView);
 USEFORM("uBooksSpecjalistWindow.cpp", BooksSpecjalistWindow);
-USEFORM("uDisplayPreviewWindow.cpp", DisplayPreviewWindow);
 //---------------------------------------------------------------------------
 #include "uInformationsAppWindow.h"
 //---------------------------------------------------------------------------
@@ -90,7 +89,6 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			Application->Initialize();
 			Application->MainFormOnTaskBar = true;
 			Application->CreateForm(__classid(TMainBibleWindow), &MainBibleWindow);
-		Application->CreateForm(__classid(TDisplayPreviewWindow), &DisplayPreviewWindow);
 		Application->Run();
 		}
 		catch (Exception &exception)

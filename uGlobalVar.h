@@ -71,7 +71,7 @@ struct GlobalVar
 																		Global_custrFileSearchInfoExtand=".isf", //Rozszerznie do pliku informacyjnego, bedącym dodatkiem do właściwego pliku ulubionych wyszukiwań
 																		Global_custrExtendCommentsFiles=".bfc", //Rozszerzenie plików z komentarzami
                                     Global_custrImagesPreviewStyles, //Ścieżka dostępu do katalogu z grafiką podglądów stylów
-														//----- Syle
+																		//----- Syle
 																		Global_DefaultStyleName="Windows", //Domyślny styl
 																		//----- Nazwa domyślnego tłumaczenia używanego do modułu konkordancji greckiej i słownika grecko-polskiego (nie w module Stronga!)
                                     // Tłumaczenie będzie można wybrać [02-06-2024]
@@ -103,6 +103,7 @@ struct GlobalVar
 																				GlobalIni_IsTipsWindowStart="IsTipsWindowStart", //Czy po uruchomieniu aplikacji uruchomić okno szybkich podpowiedzi
 																				GlobalIni_IsDisplayStartInfoTray="IsDisplayStartInfoTray", //Czy wyświetlać informacje o aplikacji w trayu, podczas uruchomienia aplikacji
 																				GlobalIni_IsDisplayBackgroundImage="IsDisplayBackgroundImage", //Czy podkładem pod główny tekst bibli bedzie jednolity kolor, czy grafika
+                                        GlobalIni_IsCloseToTray="IsCloseToTray", //Czy zakniecie aplikacji powodujw opuszczenie jej czy zchowanie do traya
 																		GlobalIni_ColorsSection_Main="COLORS",			 //Główna sekcja COLORS pliku ini
 																				GlobalIni_ColorFavoritesVers="ColorsFavoritesVers",				//Kolor zaznaczenie ulubionych wersetów
 																				GlobalIni_ColorCommentVers="ColorCommentVers",				 //Kolor zaznaczenie wersetów, do których istnieje komentarz

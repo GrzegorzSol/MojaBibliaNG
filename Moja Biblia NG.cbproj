@@ -179,8 +179,8 @@
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <BCC_InstructionSet>5</BCC_InstructionSet>
     <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
-    <VerInfo_Build>96</VerInfo_Build>
-    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.96;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+    <VerInfo_Build>98</VerInfo_Build>
+    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.98;InternalName=Moja Biblia NG x32;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x32;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
     <DynamicRTL>false</DynamicRTL>
     <UsePackages>false</UsePackages>
     <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
@@ -197,9 +197,9 @@
     <UsePackages>false</UsePackages>
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <LinkPackageStatics>rtl.lib;vcl.lib;vclactnband.lib;vclx.lib;vclie.lib;VclSmp.lib;vclwinx.lib;vclimg.lib;bindengine.lib;vcledge.lib</LinkPackageStatics>
-    <VerInfo_Build>96</VerInfo_Build>
+    <VerInfo_Build>98</VerInfo_Build>
     <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.96;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
+    <VerInfo_Keys>CompanyName=(c) Grzegorz Sołtysik;FileDescription=Moja Biblia NG;FileVersion=1.0.1.98;InternalName=Moja Biblia NG x64;LegalCopyright=Free Ware;LegalTrademarks=(c) Grzegorz Sołtysik;OriginalFilename=Moja Biblia NG x64;ProgramID=com.embarcadero.Moja Biblia NG;ProductName=Moja Biblia NG;ProductVersion=1.0.0.0;Comments=Aplikacja do studiowania i analizy Pisma Świętego</VerInfo_Keys>
     <Icon_MainIcon>Moja Biblia NG_Icon2.ico</Icon_MainIcon>
     <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
     <BCC_EnableLSPIndexing>false</BCC_EnableLSPIndexing>
@@ -275,6 +275,12 @@
       <FormType>dfm</FormType>
       <DependentOn>uDictGrecPolWindow.h</DependentOn>
       <BuildOrder>3</BuildOrder>
+    </CppCompile>
+    <CppCompile Include="uDisplayPreviewWindow.cpp">
+      <Form>DisplayPreviewWindow</Form>
+      <FormType>dfm</FormType>
+      <DependentOn>uDisplayPreviewWindow.h</DependentOn>
+      <BuildOrder>28</BuildOrder>
     </CppCompile>
     <CppCompile Include="uGlobalVar.cpp">
       <DependentOn>uGlobalVar.h</DependentOn>
@@ -358,6 +364,7 @@
     <FormResources Include="uSearchTextWindow.dfm" />
     <FormResources Include="uAllMultimediaView.dfm" />
     <FormResources Include="uBooksSpecjalistWindow.dfm" />
+    <FormResources Include="uDisplayPreviewWindow.dfm" />
     <BuildConfiguration Include="Base">
       <Key>Base</Key>
     </BuildConfiguration>

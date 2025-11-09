@@ -45,6 +45,7 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uHistoryChaptersOpen.h"
 #include "uBooksSpecjalistWindow.h"
 #include "uStrongWindow.h"
+#include "uDisplayPreviewWindow.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
 #include <System.Win.Registry.hpp>
 //---------------------------------------------------------------------------
@@ -100,6 +101,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enImage16_InfoTaskBarButton,		 //3.Obraz dla przycisku informacji na taskbarze, o aktualnie wczytanym rozdziele
 			enImage16_InfoApplicationTaskBarButton,//4.Obraz dla przycisku informacji o aplikacji
 			enImage16_FavSearchResults,				//5.Obraz dla zakładki z ulubionymi wynikami wyszukiwań //[11-10-2023]
+			enImage16_Exit,                   //6.Ikona wyjścia z programu
 			enImage16_Count,								 //Ilość małych ikon
 			//Numer paneli na objekcie klasy TStatusBar
 			enPanelMain_InfoText=0, enPanelMain_InfoEx, //Numery paneli
@@ -147,9 +149,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 		 };
 
 const UnicodeString Gl_custrNameAppReload = "MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
-										// Zmiana makr ze względu na nazwe projektu //08-07-2024
-//										Gl_custrModuleTestings = "Moja Biblia NG Testing.exe",
-//										Gl_custrModuleRelease = "Moja Biblia NG.exe";
+TDisplayPreviewWindow *Gl_pDisplayPreviewWindow=nullptr; // Wyjątkowo wskaźnik na okno(TForm) jest zmienną globalną / 08-11-2025
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -355,6 +355,9 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 		//Stałe indeksu TImageList pochodzi z GsComponents\GsSearchFavFilesClass.h //[14-10-2023]
 	this->ToolButtDeleteFile->ImageIndex = enIndexImage16_Delete;
 	this->ToolButtDeleteFile->Tag = enTagSearchFav_DeleteFile;
+
+	Gl_pDisplayPreviewWindow = new TDisplayPreviewWindow(this);
+	if(!Gl_pDisplayPreviewWindow) throw(Exception("Błąd inicjalizacji objektu TDisplayPreviewWindow"));
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
@@ -405,34 +408,77 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose)
 /**
-	OPIS METOD(FUNKCJI): Metoda tworząca główne okno
+	OPIS METOD(FUNKCJI): Metodawywoływana po kliknieciu na przycisk zamknięcia okna
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsCloseToTray, false) &&
+		Gl_pDisplayPreviewWindow)
+	{
+		UnicodeString ustrTempPreviewText;
+    const UnicodeString custrStartScript = "<script",
+												custrStopScript = "</script>";
+		int iPosStart=0, iPosStop=0, iDelChars=0;
+		const int ciLengthScript=custrStopScript.Length();
+
+		GsReadBibleTextData::GetTextHTMLCurrentSheet(ustrTempPreviewText);
+		this->Hide();
+		CanClose = false;
+		if(ustrTempPreviewText.Length() > 0)
+		{
+      iPosStart = ustrTempPreviewText.Pos(custrStartScript);
+			iPosStop = ustrTempPreviewText.Pos(custrStopScript) + ciLengthScript;
+			iDelChars = iPosStop - iPosStart;
+			if((iPosStart > 0) && (iPosStop > 0))
+			{
+				// Usunięcie skryptu powodującego możliwość wybierania wyrazów w tekście. // 09-11-2025
+				ustrTempPreviewText.Delete(iPosStart, iDelChars);
+      }
+
+			Gl_pDisplayPreviewWindow->SetDisplayPreviewText(ustrTempPreviewText);
+			Gl_pDisplayPreviewWindow->Show();
+		}
+
+		return;
+	}
+	//---
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsRequestEnd, true) &&
 		 GlobalVar::iReturnUpdate != 1)
 	{
-		TTaskDialog *pTaskDialog = new TTaskDialog(this);
-		if(!pTaskDialog) throw(Exception("Błąd inicjalizacji objektu TTaskDialog"));
-		pTaskDialog->Caption = "Pytanie aplikacji";
-		pTaskDialog->Title = "Czy rzeczywiście chcesz opuścić apilkacje?";
-
-		pTaskDialog->ExpandedText = "Naciśnięcie przycisku OK, spowoduje opuszczenie aplikacji. To pytania można wyłączyć w jej ustawieniach, wtedy aplikacja zostanie zaknięta bez pytania!";
-		pTaskDialog->MainIcon = tdiWarning;
-		pTaskDialog->DefaultButton = tcbNo;
-		pTaskDialog->CommonButtons = TTaskDialogCommonButtons() << tcbYes << tcbNo;
-		pTaskDialog->ModalResult = mrNo;
-		pTaskDialog->Flags = TTaskDialogFlags() << tfUseHiconMain << tfExpandedByDefault << tfPositionRelativeToWindow;
-		if(this->ImageListMainActive) this->ImageListMainActive->GetIcon(enImageLogoApplication, pTaskDialog->CustomMainIcon);
-		if(pTaskDialog->Execute())
-		{
-			if(pTaskDialog->ModalResult == mrYes) CanClose = true; else CanClose = false;
-		}
-		if(pTaskDialog) {delete pTaskDialog; pTaskDialog = nullptr;}
+		CanClose = this->_RequestExit(); // 09-11-2025
 	}
 	else CanClose = true;
+}
+//---------------------------------------------------------------------------
+bool __fastcall TMainBibleWindow::_RequestExit()
+/**
+	OPIS METOD(FUNKCJI): Metoda, która pyta o zamkniecie aplikacji // 09-11-2025
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	bool bIsClose=true;
+	TTaskDialog *pTaskDialog = new TTaskDialog(this);
+	if(!pTaskDialog) throw(Exception("Błąd inicjalizacji objektu TTaskDialog"));
+	pTaskDialog->Caption = "Pytanie aplikacji";
+	pTaskDialog->Title = "Czy rzeczywiście chcesz opuścić apilkacje?";
+
+	pTaskDialog->ExpandedText = "Naciśnięcie przycisku OK, spowoduje opuszczenie aplikacji. To pytania można wyłączyć w jej ustawieniach, wtedy aplikacja zostanie zaknięta bez pytania!";
+	pTaskDialog->MainIcon = tdiWarning;
+	pTaskDialog->DefaultButton = tcbNo;
+	pTaskDialog->CommonButtons = TTaskDialogCommonButtons() << tcbYes << tcbNo;
+	pTaskDialog->ModalResult = mrNo;
+	pTaskDialog->Flags = TTaskDialogFlags() << tfUseHiconMain << tfExpandedByDefault << tfPositionRelativeToWindow;
+	if(this->ImageListMainActive) this->ImageListMainActive->GetIcon(enImageLogoApplication, pTaskDialog->CustomMainIcon);
+	if(pTaskDialog->Execute())
+	{
+		if(pTaskDialog->ModalResult == mrYes) bIsClose = true; else bIsClose = false;
+	}
+	if(pTaskDialog) {delete pTaskDialog; pTaskDialog = nullptr;}
+	return bIsClose;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -658,7 +704,7 @@ bool __fastcall TMainBibleWindow::_IsWordInstalled()
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::TrayIconMainBalloonClick(TObject *Sender)
 /**
-	OPIS METOD(FUNKCJI): Kliknięto na objekt, klassy BallonHint, objektu klasy TTrayIcon
+	OPIS METOD(FUNKCJI): Kliknięto na objekt, klasy BallonHint, objektu klasy TTrayIcon
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
@@ -668,6 +714,21 @@ void __fastcall TMainBibleWindow::TrayIconMainBalloonClick(TObject *Sender)
 	if(!pTrayIcon) return;
 	//---
 	//MessageBox(NULL, L"TMainBibleWindow::MBW_TrayIconMainBalloonClick", TEXT("Informacja aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::TrayIconMainClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI): Kliknięto na objekt, klasy TTrayIcon  //08-11-2025
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TTrayIcon *pTrayIcon = dynamic_cast<TTrayIcon *>(Sender);
+	if(!pTrayIcon) return;
+	//---
+  this->Show();
+	if(Gl_pDisplayPreviewWindow) Gl_pDisplayPreviewWindow->Hide();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
@@ -681,8 +742,9 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 	TImageList *pImageList = GsReadBibleTextData::GetImageList(); //Wyłuskanie listy ikon
 	if(!pImageList) throw(Exception("Błąd wyłuskania listy grafik"));
 	this->PMenuTray->Images = pImageList;
+	unsigned int i;
 	//---
-	for(unsigned int i=0; i<GlobalVar::Global_NumberBooks; ++i)
+	for(i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
 		if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));
@@ -691,7 +753,16 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 		NewItem->OnClick = this->_OnClick_PMenuTray;
 		NewItem->Tag = enPMenuTray + i;
 		NewItem->ImageIndex = enImageIndex_Book;
+    if(i==33 || i==66) NewItem->Break = mbBarBreak;
 	}
+	//--- // 08-11-2025
+  TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
+	if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));
+	this->PMenuTray->Items->Add(NewItem);
+	NewItem->Caption = "Wyjście z aplikacji";
+	NewItem->OnClick = this->_OnClick_PMenuTray;
+	NewItem->Tag = enPMenuTray + i;
+	NewItem->ImageIndex = enImageIndex_Exit;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
@@ -751,7 +822,7 @@ void __fastcall TMainBibleWindow::PageControlBibleTextEnter(TObject *Sender)
 	this->Act_MailChapt->Enabled = this->Act_EditChapter->Enabled;
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::MBW_PageControlAllChange(TObject *Sender)
+void __fastcall TMainBibleWindow::PageControlAllChange(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI): Metoda wywoływana podczas zmiany zakłedki, we wszystkich objektach klasy TPageControl
 	OPIS ARGUMENTÓW:
@@ -828,7 +899,22 @@ void __fastcall TMainBibleWindow::_OnClick_PMenuTray(System::TObject* Sender)
 	TMenuItem *pMItem = dynamic_cast<TMenuItem *>(Sender);
 	if(!pMItem) return;
 	//---
-	GsReadBibleTextData::LoadFirstChapt(pMItem->Tag);
+	if(pMItem->Tag < GlobalVar::Global_NumberBooks) //08-11-2025
+	// Zaznaczona pozycja wybrania ksiegi
+	{
+    if(Gl_pDisplayPreviewWindow) Gl_pDisplayPreviewWindow->Hide();
+		this->Show();
+		GsReadBibleTextData::LoadFirstChapt(pMItem->Tag);
+  }
+	else if(pMItem->Tag == GlobalVar::Global_NumberBooks) //08-11-2025
+	// Zaznaczona pozycja opuszczenia aplikacji
+	{
+		if(this->_RequestExit())
+		{
+			this->TrayIconMain->Visible = false;
+			Application->Terminate();
+		}
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_OnDblClick_ListComment(System::TObject* Sender)

@@ -24,7 +24,7 @@ object SetupsWindow: TSetupsWindow
     Width = 1299
     Height = 668
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetSelectThemes
+    ActivePage = SW_SheetFlags
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -68,7 +68,6 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Ustawienia kolor'#243'w aplikacji'
         TabOrder = 0
-        ExplicitWidth = 985
         object SW_PanelSetupFlags: TPanel
           Left = 2
           Top = 18
@@ -90,7 +89,6 @@ object SetupsWindow: TSetupsWindow
             Align = alTop
             Caption = 'Kolory dla pe'#322'nych przek'#322'ad'#243'w Pisma '#346'wi'#281'tego'
             TabOrder = 0
-            ExplicitWidth = 514
             object LabelColorBacground: TLabel
               Left = 170
               Top = 22
@@ -167,7 +165,6 @@ object SetupsWindow: TSetupsWindow
               'Koloru dla ulubionych werset'#243'w, ora takich, kt'#243're posiadaj'#261' kome' +
               'ntarze'
             TabOrder = 1
-            ExplicitWidth = 514
             object LabelColorFavorities: TLabel
               Left = 170
               Top = 50
@@ -266,8 +263,6 @@ object SetupsWindow: TSetupsWindow
           Caption = 'SW_PanelSetupBacgroundText'
           ShowCaption = False
           TabOrder = 1
-          ExplicitLeft = 522
-          ExplicitWidth = 461
           object SW_ImageBackground: TImage
             AlignWithMargins = True
             Left = 12
@@ -311,11 +306,9 @@ object SetupsWindow: TSetupsWindow
         CustomHint = SW_BalloonHint
         Align = alClient
         TabOrder = 1
-        ExplicitTop = 426
-        ExplicitWidth = 991
-        ExplicitHeight = 213
+        ExplicitHeight = 211
         ControlData = {
-          4C0000006E850000CF1500000100000001020000000000000000000000000000
+          4C0000006E850000761700000100000001020000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126209000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -418,6 +411,19 @@ object SetupsWindow: TSetupsWindow
         ThumbWidth = 10
         ExplicitWidth = 47
       end
+      object ToggleSwitchIsCloseToTray: TToggleSwitch
+        AlignWithMargins = True
+        Left = 3
+        Top = 185
+        Width = 1279
+        Height = 20
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        SwitchWidth = 24
+        TabOrder = 7
+        ThumbWidth = 10
+        ExplicitWidth = 47
+      end
     end
     object SW_SheetPaths: TTabSheet
       AlignWithMargins = True
@@ -434,7 +440,6 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Wyb'#243'r katalog'#243'w z multimediami - uwaga nr. 1'
         TabOrder = 0
-        ExplicitWidth = 979
         object SW_LEditPath3: TLabeledEdit
           Left = 332
           Top = 80
@@ -545,7 +550,6 @@ object SetupsWindow: TSetupsWindow
         Align = alTop
         Caption = 'Wyb'#243'r grafiki podk'#322'adu, w g'#322#243'wnym oknie'
         TabOrder = 1
-        ExplicitWidth = 979
         object SW_LEditPathBackGround: TLabeledEdit
           Left = 332
           Top = 24
@@ -760,7 +764,6 @@ object SetupsWindow: TSetupsWindow
         ViewStyle = vsReport
         OnChanging = SW_ListViewAllTranslatesChanging
         OnItemChecked = SW_ListViewAllTranslatesItemChecked
-        ExplicitWidth = 967
       end
       object SW_STextInfoHeadSelectTranslates: TStaticText
         AlignWithMargins = True
@@ -830,7 +833,6 @@ object SetupsWindow: TSetupsWindow
         Font.Quality = fqClearType
         ParentFont = False
         TabOrder = 3
-        ExplicitWidth = 991
       end
     end
     object SW_SheetReadingPlan: TTabSheet
@@ -858,7 +860,6 @@ object SetupsWindow: TSetupsWindow
           Align = alTop
           Caption = 'Wyb'#243'r przek'#322'adu Pisma '#346'wi'#281'tego dla planu czytania'
           TabOrder = 0
-          ExplicitWidth = 383
           object CBoxSelectTranslate: TComboBox
             AlignWithMargins = True
             Left = 5
@@ -883,7 +884,6 @@ object SetupsWindow: TSetupsWindow
           Align = alTop
           Caption = 'Wyb'#243'r Planu czytania Pisma '#346'wi'#281'tego'
           TabOrder = 1
-          ExplicitWidth = 383
           object LabelInfoSelectAndactivatePlan: TLabel
             AlignWithMargins = True
             Left = 5
@@ -926,7 +926,6 @@ object SetupsWindow: TSetupsWindow
           Align = alTop
           Caption = 'Wybierz typ czcionki dla Planu czytania'
           TabOrder = 2
-          ExplicitWidth = 383
           object CBoxSelectFontReadingPlan: TComboBox
             AlignWithMargins = True
             Left = 5
@@ -952,7 +951,6 @@ object SetupsWindow: TSetupsWindow
           Align = alTop
           Caption = 'Wybierz wysoko'#347#263' czcionki dla Planu czytania'
           TabOrder = 3
-          ExplicitWidth = 383
           object CBoxSelectSizeFontPlan: TComboBox
             AlignWithMargins = True
             Left = 5
@@ -979,7 +977,6 @@ object SetupsWindow: TSetupsWindow
             'Ustalenie daty rozpocz'#281'cia czytania Pisma '#346'wi'#281'tego wed'#322'ug wybran' +
             'ego planu'
           TabOrder = 4
-          ExplicitWidth = 383
           object SpButtonStartPlan: TSpeedButton
             Left = 2
             Top = 57
@@ -1011,7 +1008,6 @@ object SetupsWindow: TSetupsWindow
             MaxDate = 54818.999988425920000000
             TabOrder = 0
             OnChange = DateTimePickerSelectStartDatePlanChange
-            ExplicitWidth = 373
           end
         end
         object GrBoxSetupsSpeak: TGroupBox
@@ -1024,7 +1020,6 @@ object SetupsWindow: TSetupsWindow
           Align = alClient
           Caption = 'Ustawienia parametr'#243'w komputerowego  czytania tekstu'
           TabOrder = 5
-          ExplicitWidth = 383
           object TrackBarSetRate: TTrackBar
             AlignWithMargins = True
             Left = 5
@@ -1041,7 +1036,6 @@ object SetupsWindow: TSetupsWindow
             SelStart = -10
             ShowSelRange = False
             TabOrder = 0
-            ExplicitWidth = 373
           end
           object TrackBarSetVolume: TTrackBar
             AlignWithMargins = True
@@ -1060,7 +1054,6 @@ object SetupsWindow: TSetupsWindow
             SelEnd = 100
             ShowSelRange = False
             TabOrder = 1
-            ExplicitWidth = 373
           end
         end
       end
@@ -1074,8 +1067,6 @@ object SetupsWindow: TSetupsWindow
         Align = alClient
         ShowCaption = False
         TabOrder = 1
-        ExplicitLeft = 398
-        ExplicitWidth = 590
         object LabelTitleDisplayListPlan: TLabel
           AlignWithMargins = True
           Left = 4
@@ -1118,7 +1109,6 @@ object SetupsWindow: TSetupsWindow
           ViewStyle = vsReport
           OnChanging = LViewDisplayselectPlanChanging
           OnDrawItem = LViewDisplayselectPlanDrawItem
-          ExplicitWidth = 582
         end
       end
     end
@@ -1163,7 +1153,6 @@ object SetupsWindow: TSetupsWindow
         BevelOuter = bvNone
         ShowCaption = False
         TabOrder = 1
-        ExplicitLeft = 190
         object SW_ImagePreviewSelectStyle: TImage
           AlignWithMargins = True
           Left = 4
@@ -1191,7 +1180,6 @@ object SetupsWindow: TSetupsWindow
           Images = SW_ImgListSmallMain
           TabOrder = 0
           OnClick = SW_ButtSetups_Click
-          ExplicitWidth = 413
         end
       end
     end
@@ -1219,7 +1207,6 @@ object SetupsWindow: TSetupsWindow
     TabOrder = 1
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 1178
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
@@ -1350,7 +1337,6 @@ object SetupsWindow: TSetupsWindow
       end>
     ShowCaption = False
     TabOrder = 3
-    ExplicitWidth = 1178
     DesignSize = (
       1478
       29)
@@ -1368,7 +1354,6 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 0
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 78
     end
     object SW_ButtSetupCancel: TButton
       Left = 886
@@ -1384,7 +1369,6 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 1
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 698
     end
     object SW_ButtSetupReturn: TButton
       Left = 458
@@ -1400,7 +1384,6 @@ object SetupsWindow: TSetupsWindow
       ShowHint = True
       TabOrder = 2
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 346
     end
     object SW_ButtSetupHelp: TButton
       Left = 1255
@@ -1411,7 +1394,6 @@ object SetupsWindow: TSetupsWindow
       Caption = 'Pomoc...'
       TabOrder = 3
       OnClick = SW_ButtSetups_Click
-      ExplicitLeft = 992
     end
   end
   object SW_ImgListMain: TImageList

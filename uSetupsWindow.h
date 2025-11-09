@@ -126,6 +126,7 @@ __published:	// IDE-managed Components
 	TLabel *LabelColorBorderFavoritiesVers;
 	TStaticText *SW_STextInfoSelectTrToDict;
 	TRadioGroup *SW_RGroupSelectTransDict;
+	TToggleSwitch *ToggleSwitchIsCloseToTray;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

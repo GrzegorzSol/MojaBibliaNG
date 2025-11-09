@@ -85,7 +85,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_SelectVersExecute(TObject *Sender);
 	void __fastcall TrayIconMainBalloonClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
-	void __fastcall MBW_PageControlAllChange(TObject *Sender);
+	void __fastcall PageControlAllChange(TObject *Sender);
 	void __fastcall Act_CorcordanceDictionaryGrecExecute(TObject *Sender);
 	void __fastcall Act_ProjectSchemeVersExecute(TObject *Sender);
 	void __fastcall Act_InfomationsExecute(TObject *Sender);
@@ -109,6 +109,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_SpecBooksExecute(TObject *Sender);
 	void __fastcall Act_StrongDictionaryExecute(TObject *Sender);
 	void __fastcall Act_HelpVideoExecute(TObject *Sender);
+	void __fastcall TrayIconMainClick(TObject *Sender);
 private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr;
@@ -125,6 +126,7 @@ private:	// User declarations
 	void __fastcall _DisplayHelp(TAction *_pAction);
 	bool __fastcall _IsWordInstalled();
 	void __fastcall _OnSelectItemSearchFile(System::TObject* Sender, TListItem* Item, bool Selected);
+	bool __fastcall _RequestExit(); // 09-11-2025
 	bool _bIsWordInstalled=false;
 	//---
 public:		// User declarations

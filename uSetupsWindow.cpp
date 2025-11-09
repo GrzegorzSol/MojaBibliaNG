@@ -78,7 +78,10 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enToggleCaptionOff_ToggleSwitchisInfosOnStatusBar,
 
 			enToggleCaptionOn_ToggleSwitchIsImageBgn,
-			enToggleCaptionOff_ToggleSwitchIsImageBgn
+			enToggleCaptionOff_ToggleSwitchIsImageBgn,
+
+			enToggleCaptionOn_ToggleSwitchIsCloseToTray,
+			enToggleCaptionOff_ToggleSwitchIsCloseToTray
 		 };
 const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tłumaczenia", "Opis tłumaczenia"},
 										ustrGroups[] = {"Polskie kompletne tłumaczenia", "Tłumaczenia oryginalne i specjalistyczne. Nie można ich wyłączyć!"}, //[18-05-2024]
@@ -109,8 +112,11 @@ const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tł
 																						"Wyświetlanie informacji na pasku zadań, podczas jej uruchamiania.",
 																						"Informacje nie będą wyświetlane na pasku zadań, podczas jej uruchamiania.",
 
-																						"Podkładem pod główny tekst biblijny bedzie grafika domyślna",
-																						"Podkładem pod główny tekst biblijny będzie jednolity kolor, wybierany z listy obok"
+																						"Podkładem pod główny tekst biblijny bedzie grafika domyślna.",
+																						"Podkładem pod główny tekst biblijny będzie jednolity kolor, wybierany z listy obok.",
+
+																						"Po zamknięciu głównego okna, aplikacja schowa się do ikony w zasobniku.",
+																						"Po zamknięciu głównego okna, nastąpi całkowite zamknięcie aplikacji."
 																						};
 
 //---------------------------------------------------------------------------
@@ -284,8 +290,8 @@ void __fastcall TSetupsWindow::_InitToggleSwitches()
 */
 {
 	// Makro zmieniajace niektóre parametry w środowisku C++Builder v12.1 Athens //[30-08-2024]
-	#if(__CODEGEARC__ == 0x0770)
-	#endif
+	//#if(__CODEGEARC__ == 0x0770)
+	//#endif
 
 	this->ToggleSwitchIsDisplayInfos->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsDisplayInfos];
 	this->ToggleSwitchIsDisplayInfos->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsDisplayInfos];
@@ -310,6 +316,9 @@ void __fastcall TSetupsWindow::_InitToggleSwitches()
 
 	this->ToggleSwitchIsImageBgn->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsImageBgn];
 	this->ToggleSwitchIsImageBgn->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsImageBgn];
+
+	this->ToggleSwitchIsCloseToTray->StateCaptions->CaptionOn = ustrCaptionToggles[enToggleCaptionOn_ToggleSwitchIsCloseToTray];
+	this->ToggleSwitchIsCloseToTray->StateCaptions->CaptionOff = ustrCaptionToggles[enToggleCaptionOff_ToggleSwitchIsCloseToTray];
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::_InitLViewDisplaySelectPlan()
@@ -585,7 +594,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->ToggleSwitchIsHintsOnStart->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, true));
 	this->ToggleSwitchisInfosOnStatusBar->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, true));
 	this->ToggleSwitchIsImageBgn->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayBackgroundImage, false));
-  //Widoczność lub nie, w pomniejszeniu podkładu pod główny tekst, zależnie od odczytanej konfiguracji
+	this->ToggleSwitchIsCloseToTray->State = static_cast<TToggleSwitchState>(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsCloseToTray, false));
+	//Widoczność lub nie, w pomniejszeniu podkładu pod główny tekst, zależnie od odczytanej konfiguracji
 	this->SW_ImageBackground->Visible = (this->ToggleSwitchIsImageBgn->State == tssOn); //[24-04-2024]
 	//Kolory
 		//Kolor zaznaczania ulubionych wersetów
@@ -826,8 +836,8 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsLoadBooksOnInit, this->ToggleSwitchIsReopenSchets->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsTipsWindowStart, this->ToggleSwitchIsHintsOnStart->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, this->ToggleSwitchisInfosOnStatusBar->IsOn());
-	//GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayOnlyPolTranslates, this->ToggleSwitchOnlyPolTranslates->IsOn());
 	GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayBackgroundImage, this->ToggleSwitchIsImageBgn->IsOn());
+  GlobalVar::Global_ConfigFile->WriteBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsCloseToTray, this->ToggleSwitchIsCloseToTray->IsOn());
 	//Zapis kolorów
 		//Kolor zaznaczenie ulubionych wersetów
 	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_ColorsSection_Main, GlobalVar::GlobalIni_ColorFavoritesVers, this->SW_ColorBoxFavorities->Selected);
