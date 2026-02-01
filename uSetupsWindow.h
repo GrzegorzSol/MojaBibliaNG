@@ -127,6 +127,13 @@ __published:	// IDE-managed Components
 	TStaticText *SW_STextInfoSelectTrToDict;
 	TRadioGroup *SW_RGroupSelectTransDict;
 	TToggleSwitch *ToggleSwitchIsCloseToTray;
+	TGroupBox *GroupBoxSetupsDisplayOffText;
+	TSpinEdit *SpinEditWidthWindow;
+	TSpinEdit *SpinEditHeightWindow;
+	TLabel *LabelWidthWindow;
+	TLabel *LabelHeightWindow;
+	TLabel *LabelTransparentWindow;
+	TSpinEdit *SpinEditTransparentWindow;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

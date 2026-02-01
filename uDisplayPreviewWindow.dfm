@@ -1,6 +1,7 @@
 object DisplayPreviewWindow: TDisplayPreviewWindow
   Left = 0
   Top = 0
+  AlphaBlend = True
   BorderStyle = bsNone
   Caption = 'DisplayPreviewWindow'
   ClientHeight = 700
@@ -14,6 +15,7 @@ object DisplayPreviewWindow: TDisplayPreviewWindow
   Font.Quality = fqClearType
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 15
   object WebBrowserPreview: TWebBrowser
@@ -24,10 +26,7 @@ object DisplayPreviewWindow: TDisplayPreviewWindow
     Height = 694
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 384
-    ExplicitTop = 384
-    ExplicitWidth = 300
-    ExplicitHeight = 150
+    OnDocumentComplete = WebBrowserPreviewDocumentComplete
     ControlData = {
       4C00000087410000BA4700000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800

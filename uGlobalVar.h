@@ -132,7 +132,7 @@ struct GlobalVar
 																				GlobalIni_IsSearchSameWord="IsSearchSameWord", // Wyszukiwane sa tylko same słowa
 																				GlobalIni_IsSearchListWord="IsSearchListWord", // Wyszukiwanie odbywa sie za pomocą listy
 																				//----- Sekcja Others
-																		GlobalIni_OthersSection="OTHERS",						//Główna sekcja OTHERS
+																		GlobalIni_OthersSection="OTHERS",						//Sekcja OTHERS
 																				GlobalIni_OtherSizeFontMain="OtherSizeFontMain",		//Wielkość głównej czcionki tekstu wersetu
 																				GlobalIni_OtherSizeFontAdress="OtherSizeFontAdress",	//Wielkość czcionki, adresu wersetu
 																				GlobalIni_OtherSizeFontNameTranslators="OtherSizeFontTranslators", //Wielkość czcionki nazwy tłumaczeń
@@ -141,11 +141,17 @@ struct GlobalVar
 																				GlobalIni_FontNameTranslators="FontNameTranslators",		//Nazwa czcionki nazwy tłymaczenia
 																				GlobalIni_SelectStyleName="SelectStyleName",				//Nazwa wybranego z listy tematu dla aplikacji
 																				GlobalIni_GrahicsBackground="GrahicsBackground",  //Ścieżka dostępu do podkładu graficznego dla głównego okna.
-                                                                                          //Grafika będzie widoczna tylko gdy nie będzie wczytana żadna księga biblijna  //[11-12-2023]
-																		//----- Sekcje Translates
+																																													//Grafika będzie widoczna tylko gdy nie będzie wczytana żadna księga biblijna  //[11-12-2023]
+																				//----- Sekcja PREVIEWWINDOWTEXT //[01-02-2026]
+																		GlobalIni_PreviewWindowText="PREVIEWWINDOWTEXT",  // Sekcja podglądu tekstu, przy schowanej aplikacji
+																				GlobalIni_WidthPreviewWindow="WidthPreviewWindow", // Szerokość okna podglądu tekstu
+																				GlobalIni_HeightPreviewWindow="HeightPreviewWindow", // Wysokość okna podglądu tekstu
+																				GlobalIni_TransparentPreviewWindow="TransparentPreviewWindow", // Przezroczystość okna podglądu tekstu
+																				//----- Sekcje TRANSLATES
 																		GlobalIni_TranslatesSection_Main="TRANSLATES",								//Główna sekcja TRANSLATES pliku ini
 																				GlobalIni_ExcludeTranslates="ExcludeTranslates",		//Tłumaczenia nie wyświetlane
 																				GlobalIni_SelectTranslateForDictConcord="SelectTranslateForDictConcord",
+																				//----- Sekcja READINGPLAN
 																		GlobalIni_ReadingPlan_Main="READINGPLAN",			//Główna sekcja ustawień planu czytania biblii
 																				GlobalIni_TranslateRPlan="TypeTranslateReadingPlan",//Tłumaczenie używane w planie
 																				GlobalIni_IDTranslateRPlan="IDTranslateReadingPlan",//Numer identyfikacyjny tłumaczenie wykorzystywanego w planie czytania

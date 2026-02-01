@@ -112,11 +112,11 @@ const UnicodeString ustrColumnLViewTranslates[] = {"Plik tłumaczenia", "Typ tł
 																						"Wyświetlanie informacji na pasku zadań, podczas jej uruchamiania.",
 																						"Informacje nie będą wyświetlane na pasku zadań, podczas jej uruchamiania.",
 
-																						"Podkładem pod główny tekst biblijny bedzie grafika domyślna.",
-																						"Podkładem pod główny tekst biblijny będzie jednolity kolor, wybierany z listy obok.",
+																						"Podkładem pod główny tekst biblijny bedzie grafika domyślna",
+																						"Podkładem pod główny tekst biblijny będzie jednolity kolor, wybierany z listy obok",
 
-																						"Po zamknięciu głównego okna, aplikacja schowa się do ikony w zasobniku.",
-																						"Po zamknięciu głównego okna, nastąpi całkowite zamknięcie aplikacji."
+																						"Po zamknięciu głównego okna, aplikacja schowa się do ikony w zasobniku",
+																						"Po zamknięciu głównego okna, nastąpi całkowite zamknięcie aplikacji"
 																						};
 
 //---------------------------------------------------------------------------
@@ -701,6 +701,10 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 			}
     }
 	}
+	//--- Okno podglądu tekstu przy zwiniętej aplikacji
+	this->SpinEditWidthWindow->Value = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_WidthPreviewWindow, 640);
+	this->SpinEditHeightWindow->Value = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_HeightPreviewWindow, 700);
+  this->SpinEditTransparentWindow->Value = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_TransparentPreviewWindow, 255);
 	//--- Planu czytania biblii
 		//--- Odczyt planów
 	TStringDynArray SDirReadingPlanList = TDirectory::GetFiles(GlobalVar::Global_custrPathAllReadingPlan, "*" +GlobalVar::Global_ustrFileReadingPlanExtend, 0);
@@ -892,6 +896,10 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_TranslatesSection_Main,
 		GlobalVar::GlobalIni_SelectTranslateForDictConcord,
 		this->SW_RGroupSelectTransDict->Items->Strings[this->SW_RGroupSelectTransDict->ItemIndex]);
+	//--- Zapis podglądu tekstu przy zwiniętej aplikacji
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_WidthPreviewWindow, this->SpinEditWidthWindow->Value);
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_HeightPreviewWindow, this->SpinEditHeightWindow->Value);
+	GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_TransparentPreviewWindow, this->SpinEditTransparentWindow->Value);
 	//--- Zapis konfiguracji dla Planu czytania biblii
 	UnicodeString ustrNameTransIDPlan;
 	int iIDTranslatePlan=-1, intPosSpace=0;

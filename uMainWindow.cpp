@@ -907,7 +907,7 @@ void __fastcall TMainBibleWindow::_OnClick_PMenuTray(System::TObject* Sender)
 		GsReadBibleTextData::LoadFirstChapt(pMItem->Tag);
   }
 	else if(pMItem->Tag == GlobalVar::Global_NumberBooks) //08-11-2025
-	// Zaznaczona pozycja opuszczenia aplikacji
+	// Zaznaczona pozycja opuszczenia aplikacji. Pozycja ostatnia
 	{
 		if(this->_RequestExit())
 		{
@@ -1476,7 +1476,7 @@ void __fastcall TMainBibleWindow::Act_HelpVideoExecute(TObject *Sender)
 	//---
 	ShellExecute(this->Handle, NULL , TEXT("https://www.youtube.com/channel/UCqx3U8EUzjAcwHOM4GNDWNw"), NULL, NULL, SW_SHOWNORMAL);
 }
-//-----------------------ZDARZENIA ZWIAZANE Z KONTROLKAMI--------------------
+//-----------------------ZDARZENIA ZWIĄZANE Z KONTROLKAMI--------------------
 void __fastcall TMainBibleWindow::ToolButtSearchFavClick(TObject *Sender)
 /**
 	OPIS METOD(FUNKCJI): Zdarzenie zwiazane z przyciskiem na karcie ulubionych wyszukiwań

@@ -16,9 +16,13 @@ __published:	// IDE-managed Components
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
+	void __fastcall WebBrowserPreviewDocumentComplete(TObject *ASender, IDispatch * const pDisp,
+          const OleVariant &URL);
+	void __fastcall FormDestroy(TObject *Sender);
 private:	// User declarations
 	THashedStringList *_pHSListDisplayChapt=nullptr;
-  UnicodeString _ustrPreviewText;
+	UnicodeString _ustrPreviewText;
+	HWND _GetIEServerWindow();
 public:		// User declarations
 	__fastcall TDisplayPreviewWindow(TComponent* Owner);
 	void __fastcall SetDisplayPreviewText(const UnicodeString &ustrPreviewText);
