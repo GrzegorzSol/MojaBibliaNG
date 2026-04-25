@@ -13,6 +13,7 @@ object NewSchemeVersWindow: TNewSchemeVersWindow
   Font.Quality = fqClearType
   Position = poScreenCenter
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   TextHeight = 15

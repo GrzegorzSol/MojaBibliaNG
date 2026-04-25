@@ -307,6 +307,7 @@ void __fastcall GsChild::MouseMove(System::Classes::TShiftState Shift, int X, in
 		}
 		this->Left += (X - this->_GetStartX);
 		this->Top += (Y - this->_GetStartY);
+    GlGsMaster->bIsModify = true;
 	}
 	GlGsDrawChildren->Invalidate();
 }
@@ -865,6 +866,10 @@ bool __fastcall GsMaster::OpenProject(UnicodeString &ustrGetFileName)
 		{
 			if(pFileOpenDialog->Execute()) //Element został wybrany
 			{
+				if(this->bIsModify) // Czy plik relacji został zmodyfikowany
+				{
+
+        }
 				this->_pTreeView->Items->Clear();
 				this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
 				UnicodeString ustrExt = TPath::GetExtension(pFileOpenDialog->FileName);
@@ -884,6 +889,7 @@ bool __fastcall GsMaster::OpenProject(UnicodeString &ustrGetFileName)
 				this->Invalidate(); //Całe odświerzenie
 				if(pOpenFile) {delete pOpenFile; pOpenFile = nullptr;}
 				bReturn = true;
+				this->bIsModify = false; // Czy plik relacji został zmodyfikowany
 			}
 			else bReturn = false;
 		}
@@ -930,6 +936,7 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 	}
 	pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
 	pFileSaveDialog->DefaultFolder = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
+	//if(
 	pFileSaveDialog->FileName = Format("%s%s", ARRAYOFCONST((custrProjectNameDefault, custrNewExtFileScheme)));
 	pFileSaveDialog->DefaultExtension = custrNewExtFileScheme;
 
@@ -943,7 +950,7 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 				if(pFileSaveDialog->Execute())
 				{
 					ustrPathSave = pFileSaveDialog->FileName;
-					ustrGetFileName = pFileSaveDialog->FileName;
+					//ustrGetFileName = pFileSaveDialog->FileName;
 
 					pSaveFile = new TFileStream(ustrPathSave, fmCreate);
 					if(!pSaveFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));
@@ -979,6 +986,7 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 					if(pDataToSave) {delete pDataToSave; pDataToSave = nullptr;}
 					if(pSaveFile) {delete pSaveFile; pSaveFile = nullptr;}
 					bReturn = true;
+					this->bIsModify = false; // Czy plik relacji został zmodyfikowany
 				}
 			}
 		}
@@ -1039,6 +1047,7 @@ void __fastcall GsMaster::RenameTextItem(const UnicodeString &custrNewAdr, const
 		pGsChild->Text = Format("%s \"%s\"", ARRAYOFCONST(( custrNewAdr, custrNewVers )));
 
 		pGsChild->_RefreshText(true);
+    this->bIsModify = true; // Czy plik relacji został zmodyfikowany
 	}
 }
 //---------------------------------------------------------------------------
@@ -1077,6 +1086,7 @@ void __fastcall GsMaster::DeleteObject()
 			this->_pGsDrawChildren->_pSelectObject = nullptr;
 		}
 		_pNode->Delete(); // Skasowanie objektu
+		this->bIsModify = true; // Czy plik relacji został zmodyfikowany
 		this->Invalidate();
 	}
 }
@@ -1155,6 +1165,7 @@ void __fastcall GsMaster::AddNewObjectScheme(const UnicodeString &custrAdr, cons
 
 	this->_pTreeView->FullExpand(); //Całkowicie rozwiniete drzewo
 	this->_pTreeView->Items->GetFirstNode()->MakeVisible();
+	this->bIsModify = true; // Czy plik relacji został zmodyfikowany
 }
 //---------------------------------------------------------------------------
 void __fastcall GsMaster::NewProject()
@@ -1165,6 +1176,7 @@ void __fastcall GsMaster::NewProject()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	this->bIsModify = true; // Czy plik relacji został zmodyfikowany
 	this->_pTreeView->Items->Clear();
 	this->_pMultiSelectTreeNodes->Clear(); // Wykasowanie listy zaznaczonych pozycji TreeNode, w objekcie, klasy TTreView
 	this->_pGsDrawChildren->_pCutCopyObject = nullptr; // Wyzerowanie objektu do wstawienia
@@ -1226,6 +1238,7 @@ void __fastcall GsMaster::CutCopyToPaste()
 */
 {
 	this->_pGsDrawChildren->_pCutCopyObject = this->_pGsDrawChildren->_pSelectObject;
+	this->bIsModify = true; // Czy plik relacji został zmodyfikowany
 }
 //---------------------------------------------------------------------------
 bool __fastcall GsMaster::PasteFromCopy()

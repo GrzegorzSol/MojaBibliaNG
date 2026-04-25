@@ -1,6 +1,7 @@
 object SearchTextWindow: TSearchTextWindow
   Left = 0
   Top = 0
+  ActiveControl = CBoxHistorySearchText
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Zaawansowane wyszukiwanie tekstu.'

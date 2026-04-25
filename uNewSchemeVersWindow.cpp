@@ -17,7 +17,8 @@ TNewSchemeVersWindow *NewSchemeVersWindow;
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 // Teksty pomocy
-UnicodeString ustrHelpText[] = {
+UnicodeString ustrHelpText[] =
+{
 	"Stwórz nowe drzewo wybierając przycisk \"Nowy projekt\", lub zacznij dodawać objekty do pustego widoku.", // enTagHelp_Start
 	UnicodeString("Po otwarciu lub stworzeniu nowego drzewa możesz zrobić następujące czynności:\n") +
 									"- Przesuwać pojedyńcze elementy\n" +
@@ -28,7 +29,8 @@ UnicodeString ustrHelpText[] = {
 									"- Zapisać drzewo wersetów jako grafikę\n"+
 									"- Rozbudowywać drzewo\n"+
 									"- Zmienić w wybranej pozycji werset objektu\n", // enTagHelp_Exist
-	"Rozpocząłeś prace od nowa, projekt jest pusty, więc możesz zacząć tworzyć nowe drzewo zależnośći między wersetami."}; // enTagHelp_New};
+	"Rozpocząłeś prace od nowa, projekt jest pusty, więc możesz zacząć tworzyć nowe drzewo zależnośći między wersetami."
+}; // enTagHelp_New};
 const UnicodeString custrTextWindow = "Wykres logicznego powiązania wersetów.";
 
 enum {// Numery pomocy
@@ -142,6 +144,28 @@ void __fastcall TNewSchemeVersWindow::FormClose(TObject *Sender, TCloseAction &A
 {
 	Action = caFree;
 }
+//---------------------------------------------------------------------------
+void __fastcall TNewSchemeVersWindow::FormCloseQuery(TObject *Sender, bool &CanClose)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(this->_pGsMasterRel->bIsModify)
+	{
+		int iResult = MessageBox(NULL, TEXT("Projekt został zmieniony, ale nie zapisany. Czy chcesz zapisać projekt, czy opuścić moduł bez zapisu?"),
+			TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON1);
+		if(iResult==IDYES)
+		{
+      UnicodeString ustrNameProject;
+			this->_pGsMasterRel->SaveProject(ustrNameProject);
+			this->Caption = Format("%s - Uktualny projekt: \"%s\"", ARRAYOFCONST((custrTextWindow, TPath::GetFileName(ustrNameProject))));
+    }
+  }
+}
+//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void __fastcall TNewSchemeVersWindow::_InitHintsAndTags()
 /**
@@ -770,7 +794,7 @@ void __fastcall TNewSchemeVersWindow::Act_NewProjectExecute(TObject *Sender)
 	this->_CloseSetupsPanels(); // Zamykanie paneli konfiguracyjnych
 	int iResult = MessageBox(NULL, TEXT("Czy rzeczywiście chcesz porzucić aktualny projekt i rozpocząć nowy?"), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONWARNING | MB_TASKMODAL | MB_DEFBUTTON2);
 	if(iResult == IDNO) return;
-	this->_pGsMasterRel->NewProject();
+	this->_pGsMasterRel->NewProject(); // Nowy projekt
 
 	this->Act_DelItem->Enabled = false;
 	this->Act_SaveAtGfx->Enabled = false;
@@ -919,4 +943,5 @@ void __fastcall TNewSchemeVersWindow::Act_PasteFromCopyExecute(TObject *Sender)
 	this->_IsSelectToCopyCut = false; // Zaznaczono wybrany objekt, i wykonano akcje Act_CutCopyToPasteExecute()
 }
 //---------------------------------------------------------------------------
+
 

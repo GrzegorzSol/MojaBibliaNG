@@ -31,7 +31,6 @@ object SetupsWindow: TSetupsWindow
     ShowHint = True
     TabOrder = 0
     OnChange = SW_PControlSelectedChange
-    ExplicitHeight = 668
     object SW_SheetLajout: TTabSheet
       CustomHint = SW_BalloonHint
       Caption = 'Ustawienia wygl'#261'du aplikacji'
@@ -57,7 +56,6 @@ object SetupsWindow: TSetupsWindow
         Layout = tlCenter
         WordWrap = True
         StyleElements = [seClient, seBorder]
-        ExplicitTop = 391
         ExplicitWidth = 1030
       end
       object GrBoxSetColors: TGroupBox
@@ -81,7 +79,6 @@ object SetupsWindow: TSetupsWindow
           Caption = 'SW_PanelSetupFlags'
           ShowCaption = False
           TabOrder = 0
-          ExplicitHeight = 362
           object GrBoxSetupsFullTr: TGroupBox
             AlignWithMargins = True
             Left = 3
@@ -266,10 +263,6 @@ object SetupsWindow: TSetupsWindow
               'Ustawienie wy'#347'wietlania podgl'#261'du wybranego tekstu, po zchowaniu ' +
               'g'#322#243'wnej aplikacji.'
             TabOrder = 2
-            ExplicitLeft = 240
-            ExplicitTop = 312
-            ExplicitWidth = 185
-            ExplicitHeight = 105
             object LabelWidthWindow: TLabel
               Left = 86
               Top = 24
@@ -307,7 +300,7 @@ object SetupsWindow: TSetupsWindow
               Height = 26
               CustomHint = SW_BalloonHint
               MaxValue = 700
-              MinValue = 0
+              MinValue = 300
               TabOrder = 0
               Value = 0
             end
@@ -318,7 +311,7 @@ object SetupsWindow: TSetupsWindow
               Height = 26
               CustomHint = SW_BalloonHint
               MaxValue = 800
-              MinValue = 0
+              MinValue = 400
               TabOrder = 1
               Value = 0
             end
@@ -329,7 +322,7 @@ object SetupsWindow: TSetupsWindow
               Height = 26
               CustomHint = SW_BalloonHint
               MaxValue = 255
-              MinValue = 0
+              MinValue = 140
               TabOrder = 2
               Value = 0
             end
@@ -346,7 +339,6 @@ object SetupsWindow: TSetupsWindow
           Caption = 'SW_PanelSetupBacgroundText'
           ShowCaption = False
           TabOrder = 1
-          ExplicitHeight = 362
           object SW_ImageBackground: TImage
             AlignWithMargins = True
             Left = 12
@@ -390,8 +382,6 @@ object SetupsWindow: TSetupsWindow
         CustomHint = SW_BalloonHint
         Align = alClient
         TabOrder = 1
-        ExplicitTop = 410
-        ExplicitHeight = 227
         ControlData = {
           4C0000006E850000E01700000100000001020000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -1092,7 +1082,7 @@ object SetupsWindow: TSetupsWindow
             Date = 45010.000000000000000000
             Time = 45010.000000000000000000
             Color = clBtnFace
-            MaxDate = 54818.999988425930000000
+            MaxDate = 54818.999988425920000000
             TabOrder = 0
             OnChange = DateTimePickerSelectStartDatePlanChange
           end
@@ -1295,7 +1285,6 @@ object SetupsWindow: TSetupsWindow
     TabOrder = 1
     Transparent = False
     StyleElements = [seFont, seBorder]
-    ExplicitTop = 671
   end
   object SW_PanelSelectListButtons: TPanel
     Left = 0
@@ -1304,7 +1293,6 @@ object SetupsWindow: TSetupsWindow
     Height = 768
     Align = alLeft
     TabOrder = 2
-    ExplicitHeight = 668
     object SW_ButGroupSections: TButtonGroup
       Left = 1
       Top = 1
@@ -1352,7 +1340,6 @@ object SetupsWindow: TSetupsWindow
       TabOrder = 0
       OnButtonClicked = SW_ButGroupSectionsButtonClicked
       OnKeyUp = SW_ButGroupSectionsKeyUp
-      ExplicitHeight = 483
     end
     object SW_PanelImageLogo: TPanel
       Left = 1
@@ -1362,7 +1349,6 @@ object SetupsWindow: TSetupsWindow
       Align = alBottom
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 484
       object SW_SetupsImageLogo: TImage
         AlignWithMargins = True
         Left = 27
@@ -1429,7 +1415,6 @@ object SetupsWindow: TSetupsWindow
       end>
     ShowCaption = False
     TabOrder = 3
-    ExplicitTop = 729
     DesignSize = (
       1478
       29)

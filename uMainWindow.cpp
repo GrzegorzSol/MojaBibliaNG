@@ -417,6 +417,8 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
   if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsCloseToTray, false) &&
 		Gl_pDisplayPreviewWindow)
 	{
+    // Aplikacja nie jest zamykana po kliknięciu na przycsk zamknięcia, lecz chowana.
+		// Podgląd wybranego tekstu został zainicjowany.
 		UnicodeString ustrTempPreviewText;
     const UnicodeString custrStartScript = "<script",
 												custrStopScript = "</script>";
@@ -424,6 +426,7 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
 		const int ciLengthScript=custrStopScript.Length();
 
 		GsReadBibleTextData::GetTextHTMLCurrentSheet(ustrTempPreviewText);
+		// Zchowanie aplikacji
 		this->Hide();
 		CanClose = false;
 		if(ustrTempPreviewText.Length() > 0)
@@ -439,6 +442,12 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
 
 			Gl_pDisplayPreviewWindow->SetDisplayPreviewText(ustrTempPreviewText);
 			Gl_pDisplayPreviewWindow->Show();
+        //--- Okno podglądu tekstu przy zwiniętej aplikacji
+			Gl_pDisplayPreviewWindow->Width = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_WidthPreviewWindow, 640);
+			Gl_pDisplayPreviewWindow->Height = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_HeightPreviewWindow, 700);
+			Gl_pDisplayPreviewWindow->AlphaBlendValue = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_PreviewWindowText, GlobalVar::GlobalIni_TransparentPreviewWindow, 255);
+			if(Gl_pDisplayPreviewWindow->AlphaBlendValue == 255) Gl_pDisplayPreviewWindow->AlphaBlend = false; else Gl_pDisplayPreviewWindow->AlphaBlend = true;
+
 		}
 
 		return;

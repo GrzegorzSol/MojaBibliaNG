@@ -22,7 +22,7 @@ const int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
 					NSIZE_TEXT = 255; // Długość tekstu pozycji, w nowej wersji danych do zapisu
 const UnicodeString custrOldExtFilesScheme = ".nsvp", // Stare rozszerzenie plików projektu
 										custrNewExtFileScheme = ".lsvc", // "logical scheme of verse connection"
-										custrProjectNameDefault = "Bez nazwy" + custrNewExtFileScheme;
+										custrProjectNameDefault = "Bez nazwy";// + custrNewExtFileScheme;
 
 typedef struct _ReadWriteDataObject
 {
@@ -154,7 +154,8 @@ class GsMaster : public TScrollingWinControl
 		// Zmienne dotyczące wyglądu modułu newSchemeVers
 		TColor Global_ColorsSchemeTable[enColorSchemeNum_Count];
 		int Global_iWidthLineScheme=2; //Szerokość lini
-		bool Global_IsTransparent=false; // Przezroczystość objektów
+		bool Global_IsTransparent=false, // Przezroczystość objektów
+				 bIsModify=false; // Czy plik relacji został zmodyfikowany
 		TList *_pMultiSelectTreeNodes=nullptr; // Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
 	protected:
 		virtual void __fastcall CreateWnd();

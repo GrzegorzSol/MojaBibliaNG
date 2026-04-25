@@ -61,6 +61,7 @@ __published:	// IDE-managed Components
 	void __fastcall Act_CreateAllTextExecute(TObject *Sender);
 	void __fastcall Act_CutCopyToPasteExecute(TObject *Sender);
 	void __fastcall Act_PasteFromCopyExecute(TObject *Sender);
+	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 private:	// User declarations
 	void __fastcall _InitHintsAndTags();
 	GsHelp *_pGsHelp=nullptr;
