@@ -151,6 +151,7 @@ struct GlobalVar
 																		GlobalIni_TranslatesSection_Main="TRANSLATES",								//Główna sekcja TRANSLATES pliku ini
 																				GlobalIni_ExcludeTranslates="ExcludeTranslates",		//Tłumaczenia nie wyświetlane
 																				GlobalIni_SelectTranslateForDictConcord="SelectTranslateForDictConcord",
+																				GlobalIni_DefaultDisplaySelectTranslate="DefaultDisplaySelectTranslate", // Domuślnie, które tłumaczenie ma być wyświetlane po wyborze tekstu
 																				//----- Sekcja READINGPLAN
 																		GlobalIni_ReadingPlan_Main="READINGPLAN",			//Główna sekcja ustawień planu czytania biblii
 																				GlobalIni_TranslateRPlan="TypeTranslateReadingPlan",//Tłumaczenie używane w planie

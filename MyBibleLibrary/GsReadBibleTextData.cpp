@@ -1005,8 +1005,10 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA. NUMER ROZDZIAŁU LICZYMY OD ZERA !!!
 	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(_iBook-1, _iChapt-1);
-	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML), na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału
-	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser);
+	//Następnie wyświetlenie wszystkich tłumaczeń (DisplayAllTextInHTML) lub wybranego,
+	//na podstawie wcześniej utworzonej listy dla konkretnej ksiegi, i konkretnego rozdziału //[06-05-2026]
+	int iSelectTranslate = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_DefaultDisplaySelectTranslate, 0);
+	GsReadBibleTextData::pGsReadBibleTextClass->DisplayAllTextInHTML(pGsTabSheetClass->pWebBrowser, iSelectTranslate-1);
 }
 //---------------------------------------------------------------------------
 TList *__fastcall GsReadBibleTextData::GetListAllTrChap()

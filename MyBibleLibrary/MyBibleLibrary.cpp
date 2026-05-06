@@ -734,6 +734,9 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	UnicodeString ustrHeaderText = StringReplace(GsReadBibleTextData::GsHTMLHeaderText, GsReadBibleTextData::GsHTMLTitle,
 		"<title>" + pTreeNodeSelect->Text + "</title>", TReplaceFlags() << rfReplaceAll); //[03-08-2023]
 	pStringStream->WriteString(ustrHeaderText); //Zapis nagłówka kodu html do strumienia
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("iSelectTranslate: %d", ARRAYOFCONST((iSelectTranslate))));
+	#endif
 	try
 	{
 		do
@@ -747,6 +750,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 				bIsOneTranslate = false;
 			}
 			//---
+			// this->_ListAllTrChap - Lista klasy TList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
 			for(int iIndexChapt=0; iIndexChapt<this->_ListAllTrChap->Count; ++iIndexChapt)
 			//Dodawanie pokolei równoległych wersetów ze wszystkich tłumaczeń
 			{
@@ -2022,7 +2026,9 @@ void __fastcall GsTabSheetClass::_InitTabSetDisplayTranslates()
 		//Sprawdzanie czy to jest pełne, polskie tłumaczenie
 		if(pGsReadBibleTextItem) {if(pGsReadBibleTextItem->enTypeTranslate == enTypeTr_Full) this->pGsTabSetClass->Tabs->Add(pGsReadBibleTextItem->NameTranslate);}
 	}
-	this->pGsTabSetClass->TabIndex = 0; //Domyślna zakładka rodzaju tłumaczenia (wszyskie tłumaczenia)
+	//this->pGsTabSetClass->TabIndex = 0; //Domyślna zakładka rodzaju tłumaczenia (wszyskie tłumaczenia)
+  //--- Domyślnie, które tłumaczenie ma być wyświetlane po wyborze tekstu //[03-05-2026]
+	this->pGsTabSetClass->TabIndex = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_DefaultDisplaySelectTranslate, 0);
 }
 //---------------------------------------------------------------------------
 __fastcall GsTabSheetClass::~GsTabSheetClass()

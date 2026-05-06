@@ -637,6 +637,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	//Dodawanie ścieżek dostępu do wszystkich tłumaczeń
 	UnicodeString ustrNameTranslate;
 	GsReadBibleTextItem *pGsReadBibleTextItem = nullptr;
+	// Tworzenie listy, dla wyświetlenia domyślnego tłumaczenia // [03-05-2026]
+	this->ListBoxSelestDefaultDisplay->AddItem("Wszystkie tłumaczenia", nullptr); // Pozycja "Wszystkie tłumaczenia"
 	for(int i=0; i<GlobalVar::SDirTranslatesList.Length; i++)
 	{
 		TListItem *NewItem = this->SW_ListViewAllTranslates->Items->Add();
@@ -644,11 +646,22 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		//Jeśli tłumaczenia nie ma na liście tłumaczeń wykluczonych, to go zaznacz
 		NewItem->Checked = pSListExcludeTrans->IndexOf(TPath::GetFileName(GlobalVar::SDirTranslatesList[i])) == -1; //Tłumaczenia nie ma na liście tłumaczeń wykluczonych
 		NewItem->ImageIndex = enPageSetup_Translates;
-		//--- Typ tłumaczenia
+		// --- Typ tłumaczenia
+    // --- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023] [31-05-2024]
+		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
+		if(pGsReadBibleTextItem)
+		{
+//			#if defined(_DEBUGINFO_)
+//				GsDebugClass::WriteDebug(Format("%d - %s", ARRAYOFCONST(( i,  pGsReadBibleTextItem->NameTranslate))));
+//			#endif
+			ustrNameTranslate = pGsReadBibleTextItem->NameTranslate;
+		}
 		if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
 		{
 			NewItem->SubItems->Add("Polskie tłumaczenie kompletne");
 			NewItem->GroupID = enGroup_PolCompleteTrans;
+			// Tworzenie listy, dla wyświetlenia domyślnego tłumaczenia // [03-05-2026]
+			this->ListBoxSelestDefaultDisplay->AddItem(ustrNameTranslate, nullptr);
 		}
 		else if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg)
 		{
@@ -662,15 +675,6 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 		}
 		else {NewItem->SubItems->Add("");}
 		NewItem->SubItemImages[enColumn_TypeTranslate] = enImage_TypeTranslate;
-		//--- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie) //[09-12-2023] [31-05-2024]
-		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
-		if(pGsReadBibleTextItem)
-		{
-//			#if defined(_DEBUGINFO_)
-//				GsDebugClass::WriteDebug(Format("%d - %s", ARRAYOFCONST(( i,  pGsReadBibleTextItem->NameTranslate))));
-//			#endif
-			ustrNameTranslate = pGsReadBibleTextItem->NameTranslate;
-		}
 
 		NewItem->SubItems->Add(ustrNameTranslate);
 //    #if defined(_DEBUGINFO_)
@@ -722,6 +726,8 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->CBoxSelectTranslate->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	this->CBoxSelectTranslate->ItemIndex = this->CBoxSelectTranslate->Items->IndexOf(this->CBoxSelectTranslate->Text);
 	this->_DisplaySelectPlan();
+		//--- Domyślnie, które tłumaczenie ma być wyświetlane po wyborze tekstu
+	this->ListBoxSelestDefaultDisplay->ItemIndex = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_DefaultDisplaySelectTranslate, 0);
 		//--- Lista czcionek dla planu czytania biblii
 	this->CBoxSelectFontReadingPlan->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_FontPlan, "Times New Roman");
 	for(int i=0; i<ARRAYSIZE(ustrFontList); i++)
@@ -950,6 +956,9 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 			this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]);
 		TStyleManager::SetStyle(this->SW_LBoxSelectTheme->Items->Strings[this->SW_LBoxSelectTheme->ItemIndex]);
 	}
+	//--- Domyślnie, które tłumaczenie ma być wyświetlane po wyborze tekstu
+	if(this->ListBoxSelestDefaultDisplay->ItemIndex > -1)
+		{GlobalVar::Global_ConfigFile->WriteInteger(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_DefaultDisplaySelectTranslate, this->ListBoxSelestDefaultDisplay->ItemIndex);}
 	//Zrzucenie zawartości objektu, klasy TMemIni, do pliku
 	GlobalVar::Global_ConfigFile->UpdateFile();
 }
