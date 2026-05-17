@@ -31,7 +31,7 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 										GlobalVar::Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	// Ścieżka dostępu do katalogu z planami czytania biblii
 										GlobalVar::Global_custrPathJavaScripts=TPath::Combine(GlobalVar::Global_custrGetDataDir, "JVScripts"), // Ścieżka dostępu do katalogu z plikami Java script
-										GlobalVar::GlobalPath_CurrentActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
+										GlobalVar::Global_custrPathActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 										GlobalVar::Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
 										GlobalVar::Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				// Ścieżka do pliku konfiguracyjnego
 										GlobalVar::Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),// Ścieżka dostępu do pliku z ostatnio używanymi adresami
@@ -51,8 +51,25 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów
 										GlobalVar::Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
-                    //----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
-										GlobalVar::Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName);	//Mutekst główny aplikacji
+										//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
+										GlobalVar::Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
+										// ----- Rozszerzenia plików (Przeniesione z GsReadBibleTextData.h) //[09-05-2026]
+										GlobalVar::GsExtendFileTranslateFull="*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
+										GlobalVar::GsExtendFileTranslateGrecOrg="*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
+										GlobalVar::GsExtendFileTranslateHbrOrg="*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
+										GlobalVar::GsExtendFileTranslateAll="*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
+										GlobalVar::GsExtendNoAsteriskFileTranslateFull=".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
+										GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg=".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
+										GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg =".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
+										GlobalVar::GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
+
+										//--- Nagłówki dla plików html (Przeniesione z GsReadBibleTextData.h) //[09-05-2026]
+UnicodeString GlobalVar::GsHTMLHeaderText="",	// Tekst nagłówka dla tekstu zwykłego
+							GlobalVar::GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", // [03-08-2023]
+							GlobalVar::GsHTMLHeaderSearch="",// Tekst nagłówka dla tekstu, wyniku wyszukiwania
+							GlobalVar::GsHTMLHeaderDisplayVer="",// Tekst nagłówka dla tekstu wybranego wersetu
+							GlobalVar::GsHTMLJavaScripts="", // Kody Java Script
+							GlobalVar::GsHTML_FileJavaSc_SelectWord=""; // Funkcja java script umożliwiająca klikalność słów [25-08-2025]
 
 void __fastcall GlobalVar::Global_InitGlobalVariables()
 /**

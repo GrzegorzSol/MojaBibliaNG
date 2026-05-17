@@ -32,21 +32,14 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enTagControl_ButtFontAdress,
 			enTagControl_ButtFontNameTranslates,
 			enTagControl_ButtDisplayselectTheme,
-				//TSpinEdit
+			//TSpinEdit
 			enTagControl_SpinEdSizeMainFont,
 			enTagControl_SpinEdSizeAdressFont,
 			enTagControl_SpinEdSizeTranslatesFont,
-
-			//Indeksy grafik ikon this->SW_ImgListSmallMain
-			//Indeksy grafik ikon this->SW_ImgListMain
-			//Indeksy grafik ikon this->SW_ImgListMainSmall
-
-			//Indeksy grafik ikon this->SW_ImgListSmallMain
-			enImage_SmallSelectDir=0, enImage_SmallSaveConfig, enImage_SmallCancel, enImage_SmallUndoSetup, enImage_SmallColors, enImage_SmallSelectTranslate,
-			emImage_DisplaySelectTheme, //6
-			//Indeksy grafik ikon this->SW_ImgListMainSmall
+			//Indeksy grafik ikon this->SW_ImgListMainSmall //17 //[16-05-2026]
 			enImage_ViewAplic=0, enImage_SetupFlags, enImage_Paths, enImage_OtherSetups, enImage_Translates, enImage_TypeTranslate, enImage_DescryptionTranslate,
-			enImage_ReadingPlan, enImage_NumberDayPlan, enImage_SelectThemes,	 //9
+			enImage_ReadingPlan, enImage_NumberDayPlan, enImage_SelectThemes,	enImage_SelectDefaultTranslates, enImage_SaveConfig,
+			enImage_UndoSetup, enImage_Cancel, enImage_HelpConfig, enImage_Open, enImage_SetupsFonts, enImage_DisplaySelectTheme,
 			//Numery kolumn dodatkowych w ustawieniach tłumaczeń
 			enColumn_TypeTranslate=0, enColumn_DescryptionTranslate,
 			//Grupy tłumaczeń
@@ -132,9 +125,9 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	//Hinty
 	this->SW_ButGroupSections->Hint = "Grupy ustawień";
-	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do głównego katalogu z multimediami|%u", ARRAYOFCONST((enImage_SmallSelectDir)));
-	this->SW_LEditPath2->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do pierwszego, dodatkowego katalogu z multimediami|%u", ARRAYOFCONST((enImage_SmallSelectDir)));
-	this->SW_LEditPath3->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do drugiego, dodatkowego katalogu z multimediami|%u", ARRAYOFCONST((enImage_SmallSelectDir)));
+	this->SW_LEditPath1->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do głównego katalogu z multimediami|%u", ARRAYOFCONST((enImage_Open)));
+	this->SW_LEditPath2->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do pierwszego, dodatkowego katalogu z multimediami|%u", ARRAYOFCONST((enImage_Open)));
+	this->SW_LEditPath3->Hint = Format("Ścieżka dostępu do katalogu z multimediami|Ścieżka dostępu do drugiego, dodatkowego katalogu z multimediami|%u", ARRAYOFCONST((enImage_Open)));
 	this->SW_ButtSelectDirMulti_1->Hint = Format("Wybór katalogu z multimediami|Główny katalog z multimediami|%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_1->ImageIndex)));
 	this->SW_ButtSelectDirMulti_2->Hint = Format("Wybór katalogu z multimediami|Pierwszy, dodatkowy katalog z multimediami|%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_2->ImageIndex)));
 	this->SW_ButtSelectDirMulti_3->Hint = Format("Wybór katalogu z multimediami|Drugi, dodatkowy katalog z multimediami|%u", ARRAYOFCONST((this->SW_ButtSelectDirMulti_3->ImageIndex)));
@@ -211,6 +204,9 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_ButtDisplaySelectTheme->Enabled =	this->SW_LBoxSelectTheme->ItemIndex > -1;
 	//Inicjalizacja obsługi przełączników flag //[15-08-2023]
 	this->_InitToggleSwitches();
+	// Parametry listy do wybierania domyślnego tłumaczenia //[15-05-2026]
+    // Wysokość pojedyńczej pozycji zależy od wysokości listy obrazków
+	this->ListBoxSelestDefaultDisplay->ItemHeight = this->SW_ImgListMainSmall->Height + 6;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetupsWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -393,7 +389,7 @@ void __fastcall TSetupsWindow::_DisplayPreview()
 	UnicodeString HTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																							 "<html>\n<head>\n" +
 																							 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-																							 GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
+																							 GlobalVar::GsHTMLTitle + "\n" + //[03-08-2023]
 																							 "<style type=\"text/css\">\n" +
 																							 _ColorAdressFullTranslates +
 																							 _ColorNameFullTranslate +
@@ -656,19 +652,19 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 //			#endif
 			ustrNameTranslate = pGsReadBibleTextItem->NameTranslate;
 		}
-		if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
+		if(TPath::GetExtension(NewItem->Caption) == GlobalVar::GsExtendNoAsteriskFileTranslateFull)
 		{
 			NewItem->SubItems->Add("Polskie tłumaczenie kompletne");
 			NewItem->GroupID = enGroup_PolCompleteTrans;
 			// Tworzenie listy, dla wyświetlenia domyślnego tłumaczenia // [03-05-2026]
 			this->ListBoxSelestDefaultDisplay->AddItem(ustrNameTranslate, nullptr);
 		}
-		else if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg)
+		else if(TPath::GetExtension(NewItem->Caption) == GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg)
 		{
 			NewItem->SubItems->Add("Greckie tłumaczenie");
 			NewItem->GroupID = enGroup_OrygTrans;
 		}
-		else if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)
+		else if(TPath::GetExtension(NewItem->Caption) == GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg)
 		{
 			NewItem->SubItems->Add("Hebrajskie tłumaczenie");
 			NewItem->GroupID = enGroup_OrygTrans;
@@ -682,7 +678,7 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 //		#endif
 		NewItem->SubItemImages[enColumn_DescryptionTranslate] = enImage_DescryptionTranslate;
 		//--- Tworzenie listy dostępnych tłumaczeń dla planu czytania biblii. Dostępne sa tylko polskie, pełne tłumaczenia.
-		if(TPath::GetExtension(NewItem->Caption) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
+		if(TPath::GetExtension(NewItem->Caption) == GlobalVar::GsExtendNoAsteriskFileTranslateFull)
 			{this->CBoxSelectTranslate->AddItem(Format("%s - %s", ARRAYOFCONST((NewItem->Caption, ustrNameTranslate))), 0);}
 	}
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
@@ -932,7 +928,7 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 	{
 		GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan);
 		GlobalVar::Global_ConfigFile->DeleteKey(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate);
-		if(TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan)) TFile::Delete(GlobalVar::GlobalPath_CurrentActivePlan);
+		if(TFile::Exists(GlobalVar::Global_custrPathActivePlan)) TFile::Delete(GlobalVar::Global_custrPathActivePlan);
 	}
 	else
 	{
@@ -1345,7 +1341,7 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 {
 	const int ciNameCurrentPlan = 0; //Indeks gdzie znajduje się nazwa aktualnie czytanego planu
 	#if defined(_DEBUGINFO_)
-		GsDebugClass::WriteDebug(Format("Path jcp: \"%s\"", ARRAYOFCONST((GlobalVar::GlobalPath_CurrentActivePlan))));
+		GsDebugClass::WriteDebug(Format("Path jcp: \"%s\"", ARRAYOFCONST((GlobalVar::Global_custrPathActivePlan))));
 		GsDebugClass::WriteDebug(Format("Size: %d", ARRAYOFCONST((this->LViewDisplayselectPlan->Items->Count))));
 	#endif
 	TListItem *pLItem = nullptr;
@@ -1356,7 +1352,7 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 	{
 		try
 		{
-			if(!TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
+			if(!TFile::Exists(GlobalVar::Global_custrPathActivePlan))
 			//Plik dziennika nie istnieje
 			{
 				pHSList->Add(this->CBoxSelectPlan->Text);
@@ -1368,12 +1364,12 @@ void __fastcall TSetupsWindow::_WriteJournalPlan()
 						pHSList->AddPair(pLItem->SubItems->Strings[0], "0");
 					}
 				}
-				pHSList->SaveToFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+				pHSList->SaveToFile(GlobalVar::Global_custrPathActivePlan, TEncoding::UTF8);
 			} //if(!TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
 			else
 			//Plik dziennika istnieje. Trzeba sprawdzić czy nie odnosi sie do aktualnego planu
 			{
-				pHSList->LoadFromFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+				pHSList->LoadFromFile(GlobalVar::Global_custrPathActivePlan, TEncoding::UTF8);
 				if(pHSList->Strings[ciNameCurrentPlan] == this->CBoxSelectPlan->Text)
 				{
 					#if defined(_DEBUGINFO_)
@@ -1543,6 +1539,32 @@ void __fastcall TSetupsWindow::SW_ListViewAllTranslatesChanging(TObject *Sender,
 	if(!pLView) return;
 	//---
 	AllowChange = (Item->GroupID != enGroup_OrygTrans);
+}
+//---------------------------------------------------------------------------
+void __fastcall TSetupsWindow::ListBoxSelestDefaultDisplayDrawItem(TWinControl *Control,
+					int Index, TRect &Rect, TOwnerDrawState State)
+/**
+	OPIS METOD(FUNKCJI): [15-05-2026]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TListBox *pLBox = dynamic_cast<TListBox *>(Control);
+	if(!pLBox) return;
+	//---
+  TCanvas *pCanvas = pLBox->Canvas;
+	pCanvas->Font = pLBox->Font;
+	TRect myRect(Rect);
+
+	pCanvas->Brush->Color = pLBox->Color;
+	if(State.Contains(odSelected))
+		{pCanvas->Brush->Color = clRed;}
+	pCanvas->FillRect(Rect);
+	this->SW_ImgListMainSmall->Draw(pCanvas, myRect.Left + 2,
+		myRect.Top + 1 + (myRect.Height() / 2) - (this->SW_ImgListMainSmall->Height / 2) ,enImage_SelectDefaultTranslates);
+	myRect.Inflate(-this->SW_ImgListMainSmall->Width - 4, 0, 0, 0);
+	DrawText(pCanvas->Handle, pLBox->Items->Strings[Index].c_str(), -1, &myRect, DT_SINGLELINE | DT_VCENTER);
 }
 //---------------------------------------------------------------------------
 

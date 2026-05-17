@@ -414,7 +414,7 @@ void __fastcall TNewSchemeVersWindow::_OpenSelectTranslate()
 	{
 		//--- Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie)
 		pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(i);
-		if(TPath::GetExtension(GlobalVar::SDirTranslatesList[i]) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
+		if(TPath::GetExtension(GlobalVar::SDirTranslatesList[i]) == GlobalVar::GsExtendNoAsteriskFileTranslateFull)
 		{
 			this->pLBox->Items->Add(Format("%s - %s",
 				ARRAYOFCONST((TPath::GetFileNameWithoutExtension(GlobalVar::SDirTranslatesList[i]),

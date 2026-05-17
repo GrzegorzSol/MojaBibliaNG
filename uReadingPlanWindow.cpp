@@ -142,9 +142,9 @@ void __fastcall TReadingPlanWindow::_ReadSetupsJournal()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(TFile::Exists(GlobalVar::GlobalPath_CurrentActivePlan))
+	if(TFile::Exists(GlobalVar::Global_custrPathActivePlan))
 	{
-		this->_pHSListJournaling->LoadFromFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+		this->_pHSListJournaling->LoadFromFile(GlobalVar::Global_custrPathActivePlan, TEncoding::UTF8);
 		this->ChListBoxJournaling->Items->BeginUpdate();
 		for(int i=0; i<this->_pHSListJournaling->Count; ++i)
 		{
@@ -294,7 +294,7 @@ void __fastcall TReadingPlanWindow::FormDestroy(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->_pHSListJournaling->SaveToFile(GlobalVar::GlobalPath_CurrentActivePlan, TEncoding::UTF8);
+	this->_pHSListJournaling->SaveToFile(GlobalVar::Global_custrPathActivePlan, TEncoding::UTF8);
 	if(this->_pListWebBrowsers) {delete this->_pListWebBrowsers; this->_pListWebBrowsers = nullptr;}
 	if(this->_pHSListJournaling) {delete this->_pHSListJournaling; this->_pHSListJournaling = nullptr;}
 }

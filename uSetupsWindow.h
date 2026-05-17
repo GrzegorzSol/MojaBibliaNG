@@ -38,7 +38,6 @@ __published:	// IDE-managed Components
 	TLabeledEdit *SW_LEditPath2;
 	TLabeledEdit *SW_LEditPath3;
 	TGroupBox *SW_GrBoxSelectPathDirMulti;
-	TImageList *SW_ImgListSmallMain;
 	TButton *SW_ButtSelectDirMulti_1;
 	TButton *SW_ButtSelectDirMulti_2;
 	TButton *SW_ButtSelectDirMulti_3;
@@ -160,6 +159,8 @@ __published:	// IDE-managed Components
 	void __fastcall ToggleSwitchIsImageBgnClick(TObject *Sender);
 	void __fastcall SW_ListViewAllTranslatesChanging(TObject *Sender, TListItem *Item,
           TItemChange Change, bool &AllowChange);
+	void __fastcall ListBoxSelestDefaultDisplayDrawItem(TWinControl *Control, int Index,
+          TRect &Rect, TOwnerDrawState State);
 
 private:	// User declarations
 	UnicodeString __fastcall _SelectMultimediaDir(UnicodeString _ustrPath=GlobalVar::Global_custrPathMultimediaFilesData);

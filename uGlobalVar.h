@@ -45,7 +45,7 @@ struct GlobalVar
 														 Global_custrPathImagesStyles,  // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 														 Global_custrPathAllReadingPlan, // Ścieżka dostępu do katalogu z planami czytania biblii
 														 Global_custrPathJavaScripts, // Ścieżka dostępu do katalogu z plikami java script
-														 GlobalPath_CurrentActivePlan, // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
+														 Global_custrPathActivePlan, // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
 														 Global_custrPathSearchFavorities, // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
 														 Global_custrGetConfigFile, // Ścieżka do pliku konfiguracyjnego
 														 Global_custrPathLastUsedAddressFile, // Ścieżka dostępu do pliku z ostatnio używanymi adresami
@@ -64,7 +64,24 @@ struct GlobalVar
 														 Global_custrPathHistorySearch, // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 														 Global_custrPathImageBackgroundMainText, // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
 														 //----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
-														 Global_ustrMutexName; //Mutekst główny aplikacji
+														 Global_ustrMutexName, //Mutekst główny aplikacji
+														 // ----- Rozszerzenia plików (Przeniesione z GsReadBibleTextData.h)
+														 GsExtendFileTranslateFull, //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
+														 GsExtendFileTranslateGrecOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
+														 GsExtendFileTranslateHbrOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
+														 GsExtendFileTranslateAll,//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
+														 GsExtendNoAsteriskFileTranslateFull, //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
+														 GsExtendNoAsteriskFileTranslateGrecOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
+														 GsExtendNoAsteriskFileTranslateHbrOrg,//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
+														 GsExtendNoAsteriskTextInfoTranslate; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
+
+	//--- Nagłówki dla plików html (Przeniesione z GsReadBibleTextData.h) //[09-05-2026]
+	static UnicodeString GsHTMLHeaderText,	// Tekst nagłówka dla tekstu zwykłego
+											 GsHTMLTitle, // [03-08-2023]
+											 GsHTMLHeaderSearch,// Tekst nagłówka dla tekstu, wyniku wyszukiwania
+											 GsHTMLHeaderDisplayVer,// Tekst nagłówka dla tekstu wybranego wersetu
+											 GsHTMLJavaScripts, // Kody Java Script
+											 GsHTML_FileJavaSc_SelectWord; // Funkcja java script umożliwiająca klikalność słów [25-08-2025]
 
 	//=======================================
 	inline const static UnicodeString Global_custrFileSearchFavExtend=".fsv",	 //Rozszerzenie ulubionych plików wyszukiwania  = "*.fsv";

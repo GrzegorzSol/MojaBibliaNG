@@ -57,23 +57,6 @@ class GsReadBibleTextData : public TObject
 	public:
 		static inline GsReadBibleTextClass* pGsReadBibleTextClass=nullptr;	//Wskaźnik na główną klasę
     static inline GsReadBibleSpecTextClass* pGsReadBibleSpecTextClass=nullptr; //w Wskaxnik na klase tłumaczeń specjalistycznych
-		static const inline UnicodeString GsExtendFileTranslateFull="*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
-													 GsExtendFileTranslateGrecOrg="*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
-													 GsExtendFileTranslateHbrOrg="*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
-													 GsExtendFileTranslateAll="*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
-													 GsExtendNoAsteriskFileTranslateFull=".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
-													 GsExtendNoAsteriskFileTranslateGrecOrg=".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
-													 GsExtendNoAsteriskFileTranslateHbrOrg =".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
-													 GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
-		static UnicodeString inline //--- Nagłówki dla plików html
-															 GsHTMLHeaderText="",	// Tekst nagłówka dla tekstu zwykłego
-															 GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", // [03-08-2023]
-															 GsHTMLHeaderSearch="",// Tekst nagłówka dla tekstu, wyniku wyszukiwania
-															 GsHTMLHeaderDisplayVer="",// Tekst nagłówka dla tekstu wybranego wersetu
-															 GsHTMLJavaScripts="", // Kody Java Script
-															 // --- Skrypty Java Script
-															 GsHTML_FileJavaSc_SelectWord=""; // Funkcja java script umożliwiająca klikalność słów [25-08-2025]
-															 // ---
 		static const unsigned char inline GsNumberAllGroups = en_GrSearch_Count,//Ilość grup biblii, do wyszukiwania
 															 GsNumberGroups = 3,	//Ilość grup w drzewie struktury bibli
 															 //Ilość ksiąg w poszczególnych grupach

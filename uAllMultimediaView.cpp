@@ -435,9 +435,9 @@ void __fastcall TAllMultimediaView::CListTranlatesBeforeDrawItem(int AIndex,
 	}
 
 	//Rozróżnianie typu tłumaczenia po rozszerzeniu plików
-	if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) this->LabelTypeTranslate->Caption = "Pełne tłumaczenie";
-			else if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg) this->LabelTypeTranslate->Caption = "Oryginalne greckie tłumaczenie";
-			else if(ustrExt == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg) this->LabelTypeTranslate->Caption = "Oryginalne hebrajskie tłumaczenie";
+	if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateFull) this->LabelTypeTranslate->Caption = "Pełne tłumaczenie";
+			else if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg) this->LabelTypeTranslate->Caption = "Oryginalne greckie tłumaczenie";
+			else if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg) this->LabelTypeTranslate->Caption = "Oryginalne hebrajskie tłumaczenie";
 
 	for(int i=0; i<this->HeaderControlTranslates->Sections->Count; ++i)
 	{

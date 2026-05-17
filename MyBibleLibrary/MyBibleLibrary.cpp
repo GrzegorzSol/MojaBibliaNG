@@ -147,7 +147,7 @@ __fastcall GsReadBibleTextItem::GsReadBibleTextItem(const UnicodeString &_PathTr
 	THashedStringList *_tempHStringList=nullptr; //Hashed String lista z całym tłumaczeniem
 	int iGetBook=0;
 	//Ścieżka do pliku informacji o tłumaczeniu
-	this->PathInfoTranslate = Format("%s", ARRAYOFCONST(( TPath::ChangeExtension(_PathTransl, GsReadBibleTextData::GsExtendNoAsteriskTextInfoTranslate) )));
+	this->PathInfoTranslate = Format("%s", ARRAYOFCONST(( TPath::ChangeExtension(_PathTransl, GlobalVar::GsExtendNoAsteriskTextInfoTranslate) )));
 
 	try
 	{
@@ -302,11 +302,11 @@ int __fastcall MySortDir(TStringList* List, int Index1, int Index2)
 	UnicodeString ustr1 = TPath::GetExtension(List->Strings[Index1]),
 								ustr2 = TPath::GetExtension(List->Strings[Index2]);
 	//---
-	if((ustr1 != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) && (ustr2 == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull))
+	if((ustr1 != GlobalVar::GsExtendNoAsteriskFileTranslateFull) && (ustr2 == GlobalVar::GsExtendNoAsteriskFileTranslateFull))
 	{
 		return 1;
 	}
-	else if((ustr2 != GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull) && (ustr1 == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull))
+	else if((ustr2 != GlobalVar::GsExtendNoAsteriskFileTranslateFull) && (ustr1 == GlobalVar::GsExtendNoAsteriskFileTranslateFull))
 	{
 		return -1;
 	}
@@ -385,7 +385,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_P
 	//Odczyt z pliku ini, tłumaczeń wykluczonych
 	pSListExcludeTrans->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, "");
 	//Odczyt wszystkich dostępnych tłumaczeń
-	GlobalVar::SDirTranslatesList = TDirectory::GetFiles(_PathDir, GsReadBibleTextData::GsExtendFileTranslateAll, 0);
+	GlobalVar::SDirTranslatesList = TDirectory::GetFiles(_PathDir,GlobalVar::GsExtendFileTranslateAll, 0);
 	//Tworzenie string listy wszystkich możliwych tłumaczeń, a następnie posortowanie ich ze względu na typ.
 	//Oryginalne tłumaczenia ZAWSZE są na końcu!!!
 	TStringList *pSortedListFileTrans = new TStringList();
@@ -405,11 +405,11 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_P
 		//Nie wczytywanie tłumaczeń, które są na liście wykluczeń
 		if(pSListExcludeTrans->IndexOf(ustrNameTranslate) > -1) continue;
 		//Inicjowanie wszystkich dostępnych tłumaczeń, przez tworzenie objektów, klasy TranslateItemClassNG
-		if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateFull)
+		if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GlobalVar::GsExtendNoAsteriskFileTranslateFull)
 			{_enTypeTranslate = enTypeTr_Full; ++this->uiCountPol;}
-		else if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateGrecOrg)
+		else if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg)
 			{_enTypeTranslate = enTypeTr_Greek; ++this->uiCountOryg;}
-		else if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GsReadBibleTextData::GsExtendNoAsteriskFileTranslateHbrOrg)
+		else if(TPath::GetExtension(pSortedListFileTrans->Strings[i]) == GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg)
 			{_enTypeTranslate = enTypeTr_Hebrew; ++this->uiCountOryg;}
 		//--- Dodawanie klasy(GsReadBibleTextItem) tłumaczenia, listy klas dostępnych tłumaczeń
 		GsReadBibleTextItem *pGsReadBibleTextItem = new GsReadBibleTextItem(pSortedListFileTrans->Strings[i], _enTypeTranslate, i);
@@ -731,7 +731,7 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 	pGsTabSheetClass->pLBoxSelectText->Items->BeginUpdate();
 	pGsTabSheetClass->pLBoxSelectText->Clear(); //Wyczyszczenie listy ulubionych wersetów (objekt, klasy TListBox)
 	//Podmiana elementu /title w kodzie html wczytanego rozdziału i księgi na nazwę księgi - [03-08-2023]
-	UnicodeString ustrHeaderText = StringReplace(GsReadBibleTextData::GsHTMLHeaderText, GsReadBibleTextData::GsHTMLTitle,
+	UnicodeString ustrHeaderText = StringReplace(GlobalVar::GsHTMLHeaderText, GlobalVar::GsHTMLTitle,
 		"<title>" + pTreeNodeSelect->Text + "</title>", TReplaceFlags() << rfReplaceAll); //[03-08-2023]
 	pStringStream->WriteString(ustrHeaderText); //Zapis nagłówka kodu html do strumienia
   #if defined(_DEBUGINFO_)
@@ -873,12 +873,15 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
 //    #if defined(_DEBUGINFO_)
 //			GsDebugClass::WriteDebug(Format("bIsOneTranslate: %d", ARRAYOFCONST(((int)bIsOneTranslate))));
 //		#endif
+    #if defined(_DEBUGINFO_)
+			GsDebugClass::WriteDebug(Format("GsHTML_FileJavaSc_SelectWord: %s", ARRAYOFCONST((GlobalVar::GsHTML_FileJavaSc_SelectWord))));
+		#endif
 		if(bIsOneTranslate) // [04-09-2025]
 		{
-  		GsReadBibleTextData::GsHTMLJavaScripts = UnicodeString // Rozpoczęcie kodu Java script // [30-08-2025]
+			GlobalVar::GsHTMLJavaScripts = UnicodeString // Rozpoczęcie kodu Java script // [30-08-2025]
   																						("<script type=\"text/javascript\">\n") +
   																						// Wczytanie kody java script, który umożliwia klikalność słów
-  																						TFile::ReadAllText(GsReadBibleTextData::GsHTML_FileJavaSc_SelectWord, TEncoding::UTF8) +
+  																						TFile::ReadAllText(GlobalVar::GsHTML_FileJavaSc_SelectWord, TEncoding::UTF8) +
   																						"\n\n// Wywołanie z poziomu window.onload() z podanymi identyfikatorami\n" +
   																						"window.onload = function()\n{\n";
   		// Tworzenie wywoływania funkcji Java script z indeksem wersetów
@@ -887,12 +890,12 @@ void __fastcall GsReadBibleTextClass::DisplayAllTextInHTML(TWebBrowser *_pWebBro
   		{
   			for(int iVers=0; iVers<iIndexVers; ++iVers)
   			{
-  				GsReadBibleTextData::GsHTMLJavaScripts += Format("\tprzetworzTekst(\"tekst%d_%d\");\n",
+					GlobalVar::GsHTMLJavaScripts += Format("\tprzetworzTekst(\"tekst%d_%d\");\n",
   					ARRAYOFCONST((iIndexTrans, iVers)));
-  			}
-  		}
-			GsReadBibleTextData::GsHTMLJavaScripts += "}\n</script>\n";
-			pStringStream->WriteString(GsReadBibleTextData::GsHTMLJavaScripts); // [24-08-2025]
+				}
+			}
+			GlobalVar::GsHTMLJavaScripts += "}\n</script>\n";
+			pStringStream->WriteString(GlobalVar::GsHTMLJavaScripts); // [24-08-2025]
 		}
 		pStringStream->WriteString("</body>\n</html>\n");
 		pStringStream->Position = 0;
@@ -3160,7 +3163,7 @@ void __fastcall GsBarSelectVers::_DisplayVers()
   TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
 	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
 
-	pStringStream->WriteString(GsReadBibleTextData::GsHTMLHeaderDisplayVer);
+	pStringStream->WriteString(GlobalVar::GsHTMLHeaderDisplayVer);
 
 	try
 	{

@@ -258,6 +258,12 @@ object AllMultimediaView: TAllMultimediaView
     Width = 1182
     Height = 179
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    Font.Quality = fqClearType
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssBoth

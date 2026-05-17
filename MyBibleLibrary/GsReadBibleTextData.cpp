@@ -593,10 +593,10 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
 
   // Tekst nagłówka dla tekstu zwykłego
-	GsReadBibleTextData::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+	GlobalVar::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html>\n<head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-																												GsReadBibleTextData::GsHTMLTitle + "\n" + //[03-08-2023]
+																												GlobalVar::GsHTMLTitle + "\n" + //[03-08-2023]
 																												//"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
 																												"<style type=\"text/css\">\n" +
 																												_ColorAdressFullTranslates +
@@ -609,7 +609,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												_SelectWord +
 																												"</style>\n</head>\n\n<body>\n";
 	// Tekst nagłówka dla tekstu, wyniku wyszukiwania
-	GsReadBibleTextData::GsHTMLHeaderSearch = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+	GlobalVar::GsHTMLHeaderSearch = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html>\n<head>\n" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
 																												"<title>Wyniki wyszukiwania</title>" +
@@ -622,7 +622,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												"body {background-color:#33CCCC;font-size:12pt;font-family:Times New Roman;}" +
 																												"</style>\n</head>\n<body>\n";
 	// Tekst nagłówka dla tekstu wybranego wersetu
-	GsReadBibleTextData::GsHTMLHeaderDisplayVer = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+	GlobalVar::GsHTMLHeaderDisplayVer = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
 																												"<html>\n<head>" +
 																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
 																												"<title>Wyswietlanie pojedyńczego werstu</title>" +
@@ -636,7 +636,7 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 																												"</style>\n</head>\n<body>";
 	// KODY JAVA SCRIPT
 		// Kod Java script umożliwiający "klikalność" tekstu, znajduje sięd na  każdej zakładce rozdziału. // [24-08-2025]
-	GsReadBibleTextData::GsHTML_FileJavaSc_SelectWord = TPath::Combine(GlobalVar::Global_custrPathJavaScripts, "SelectWord.js");
+	GlobalVar::GsHTML_FileJavaSc_SelectWord = TPath::Combine(GlobalVar::Global_custrPathJavaScripts, "SelectWord.js");
 	//--- Aktualizacja wyglądu strony, po zmianie konfiguracji kolorów aplikacji
 	if(GsReadBibleTextData::_GsPageControl) //Istnieje zakładka
 	{
