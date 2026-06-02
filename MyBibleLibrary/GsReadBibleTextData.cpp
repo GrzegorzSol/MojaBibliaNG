@@ -16,22 +16,22 @@ void __fastcall GsReadBibleTextData::InitGlobalVariables()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN64) && defined(__MINGW64__)
-		#if defined(_DEBUGINFO_)
-      // Kompilator dla Win64 typu Modern
-			GsDebugClass::WriteDebug("BCC64X Modern");
-		#endif
-	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN64)
-		#if defined(_DEBUGINFO_)
-			// Tradycyjny kompilator dla Win64
-			GsDebugClass::WriteDebug("BCC64C Standart");
-		#endif
-	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32) && !defined(_WIN64)
-    #if defined(_DEBUGINFO_)
-			// Tradycyjny kompilator dla Win32
-			GsDebugClass::WriteDebug("BCC32C i BCC32X Standart");
-		#endif
-	#endif
+//	#if defined(__BORLANDC__) && defined(__clang__) && defined(_WIN64) && defined(__MINGW64__)
+//		#if defined(_DEBUGINFO_)
+//			// Kompilator dla Win64 typu Modern
+//			GsDebugClass::WriteDebug("BCC64X Modern");
+//		#endif
+//	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN64)
+//		#if defined(_DEBUGINFO_)
+//			// Tradycyjny kompilator dla Win64
+//			GsDebugClass::WriteDebug("BCC64C Standart");
+//		#endif
+//	#elif defined(__BORLANDC__) && defined(__clang__) && defined(_WIN32) && !defined(_WIN64)
+//		#if defined(_DEBUGINFO_)
+//			// Tradycyjny kompilator dla Win32
+//			GsDebugClass::WriteDebug("BCC32C i BCC32X Standart");
+//		#endif
+//	#endif
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//Inicjalizacja zmiennych klasy
@@ -54,7 +54,7 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 	if(!GsReadBibleTextData::_GsImgListDataDisable) throw(Exception("Błąd otwarcia objektu TImageLists"));
 	GsReadBibleTextData::_GsImgListDataDisable->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListDataDisable->DrawingStyle = dsTransparent;
-	//Inicjalizacja objektu klasy TImageList, z określeniem wymiarów przyszłych obrazków na 32x3 2pikseli
+	//Inicjalizacja objektu klasy TImageList, z określeniem wymiarów przyszłych obrazków na 32x32 pikseli
 	GsReadBibleTextData::_GsImgListDataLarge = new TImageList(pMainForm);
 	if(!GsReadBibleTextData::_GsImgListDataLarge) throw(Exception("Błąd otwarcia objektu TImageLists"));
 	GsReadBibleTextData::_GsImgListDataLarge->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
@@ -69,14 +69,21 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		if(!pIcon) throw(Exception("Błąd metody TIcon"));
 		pMemoryStr = new TMemoryStream();
 		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
-		//********************************** WERSJA IKON DUŻYCH NIEAKTYWNYCH **************************************
+
+		//************************************* WERSJA IKON DUŻYCH AKTYWNYCH **************************************
 		//--- 0.Ikona wersetu skopiowanego z modułu wyborów wersetów.
 		pMemoryStr->WriteBuffer(ID_SELECTVERS_LARGEICON, ARRAYSIZE(ID_SELECTVERS_LARGEICON)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//***************************************** WERSJA IKON AKTYWNYCH *****************************************
+		//--- 1.Ikona wersetu skopiowanego z modułu wyborów wersetów. //[01-06-2026]
+		pMemoryStr->WriteBuffer(ID_SEARCHSTRONGINTERLINEAR_LARGEICON, ARRAYSIZE(ID_SEARCHSTRONGINTERLINEAR_LARGEICON)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//********************************* WERSJA IKON MAŁYCH, AKTYWNYCH *****************************************
 		//--- 0.Ikona korzenia drzewiastej struktury Bibli
 		pMemoryStr->WriteBuffer(ID_ROOT_BOOKS, ARRAYSIZE(ID_ROOT_BOOKS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
@@ -233,7 +240,7 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//************************************** WERSJA IKON NIEAKTYWNYCH **************************************
+		//********************************* WERSJA IKON MAŁYCH, NIEAKTYWNYCH **************************************
 		//--- 0.Ikona korzenia drzewiastej struktury Bibli
 		pMemoryStr->WriteBuffer(ID_ROOT_BOOKS_DIS, ARRAYSIZE(ID_ROOT_BOOKS_DIS)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
@@ -407,7 +414,9 @@ void __fastcall GsReadBibleTextData::GsFreeGlobalImageList()	//Likwidacja zmienn
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	///
+	GsReadBibleTextData::_GsImgListData->Clear(); //[26-05-2026]
+	GsReadBibleTextData::_GsImgListDataDisable->Clear(); //[26-05-2026]
+	GsReadBibleTextData::_GsImgListDataLarge->Clear(); //[26-05-2026]
 }
 //---------------------------------------------------------------------------
 UnicodeString __fastcall GsReadBibleTextData::GetVersionMainClass()
@@ -682,7 +691,8 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	{
 		delete GsReadBibleTextData::pGsReadBibleSpecTextClass;
     GsReadBibleTextData::pGsReadBibleSpecTextClass = nullptr;
-  }
+	}
+	GsReadBibleTextData::GsFreeGlobalImageList();	//Likwidacja zmiennych klasy //[26-05-2026]
 	GsReadBibleTextData::IsInitLibrary = false; //Czy została zainicjowana bibliteka (moduł)
 }
 //---------------------------------------------------------------------------

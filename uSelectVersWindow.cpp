@@ -4,6 +4,9 @@
 #include "uSelectVersWindow.h"
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
+#if defined(_FULLAPLIC_)
+	#include "uStrongWindow.h"
+#endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -11,6 +14,8 @@
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
 	GsDebugClass::WriteDebug("");
+#endif
+#if defined(_FULLAPLIC_)
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */

@@ -22,8 +22,6 @@
 #ifndef MyBibleLibraryH
 #define MyBibleLibraryH
 //---------------------------------------------------------------------------
-//#define _TEST_CONTROLLIST_
-
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.Tabs.hpp>	//TTabSet
@@ -37,13 +35,17 @@
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 #include "MyBibleLibrary\InitMBAppConst.h"
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.3.81248.9684";
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.9.89400";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
 //Numery ikon dla lsisty typu TImageList GsReadBibleTextData::GsImgListData
-enum {//--- Grafika dla drzewa ksiąg biblijnych
-			enImageIndex_Root,						//0.Główny korzeń drzew
+enum {//--- Ikony 32x32
+			enImageLargeIndex_SelectVers=0,
+      enImageLargeIndex_SearchStrongInterlinear,
+			//--- Ikony 16x16
+			//--- Grafika dla drzewa ksiąg biblijnych
+			enImageIndex_Root=0,						//0.Główny korzeń drzew
 			enImageIndex_PartBooks,				//1.Grupa ksiąg
 			enImageIndex_Book,						//2.Pojedyńcza księga
 			enImageIndex_SelectChapter,		//3.Wybór rozdziału
@@ -440,14 +442,15 @@ class GsTabSheetClass : public TTabSheet
 																								// który zastąpi sposób wyświetlania w formie html ???
                     *pHSlistResultSearchSelectWord=nullptr; // Lista wyszkanych miejsc wystepowania zaznaczonego słowa
 	GsListBoxSelectedVersClass *pLBoxSelectText=nullptr;	//Lista ulubionych wersetów
+	//--- Objekty dziedziczące z TGraphicControl, będące składnikami pCListResultSearchSelectWord [TControlList]
+	TControlList *pCListResultSearchSelectWord=nullptr; // [31-08-2025]
 	TLabel *pLabelItemResultSearchSelectWord=nullptr, // Pozycja w liście rezultatów wyszukiwania zaznaczonego słowa [31-08-2025]
-         *pLabelItemAddressResult=nullptr; // Adres wyszukiwania słowa [01-09-2025]
-
+				 *pLabelItemAddressResult=nullptr; // Adres wyszukiwania słowa [01-09-2025]
+	//---
 	GsEditorClass *pGsEditorClass=nullptr;							 //Edycja komentarza do wybranego wersetu
 	TSplitter *pSplitterEd=nullptr;
 	TPanel *pPanelInfoTraslates=nullptr,
 				 *pPanelSelectWordResult=nullptr; // [31-08-2025]
-	TControlList *pCListResultSearchSelectWord=nullptr; // [31-08-2025]
 	//--- Niektóre przyciski na TToolbarach
 	TToolButton *pToolButtonEdit=nullptr,	//Przycisk do edycji
 							*pToolButtonInfoTranslates=nullptr;//Przycisk do informacji o przekładach
@@ -523,10 +526,10 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
   	//---
   	void __fastcall _CreatePMenuBooks(); //Tworzenie stałych popup menu (wszystkich tłumaczeń, księgi biblijne, rozdziałów i wersetów)
   	void __fastcall _OnClick_PMenu(System::TObject* Sender);
-  	void __fastcall _OnClickDisplay(System::TObject* Sender);
-  	void __fastcall _OnClickButtonSelect(System::TObject* Sender);
-  	void __fastcall _OnClickNavigateVers(System::TObject* Sender);
-  	void __fastcall _OnClickCopyToSheet(System::TObject* Sender);
+		void __fastcall _OnClickDisplay(System::TObject* Sender);
+		void __fastcall _OnClickButtonSelect(System::TObject* Sender);
+		void __fastcall _OnClickNavigateVers(System::TObject* Sender);
+		void __fastcall _OnClickCopyToSheet(System::TObject* Sender);
   	void __fastcall _OnClickSaveComment(System::TObject* Sender);
   	void __fastcall _OnClickDeleteComment(System::TObject* Sender);
   	void __fastcall _OnClickFavVers(System::TObject* Sender);
@@ -543,7 +546,7 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
  *	Klasa wizualna do wyświetlania wybranego wersetu,												*
  *	wybranego za pomocą objektu, klasy GsBarSelectVers											*
  ****************************************************************************/
-class GsPanelSelectVers	 : public TCustomPanel
+class GsPanelSelectVers	: public TCustomPanel
 {
 	friend class GsBarSelectVers;
 	public:
@@ -551,6 +554,7 @@ class GsPanelSelectVers	 : public TCustomPanel
 		__fastcall virtual ~GsPanelSelectVers();
 		//---
 		inline void __fastcall DisplayStart() {this->_pGsBarSelectVers->_DisplayVers();}; //Wyświetla wybrany werset
+		inline TStringGrid * __fastcall GetSGridInterlinearVers() {return this->_pSGridInterlinearVers;};
 		//---
 		unsigned char ucSetBook,
 									ucSetChapt,
@@ -560,13 +564,20 @@ class GsPanelSelectVers	 : public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 	private:
 		//---
+		UnicodeString _ustrSelectNumberStrong; //[01-06-2026]
 		GsBarSelectVers *_pGsBarSelectVers=nullptr;
 		GsEditorClass *_pEditComment=nullptr;
 		TWebBrowser *_pWebBrowser=nullptr;
+    //---
+		TPanel *_pPanelSGridInterlinearVers=nullptr, //[31-05-2026]
+					 *_pPanelButtons=nullptr; //[01-06-2026]
+		TButton *_pButtonStrong=nullptr; //[31-05-2026]
 		TStringGrid *_pSGridInterlinearVers=nullptr; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
 		//---
+		void __fastcall _OnClickButtonSGrid(System::TObject* Sender);
 		void __fastcall _DisplayInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla greckiego oryginału
-		void __fastcall _DrawGridInterlinearVersCell(System::TObject* Sender, int ACol, int ARow, const System::Types::TRect &Rect, TGridDrawState State);
+		void __fastcall _DrawGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol, System::LongInt ARow, const System::Types::TRect &Rect, TGridDrawState State);
+		void __fastcall _SelectGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol, System::LongInt ARow, bool &CanSelect);
 };
 /****************************************************************************
  *										 KLASA GsTabSheetSelectVersClass											*
