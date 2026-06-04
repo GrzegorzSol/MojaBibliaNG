@@ -2,8 +2,8 @@ object DictGrecPolWindow: TDictGrecPolWindow
   Left = 0
   Top = 0
   Caption = 'S'#322'ownik i korkondancja grecko-polska'
-  ClientHeight = 817
-  ClientWidth = 1188
+  ClientHeight = 901
+  ClientWidth = 1264
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET

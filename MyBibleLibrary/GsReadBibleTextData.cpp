@@ -83,6 +83,12 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
+		//--- 2.Ikona wersetu skopiowanego z modułu wyborów wersetów. //[02-06-2026]
+		pMemoryStr->WriteBuffer(ID_SEARCHSTRONGWEB_LARGEICON, ARRAYSIZE(ID_SEARCHSTRONGWEB_LARGEICON)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
 		//********************************* WERSJA IKON MAŁYCH, AKTYWNYCH *****************************************
 		//--- 0.Ikona korzenia drzewiastej struktury Bibli
 		pMemoryStr->WriteBuffer(ID_ROOT_BOOKS, ARRAYSIZE(ID_ROOT_BOOKS)); //Zapis do strumienia danych

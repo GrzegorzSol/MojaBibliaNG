@@ -18,6 +18,8 @@
 #if defined(_FULLAPLIC_)
 #endif
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+#if defined(_FULLAPLIC_)
+#endif
 */
 TSelectVersWindow *SelectVersWindow;
 //---------------------------------------------------------------------------
@@ -61,6 +63,7 @@ void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
 	if(!this->_pGsPanelSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsPanelSelectVers"));
 	this->_pGsPanelSelectVers->Parent = this;
 	this->_pGsPanelSelectVers->Align = alClient;
+  this->_pGsPanelSelectVers->OnStrongSelect = this->_OnClickButtonSelectStrong;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSelectVersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -94,6 +97,28 @@ void __fastcall TSelectVersWindow::FormActivate(TObject *Sender)
 */
 {
 	///
+}
+//---------------------------------------------------------------------------
+void __fastcall TSelectVersWindow::_OnClickButtonSelectStrong(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButton *pButton = dynamic_cast<TButton *>(Sender);
+	if(!pButton) return;
+	//---
+//	#if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug("_OnClickButtonSelectStrong");
+//		GsDebugClass::WriteDebug(Format("Strong: \"%s\"", ARRAYOFCONST((pButton->Caption))));
+//	#endif
+	#if defined(_FULLAPLIC_)
+		TStrongWindow *pStrongWindow = new TStrongWindow(this, pButton->Caption);
+		if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
+		pStrongWindow->Show();
+	#endif
 }
 //---------------------------------------------------------------------------
 

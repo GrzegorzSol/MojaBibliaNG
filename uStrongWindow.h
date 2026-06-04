@@ -55,9 +55,10 @@ private:	// User declarations
 			_iNumberTranslateHbr=-1;  // Numer tłumaczenia hebrajskiego używany do wyświetlania wersetów // [31-07-2024]
 	void __fastcall _AllClear();
 	UnicodeString __fastcall _SearchVersWordGrec(const UnicodeString &_custrIn); //[22-06-2024]
-  UnicodeString __fastcall _SearchVersWordHbr(const UnicodeString &_custrIn); //[01-08-2024]
+	UnicodeString __fastcall _SearchVersWordHbr(const UnicodeString &_custrIn); //[01-08-2024]
+  UnicodeString _ustrStartInputNumberStrong; // Startowy numer Stronga, do natychmiastowego wyświetlenia //[01-06-2026]
 public:		// User declarations
-	__fastcall TStrongWindow(TComponent* Owner);
+	__fastcall TStrongWindow(TComponent* Owner, UnicodeString _ustrNumberStrong="");
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TStrongWindow *StrongWindow;

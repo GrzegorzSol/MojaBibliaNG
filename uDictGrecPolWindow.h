@@ -15,7 +15,8 @@ __published:	// IDE-managed Components
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 private:	// User declarations
-	GsLViewDictionaryClass *_pGsLViewDictionaryClass=nullptr;
+	GsPanelDictionaryClass *_pGsPanelDictionaryClass=nullptr;
+	void __fastcall _OnClickButtonSelectWordStrong(System::TObject* Sender);
 public:		// User declarations
 	__fastcall TDictGrecPolWindow(TComponent* Owner);
 };

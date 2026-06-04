@@ -35,14 +35,16 @@
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 #include "MyBibleLibrary\InitMBAppConst.h"
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.9.89400";
+
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.9.91461";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
 //Numery ikon dla lsisty typu TImageList GsReadBibleTextData::GsImgListData
 enum {//--- Ikony 32x32
 			enImageLargeIndex_SelectVers=0,
-      enImageLargeIndex_SearchStrongInterlinear,
+			enImageLargeIndex_SearchStrongInterlinear,
+      enImageLargeIndex_SearchStrongWeb,
 			//--- Ikony 16x16
 			//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_Root=0,						//0.Główny korzeń drzew
@@ -87,9 +89,12 @@ class GsTabSheetSelectVersClass;
 class GsReadBibleTextItem;
 class GsTabSetClass;
 class GsPanelSelectVers;
-const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 class GsListBoxFavoritiesClass;
 class GsLViewCommentsAllClass;
+class GsLViewDictionaryClass;
+class GsControlListVers;
+
+const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 ///*============================================================================
 // =													STRUKTURA InfoAllBooks													 =
 // ============================================================================*/
@@ -553,6 +558,8 @@ class GsPanelSelectVers	: public TCustomPanel
 		__fastcall GsPanelSelectVers(TComponent* Owner, const unsigned char _cucBook=0, const unsigned char _cucChapt=0, const unsigned char _cucVers=1);
 		__fastcall virtual ~GsPanelSelectVers();
 		//---
+		__property TNotifyEvent OnStrongSelect = {write = _FSetStrongSelect}; //[02-06-2026]
+		//---
 		inline void __fastcall DisplayStart() {this->_pGsBarSelectVers->_DisplayVers();}; //Wyświetla wybrany werset
 		inline TStringGrid * __fastcall GetSGridInterlinearVers() {return this->_pSGridInterlinearVers;};
 		//---
@@ -563,6 +570,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 	private:
+		TNotifyEvent _FSetStrongSelect; //[02-06-2026]
 		//---
 		UnicodeString _ustrSelectNumberStrong; //[01-06-2026]
 		GsBarSelectVers *_pGsBarSelectVers=nullptr;
@@ -571,7 +579,8 @@ class GsPanelSelectVers	: public TCustomPanel
     //---
 		TPanel *_pPanelSGridInterlinearVers=nullptr, //[31-05-2026]
 					 *_pPanelButtons=nullptr; //[01-06-2026]
-		TButton *_pButtonStrong=nullptr; //[31-05-2026]
+		TButton *_pButtonStrongWeb=nullptr, //[31-05-2026]
+						*_pButtonStrongAplic=nullptr; //[02-06-2026]
 		TStringGrid *_pSGridInterlinearVers=nullptr; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
 		//---
 		void __fastcall _OnClickButtonSGrid(System::TObject* Sender);
@@ -583,7 +592,6 @@ class GsPanelSelectVers	: public TCustomPanel
  *										 KLASA GsTabSheetSelectVersClass											*
  *	Klasa wizualna zakładki do wyświetlania zawartości ulubionych wersetów	*
  ****************************************************************************/
-class GsControlListVers;
 class GsTabSheetSelectVersClass : public TTabSheet //Klasa całkowicie PRYWATNA!
 {
 	friend class GsBarSelectVers;
@@ -622,14 +630,19 @@ class GsControlListVers : public TCustomControlList
 		//---
     void __fastcall ControlListEnableItem(const int AIndex, bool &AEnabled);
 };
+//---------------------------------------------------------------------------
+
 /****************************************************************************
 *		 Klasa całkowicie PRYWATNA DataGrecWordDictClass, pomocnicz klasa				*
 *									dla klasy GsLViewDictionaryClass.													*
+* Klasa, która wraz z klasą GsPanelDictionaryClass i GsLViewDictionaryClass,*
+*       			 tworzy	słownik i konkordancje grecko-polską                  *
 *****************************************************************************/
 //--- Całkowicie prywatna klasa, służaca jako dane do każdego słowa w słowniku grecko-polskim
 class DataGrecWordDictClass : public TObject
 {
 	friend class GsLViewDictionaryClass;
+	friend class GsPanelDictionaryClass;
 
 	DataGrecWordDictClass()
 	{
@@ -647,14 +660,46 @@ class DataGrecWordDictClass : public TObject
 								ustrStrongNumber; //Numer stronga
 	THashedStringList *pHSListVers=nullptr; //Lista wersetów, w których dane słowo występuje
 };
+/**************************************************************************** //[03-06-2026]
+*												 Klasa GsPanelDictionaryClass												*
+*						Klasa główna słownika i konkordancji grecko-polskiej						*
+* Klasa, która wraz z klasą DataGrecWordDictClass i GsLViewDictionaryClass, *
+*       			 tworzy	słownik i konkordancje grecko-polską                  *
+*****************************************************************************/
+class GsPanelDictionaryClass	: public TCustomPanel  //[03-06-2026]
+{
+  friend class GsLViewDictionaryClass;
+	public:
+		__fastcall GsPanelDictionaryClass(TComponent* Owner);
+		__fastcall virtual ~GsPanelDictionaryClass();
+		//---
+		__property TNotifyEvent OnStrongWordSelect = {write = _FSetStrongWordSelect}; //[03-06-2026]
+	protected:
+		virtual void __fastcall CreateWnd();
+		virtual void __fastcall DestroyWnd();
+	private:
+		TNotifyEvent _FSetStrongWordSelect; //[03-06-2026]
+		//---
+		TPanel *_pPanelMain=nullptr, //[03-06-2026]
+					 *_pPanelButtons=nullptr;
+		TButton *_pButtonStrongWeb=nullptr,
+            *_pButtonStrongAplic=nullptr;
+		GsLViewDictionaryClass *_pGsLViewDictionaryClass=nullptr;
+		TWebBrowser *_pWBrowseWordResult=nullptr;	//Wyświetlanie wyników, dla wybranego słowa //[03-06-2026]
+		//---
+		void __fastcall _OnClickButtonStrongWord(System::TObject* Sender);
+};
 /****************************************************************************
 *												 Klasa GsLViewDictionaryClass												*
 *							 Klasa słownika i konkordancji grecko-polskiej								*
+* Klasa, która wraz z klasą GsPanelDictionaryClass i DataGrecWordDictClass, *
+*       			 tworzy	słownik i konkordancje grecko-polską                  *
 *****************************************************************************/
 class GsLViewDictionaryClass : public TCustomListView
 {
+	friend class GsPanelDictionaryClass;
 	public:
-		__fastcall GsLViewDictionaryClass(TComponent* Owner);
+		__fastcall GsLViewDictionaryClass(TComponent* Owner, TWebBrowser *pWBrowserWordResult);
 		__fastcall virtual ~GsLViewDictionaryClass();
 	protected:
 		virtual void __fastcall CreateWnd();
@@ -675,6 +720,8 @@ class GsLViewDictionaryClass : public TCustomListView
 		void __fastcall _OnGetImageIndex(System::TObject* Sender, TListItem* Item);
 		void __fastcall _OnGetSubItemImage(System::TObject* Sender, TListItem* Item, int SubItem, int &ImageIndex);
 };
+//---------------------------------------------------------------------------
+
 /***************************************************************************************
  *												Klasa ListComments																					 *
  *	Klasa niewizualna pojedyńczej pozycji komentarza dla wersetu											 *

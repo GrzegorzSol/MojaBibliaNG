@@ -2,6 +2,9 @@
 #pragma hdrstop
 
 #include "uDictGrecPolWindow.h"
+#if defined(_FULLAPLIC_)
+	#include "uStrongWindow.h"
+#endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -37,11 +40,11 @@ void __fastcall TDictGrecPolWindow::FormCreate(TObject *Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->_pGsLViewDictionaryClass = new GsLViewDictionaryClass(this);
-	if(!this->_pGsLViewDictionaryClass) throw(Exception("Bład funkcji GsLViewDictionaryClass"));
-	this->_pGsLViewDictionaryClass->Parent = this;
-	this->_pGsLViewDictionaryClass->Align = alLeft;
-	this->_pGsLViewDictionaryClass->Width = 680;
+	this->_pGsPanelDictionaryClass = new GsPanelDictionaryClass(this);
+	if(!this->_pGsPanelDictionaryClass) throw(Exception("Bład funkcji GsPanelDictionaryClass"));
+	this->_pGsPanelDictionaryClass->Parent = this;
+	this->_pGsPanelDictionaryClass->Align = alClient;
+	this->_pGsPanelDictionaryClass->OnStrongWordSelect = this->_OnClickButtonSelectWordStrong;
 }
 //---------------------------------------------------------------------------
 void __fastcall TDictGrecPolWindow::FormDestroy(TObject *Sender)
@@ -53,6 +56,28 @@ void __fastcall TDictGrecPolWindow::FormDestroy(TObject *Sender)
 */
 {
 	///
+}
+//---------------------------------------------------------------------------
+void __fastcall TDictGrecPolWindow::_OnClickButtonSelectWordStrong(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TButton *pButton = dynamic_cast<TButton *>(Sender);
+	if(!pButton) return;
+	//---
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug("_OnClickButtonSelectWordStrong");
+		//GsDebugClass::WriteDebug(Format("Strong: \"%s\"", ARRAYOFCONST((pButton->Caption))));
+	#endif
+  #if defined(_FULLAPLIC_)
+		TStrongWindow *pStrongWindow = new TStrongWindow(this, pButton->Caption);
+		if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
+		pStrongWindow->Show();
+	#endif
 }
 //---------------------------------------------------------------------------
 

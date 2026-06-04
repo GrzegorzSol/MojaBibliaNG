@@ -23,6 +23,7 @@ private:	// User declarations
 											_InputCucStartChapt,
 											_InputCucStarVers;
 	bool _InputBSelectComment;
+	void __fastcall _OnClickButtonSelectStrong(System::TObject* Sender);
 public:		// User declarations
 	__fastcall TSelectVersWindow(TComponent* Owner, const unsigned char _cucStartBook=0, const unsigned char _cucStartChapt=0, const unsigned char _cucStarVers=1, bool bSelectComment=false);
 };

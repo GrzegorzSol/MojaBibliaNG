@@ -38,6 +38,8 @@
 	GsDebugClass::WriteDebug("");
 #endif
 [30-07-2023]
+#if defined(_FULLAPLIC_)
+#endif
 */
 // Stałe uzywane do wyboru wyswietlania widoku interlinearnego dla Nowego Testament
 const int ciMinSelectBookNewTestament = 38, // Minimum numeru ksiegi Nowego Testamenu
@@ -3174,7 +3176,8 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 
 	pStringStream->WriteString(GlobalVar::GsHTMLHeaderDisplayVer);
 	// Przy zmianie wersetu, przycisk do wyświetlenie słownika Stronga dla wybranego słowa zostanie zdezaktywowany
-	pGsPanelSelectVers->_pButtonStrong->Enabled = false; //[01-06-2026]
+	pGsPanelSelectVers->_pButtonStrongWeb->Enabled = false; //[01-06-2026]
+	pGsPanelSelectVers->_pButtonStrongAplic->Enabled = false; //[02-06-2026]
 
 	try
 	{
@@ -3469,22 +3472,38 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pPanelButtons->Font->Size = 12;
 	this->_pPanelButtons->Align = alLeft;
 	this->_pPanelButtons->AlignWithMargins = true;
-	this->_pPanelButtons->Width = this->Canvas->TextWidth("G0000") + GsReadBibleTextData::_GsImgListDataLarge->Width + 28;
+	this->_pPanelButtons->Width = this->Canvas->TextWidth("G0000") + GsReadBibleTextData::_GsImgListDataLarge->Width + 48;
 	this->_pPanelButtons->BevelOuter = bvNone;
-	// Przycisk wywoływania informacji o numerze Stronga, dla wybranego słowa //[31-05-2026]
-	this->_pButtonStrong = new TButton(this->_pPanelButtons);
-	if(!this->_pButtonStrong) throw(Exception("Błąd inicjalizacji klasy TButton"));
-	this->_pButtonStrong->Parent = this->_pPanelButtons;
-	this->_pButtonStrong->Font->Size = 12;
-	this->_pButtonStrong->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
-	this->_pButtonStrong->Font->Color = clRed; //[02-06-2026]
-	this->_pButtonStrong->Align = alTop;
-	this->_pButtonStrong->Height = GsReadBibleTextData::_GsImgListDataLarge->Height + 8;
-	this->_pButtonStrong->Images = GsReadBibleTextData::_GsImgListDataLarge;
-	this->_pButtonStrong->ImageIndex = enImageLargeIndex_SearchStrongInterlinear;
-	this->_pButtonStrong->StyleElements = TStyleElements() << seClient << seBorder;
-	this->_pButtonStrong->Enabled = false;
-	this->_pButtonStrong->OnClick = this->_OnClickButtonSGrid;
+	// Przycisk wywoływania informacji o numerze Stronga w aplikacji, dla wybranego słowa //[31-05-2026]
+	this->_pButtonStrongWeb = new TButton(this->_pPanelButtons);
+	if(!this->_pButtonStrongWeb) throw(Exception("Błąd inicjalizacji klasy TButton"));
+	this->_pButtonStrongWeb->Parent = this->_pPanelButtons;
+	this->_pButtonStrongWeb->Font->Size = 12;
+	this->_pButtonStrongWeb->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
+	this->_pButtonStrongWeb->Font->Color = clRed; //[02-06-2026]
+	this->_pButtonStrongWeb->Align = alTop;
+	this->_pButtonStrongWeb->AlignWithMargins = true; //[04-06-2026]
+	this->_pButtonStrongWeb->Height = GsReadBibleTextData::_GsImgListDataLarge->Height + 8;
+	this->_pButtonStrongWeb->Images = GsReadBibleTextData::_GsImgListDataLarge;
+	this->_pButtonStrongWeb->ImageIndex = enImageLargeIndex_SearchStrongInterlinear;
+	this->_pButtonStrongWeb->StyleElements = TStyleElements() << seClient << seBorder;
+	this->_pButtonStrongWeb->Enabled = false;
+	this->_pButtonStrongWeb->OnClick = this->_OnClickButtonSGrid;
+	// Przycisk wywoływania informacji o numerze Stronga w sieci, dla wybranego słowa //[02-06-2026]
+	this->_pButtonStrongAplic = new TButton(this->_pPanelButtons);
+	if(!this->_pButtonStrongAplic) throw(Exception("Błąd inicjalizacji klasy TButton"));
+	this->_pButtonStrongAplic->Parent = this->_pPanelButtons;
+	this->_pButtonStrongAplic->Font->Size = 12;
+	this->_pButtonStrongAplic->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
+	this->_pButtonStrongAplic->Font->Color = clRed; //[02-06-2026]
+	this->_pButtonStrongAplic->Align = alTop;
+	this->_pButtonStrongAplic->AlignWithMargins = true; //[04-06-2026]
+	this->_pButtonStrongAplic->Height = GsReadBibleTextData::_GsImgListDataLarge->Height + 8;
+	this->_pButtonStrongAplic->Images = GsReadBibleTextData::_GsImgListDataLarge;
+	this->_pButtonStrongAplic->ImageIndex = enImageLargeIndex_SearchStrongWeb;
+	this->_pButtonStrongAplic->StyleElements = TStyleElements() << seClient << seBorder;
+	this->_pButtonStrongAplic->Enabled = false;
+	this->_pButtonStrongAplic->OnClick = this->_OnClickButtonSGrid;
 	//Objekt klasy TStringGrid z interlinearnym widokiem polsko-greckim
 	this->_pSGridInterlinearVers = new TStringGrid(this->_pPanelSGridInterlinearVers);
 	if(!this->_pSGridInterlinearVers) throw(Exception("Nie dokonano inicjalizacji objektu TStringGrid"));
@@ -3637,9 +3656,11 @@ void __fastcall GsPanelSelectVers::_SelectGridInterlinearVersCell(System::TObjec
 	if(!pSGrid) return;
 	//--- //[01-06-2026]
 	CanSelect = true;
-	this->_pButtonStrong->Enabled = true; //[01-06-2026]
+	this->_pButtonStrongWeb->Enabled = true; //[01-06-2026]
+	this->_pButtonStrongAplic->Enabled = true; //[02-06-2026]
 	this->_ustrSelectNumberStrong = pSGrid->Cells[ACol][0];
-	this->_pButtonStrong->Caption = this->_ustrSelectNumberStrong;
+	this->_pButtonStrongWeb->Caption = this->_ustrSelectNumberStrong;
+	this->_pButtonStrongAplic->Caption = this->_ustrSelectNumberStrong; //[02-06-2026]
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_OnClickButtonSGrid(System::TObject* Sender)
@@ -3656,9 +3677,21 @@ void __fastcall GsPanelSelectVers::_OnClickButtonSGrid(System::TObject* Sender)
 	UnicodeString ustrGetHTML, ustrNuberStrong = this->_ustrSelectNumberStrong;
 
 	int iNumberStrong = ustrNuberStrong.Delete(1, 1).ToIntDef(1);
-
-	ustrGetHTML = Format("%sG%d.html", ARRAYOFCONST((custrRunHTMLNumberStrongGreek, iNumberStrong)));
-	ShellExecute(this->Handle, nullptr , ustrGetHTML.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	switch(pButton->ImageIndex)
+	{
+		case enImageLargeIndex_SearchStrongInterlinear:
+		{
+			if(this->_FSetStrongSelect) this->_FSetStrongSelect(pButton); //[02-06-2026]
+    }
+		break;
+		//---
+		case enImageLargeIndex_SearchStrongWeb:
+		{
+			ustrGetHTML = Format("%sG%d.html", ARRAYOFCONST((custrRunHTMLNumberStrongGreek, iNumberStrong)));
+			ShellExecute(this->Handle, nullptr , ustrGetHTML.c_str(), NULL, NULL, SW_SHOWNORMAL);
+    }
+		break;
+	}
 }
 /****************************************************************************
  *										 KLASA GsTabSheetSelectVersClass											*
@@ -3880,15 +3913,160 @@ void __fastcall GsControlListVers::ControlListEnableItem(const int AIndex, bool 
 	if(this->pHSListVerses->Strings[AIndex].Length() == 0)
 		AEnabled = false;
 }
+//---------------------------------------------------------------------------
+
+/****************************************************************************  //[03-06-2026]
+*												 Klasa GsPanelDictionaryClass												*
+*						GŁÓWNA KLASA SŁOWNIKA I KONKORDANCJI GRECKO-POLSKIEJ            *
+*							 Klasa słownika i konkordancji grecko-polskiej								*
+*****************************************************************************/
+__fastcall GsPanelDictionaryClass::GsPanelDictionaryClass(TComponent* Owner) : TCustomPanel(Owner)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->BevelOuter = bvNone; //[03-06-2026]
+}
+//---------------------------------------------------------------------------
+__fastcall GsPanelDictionaryClass::~GsPanelDictionaryClass()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelDictionaryClass::CreateWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCustomPanel::CreateWnd();
+	//Własny kod.
+  //---Panel z przyciskami
+	this->_pPanelButtons = new TPanel(this);
+	if(!this->_pPanelButtons) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->_pPanelButtons->Parent = this;
+	this->_pPanelButtons->Align = alTop;
+	this->_pPanelButtons->Height = GsReadBibleTextData::_GsImgListDataLarge->Height + 12;
+	//this->_pPanelButtons->BevelOuter = bvNone;
+  // Przycisk wywoływania informacji o numerze Stronga w aplikacji, dla wybranego słowa //[31-05-2026]
+	this->_pButtonStrongWeb = new TButton(this->_pPanelButtons);
+	if(!this->_pButtonStrongWeb) throw(Exception("Błąd inicjalizacji klasy TButton"));
+	this->_pButtonStrongWeb->Parent = this->_pPanelButtons;
+	this->_pButtonStrongWeb->Font->Size = 12;
+	this->_pButtonStrongWeb->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
+	this->_pButtonStrongWeb->Font->Color = clWebLightSeaGreen; //[03-06-2026]
+	this->_pButtonStrongWeb->Align = alLeft;
+	this->_pButtonStrongWeb->AlignWithMargins = true; //[04-06-2026]
+	this->_pButtonStrongWeb->Width = 100;
+	this->_pButtonStrongWeb->Images = GsReadBibleTextData::_GsImgListDataLarge;
+	this->_pButtonStrongWeb->ImageIndex = enImageLargeIndex_SearchStrongInterlinear;
+	this->_pButtonStrongWeb->StyleElements = TStyleElements() << seClient << seBorder;
+	this->_pButtonStrongWeb->Enabled = false;
+	this->_pButtonStrongWeb->OnClick = this->_OnClickButtonStrongWord;
+	// Przycisk wywoływania informacji o numerze Stronga w sieci, dla wybranego słowa //[03-06-2026]
+	this->_pButtonStrongAplic = new TButton(this->_pPanelButtons);
+	if(!this->_pButtonStrongAplic) throw(Exception("Błąd inicjalizacji klasy TButton"));
+	this->_pButtonStrongAplic->Parent = this->_pPanelButtons;
+	this->_pButtonStrongAplic->Font->Size = 12;
+	this->_pButtonStrongAplic->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
+	this->_pButtonStrongAplic->Font->Color = clWebLightSeaGreen; //[02-06-2026]
+	this->_pButtonStrongAplic->Align = alLeft;
+	this->_pButtonStrongAplic->AlignWithMargins = true; //[04-06-2026]
+	this->_pButtonStrongAplic->Width = this->_pButtonStrongWeb->Width;
+	this->_pButtonStrongAplic->Images = GsReadBibleTextData::_GsImgListDataLarge;
+	this->_pButtonStrongAplic->ImageIndex = enImageLargeIndex_SearchStrongWeb;
+	this->_pButtonStrongAplic->StyleElements = TStyleElements() << seClient << seBorder;
+	this->_pButtonStrongAplic->Enabled = false;
+	this->_pButtonStrongAplic->OnClick = this->_OnClickButtonStrongWord;
+	//---Główny panel
+	this->_pPanelMain = new TPanel(this);
+	if(!this->_pPanelMain) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->_pPanelMain->Parent = this;
+	this->_pPanelMain->Align = alClient;
+	this->_pPanelMain->BevelOuter = bvNone;
+	//---Inicjalizacja objektu, klasy TWebBrowser //[03-06-2026]
+	this->_pWBrowseWordResult = new TWebBrowser(this->_pPanelMain);
+	if(!this->_pWBrowseWordResult) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->_pWBrowseWordResult->TOleControl::Parent = this->_pPanelMain;
+	this->_pWBrowseWordResult->Align = alClient;
+	this->_pWBrowseWordResult->Offline = true;
+	this->_pWBrowseWordResult->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
+	this->_pWBrowseWordResult->SetFocus();
+	//--- Inicjalizacja listy wszystkich breckich słów Stronga //[03-06-2026]
+  this->_pGsLViewDictionaryClass = new GsLViewDictionaryClass(this->_pPanelMain, this->_pWBrowseWordResult);
+	if(!this->_pGsLViewDictionaryClass) throw(Exception("Bład funkcji GsLViewDictionaryClass"));
+	this->_pGsLViewDictionaryClass->Parent = this->_pPanelMain;
+	this->_pGsLViewDictionaryClass->Align = alLeft;
+  this->_pGsLViewDictionaryClass->Width = this->Width / 2;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelDictionaryClass::DestroyWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	//Własny kod.
+	TCustomPanel::DestroyWnd();
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelDictionaryClass::_OnClickButtonStrongWord(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  TButton *pButton = dynamic_cast<TButton *>(Sender);
+	if(!pButton) return;
+	//---
+	UnicodeString ustrGetHTML, ustrNuberStrong = pButton->Caption;
+
+	int iNumberStrong = ustrNuberStrong.Delete(1, 1).ToIntDef(1);
+
+	switch(pButton->ImageIndex)
+	{
+		case enImageLargeIndex_SearchStrongInterlinear:
+		{
+			if(this->_FSetStrongWordSelect) this->_FSetStrongWordSelect(pButton); //[02-06-2026]
+    }
+		break;
+		//---
+		case enImageLargeIndex_SearchStrongWeb:
+		{
+			ustrGetHTML = Format("%sG%d.html", ARRAYOFCONST((custrRunHTMLNumberStrongGreek, iNumberStrong)));
+			ShellExecute(this->Handle, nullptr , ustrGetHTML.c_str(), NULL, NULL, SW_SHOWNORMAL);
+    }
+		break;
+  }
+
+}
 /****************************************************************************
 *												 Klasa GsLViewDictionaryClass												*
+*       Klasa, która wraz z klasą GsPanelDictionaryClass, tworzy            *
+*       						słownik i konkordancje grecko-polską                    *
 *****************************************************************************/
 static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
 //Tablica nazw kolumn w głównej liście
 static UnicodeString ustrColumsNames[] = {"Grecki wyraz", "Numeracja wg. Stronga", "Tłumaczenie na polski"};
 enum {enGreekWord, enNumberStrong, enTranslates, enSize};
 enum {enIconPosition, enIconGreekWord, enIconStrongNum, enIconDictPol};
-__fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : TCustomListView(Owner)
+__fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner, TWebBrowser *pWBrowserWordResult)
+	 : TCustomListView(Owner), _pWBrowseResult(pWBrowserWordResult)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -3901,9 +4079,9 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	//this->StyleElements = TStyleElements(); //Musi być
 	this->OwnerData = true;
 	this->OwnerDraw = true;
+  this->DoubleBuffered = true;
 	//this->OnGetImageIndex = this->_OnGetImageIndex;
 	//this->OnGetSubItemImage = this->_OnGetSubItemImage;
-	//this->DoubleBuffered = true;
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->ParentFont = true;
 	this->Font->Size = 12;
@@ -3911,6 +4089,7 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner) : T
 	this->ReadOnly = true;
 	this->RowSelect = true;
 	this->ViewStyle = vsReport;
+  this->ShowHint = true;
 	this->SmallImages = GsReadBibleTextData::_GsImgListData; //Ikony kolumn
 }
 //---------------------------------------------------------------------------
@@ -3949,6 +4128,10 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 {
 	TCustomListView::CreateWnd();
 	//Własny kod.
+  //Wyłączenie podpowiedzi do pozycji, która nie mieści się poziomo
+	DWORD flags = this->Perform(LVM_GETEXTENDEDLISTVIEWSTYLE, NULL, (System::WideChar)NULL);
+	this->Perform(LVM_SETEXTENDEDLISTVIEWSTYLE, flags &~LVS_EX_LABELTIP, (System::WideChar)NULL);
+
 	this->_CreateAllColumns();
 	this->Items->BeginUpdate();
 	//--- Allokacja listy, struktarami dla każdego słowa według Stronga - czyli 5625 pozycji
@@ -3962,7 +4145,7 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 	}
 	//this->_pListWordGrec->Count
 	//--- Obróbka danych z pliku \Data\gnt.intrl.
-	// Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi, czyli "gnt.intrl"
+	// Uzyskanie wskaźnika na listę z zawart	pHSListInterlinearGreek->BeginUpdate();
 	THashedStringList *pHSListInterlinearGreek = GsReadBibleTextData::pGsReadBibleTextClass->GetListInterlinearGrec();
 
 	for(int i=0; i<pHSListInterlinearGreek->Count; ++i)
@@ -3997,14 +4180,6 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 	//---
 	this->Items->Count = this->_pListWordGrec->Count;
 	this->Items->EndUpdate();
-	//---Inicjalizacja objektu, klasy TWebBrowser
-	this->_pWBrowseResult = new TWebBrowser(this->Parent);
-	if(!this->_pWBrowseResult) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
-	this->_pWBrowseResult->TOleControl::Parent = this->Parent;
-	this->_pWBrowseResult->Align = alClient;
-	this->_pWBrowseResult->Offline = true;
-	this->_pWBrowseResult->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
-	this->_pWBrowseResult->SetFocus();
 }
 //---------------------------------------------------------------------------
 void __fastcall GsLViewDictionaryClass::DestroyWnd()
@@ -4063,7 +4238,7 @@ void __fastcall GsLViewDictionaryClass::_CreateAllColumns()
 		NewColumn = this->Columns->Add();
 		NewColumn->Caption = ustrColumsNames[iColumns];
 		NewColumn->Width = 2 * this->Canvas->TextWidth(ustrColumsNames[iColumns]);
-		NewColumn->ImageIndex = enImageIndex_GrecWordColumn + iColumns;//ID_GLOBALIMAGE_ID_GRECWORD_COLUMN + iColumns;
+		NewColumn->ImageIndex = enImageIndex_GrecWordColumn + iColumns;
 	}
 }
 //---------------------------------------------------------------------------
@@ -4189,6 +4364,13 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 */
 {
 	if(this->ItemIndex == -1) return;	//Kliknąłeś poza pozycje listy, która jest numerem stronga
+	GsPanelDictionaryClass *pGsPanelDictionaryClass = dynamic_cast<GsPanelDictionaryClass *>(this->Parent->Parent);
+	if(!pGsPanelDictionaryClass) return;
+	pGsPanelDictionaryClass->_pButtonStrongAplic->Enabled = true;
+	pGsPanelDictionaryClass->_pButtonStrongWeb->Enabled = true;
+	pGsPanelDictionaryClass->_pButtonStrongAplic->Caption = Item->SubItems->Strings[enNumberStrong - 1];
+	pGsPanelDictionaryClass->_pButtonStrongWeb->Caption = pGsPanelDictionaryClass->_pButtonStrongAplic->Caption;
+	//---
 	THashedStringList *pHSListTemp=nullptr;
 	try
 	{
@@ -4206,6 +4388,7 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 				int iBook = pDataGrecWordDictClass->pHSListVers->Strings[iVers].SubString(1, 3).ToInt();
 				//Uzyskanie wskażnika na liste wersetów wybranej księgi
 				THashedStringList *pHSListGreek = GsReadBibleTextData::pGsReadBibleTextClass->GetSelectBookOrgTranslate(iBook-1);//iBook);
+				pHSListTemp->BeginUpdate(); //[03-06-2026]
 				for(int i=0; i<pHSListGreek->Count; ++i)
 				//Liczenie wersetów wybranej księgi
 				{
@@ -4218,6 +4401,7 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 						break;
 					}
 				}
+				pHSListTemp->EndUpdate(); //[03-06-2026]
 			}
 		}
 		DataDisplayTextAnyBrowser SetDataDisplay;
@@ -4227,7 +4411,7 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 		SetDataDisplay.iSizeFont = 16;
 		SetDataDisplay.pMemoryStream = nullptr;
 		SetDataDisplay.bIsHorizontLine = true;
-		//---
+		// Wyświetlenie wersetów, gdzie wystepuje wybrane słowo greckie
 		GsReadBibleTextData::pGsReadBibleTextClass->_ViewSListBibleToHTML(this->_pWBrowseResult, pHSListTemp, SetDataDisplay);
 	}
 	__finally
@@ -4235,6 +4419,8 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 		if(pHSListTemp) {delete pHSListTemp; pHSListTemp = nullptr;}
 	}
 }
+//---------------------------------------------------------------------------
+
 /****************************************************************************
 *												 Klasa GsLViewCommentsAllClass											*
 *****************************************************************************/

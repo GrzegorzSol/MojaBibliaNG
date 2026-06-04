@@ -58,8 +58,8 @@ TStrongWindow *StrongWindow;
 MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 */
 //---------------------------------------------------------------------------
-__fastcall TStrongWindow::TStrongWindow(TComponent* Owner)
-	: TForm(Owner)
+__fastcall TStrongWindow::TStrongWindow(TComponent* Owner, UnicodeString _ustrNumberStrong)
+	: TForm(Owner), _ustrStartInputNumberStrong(_ustrNumberStrong)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -161,6 +161,14 @@ void __fastcall TStrongWindow::FormCreate(TObject *Sender)
 	if(!TFile::Exists(GlobalVar::Global_custrPathFileWordVersesExistHbr))
 		throw(Exception("Brak pliku ze słownikiem hebrajskim Stronga!"));
 	this->_pHListWordInVersesExistHbr->LoadFromFile(GlobalVar::Global_custrPathFileWordVersesExistHbr, TEncoding::UTF8);
+	// Jeśli uruchomiono moduł z numerem stronga, to zostanie on wyświetlony //[01-06-2026]
+  if(!this->_ustrStartInputNumberStrong.IsEmpty())
+	{
+		this->CBoxSelectDict->ItemIndex = enSelect_Grec;
+		this->LEditSearchNumberStr->Text = this->_ustrStartInputNumberStrong;
+		this->LEditSearchNumberStr->OnChange(this->LEditSearchNumberStr);
+    this->ButtStartSearchClick(this->ButtStartSearch);
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TStrongWindow::FormDestroy(TObject *Sender)
@@ -451,6 +459,9 @@ UnicodeString __fastcall TStrongWindow::_SearchVersWordGrec(const UnicodeString 
 
 	// Podmiana na "</m>#"
 	ustrOp = StringReplace(ustrOp, "</m> ", "</m>#", TReplaceFlags() << rfReplaceAll);
+//  #if defined(_DEBUGINFO_)
+//		GsDebugClass::WriteDebug(Format("ustrOp: \"%s\"", ARRAYOFCONST((ustrOp))));
+//	#endif
 	// Podział wersetu na części kończace sie na "#". I stworzenie tablicy dynamicznej
 	DynamicArray daWord = Strutils::SplitString(ustrOp, "#");
 
