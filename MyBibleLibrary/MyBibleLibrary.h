@@ -15,7 +15,7 @@
 	Klasa GsPanelSelectVers - Klasa główna w oknie wyboru pojedyńczego wersetu
 	Klasa GsTabSheetSelectVersClass - Klasa pochodna TTabSheet
 	Klasa GsControlListVers - Klasa pochodna TCustomControlListVers, wyświetlająca aktualnie wybrany werset na głównej zakładce okna, w formie listy wybieralnej
-	Klasa GsLViewDictionaryClass - Klasa pochodna TCustomListView, jest klasą słownika i konkordancji grecko-polskiej
+	Klasa GsControlListDictionaryClass - Klasa pochodna TControlList, jest klasą słownika i konkordancji grecko-polskiej
 	Klasa GsLViewCommentsAllClass - Klasa listy wszystkich komentarzy do wersetów biblijnych
 	Klasa GsListBoxFavoritiesClass - Klasa listy ulubionych wersetów
 */
@@ -36,7 +36,9 @@
 #include "GsComponents\GsEditorClass.h"
 #include "MyBibleLibrary\InitMBAppConst.h"
 
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.9.91461";
+//#define _TESTING_
+
+static UnicodeString sustrVersionGsReadBibleTextClass = "1.9.988743";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
@@ -91,8 +93,8 @@ class GsTabSetClass;
 class GsPanelSelectVers;
 class GsListBoxFavoritiesClass;
 class GsLViewCommentsAllClass;
-class GsLViewDictionaryClass;
 class GsControlListVers;
+class GsControlListDictionaryClass;
 
 const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 ///*============================================================================
@@ -266,11 +268,12 @@ class GsReadBibleTextClass : public TObject
 	friend class GsTabSetClass;
 	friend class GsReadBibleTextData;
 	friend class GsPanelSelectVers;
-	friend class GsLViewDictionaryClass;
 	friend class GsListBoxSelectedVersClass;
 	friend class GsReadBibleSpecTextClass;
   friend class GsBarSelectVers; //[16-06-2024]
-  friend class TBooksSpecjalistWindow;
+	friend class TBooksSpecjalistWindow;
+	friend class GsControlListDictionaryClass;
+
 	//---
 	GsReadBibleTextClass(const UnicodeString &_PathDir);
 	virtual ~GsReadBibleTextClass();
@@ -617,13 +620,13 @@ class GsControlListVers : public TCustomControlList
 		__fastcall GsControlListVers(TComponent* Owner);
 		__fastcall virtual ~GsControlListVers();
 	protected:
-    virtual void __fastcall CreateWnd();
+		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
 		virtual void __fastcall DoBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
 			const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState);
 		virtual void __fastcall DoItemClicked();
 	private:
-    //Składowe objektu klasy GsControlListVers
+		//Składowe objektu klasy GsControlListVers
 		TLabel *pLabelAdress=nullptr, *pLabelText=nullptr, *pLabelTranslate=nullptr;
 		TImage *pImageVers=nullptr;
 		THashedStringList *pHSListVerses=nullptr;
@@ -634,15 +637,16 @@ class GsControlListVers : public TCustomControlList
 
 /****************************************************************************
 *		 Klasa całkowicie PRYWATNA DataGrecWordDictClass, pomocnicz klasa				*
-*									dla klasy GsLViewDictionaryClass.													*
-* Klasa, która wraz z klasą GsPanelDictionaryClass i GsLViewDictionaryClass,*
+*									dla klasy GsControlListDictionaryClass.										 *
+* Klasa, która wraz z klasą GsPanelDictionaryClass i GsControlListDictionaryClass,*
 *       			 tworzy	słownik i konkordancje grecko-polską                  *
 *****************************************************************************/
 //--- Całkowicie prywatna klasa, służaca jako dane do każdego słowa w słowniku grecko-polskim
 class DataGrecWordDictClass : public TObject
 {
-	friend class GsLViewDictionaryClass;
 	friend class GsPanelDictionaryClass;
+	//[10-06-2026]
+	friend class GsControlListDictionaryClass;
 
 	DataGrecWordDictClass()
 	{
@@ -663,12 +667,14 @@ class DataGrecWordDictClass : public TObject
 /**************************************************************************** //[03-06-2026]
 *												 Klasa GsPanelDictionaryClass												*
 *						Klasa główna słownika i konkordancji grecko-polskiej						*
-* Klasa, która wraz z klasą DataGrecWordDictClass i GsLViewDictionaryClass, *
+* Klasa, która wraz z klasą DataGrecWordDictClass i GsControlListDictionaryClass, *
 *       			 tworzy	słownik i konkordancje grecko-polską                  *
 *****************************************************************************/
 class GsPanelDictionaryClass	: public TCustomPanel  //[03-06-2026]
 {
-  friend class GsLViewDictionaryClass;
+	//[10-06-2026]
+	friend class GsControlListDictionaryClass;
+
 	public:
 		__fastcall GsPanelDictionaryClass(TComponent* Owner);
 		__fastcall virtual ~GsPanelDictionaryClass();
@@ -683,44 +689,46 @@ class GsPanelDictionaryClass	: public TCustomPanel  //[03-06-2026]
 		TPanel *_pPanelMain=nullptr, //[03-06-2026]
 					 *_pPanelButtons=nullptr;
 		TButton *_pButtonStrongWeb=nullptr,
-            *_pButtonStrongAplic=nullptr;
-		GsLViewDictionaryClass *_pGsLViewDictionaryClass=nullptr;
+						*_pButtonStrongAplic=nullptr;
+		//[10-06-2026]
+		TPanel *_pPanelCList=nullptr;
+		THeaderControl *_pHeaderControl=nullptr;
+    TSplitter *pSplitter=nullptr; //[11-06-2026]
+		GsControlListDictionaryClass *_pGsControlListDictionaryClass=nullptr;
+		//---
+		void __fastcall _OnSectionResize(THeaderControl* HeaderControl, THeaderSection* Section);
+		void __fastcall _OnSectionTrack(THeaderControl* HeaderControl, THeaderSection* Section, int Width, TSectionTrackState State);
+
 		TWebBrowser *_pWBrowseWordResult=nullptr;	//Wyświetlanie wyników, dla wybranego słowa //[03-06-2026]
 		//---
 		void __fastcall _OnClickButtonStrongWord(System::TObject* Sender);
 };
+
 /****************************************************************************
-*												 Klasa GsLViewDictionaryClass												*
+*																KLASA TESTOWA!!!                            *
+*										  Klasa GsControlListDictionaryClass									  *
 *							 Klasa słownika i konkordancji grecko-polskiej								*
 * Klasa, która wraz z klasą GsPanelDictionaryClass i DataGrecWordDictClass, *
 *       			 tworzy	słownik i konkordancje grecko-polską                  *
 *****************************************************************************/
-class GsLViewDictionaryClass : public TCustomListView
+class GsControlListDictionaryClass : public TCustomControlList
 {
-	friend class GsPanelDictionaryClass;
+  friend class GsPanelDictionaryClass;
 	public:
-		__fastcall GsLViewDictionaryClass(TComponent* Owner, TWebBrowser *pWBrowserWordResult);
-		__fastcall virtual ~GsLViewDictionaryClass();
+		__fastcall GsControlListDictionaryClass(TComponent* Owner, TWebBrowser *pWBrowserWordResult);
+		__fastcall virtual ~GsControlListDictionaryClass();
 	protected:
 		virtual void __fastcall CreateWnd();
 		virtual void __fastcall DestroyWnd();
-		virtual bool __fastcall OwnerDataFetch(Comctrls::TListItem* Item, Comctrls::TItemRequest Request);
-		virtual bool __fastcall OwnerDataHint(int StartIndex, int EndIndex);
-		virtual int __fastcall OwnerDataFind(TItemFind Find, const System::UnicodeString FindString, const System::Types::TPoint &FindPosition,
-			void * FindData, int StartIndex, TSearchDirection Direction, bool Wrap);
-		virtual void __fastcall DoSelectItem(TListItem* Item, bool Selected);
-		virtual void __fastcall DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State);
+		virtual void __fastcall DoBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+			const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState);
+		virtual void __fastcall DoItemClicked();
 	private:
-	//Indeksy początku i końca listy
-		int _iLViewStartIndex;
-		int _iLViewEndIndex;
-		TWebBrowser *_pWBrowseResult=nullptr;	//Wyświetlanie wyników, dla wybranego słowa
-		TList *_pListWordGrec=nullptr; //Lista objektów, klasy DataGrecWordDictClass
-		void __fastcall _CreateAllColumns(); //Tworzenie kolumn
-		void __fastcall _OnGetImageIndex(System::TObject* Sender, TListItem* Item);
-		void __fastcall _OnGetSubItemImage(System::TObject* Sender, TListItem* Item, int SubItem, int &ImageIndex);
+    TWebBrowser *_pWBrowseResult=nullptr;	//Wyświetlanie wyników, dla wybranego słowa
+    TList *_pListWordGrec=nullptr; //Lista objektów, klasy DataGrecWordDictClass
+		//Składowe objektu klasy GsControlListDictionaryClass
+		TLabel *pLabelGrecWords=nullptr, *pLabelStrongNumber=nullptr, *pLabelInfoTranslate=nullptr;
 };
-//---------------------------------------------------------------------------
 
 /***************************************************************************************
  *												Klasa ListComments																					 *

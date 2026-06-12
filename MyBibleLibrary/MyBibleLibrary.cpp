@@ -16,7 +16,7 @@
 	Klasa GsPanelSelectVers - Klasa główna w oknie wyboru pojedyńczego wersetu
 	Klasa GsTabSheetSelectVersClass - Klasa pochodna TTabSheet
 	Klasa GsControlListVers - Klasa pochodna TCustomControlListVers, wyświetlająca aktualnie wybrany werset na głównej zakładce okna, w formie listy wybieralnej
-	Klasa GsLViewDictionaryClass - Klasa pochodna TCustomListView, jest klasą słownika i konkordancji grecko-polskiej
+	Klasa GsControlListDictionaryClass - Klasa pochodna TCustomListView, jest klasą słownika i konkordancji grecko-polskiej
 	Klasa GsLViewCommentsAllClass - Klasa listy wszystkich komentarzy do wersetów biblijnych
 	Klasa GsListBoxFavoritiesClass - Klasa listy ulubionych wersetów
 */
@@ -527,7 +527,7 @@ THashedStringList *__fastcall GsReadBibleTextClass::GetSelectBookOrgTranslate(in
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
 	NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA!!!
-	Metoda używana TYLKO w module(klasie) GsLViewDictionaryClass (lista Słów greckich z ich tłumaczeniami)
+	Metoda używana TYLKO w module(klasie) GsControlListDictionaryClass (lista Słów greckich z ich tłumaczeniami)
 */
 {
 	if(_iBook >= static_cast<int>(GlobalVar::Global_NumberBooks)) return 0;
@@ -3449,6 +3449,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
+	this->Font->Size = 12;
 		//---Przyciski główne
 	this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers);
 	if(!this->_pGsBarSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsBarSelectVers"));
@@ -3462,14 +3463,13 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pPanelSGridInterlinearVers->Align = alBottom;
 	this->_pPanelSGridInterlinearVers->AlignWithMargins = true;
 	this->_pPanelSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
-	this->_pPanelSGridInterlinearVers->Height = enRow_Count * 3 * -this->_pPanelSGridInterlinearVers->Font->Height + 8;
+	this->_pPanelSGridInterlinearVers->Height = 12 * -this->_pPanelSGridInterlinearVers->Font->Height;
 	this->_pPanelSGridInterlinearVers->Visible = false;
 	this->_pPanelSGridInterlinearVers->BevelOuter = bvNone;
 	// Panel na przyciski dla objektu, klasy TStringGrid //[01-06-2026]
 	this->_pPanelButtons = new TPanel(this->_pPanelSGridInterlinearVers);
 	if(!this->_pPanelButtons) throw(Exception("Nie dokonano inicjalizacji objektu TPanel"));
 	this->_pPanelButtons->Parent = this->_pPanelSGridInterlinearVers;
-	this->_pPanelButtons->Font->Size = 12;
 	this->_pPanelButtons->Align = alLeft;
 	this->_pPanelButtons->AlignWithMargins = true;
 	this->_pPanelButtons->Width = this->Canvas->TextWidth("G0000") + GsReadBibleTextData::_GsImgListDataLarge->Width + 48;
@@ -3478,7 +3478,6 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pButtonStrongWeb = new TButton(this->_pPanelButtons);
 	if(!this->_pButtonStrongWeb) throw(Exception("Błąd inicjalizacji klasy TButton"));
 	this->_pButtonStrongWeb->Parent = this->_pPanelButtons;
-	this->_pButtonStrongWeb->Font->Size = 12;
 	this->_pButtonStrongWeb->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
 	this->_pButtonStrongWeb->Font->Color = clRed; //[02-06-2026]
 	this->_pButtonStrongWeb->Align = alTop;
@@ -3493,7 +3492,6 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pButtonStrongAplic = new TButton(this->_pPanelButtons);
 	if(!this->_pButtonStrongAplic) throw(Exception("Błąd inicjalizacji klasy TButton"));
 	this->_pButtonStrongAplic->Parent = this->_pPanelButtons;
-	this->_pButtonStrongAplic->Font->Size = 12;
 	this->_pButtonStrongAplic->Font->Style = TFontStyles() << fsBold; //[02-06-2026]
 	this->_pButtonStrongAplic->Font->Color = clRed; //[02-06-2026]
 	this->_pButtonStrongAplic->Align = alTop;
@@ -3509,17 +3507,17 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	if(!this->_pSGridInterlinearVers) throw(Exception("Nie dokonano inicjalizacji objektu TStringGrid"));
 	this->_pSGridInterlinearVers->Parent = this->_pPanelSGridInterlinearVers;
 	this->_pSGridInterlinearVers->Align = alClient;
-	this->_pSGridInterlinearVers->Ctl3D = false;
+	this->_pSGridInterlinearVers->Color = clCream;
 	this->_pSGridInterlinearVers->RowCount = enRow_Count;
 	this->_pSGridInterlinearVers->FixedCols = 0;
 	this->_pSGridInterlinearVers->FixedRows = 0;
-	this->_pSGridInterlinearVers->Font->Size = 12;
 	this->_pSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
 	this->_pSGridInterlinearVers->DefaultRowHeight = 2 * -this->_pSGridInterlinearVers->Font->Height;
-	this->_pSGridInterlinearVers->DefaultColWidth = 148;
-	this->_pSGridInterlinearVers->Options = TGridOptions() >> goVertLine >> goHorzLine;
+	this->_pSGridInterlinearVers->DefaultColWidth = 500;
+	this->_pSGridInterlinearVers->Options = TGridOptions() << goVertLine >> goHorzLine;
 	this->_pSGridInterlinearVers->OnDrawCell = this->_DrawGridInterlinearVersCell;
 	this->_pSGridInterlinearVers->OnSelectCell = this->_SelectGridInterlinearVersCell;
+	this->_pSGridInterlinearVers->GridLineWidth = 2;
 	this->_pSGridInterlinearVers->DefaultDrawing = false;
 	this->_pSGridInterlinearVers->StyleElements = TStyleElements(); //[17-06-2024]
 	//---Wyświetlenie wersetów
@@ -3558,6 +3556,7 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 	OPIS ARGUMENTÓW:
 	OPIS ZMIENNYCH:
 	OPIS WYNIKU METODY(FUNKCJI):
+	//[12-06-2026]
 */
 {
 	if((cucBook < GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStartRange+1) || (cucBook > GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStopRange+1))
@@ -3593,9 +3592,8 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(1, 5);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(7, 20);
 		this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pHSListSelectVers->ValueFromIndex[iIndex];
-		// Szerokość kolumny zależna od zawartości. Szerokość zależna od tekstu tłumaczenia, ze względu ze tekst ten jest najdłuższy //[16-06-2024]
-		this->_pSGridInterlinearVers->ColWidths[iIndex] = this->_pSGridInterlinearVers->Canvas->TextWidth(pHSListSelectVers->ValueFromIndex[iIndex]) * 2; // [30-05-2026]
-		if(this->_pSGridInterlinearVers->ColWidths[iIndex] < 98) this->_pSGridInterlinearVers->ColWidths[iIndex] = 120;
+
+		this->_pSGridInterlinearVers->RowHeights[enRow_PolWord] = 98;
 	}
 	if(pHSListSelectVers) {delete pHSListSelectVers; pHSListSelectVers = nullptr;}
 }
@@ -3617,7 +3615,7 @@ void __fastcall GsPanelSelectVers::_DrawGridInterlinearVersCell(System::TObject*
 
 	if(State.Contains(gdFocused)) // [30-05-2026]
 	{
-		pSGrid->Canvas->Brush->Color = clYellow;
+		pSGrid->Canvas->Brush->Color = clWebAliceBlue;//clYellow;
 	}
 	else
 		{pSGrid->Canvas->Brush->Color = pSGrid->Color;}
@@ -3630,17 +3628,19 @@ void __fastcall GsPanelSelectVers::_DrawGridInterlinearVersCell(System::TObject*
 	if(ARow == enRow_GreckWord)
 	{
 		pSGrid->Canvas->Font->Color = clRed;
+		pSGrid->Canvas->Font->Style = TFontStyles() << fsBold;
+    DrawText(pSGrid->Canvas->Handle, ustrCellText.c_str(), -1, &DrawRect, DT_SINGLELINE | DT_VCENTER);
 	}
 	else if(ARow == enRow_StrongNumber)
 	{
 		pSGrid->Canvas->Font->Color = clGreen;
+		pSGrid->Canvas->Font->Style = TFontStyles() << fsBold;
+		DrawText(pSGrid->Canvas->Handle, ustrCellText.c_str(), -1, &DrawRect, DT_SINGLELINE | DT_VCENTER);
 	}
 	else if(ARow == enRow_PolWord)
 	{
-		pSGrid->Canvas->Font->Style = TFontStyles() << fsBold;
+		DrawText(pSGrid->Canvas->Handle, ustrCellText.c_str(), -1, &DrawRect, DT_WORDBREAK);
 	}
-
-	DrawText(pSGrid->Canvas->Handle, ustrCellText.c_str(), -1, &DrawRect, DT_SINGLELINE | DT_VCENTER);
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_SelectGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol,
@@ -3920,6 +3920,12 @@ void __fastcall GsControlListVers::ControlListEnableItem(const int AIndex, bool 
 *						GŁÓWNA KLASA SŁOWNIKA I KONKORDANCJI GRECKO-POLSKIEJ            *
 *							 Klasa słownika i konkordancji grecko-polskiej								*
 *****************************************************************************/
+static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
+//Tablica nazw kolumn w głównej liście
+static UnicodeString ustrColumsNames[] = {"Grecki wyraz", "Numeracja wg. Stronga", "Tłumaczenie na polski"};
+enum {enGreekWord, enNumberStrong, enTranslates, enSize};
+enum {enIconPosition, enIconGreekWord, enIconStrongNum, enIconDictPol};
+//---
 __fastcall GsPanelDictionaryClass::GsPanelDictionaryClass(TComponent* Owner) : TCustomPanel(Owner)
 /**
 	OPIS METOD(FUNKCJI):
@@ -3952,9 +3958,9 @@ void __fastcall GsPanelDictionaryClass::CreateWnd()
 {
 	TCustomPanel::CreateWnd();
 	//Własny kod.
-  //---Panel z przyciskami
+	//---Panel z przyciskami
 	this->_pPanelButtons = new TPanel(this);
-	if(!this->_pPanelButtons) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	if(!this->_pPanelButtons) throw(Exception("Błąd inicjalizacji klasy TPanel"));
 	this->_pPanelButtons->Parent = this;
 	this->_pPanelButtons->Align = alTop;
 	this->_pPanelButtons->Height = GsReadBibleTextData::_GsImgListDataLarge->Height + 12;
@@ -4003,12 +4009,42 @@ void __fastcall GsPanelDictionaryClass::CreateWnd()
 	this->_pWBrowseWordResult->Offline = true;
 	this->_pWBrowseWordResult->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
 	this->_pWBrowseWordResult->SetFocus();
-	//--- Inicjalizacja listy wszystkich breckich słów Stronga //[03-06-2026]
-  this->_pGsLViewDictionaryClass = new GsLViewDictionaryClass(this->_pPanelMain, this->_pWBrowseWordResult);
-	if(!this->_pGsLViewDictionaryClass) throw(Exception("Bład funkcji GsLViewDictionaryClass"));
-	this->_pGsLViewDictionaryClass->Parent = this->_pPanelMain;
-	this->_pGsLViewDictionaryClass->Align = alLeft;
-  this->_pGsLViewDictionaryClass->Width = this->Width / 2;
+	//--- [11-06-2026]
+	this->pSplitter = new TSplitter(this->_pPanelMain);
+	if(!this->pSplitter) throw(Exception("Błąd inicjalizacji klasy TSplitter"));
+	this->pSplitter->Parent = this->_pPanelMain;
+	this->pSplitter->Align = alLeft;
+	this->pSplitter->StyleElements = TStyleElements();
+  this->pSplitter->Color = clBlue;
+	//[10-06-2026]
+	// Panel na objekt TControlList, który jest na panelu: this->_pPanelMain
+	this->_pPanelCList = new TPanel(this->_pPanelMain);
+	if(!this->_pPanelCList) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->_pPanelCList->Parent = this->_pPanelMain;
+	this->_pPanelCList->Align = alLeft;
+	this->_pPanelCList->Width = this->Width / 2;
+	this->_pPanelCList->BevelOuter = bvNone;
+		//--- Nagłówek dla listy //[10-06-2026]
+	this->_pHeaderControl = new THeaderControl(this->_pPanelCList);
+	if(!this->_pHeaderControl) throw(Exception("Błąd inicjalizacji klasy THeaderControl"));
+	this->_pHeaderControl->Parent = this->_pPanelCList;
+	this->_pHeaderControl->Font->Size = 12;
+	this->_pHeaderControl->OnSectionResize = this->_OnSectionResize;
+	this->_pHeaderControl->OnSectionTrack = this->_OnSectionTrack;
+  this->_pHeaderControl->Images = GsReadBibleTextData::_GsImgListData;
+		// Dodanie sekcji
+	for(int iIndex=0; iIndex<enSize; ++iIndex)
+	{
+		// Ustawienie nazw sekcji //[10-06-2026]
+		THeaderSection *pHeaderSection = this->_pHeaderControl->Sections->Add();
+		pHeaderSection->Text = ustrColumsNames[iIndex];
+		pHeaderSection->ImageIndex = enImageIndex_GrecWordColumn + iIndex;
+	}
+	//---
+	this->_pGsControlListDictionaryClass = new GsControlListDictionaryClass(this->_pPanelCList, this->_pWBrowseWordResult);
+	if(!this->_pGsControlListDictionaryClass) throw(Exception("Bład funkcji GsControlListDictionaryClass"));
+	this->_pGsControlListDictionaryClass->Parent = this->_pPanelCList;
+	this->_pGsControlListDictionaryClass->Align = alClient;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelDictionaryClass::DestroyWnd()
@@ -4055,18 +4091,8 @@ void __fastcall GsPanelDictionaryClass::_OnClickButtonStrongWord(System::TObject
   }
 
 }
-/****************************************************************************
-*												 Klasa GsLViewDictionaryClass												*
-*       Klasa, która wraz z klasą GsPanelDictionaryClass, tworzy            *
-*       						słownik i konkordancje grecko-polską                    *
-*****************************************************************************/
-static const int ciMaxStrongCount=5625; //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
-//Tablica nazw kolumn w głównej liście
-static UnicodeString ustrColumsNames[] = {"Grecki wyraz", "Numeracja wg. Stronga", "Tłumaczenie na polski"};
-enum {enGreekWord, enNumberStrong, enTranslates, enSize};
-enum {enIconPosition, enIconGreekWord, enIconStrongNum, enIconDictPol};
-__fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner, TWebBrowser *pWBrowserWordResult)
-	 : TCustomListView(Owner), _pWBrowseResult(pWBrowserWordResult)
+//---------------------------------------------------------------------------
+void __fastcall GsPanelDictionaryClass::_OnSectionResize(THeaderControl* HeaderControl, THeaderSection* Section)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -4074,26 +4100,23 @@ __fastcall GsLViewDictionaryClass::GsLViewDictionaryClass(TComponent* Owner, TWe
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	this->_pListWordGrec = new TList();
-	if(!this->_pListWordGrec) throw(Exception("Błąd funkcji TList"));
-	//this->StyleElements = TStyleElements(); //Musi być
-	this->OwnerData = true;
-	this->OwnerDraw = true;
-  this->DoubleBuffered = true;
-	//this->OnGetImageIndex = this->_OnGetImageIndex;
-	//this->OnGetSubItemImage = this->_OnGetSubItemImage;
-	this->Font->Quality = TFontQuality::fqClearType;
-	this->ParentFont = true;
-	this->Font->Size = 12;
-	this->_iLViewStartIndex=0; this->_iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
-	this->ReadOnly = true;
-	this->RowSelect = true;
-	this->ViewStyle = vsReport;
-  this->ShowHint = true;
-	this->SmallImages = GsReadBibleTextData::_GsImgListData; //Ikony kolumn
+//	switch(Section->ID)
+//	{
+//		case enGreekWord:
+//			this->_pGsControlListDictionaryClass->pLabelGrecWords->Width = Section->Width;
+//		break;
+//		//---
+//		case enNumberStrong:
+//			this->_pGsControlListDictionaryClass->pLabelStrongNumber->Width = Section->Width;
+//		break;
+//		//---
+//		case enTranslates:
+//			this->_pGsControlListDictionaryClass->pLabelInfoTranslate->Width = Section->Width;
+//		break;
+//	}
 }
 //---------------------------------------------------------------------------
-__fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
+void __fastcall GsPanelDictionaryClass::_OnSectionTrack(THeaderControl* HeaderControl, THeaderSection* Section, int Width, TSectionTrackState State)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -4101,24 +4124,34 @@ __fastcall GsLViewDictionaryClass::~GsLViewDictionaryClass()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	//--- Deallokacja listy, struktarami dla każdego słowa
-	for(int i=0; i<this->_pListWordGrec->Count; ++i)
+  if(State == tsTrackBegin) return;
+	switch(Section->ID)
 	{
-		DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[i]);
-		if(pDataGrecWordDictClass)
-		{
-			delete pDataGrecWordDictClass; pDataGrecWordDictClass = nullptr;
-//			#if defined(_DEBUGINFO_)
-//				GsDebugClass::WriteDebug(Format("i: %d -> GsLViewDictionaryClass", ARRAYOFCONST((i))));
-//			#endif
-		}
+		case enGreekWord:
+			this->_pGsControlListDictionaryClass->pLabelGrecWords->Width = Width;
+		break;
+		//---
+		case enNumberStrong:
+			this->_pGsControlListDictionaryClass->pLabelStrongNumber->Width = Width;
+		break;
+		//---
+		case enTranslates:
+			this->_pGsControlListDictionaryClass->pLabelInfoTranslate->Width = Width;
+		break;
 	}
 
-	this->_pListWordGrec->Clear();
-	if(this->_pListWordGrec) {delete this->_pListWordGrec; this->_pListWordGrec = nullptr;}
+	this->_pGsControlListDictionaryClass->Invalidate();
 }
-//---------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::CreateWnd()
+
+/****************************************************************************
+*										  Klasa GsControlListDictionaryClass									  *
+*							 Klasa słownika i konkordancji grecko-polskiej								*
+* Klasa, która wraz z klasą GsPanelDictionaryClass i DataGrecWordDictClass, *
+*       			 tworzy	słownik i konkordancje grecko-polską                  *
+*****************************************************************************/
+//[10-06-2026]
+__fastcall GsControlListDictionaryClass::GsControlListDictionaryClass(TComponent* Owner, TWebBrowser *pWBrowserWordResult)
+ : TCustomControlList(Owner), _pWBrowseResult(pWBrowserWordResult)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -4126,15 +4159,10 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	TCustomListView::CreateWnd();
-	//Własny kod.
-  //Wyłączenie podpowiedzi do pozycji, która nie mieści się poziomo
-	DWORD flags = this->Perform(LVM_GETEXTENDEDLISTVIEWSTYLE, NULL, (System::WideChar)NULL);
-	this->Perform(LVM_SETEXTENDEDLISTVIEWSTYLE, flags &~LVS_EX_LABELTIP, (System::WideChar)NULL);
-
-	this->_CreateAllColumns();
-	this->Items->BeginUpdate();
-	//--- Allokacja listy, struktarami dla każdego słowa według Stronga - czyli 5625 pozycji
+  this->_pListWordGrec = new TList();
+	if(!this->_pListWordGrec) throw(Exception("Błąd funkcji TList"));
+	//---
+  //--- Allokacja listy, struktarami dla każdego słowa według Stronga - czyli 5625 pozycji
 	for(int i=0; i<ciMaxStrongCount; ++i)
 	{
 		DataGrecWordDictClass *pDataGrecWordDictClass = new DataGrecWordDictClass();
@@ -4143,8 +4171,8 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 		if(pDataGrecWordDictClass)
 			{this->_pListWordGrec->Add(pDataGrecWordDictClass);}
 	}
-	//this->_pListWordGrec->Count
-	//--- Obróbka danych z pliku \Data\gnt.intrl.
+	//---
+  	//--- Obróbka danych z pliku \Data\gnt.intrl.
 	// Uzyskanie wskaźnika na listę z zawart	pHSListInterlinearGreek->BeginUpdate();
 	THashedStringList *pHSListInterlinearGreek = GsReadBibleTextData::pGsReadBibleTextClass->GetListInterlinearGrec();
 
@@ -4178,11 +4206,102 @@ void __fastcall GsLViewDictionaryClass::CreateWnd()
 	if(pDataGrecWordDictClass) {delete pDataGrecWordDictClass; pDataGrecWordDictClass = nullptr;}
 	this->_pListWordGrec->Delete(0);
 	//---
-	this->Items->Count = this->_pListWordGrec->Count;
-	this->Items->EndUpdate();
+  this->ParentFont = true;
+	this->Font->Quality = TFontQuality::fqClearType;
 }
 //---------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::DestroyWnd()
+__fastcall GsControlListDictionaryClass::~GsControlListDictionaryClass()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	//--- Deallokacja listy, struktarami dla każdego słowa
+	for(int i=0; i<this->_pListWordGrec->Count; ++i)
+	{
+		DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[i]);
+		if(pDataGrecWordDictClass)
+		{
+			delete pDataGrecWordDictClass; pDataGrecWordDictClass = nullptr;
+		}
+	}
+
+  this->_pListWordGrec->Clear();
+	if(this->_pListWordGrec) {delete this->_pListWordGrec; this->_pListWordGrec = nullptr;}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsControlListDictionaryClass::CreateWnd()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TCustomControlList::CreateWnd();
+	//Własny kod.
+	this->ItemHeight = GsReadBibleTextData::_GsImgListData->Height + 8;
+	this->ItemCount = ciMaxStrongCount - 1;
+	// Słowo greckie
+	this->pLabelGrecWords = new TLabel(this);
+	if(!this->pLabelGrecWords) throw(Exception("Nie można zainicjować klasy TLabel"));
+	this->pLabelGrecWords->Align = alLeft;
+	this->pLabelGrecWords->AutoSize = false;
+	this->pLabelGrecWords->AlignWithMargins = true;
+	this->pLabelGrecWords->Width = this->Width / 3;
+	this->pLabelGrecWords->Layout = tlCenter;
+	this->pLabelGrecWords->StyleElements = TStyleElements();
+	this->pLabelGrecWords->Font->Color = clRed;
+	this->pLabelGrecWords->Font->Style = TFontStyles()<< fsBold;
+	this->pLabelGrecWords->Font->Size = 12;
+	this->pLabelGrecWords->EllipsisPosition = epEndEllipsis;
+	this->pLabelGrecWords->Margins->Left = GsReadBibleTextData::_GsImgListData->Width + 4;
+	// Numer Stronga
+	this->pLabelStrongNumber = new TLabel(this);
+	if(!this->pLabelStrongNumber) throw(Exception("Nie można zainicjować klasy TLabel"));
+	this->pLabelStrongNumber->Align = alLeft;
+	this->pLabelStrongNumber->AutoSize = false;
+	this->pLabelStrongNumber->AlignWithMargins = true;
+	this->pLabelStrongNumber->Width = this->Width / 3;
+	this->pLabelStrongNumber->Layout = tlCenter;
+	//this->pLabelStrongNumber->StyleElements = TStyleElements();
+	//this->pLabelStrongNumber->Font->Color = clRed;
+	//this->pLabelStrongNumber->Font->Style = TFontStyles()<< fsBold;
+	this->pLabelStrongNumber->Font->Size = 12;
+	this->pLabelStrongNumber->EllipsisPosition = epEndEllipsis;
+	// Wymowa fonetyczna i znaczenie
+	this->pLabelInfoTranslate = new TLabel(this);
+	if(!this->pLabelInfoTranslate) throw(Exception("Nie można zainicjować klasy TLabel"));
+	this->pLabelInfoTranslate->Align = alClient;
+	this->pLabelInfoTranslate->AutoSize = false;
+	this->pLabelInfoTranslate->AlignWithMargins = true;
+	//this->pLabelInfoTranslate->Width = this->Width / 3;
+	this->pLabelInfoTranslate->Layout = tlCenter;
+	//this->pLabelInfoTranslate->StyleElements = TStyleElements();
+	//this->pLabelInfoTranslate->Font->Color = clRed;
+	//this->pLabelInfoTranslate->Font->Style = TFontStyles()<< fsBold;
+	this->pLabelInfoTranslate->Font->Size = 12;
+	this->pLabelInfoTranslate->EllipsisPosition = epEndEllipsis;
+
+	this->AddControlToItem(this->pLabelGrecWords);
+	this->AddControlToItem(this->pLabelStrongNumber);
+	this->AddControlToItem(this->pLabelInfoTranslate);
+
+	// Ustawienie szerokości poszczególnych sekcji objektu, klasy THeader
+	GsPanelDictionaryClass *pGsPanelDictionaryClass = dynamic_cast<GsPanelDictionaryClass *>(this->Parent->Parent->Parent);
+	if(pGsPanelDictionaryClass)
+	{
+		THeaderSections *pHeaderSections = pGsPanelDictionaryClass->_pHeaderControl->Sections;
+
+		pHeaderSections->Items[enGreekWord]->Width = this->pLabelGrecWords->Width;
+		pHeaderSections->Items[enNumberStrong]->Width = this->pLabelStrongNumber->Width;
+		pHeaderSections->Items[enTranslates]->Width = this->Width / 3;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsControlListDictionaryClass::DestroyWnd()
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -4191,149 +4310,11 @@ void __fastcall GsLViewDictionaryClass::DestroyWnd()
 */
 {
 	//Własny kod.
-	TCustomListView::DestroyWnd();
+	TCustomControlList::DestroyWnd();
 }
 //---------------------------------------------------------------------------
-bool __fastcall GsLViewDictionaryClass::OwnerDataFetch(Comctrls::TListItem* Item, Comctrls::TItemRequest Request)
-/**
-	OPIS METOD(FUNKCJI): OnData
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	if ((Item->Index > this->_iLViewEndIndex) || (Item->Index < this->_iLViewStartIndex)) return false;
-
-	if(Request.Contains(irText) || Item->Caption.IsEmpty())
-	{
-		//Item->Caption = this->_pHSList->Strings[Item->Index];
-		DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[Item->Index]);
-
-		Item->Caption = pDataGrecWordDictClass->ustrGrecName;
-		//Item->ImageIndex = enIconPosition;
-		Item->SubItems->Add(pDataGrecWordDictClass->ustrStrongNumber);
-		Item->SubItems->Add(pDataGrecWordDictClass->ustrDictPol);
-	}
-	if (Request.Contains(irImage))
-	{
-		//Item->ImageIndex = pItemInfoFile->iIconId;
-	}
-
-	return true;
-}
-//---------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::_CreateAllColumns()
-/**
-	OPIS METOD(FUNKCJI): Tworzenie kolumn
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TListColumn *NewColumn=nullptr;
-
-	//Dodawanie kolumn
-	for(unsigned int iColumns=0; iColumns<ARRAYSIZE(ustrColumsNames); ++iColumns)
-	{
-		NewColumn = this->Columns->Add();
-		NewColumn->Caption = ustrColumsNames[iColumns];
-		NewColumn->Width = 2 * this->Canvas->TextWidth(ustrColumsNames[iColumns]);
-		NewColumn->ImageIndex = enImageIndex_GrecWordColumn + iColumns;
-	}
-}
-//---------------------------------------------------------------------------
-bool __fastcall GsLViewDictionaryClass::OwnerDataHint(int StartIndex, int EndIndex)
-/**
-	OPIS METOD(FUNKCJI): OnDataHint
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	this->_iLViewStartIndex = StartIndex; //Dolny zakres, elementów listy
-	this->_iLViewEndIndex = EndIndex;			//Górny zakres, elementów listy
-
-	return true;
-}
-//---------------------------------------------------------------------------
-int __fastcall GsLViewDictionaryClass::OwnerDataFind(TItemFind Find, const System::UnicodeString FindString, const System::Types::TPoint &FindPosition,
-			void * FindData, int StartIndex, TSearchDirection Direction, bool Wrap)
-/**
-	OPIS METOD(FUNKCJI): OnDataHint
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	for(int i=0; i<this->_pListWordGrec->Count; ++i)
-	{
-		DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[i]);
-		if (UpperCase(pDataGrecWordDictClass->ustrGrecName) == UpperCase(FindString))
-		{
-			return i;
-			//break;
-		}
-	}
-	return -1;
-}
-//---------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::DrawItem(TListItem* Item, const System::Types::TRect &Rect, Winapi::Windows::TOwnerDrawState State)
-/**
-	OPIS METOD(FUNKCJI):Rysowanie pozycji listy
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TRect RectBounds = Item->DisplayRect(drBounds);
-	TRect RectLabel = Item->DisplayRect(drLabel);
-	TRect RectIcon = Item->DisplayRect(drIcon);
-	//--- Kolory aktywnego stylu //[16-12-2023]
-	TColor cBackGround = TStyleManager::ActiveStyle->GetStyleColor(scListView);
-	TColor cText = TStyleManager::ActiveStyle->GetStyleFontColor(sfListItemTextNormal);
-	this->Canvas->Brush->Color = cBackGround;
-
-	if(State.Contains(odSelected))
-	{
-		this->Canvas->Brush->Color = clWebRoyalBlue;//clYellow;
-	}
-	this->Canvas->FillRect(RectBounds);
-
-	this->SmallImages->Draw(this->Canvas, RectIcon.Left, RectIcon.Top + 1, enImageIndex_GrecWordItem);
-
-	this->Canvas->Font->Color = clRed;
-	this->Canvas->Font->Style = TFontStyles() << fsBold;
-	DrawText(this->Canvas->Handle, Item->Caption.c_str(), -1, &RectLabel, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-	//---
-	TRect RectSubItemText = RectBounds; RectSubItemText.Left += 20; //[16-12-2023]
-	TRect RectSubItemIcon = RectBounds; RectSubItemIcon.Left += 4;	//[16-12-2023]
-
-	for(int iColumn=1; iColumn<this->Columns->Count; ++iColumn)
-	{
-		//Wymiary następnej kolumny
-		RectSubItemText.Left += this->Column[iColumn-1]->Width;
-		RectSubItemText.Right = RectSubItemText.Left + this->Column[iColumn]->Width;
-
-		RectSubItemIcon.Left += this->Column[iColumn-1]->Width; //[16-12-2023]
-		//
-		if(iColumn==1)
-		{
-			this->Canvas->Font->Color = clWebLimeGreen;
-			this->Canvas->Font->Style = TFontStyles();
-			this->SmallImages->Draw(this->Canvas, RectSubItemIcon.Left, RectSubItemIcon.Top + 1, enImageIndex_GrecStrongColumn); //[16-12-2023]
-		}
-		else if(iColumn==2)
-		{
-			this->Canvas->Font->Color = cText;//this->Font->Color; //Tłumaczenie
-			this->Canvas->Font->Style = TFontStyles();
-			this->SmallImages->Draw(this->Canvas, RectSubItemIcon.Left, RectSubItemIcon.Top + 1, enImageIndex_GrecDictionaryColumn); //[16-12-2023]
-		}
-
-		DrawText(this->Canvas->Handle, Item->SubItems->Strings[iColumn-1].c_str(), -1, &RectSubItemText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
-	}
-}
-//--------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::_OnGetImageIndex(System::TObject* Sender, TListItem* Item)
+void __fastcall GsControlListDictionaryClass::DoBeforeDrawItem(int AIndex, Vcl::Graphics::TCanvas* ACanvas,
+			const System::Types::TRect &ARect, Winapi::Windows::TOwnerDrawState AState)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -4341,10 +4322,27 @@ void __fastcall GsLViewDictionaryClass::_OnGetImageIndex(System::TObject* Sender
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	Item->ImageIndex = enImageIndex_GrecWordItem;
+	TRect MyRect = ARect;
+
+	this->pLabelGrecWords->Caption = Format("Pozycja: %d", ARRAYOFCONST((AIndex)));
+
+	int iImageWidth = GsReadBibleTextData::_GsImgListData->Width + 4,
+			iImageHeight = this->ItemHeight;
+
+	GsReadBibleTextData::_GsImgListData->Draw(ACanvas,
+		iImageWidth / 2 - (GsReadBibleTextData::_GsImgListData->Width / 2),
+		iImageHeight / 2 - (GsReadBibleTextData::_GsImgListData->Height / 2), enImageIndex_GrecWordItem, dsTransparent);
+
+	DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[AIndex]);
+	if(pDataGrecWordDictClass)
+	{
+		this->pLabelGrecWords->Caption = pDataGrecWordDictClass->ustrGrecName;
+		this->pLabelStrongNumber->Caption = pDataGrecWordDictClass->ustrStrongNumber;
+		this->pLabelInfoTranslate->Caption = pDataGrecWordDictClass->ustrDictPol; // Tłumaczenie
+	}
 }
 //---------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::_OnGetSubItemImage(System::TObject* Sender, TListItem* Item, int SubItem, int &ImageIndex)
+void __fastcall GsControlListDictionaryClass::DoItemClicked()
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -4352,26 +4350,14 @@ void __fastcall GsLViewDictionaryClass::_OnGetSubItemImage(System::TObject* Send
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	ImageIndex = enImageIndex_GrecWordItem;
-}
-//---------------------------------------------------------------------------
-void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selected)
-/**
-	OPIS METOD(FUNKCJI): Wybranie pozycji z ListView listy
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	if(this->ItemIndex == -1) return;	//Kliknąłeś poza pozycje listy, która jest numerem stronga
-	GsPanelDictionaryClass *pGsPanelDictionaryClass = dynamic_cast<GsPanelDictionaryClass *>(this->Parent->Parent);
+	GsPanelDictionaryClass *pGsPanelDictionaryClass = dynamic_cast<GsPanelDictionaryClass *>(this->Parent->Parent->Parent);
 	if(!pGsPanelDictionaryClass) return;
+  //---
 	pGsPanelDictionaryClass->_pButtonStrongAplic->Enabled = true;
 	pGsPanelDictionaryClass->_pButtonStrongWeb->Enabled = true;
-	pGsPanelDictionaryClass->_pButtonStrongAplic->Caption = Item->SubItems->Strings[enNumberStrong - 1];
-	pGsPanelDictionaryClass->_pButtonStrongWeb->Caption = pGsPanelDictionaryClass->_pButtonStrongAplic->Caption;
 	//---
 	THashedStringList *pHSListTemp=nullptr;
+
 	try
 	{
 		pHSListTemp = new THashedStringList();
@@ -4379,9 +4365,12 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 		//--- Wyciągnięcie struktury DataGrecWordDictClass, wybranej pozycji
 		DataGrecWordDictClass *pDataGrecWordDictClass = static_cast<DataGrecWordDictClass *>(this->_pListWordGrec->Items[this->ItemIndex]);
 		if(pDataGrecWordDictClass)
-		//Jeśli uzyskano wskażnik na listę wystąpień słowa greckiego
+    //Jeśli uzyskano wskażnik na listę wystąpień słowa greckiego
 		{
-			for(int iVers=0; iVers<pDataGrecWordDictClass->pHSListVers->Count; ++iVers)
+			pGsPanelDictionaryClass->_pButtonStrongAplic->Caption = pDataGrecWordDictClass->ustrStrongNumber;
+			pGsPanelDictionaryClass->_pButtonStrongWeb->Caption = pGsPanelDictionaryClass->_pButtonStrongAplic->Caption;
+			//---
+      for(int iVers=0; iVers<pDataGrecWordDictClass->pHSListVers->Count; ++iVers)
 			//Liczenie elementów listy wystąpień greckiego słowa
 			{
 				//Odczytanie księgi z pozycji, listy wystąpień greckiego słowa
@@ -4404,7 +4393,7 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 				pHSListTemp->EndUpdate(); //[03-06-2026]
 			}
 		}
-		DataDisplayTextAnyBrowser SetDataDisplay;
+    DataDisplayTextAnyBrowser SetDataDisplay;
 		SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
 		SetDataDisplay.strBackgroundColor = RGBToWebColorStr(clWebAzure);
 		SetDataDisplay.strNameFont = "Times New Roman";
@@ -4419,8 +4408,6 @@ void __fastcall GsLViewDictionaryClass::DoSelectItem(TListItem* Item, bool Selec
 		if(pHSListTemp) {delete pHSListTemp; pHSListTemp = nullptr;}
 	}
 }
-//---------------------------------------------------------------------------
-
 /****************************************************************************
 *												 Klasa GsLViewCommentsAllClass											*
 *****************************************************************************/

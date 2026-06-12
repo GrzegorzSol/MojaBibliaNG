@@ -32,11 +32,13 @@ class GsReadBibleTextData : public TObject
 	friend class GsPanelSelectVers;
   friend class GsControlListVers;
 	friend class GsTabSheetSelectVersClass;
-	friend class GsLViewDictionaryClass;
 	friend class GsListBoxSelectedVersClass;
 	friend class GsListBoxFavoritiesClass;
 	friend class GsLViewCommentsAllClass;
-  friend class GsPanelDictionaryClass;
+	friend class GsPanelDictionaryClass;
+	//[10-06-2026]
+	friend class GsControlListDictionaryClass;
+
 	friend int __fastcall MySortDir(TStringList* List, int Index1, int Index2);	//dla funkcji wyszukiwania
 	//---
 	private:
