@@ -27,7 +27,6 @@ const UnicodeString GlobalVar::Global_custrNameIVerFile="MBibleNG.iver",				 //N
 	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data");  // Ścieżka dostępu do katalogu z danymi aplikacji
 #endif
 const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),	 // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
-										GlobalVar::Global_custrPathStrongDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "StrongDict.strdi"), // Ścieżka dostępu do pliku ze słownikiem stronga
 										GlobalVar::Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 										GlobalVar::Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	// Ścieżka dostępu do katalogu z planami czytania biblii
 										GlobalVar::Global_custrPathJavaScripts=TPath::Combine(GlobalVar::Global_custrGetDataDir, "JVScripts"), // Ścieżka dostępu do katalogu z plikami Java script
@@ -42,10 +41,13 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathSearchLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),// Logo w oknie wyszukiwania
 										GlobalVar::Global_custrPathSetupsLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),// Logo w oknie ustawień
 										GlobalVar::Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"), // Logo główne podkładu
+										GlobalVar::Global_custrPathBackgroundSDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundSuperDict.gli"), // Podkład graficzny w słowniku gp i hp
 										//---
-										GlobalVar::Global_custrPathFileWordVersesExistGrec=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistGrec.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu greckiegoposzczególnych słów // [08-06-2024]
-										GlobalVar::Global_custrPathFileWordVersesExistHbr=TPath::Combine(GlobalVar::Global_custrGetDataDir, "WordToExistHbr.wte"), // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu hebrajskiego, poszczególnych słów // [31-07-2024]
 										GlobalVar::Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+										//[18-06-2026 Test]
+										GlobalVar::Global_custrPathGrecSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperGrecDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
+										GlobalVar::Global_custrPathHbrSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperHbrDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)
+
 										GlobalVar::Global_custrPathMultimediaFilesData=TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),// Ścieżka dostępu do danych multimedialnych
 										GlobalVar::Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		// Ścieżka dostępu do pliku z listą ulubionych wersetów
 										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów

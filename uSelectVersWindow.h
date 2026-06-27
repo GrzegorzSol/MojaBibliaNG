@@ -1,6 +1,4 @@
-﻿//---------------------------------------------------------------------------
-
-#ifndef uSelectVersWindowH
+﻿#ifndef uSelectVersWindowH
 #define uSelectVersWindowH
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>

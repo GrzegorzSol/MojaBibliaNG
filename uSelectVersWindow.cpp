@@ -5,7 +5,7 @@
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
 #if defined(_FULLAPLIC_)
-	#include "uStrongWindow.h"
+	//#include "uStrongWindow.h"
 #endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -114,11 +114,11 @@ void __fastcall TSelectVersWindow::_OnClickButtonSelectStrong(System::TObject* S
 //		GsDebugClass::WriteDebug("_OnClickButtonSelectStrong");
 //		GsDebugClass::WriteDebug(Format("Strong: \"%s\"", ARRAYOFCONST((pButton->Caption))));
 //	#endif
-	#if defined(_FULLAPLIC_)
-		TStrongWindow *pStrongWindow = new TStrongWindow(this, pButton->Caption);
-		if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
-		pStrongWindow->Show();
-	#endif
+//	#if defined(_FULLAPLIC_)
+//		TStrongWindow *pStrongWindow = new TStrongWindow(this, pButton->Caption);
+//		if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
+//		pStrongWindow->Show();
+//	#endif
 }
 //---------------------------------------------------------------------------
 

@@ -41,7 +41,6 @@ struct GlobalVar
 														 Global_custrGetExeDir, // Ścieżka dostępu do pliku ze słownikiem stronga
 														 Global_custrGetDataDir,  // Ścieżka dostępu do katalogu z danymi aplikacji
 														 Global_custrGetVersionUpdate, // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
-														 Global_custrPathStrongDict, // Ścieżka dostępu do pliku ze słownikiem stronga
 														 Global_custrPathImagesStyles,  // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
 														 Global_custrPathAllReadingPlan, // Ścieżka dostępu do katalogu z planami czytania biblii
 														 Global_custrPathJavaScripts, // Ścieżka dostępu do katalogu z plikami java script
@@ -55,9 +54,12 @@ struct GlobalVar
 														 Global_custrPathSearchLogo, // Logo w oknie wyszukiwania
 														 Global_custrPathSetupsLogo, // Logo w oknie ustawień
 														 Global_custrPathBacgroundImageText, // Logo główne podkładu
-														 Global_custrPathFileWordVersesExistGrec, // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu greckiegoposzczególnych słów // [08-06-2024]
-														 Global_custrPathFileWordVersesExistHbr, // Ścieżka dostępu do pliku z danymi wystapień w wersetach, dla tekstu hebrajskiego, poszczególnych słów // [31-07-2024]
+														 Global_custrPathBackgroundSDict, // Podkład graficzny w słowniku gp i hp
 														 Global_custrPathFileInterlinear, // Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+														 //[18-06-2026 Test]
+														 Global_custrPathGrecSuperDictionary, // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
+														 Global_custrPathHbrSuperDictionary, // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)
+
 														 Global_custrPathMultimediaFilesData, // Ścieżka dostępu do danych multimedialnych
 														 Global_custrPathFileFavoriteVers, // Ścieżka dostępu do pliku z listą ulubionych wersetów
 														 Global_custrPathDirComments, // Katalog do pojedyńczych plików z komentarzami do wersetów

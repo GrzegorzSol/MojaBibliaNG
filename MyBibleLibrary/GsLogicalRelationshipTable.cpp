@@ -25,7 +25,7 @@ if(pGsChild && (pGsChild != this))
 
 static GsDrawChildren *GlGsDrawChildren=nullptr;
 static GsMaster *GlGsMaster=nullptr;
-const UnicodeString custrNameBackground = "BackGroundScheme.bmp",
+const UnicodeString custrNameBackground = "BackGroundScheme.gli",
 										custrPathBackground = TPath::Combine(GlobalVar::Global_custrGetDataDir, custrNameBackground);
 
 /****************************************************************************

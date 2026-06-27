@@ -30,7 +30,7 @@ class GsReadBibleTextData : public TObject
 	friend class MyObjectVers;
 	friend class GsBarSelectVers;
 	friend class GsPanelSelectVers;
-  friend class GsControlListVers;
+  friend class GsControlListPasteSelectVers;
 	friend class GsTabSheetSelectVersClass;
 	friend class GsListBoxSelectedVersClass;
 	friend class GsListBoxFavoritiesClass;

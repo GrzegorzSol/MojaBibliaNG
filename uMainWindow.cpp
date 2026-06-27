@@ -35,7 +35,6 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uLibrary.h"
 #include "uSetupsWindow.h"
 #include "uSelectVersWindow.h"
-#include "uDictGrecPolWindow.h"
 #include "uNewSchemeVersWindow.h"
 #include "uAllMultimediaView.h"
 #include "uInformationsAppWindow.h"
@@ -44,9 +43,9 @@ np. wskaźnik na obiekt klasy ReadBibleTextClass, tworzy się następująco: _(j
 #include "uReadingPlanWindow.h"
 #include "uHistoryChaptersOpen.h"
 #include "uBooksSpecjalistWindow.h"
-#include "uStrongWindow.h"
 #include "uDisplayPreviewWindow.h"
 #include "MyBibleLibrary\GsReadBibleTextdata.h"
+#include "uSuperDitionariesWindow.h"
 #include <System.Win.Registry.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -1142,9 +1141,6 @@ void __fastcall TMainBibleWindow::Act_CorcordanceDictionaryGrecExecute(TObject *
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	TDictGrecPolWindow *pTDictGrecPolWindow = new TDictGrecPolWindow(this);
-	if(!pTDictGrecPolWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TDictGrecPolWindow"));
-	pTDictGrecPolWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
@@ -1469,9 +1465,9 @@ void __fastcall TMainBibleWindow::Act_StrongDictionaryExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	TStrongWindow *pStrongWindow = new TStrongWindow(this);
-	if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
-	pStrongWindow->Show();
+	TSuperDitionariesWindow *pSuperDitionariesWindow = new TSuperDitionariesWindow(this);
+	if(!pSuperDitionariesWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSuperDitionariesWindow"));
+	pSuperDitionariesWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_HelpVideoExecute(TObject *Sender)
