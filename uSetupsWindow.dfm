@@ -24,7 +24,7 @@ object SetupsWindow: TSetupsWindow
     Width = 1379
     Height = 768
     CustomHint = SW_BalloonHint
-    ActivePage = SW_SheetLajout
+    ActivePage = SW_SheetPaths
     Align = alClient
     Images = SW_ImgListMainSmall
     ParentShowHint = False
@@ -690,13 +690,50 @@ object SetupsWindow: TSetupsWindow
           Left = 940
           Top = 24
           Width = 140
-          Height = 21
+          Height = 24
           CustomHint = SW_BalloonHint
           Caption = 'Wybierz grafik'#281'...'
           ImageIndex = 15
           Images = SW_ImgListMainSmall
           ParentShowHint = False
           ShowHint = True
+          TabOrder = 1
+          OnClick = SW_ButtSetups_Click
+        end
+      end
+      object SW_GrBoxAddPathDoc: TGroupBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 195
+        Width = 1359
+        Height = 63
+        CustomHint = SW_BalloonHint
+        Align = alTop
+        Caption = 'Dodatkowy katalog na dokumenty'
+        TabOrder = 2
+        object SW_LEditAddPathDoc: TLabeledEdit
+          Left = 332
+          Top = 25
+          Width = 602
+          Height = 24
+          CustomHint = SW_BalloonHint
+          EditLabel.Width = 196
+          EditLabel.Height = 24
+          EditLabel.CustomHint = SW_BalloonHint
+          EditLabel.Caption = 'Dodatkowy katalog na dokumenty:'
+          LabelPosition = lpLeft
+          TabOrder = 0
+          Text = ''
+        end
+        object SW_ButtAddPathDoc: TButton
+          Left = 940
+          Top = 25
+          Width = 140
+          Height = 24
+          CustomHint = SW_BalloonHint
+          Caption = 'Wybierz katalog...'
+          ImageIndex = 15
+          Images = SW_ImgListMainSmall
           TabOrder = 1
           OnClick = SW_ButtSetups_Click
         end
@@ -891,7 +928,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 12
         Top = 12
-        Width = 1347
+        Width = 338
         Height = 20
         Margins.Left = 12
         Margins.Top = 12
@@ -917,7 +954,7 @@ object SetupsWindow: TSetupsWindow
         AlignWithMargins = True
         Left = 3
         Top = 609
-        Width = 1365
+        Width = 615
         Height = 20
         CustomHint = SW_BalloonHint
         Align = alBottom
@@ -1010,8 +1047,8 @@ object SetupsWindow: TSetupsWindow
             AlignWithMargins = True
             Left = 5
             Top = 51
-            Width = 550
-            Height = 67
+            Width = 4
+            Height = 16
             CustomHint = SW_BalloonHint
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -1023,8 +1060,6 @@ object SetupsWindow: TSetupsWindow
             ParentFont = False
             Layout = tlCenter
             WordWrap = True
-            ExplicitWidth = 4
-            ExplicitHeight = 16
           end
           object CBoxSelectPlan: TComboBox
             AlignWithMargins = True
@@ -1195,7 +1230,7 @@ object SetupsWindow: TSetupsWindow
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 785
+          Width = 232
           Height = 13
           CustomHint = SW_BalloonHint
           Align = alTop
@@ -1212,7 +1247,6 @@ object SetupsWindow: TSetupsWindow
           ParentFont = False
           Transparent = True
           Layout = tlCenter
-          ExplicitWidth = 232
         end
         object LViewDisplayselectPlan: TListView
           AlignWithMargins = True

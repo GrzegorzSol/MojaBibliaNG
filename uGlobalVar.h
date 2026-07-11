@@ -56,7 +56,7 @@ struct GlobalVar
 														 Global_custrPathBacgroundImageText, // Logo główne podkładu
 														 Global_custrPathBackgroundSDict, // Podkład graficzny w słowniku gp i hp
 														 Global_custrPathFileInterlinear, // Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
-														 //[18-06-2026 Test]
+														 //[18-06-2026] // Scieżki dostępu do słowników i korkondancji
 														 Global_custrPathGrecSuperDictionary, // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
 														 Global_custrPathHbrSuperDictionary, // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)
 
@@ -65,6 +65,9 @@ struct GlobalVar
 														 Global_custrPathDirComments, // Katalog do pojedyńczych plików z komentarzami do wersetów
 														 Global_custrPathHistorySearch, // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 														 Global_custrPathImageBackgroundMainText, // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
+														 // [05-07-2026] // Dodatkowe pomoce do studiowania Pisma Świętego
+														 Global_custrPathPDFDocsWork, // Ścieżka dostepu do dokumentów, komentarzy , przekładów idt. w formacie pdf
+														 Global_custrListLinksWork, // Ścieżka dostępu do pliku z różnymi linkami na tematy Pisma Świętego (przekłady, teksty, itd.)
 														 //----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 														 Global_ustrMutexName, //Mutekst główny aplikacji
 														 // ----- Rozszerzenia plików (Przeniesione z GsReadBibleTextData.h)
@@ -110,6 +113,7 @@ struct GlobalVar
 																		//----- Sekcje Main pliku ini
 																		GlobalIni_MainSection_Main="MAIN",					 //Główna sekcja MAIN pliku ini
 																				GlobalIni_PathMultiM1="MultimediaPath1", GlobalIni_PathMultiM2="MultimediaPath2", GlobalIni_PathMultiM3="MultimediaPath3", //Ścieżki dostępu do wybranych katalogów z multimediami
+                                        GlobalIni_PathAddDoc="PathAddDoc", //Dodatkowy katalog z dokumentami //[10-07-2026]
 																				GlobalIni_AppWidth="ApplicWinWidth", GlobalIni_AppHeight="ApplicWinHeight", //Szerokość i wysokość głównego okna
 																				GlobalIni_LoadBooksOnExit="LoadBooksOnExit", //Lista otwartych ksiąg i rozdziałów w momencie zamknięcia aplikacji
 																		//----- Sekcje Flags pliku ini

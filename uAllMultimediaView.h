@@ -42,6 +42,14 @@ __published:	// IDE-managed Components
 	TLabel *LabelComments;
 	TLabel *LabelFavVerses;
 	TLabel *LabelSizeGraphics;
+	TTabSheet *TabSheetPDFDocs;
+	TTabSheet *TabSheetWWWLinks;
+	TControlList *CListPDFDocs;
+	TControlList *CListWWWLinks;
+	TLabel *LabelPDFDoc;
+	TLabel *LabelWWWLink;
+	TImage *ImagePDFDoc;
+	TImage *ImageWWWLink;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -60,6 +68,11 @@ __published:	// IDE-managed Components
 					THeaderSection *Section);
 	void __fastcall PControlAllMultimediaDrawTab(TCustomTabControl *Control, int TabIndex,
 					const TRect &Rect, bool Active);
+	void __fastcall CListPDFDocsBeforeDrawItem(int AIndex, TCanvas *ACanvas, TRect &ARect,
+          TOwnerDrawState AState);
+	void __fastcall CListWWWLinksBeforeDrawItem(int AIndex, TCanvas *ACanvas, TRect &ARect,
+          TOwnerDrawState AState);
+	void __fastcall CListDblClick(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall _SetTagsAndHints();
@@ -70,11 +83,15 @@ private:	// User declarations
 	void __fastcall _LoadAllGraphics();
 	void __fastcall _LoadAllComments();
 	void __fastcall _LoadAllFavVerses();
+	void __fastcall _LoadAllPDFDocs();
+	void __fastcall _LoadAllWWWLinks();
 	void __fastcall _DisplaySelectVersAllTrans(const UnicodeString ustrCodeVers);
 
 	THashedStringList *_pHListGraphics=nullptr,
 										*_pHListComments=nullptr,
-										*_pHListFavVerses=nullptr;
+										*_pHListFavVerses=nullptr,
+										*_pHListPDFDocs=nullptr,
+										*_pHListWWWLinksList=nullptr;
 	float _fFactorProp=0;
 	TForm *_pDisplayWindow=nullptr;
 	TImage *_pImageScr=nullptr;

@@ -44,7 +44,7 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathBackgroundSDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundSuperDict.gli"), // Podkład graficzny w słowniku gp i hp
 										//---
 										GlobalVar::Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
-										//[18-06-2026 Test]
+										//[18-06-2026] // Scieżki dostępu do słowników i korkondancji
 										GlobalVar::Global_custrPathGrecSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperGrecDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
 										GlobalVar::Global_custrPathHbrSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperHbrDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)
 
@@ -53,6 +53,9 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów
 										GlobalVar::Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
 										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
+										// [05-07-2026]
+										GlobalVar::Global_custrPathPDFDocsWork=TPath::Combine(GlobalVar::Global_custrGetExeDir, "PDFTextDocsWork"), // Ścieżka dostepu do dokumentów, komentarzy , przekładów idt. w formacie pdf
+										GlobalVar::Global_custrListLinksWork=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ListLinksWork.fll"), // Ścieżka dostępu do pliku z różnymi linkami na tematy Pisma Świętego (przekłady, teksty, itd.)
 										//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
 										GlobalVar::Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
 										// ----- Rozszerzenia plików (Przeniesione z GsReadBibleTextData.h) //[09-05-2026]

@@ -20,6 +20,11 @@
 #include <SHDocVw.hpp>
 #include <Vcl.OleCtrls.hpp>
 //---------------------------------------------------------------------------
+
+enum TypeStartDict {
+	enStartDict_Grec=1200, enStartDict_Hbr
+};
+
 class TSuperDitionariesWindow : public TForm
 {
 __published:	// IDE-managed Components
@@ -41,6 +46,7 @@ __published:	// IDE-managed Components
 	TImageList *ImageListSmall;
 	TWebBrowser *WebBrowserVers;
 	TImage *ImageStrongNumbers;
+	TWebBrowser *WebBrowserExplanations;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -59,9 +65,11 @@ private:	// User declarations
 	UnicodeString __fastcall _SelectVersWordHbr(const UnicodeString &_custrIn);
   int _iSearchNumber=-1, // [07-06-2024]
 			_iNumberTranslateGrec=-1, // Numer tłumaczenia greckiego używany do wyświetlania wersetów // [31-07-2024]
-			_iNumberTranslateHbr=-1;  // Numer tłumaczenia hebrajskiego używany do wyświetlania wersetów // [31-07-2024]
+			_iNumberTranslateHbr=-1,  // Numer tłumaczenia hebrajskiego używany do wyświetlania wersetów // [31-07-2024]
+			_iStartNumberStrong=-1;
+	TypeStartDict _tsdTypeStartDic=enStartDict_Grec;
 public:		// User declarations
-	__fastcall TSuperDitionariesWindow(TComponent* Owner);
+	__fastcall TSuperDitionariesWindow(TComponent* Owner, int iStartNumberStrong=1, TypeStartDict TypeSDict=enStartDict_Grec);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSuperDitionariesWindow *SuperDitionariesWindow;

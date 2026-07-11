@@ -2,8 +2,8 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
   Left = 0
   Top = 0
   Caption = 'S'#322'owniki i konkordancje: grecko-polski i hebrajsko-polski'
-  ClientHeight = 861
-  ClientWidth = 1184
+  ClientHeight = 961
+  ClientWidth = 1224
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,18 +20,19 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
   object PanelListStrong: TPanel
     Left = 0
     Top = 0
-    Width = 129
-    Height = 861
+    Width = 225
+    Height = 961
     Align = alLeft
     BevelOuter = bvNone
     Caption = 'PanelListStrong'
     ShowCaption = False
     TabOrder = 0
+    ExplicitHeight = 861
     object LabelInfoDictionary: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 53
-      Width = 123
+      Width = 219
       Height = 21
       Align = alTop
       Alignment = taCenter
@@ -53,7 +54,7 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 123
+      Width = 219
       Height = 44
       ActionManager = ActionManagerMain
       Caption = 'ActionToolBarMain'
@@ -75,8 +76,8 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       AlignWithMargins = True
       Left = 3
       Top = 80
-      Width = 123
-      Height = 778
+      Width = 219
+      Height = 878
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -99,13 +100,13 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       TabOrder = 1
       OnBeforeDrawItem = ControlListStrongBeforeDrawItem
       OnItemClick = ControlListStrongItemClick
-      ExplicitWidth = 136
+      ExplicitHeight = 778
       object LabelStrongNumber: TLabel
         AlignWithMargins = True
         Left = 43
         Top = 3
-        Width = 5
-        Height = 19
+        Width = 169
+        Height = 34
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -116,6 +117,8 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitWidth = 5
+        ExplicitHeight = 19
       end
       object ImageStrongNumbers: TImage
         AlignWithMargins = True
@@ -129,30 +132,29 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
     end
   end
   object PanelInfoDisplay: TPanel
-    Left = 129
+    Left = 225
     Top = 0
-    Width = 870
-    Height = 861
+    Width = 823
+    Height = 961
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PanelInfoDisplay'
     ShowCaption = False
     TabOrder = 1
-    ExplicitLeft = 142
-    ExplicitWidth = 857
+    ExplicitHeight = 861
     object WebBrowserVers: TWebBrowser
       AlignWithMargins = True
       Left = 3
       Top = 490
-      Width = 864
-      Height = 368
+      Width = 817
+      Height = 224
       Align = alClient
       TabOrder = 1
-      ExplicitWidth = 851
+      ExplicitHeight = 368
       ControlData = {
-        4C0000004C590000092600000000000000000000000000000000000000000000
+        4C00000070540000271700000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
-        2B2E126208000000000000004C0000000114020000000000C000000000000046
+        2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
         00000000000000000100000000000000000000000000000000000000}
     end
@@ -160,35 +162,50 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 864
+      Width = 817
       Height = 481
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 851
       ControlData = {
-        4C0000004C590000B63100000000000000000000000000000000000000000000
+        4C00000070540000B63100000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
-        2B2E126208000000000000004C0000000114020000000000C000000000000046
+        2B2E126209000000000000004C0000000114020000000000C000000000000046
+        8000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000100000000000000000000000000000000000000}
+    end
+    object WebBrowserExplanations: TWebBrowser
+      AlignWithMargins = True
+      Left = 3
+      Top = 720
+      Width = 817
+      Height = 238
+      Align = alBottom
+      TabOrder = 8
+      ControlData = {
+        4C00000070540000991800000000000000000000000000000000000000000000
+        000000004C000000000000000000000001000000E0D057007335CF11AE690800
+        2B2E126209000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
         00000000000000000100000000000000000000000000000000000000}
     end
   end
   object PanelListvers: TPanel
-    Left = 999
+    Left = 1048
     Top = 0
-    Width = 185
-    Height = 861
+    Width = 176
+    Height = 961
     Align = alRight
     BevelOuter = bvNone
     Caption = 'PanelListvers'
     ShowCaption = False
     TabOrder = 2
+    ExplicitHeight = 861
     object ControlListApperances: TControlList
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 179
-      Height = 855
+      Width = 170
+      Height = 955
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -211,12 +228,13 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       TabOrder = 0
       OnBeforeDrawItem = ControlListApperancesBeforeDrawItem
       OnItemClick = ControlListApperancesItemClick
+      ExplicitHeight = 855
       object LabelApperances: TLabel
         AlignWithMargins = True
         Left = 43
         Top = 3
-        Width = 5
-        Height = 19
+        Width = 120
+        Height = 34
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -227,6 +245,8 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitWidth = 5
+        ExplicitHeight = 19
       end
       object ImageVers: TImage
         AlignWithMargins = True

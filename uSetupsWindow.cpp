@@ -25,6 +25,7 @@ enum {enPageSetups_Layout, enPageSetup_Flags, enPageSetup_Paths, enPageSetup_Oth
 			enPageSetups_ReadingPlan, enPageSetups_SelectThemes,
 			enSelectDirMulti_1, enSelectDirMulti_2, enSelectDirMulti_3,
 			enSelectBackground, //[12-12-2023]
+			enAddPathDoc, //[10-07-2026]
 			enSetup_Save=50, enSetup_Return, enSetup_Cancel, enSetup_Help,
 			//enTag_IsDisplaySplashScreen=20, enTag_IsRequestEnd, enTag_IsOnlyOne, enTag_IsAutoFindUpdate, enTag_IsLoadBooksOnInit,
 			//Tagi dla przycisków i innych kontrolek
@@ -122,6 +123,9 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  #if defined(_DEBUGINFO_)
+	GsDebugClass::WriteDebug("TSetupsWindow");
+#endif
 	this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	//Hinty
 	this->SW_ButGroupSections->Hint = "Grupy ustawień";
@@ -144,6 +148,7 @@ __fastcall TSetupsWindow::TSetupsWindow(TComponent* Owner)
 	this->SW_LEditPath3->Tag = enSelectDirMulti_3; this->SW_ButtSelectDirMulti_3->Tag = enSelectDirMulti_3;
 	//Inne pola tekstowe
 	this->SW_ButtSelectBackground->Tag =  enSelectBackground; //[12-12-2023]
+	this->SW_ButtAddPathDoc->Tag = enAddPathDoc; //[10-07-2026]
 	//Dolne przyciski
 	this->SW_ButtSetupSave->Tag = enSetup_Save;
 	this->SW_ButtSetupReturn->Tag = enSetup_Return;
@@ -575,8 +580,9 @@ void __fastcall TSetupsWindow::_ReadAllConfig()
 	this->SW_LEditPath1->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1, "");
 	this->SW_LEditPath2->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, "");
 	this->SW_LEditPath3->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, "");
-  this->SW_LEditPathBackGround->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection,
+	this->SW_LEditPathBackGround->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_OthersSection,
 		GlobalVar::GlobalIni_GrahicsBackground, GlobalVar::Global_custrPathBackgroundWindow); //[12-12-2023]
+	this->SW_LEditAddPathDoc->Text = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathAddDoc, ""); //[10-07-2026]
 	//Sprawdzenie poprawności ścieżki dostępu
 	this->_VaidatePathMedia(this->SW_LEditPath1, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1);
 	this->_VaidatePathMedia(this->SW_LEditPath2, GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2);
@@ -793,6 +799,10 @@ void __fastcall TSetupsWindow::_WriteAllConfig()
 		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, this->SW_LEditPath2->Text);}
 	if(!this->SW_LEditPath3->Text.IsEmpty())
 		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, this->SW_LEditPath3->Text);}
+  //[10-07-2026] //Dodatkowy katalog na dokumenty
+	if(!this->SW_LEditAddPathDoc->Text.IsEmpty())
+		{GlobalVar::Global_ConfigFile->WriteString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathAddDoc, this->SW_LEditAddPathDoc->Text);}
+
 	if(!this->SW_LEditPathBackGround->Text.IsEmpty())
 	{
     //[12-12-2023]
@@ -1029,7 +1039,11 @@ void __fastcall TSetupsWindow::SW_ButtSetups_Click(TObject *Sender)
 		//Wybór grafiki na podkład
 		case enSelectBackground:
 			this->SW_LEditPathBackGround->Text = this->_SelectBackGround();
-    break;
+		break;
+		//Dodatkowy katalog dokumentów
+		case enAddPathDoc:
+      this->SW_LEditAddPathDoc->Text = this->_SelectAddPathDoc();
+		break;
 		//Dolne przyciski akcji
 		case enSetup_Save:
 		{
@@ -1160,7 +1174,7 @@ UnicodeString __fastcall TSetupsWindow::_SelectBackGround(UnicodeString _ustrPat
 																				 "Pliki png", "*.png", "Pliki bmp", "*.bmp", "Każdy plik", "*.*"};
 
 	UnicodeString ustrSelect;
-  TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
+	TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
 	if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
 	//---
   for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
@@ -1174,11 +1188,34 @@ UnicodeString __fastcall TSetupsWindow::_SelectBackGround(UnicodeString _ustrPat
 	pFileOpenDialog->Options << fdoPathMustExist << fdoFileMustExist << fdoForceFileSystem;
 	pFileOpenDialog->DefaultFolder = _ustrPath;
 
-  if(pFileOpenDialog->Execute())
+	if(pFileOpenDialog->Execute())
 		ustrSelect = pFileOpenDialog->FileName;
 	else ustrSelect = _ustrPath;
 
-  if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
+	if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
+	return ustrSelect;
+}
+//---------------------------------------------------------------------------
+UnicodeString __fastcall TSetupsWindow::_SelectAddPathDoc() //[10-07-2026]
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	UnicodeString ustrSelect;
+  TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
+	if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
+  //---
+
+	pFileOpenDialog->Title = "Wybierz dodatkowy katalog z dokumentami...";
+	pFileOpenDialog->Options << fdoPickFolders << fdoPathMustExist << fdoForceFileSystem;
+
+  if(pFileOpenDialog->Execute())
+		ustrSelect = pFileOpenDialog->FileName;
+
+	if(pFileOpenDialog) {delete pFileOpenDialog; pFileOpenDialog = nullptr;}
 	return ustrSelect;
 }
 //---------------------------------------------------------------------------

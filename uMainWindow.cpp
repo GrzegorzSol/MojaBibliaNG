@@ -1287,8 +1287,8 @@ void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	//MessageBox(NULL, TEXT("Funkcje jeszcze nie aktywna"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-	//return;
+//	MessageBox(NULL, TEXT("Funkcje jeszcze nie aktywna"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+//	return;
 	//---
 	GsTabSheetClass *pTabSheet = dynamic_cast<GsTabSheetClass *>(this->PageControlBibleText->ActivePage);
 	if(!pTabSheet) return;

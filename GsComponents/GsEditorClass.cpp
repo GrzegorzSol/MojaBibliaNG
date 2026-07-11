@@ -196,6 +196,7 @@ void __fastcall GsEditorClass::_InitInterface()
 	this->pToolBar->AutoSize = true;
 	//this->pToolBar->Height = 12;
 	this->pToolBar->Flat = true;
+	this->pToolBar->Font->Size = 10; //[28-06-2026]
 	//this->pToolBar->StyleElements = TStyleElements();
 	this->pToolBar->DrawingStyle = (Vcl::Comctrls::TTBDrawingStyle)Vcl::Comctrls::gdoGradient;
 	this->pToolBar->Images = this->pTImageListActive;

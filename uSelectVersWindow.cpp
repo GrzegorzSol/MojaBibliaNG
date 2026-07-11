@@ -5,7 +5,7 @@
 #include "uGlobalVar.h"
 #include <System.IOUtils.hpp>
 #if defined(_FULLAPLIC_)
-	//#include "uStrongWindow.h"
+	#include "uSuperDitionariesWindow.h"
 #endif
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -110,15 +110,12 @@ void __fastcall TSelectVersWindow::_OnClickButtonSelectStrong(System::TObject* S
 	TButton *pButton = dynamic_cast<TButton *>(Sender);
 	if(!pButton) return;
 	//---
-//	#if defined(_DEBUGINFO_)
-//		GsDebugClass::WriteDebug("_OnClickButtonSelectStrong");
-//		GsDebugClass::WriteDebug(Format("Strong: \"%s\"", ARRAYOFCONST((pButton->Caption))));
-//	#endif
-//	#if defined(_FULLAPLIC_)
-//		TStrongWindow *pStrongWindow = new TStrongWindow(this, pButton->Caption);
-//		if(!pStrongWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TStrongWindow"));
-//		pStrongWindow->Show();
-//	#endif
+	#if defined(_FULLAPLIC_)
+		int iGetStrong = pButton->Caption.Delete(1, 1).ToIntDef(1);
+		TSuperDitionariesWindow *pSuperDitionariesWindow = new TSuperDitionariesWindow(this, iGetStrong);
+		if(!pSuperDitionariesWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSuperDitionariesWindow"));
+		pSuperDitionariesWindow->Show();
+	#endif
 }
 //---------------------------------------------------------------------------
 

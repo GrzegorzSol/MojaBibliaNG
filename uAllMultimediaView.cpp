@@ -15,7 +15,7 @@ TAllMultimediaView *AllMultimediaView;
 enum {//Indeksy głównych zakładek
 			enSheet_Translates, enSheet_Graphics, enSheet_Comments, enSheet_FavVerses, enSheet_Count,
 			//Indeksy grafik dla list
-			enImage_Translates=0, enImage_Graphics, enImage_Comments, enImage_FavVerses,
+			enImage_Translates=0, enImage_Graphics, enImage_Comments, enImage_FavVerses, enImage_PDFDocs, enImageWWWLinks,
 			//Tagi dla objektów, klasy TControlList
 			enCList_Translates = 100, enCList_Graphics, enCList_Comments, enCList_FavVerses,
 			//Indeksy dla nagłówka, dla listy tłumaczeń
@@ -25,10 +25,13 @@ enum {//Indeksy głównych zakładek
 			//Indeksy dla nagłówka ulubionych wersetów
 			enHeaderFav_Name=0,
 			//Indeksy dla nagłowka, dla grafik
-			enHeaderGraphics_Name=0, enHeaderGraphics_Size};
+			enHeaderGraphics_Name=0, enHeaderGraphics_Size,
+			//Tagi dla objektów klasy, TControlList
+			enTag_PDFDocs=100, enTag_WWWLinks};
 //Nazwy zakładek
 const UnicodeString //Nazwy zakładek
-										cstrGroupName[] = {"Dostępne tłumaczenia", "Zarejestrowana grafika", "Lista komentarzy do wersetów", "Lista ulubionych wersetów"},
+										cstrGroupName[] = {"Dostępne tłumaczenia", "Zarejestrowana grafika", "Lista komentarzy do wersetów", "Lista ulubionych wersetów",
+																			 "Dokumenty w formacie PDF", "Lista odnośników"},
 										//Nazwy nagłówków dla tłumaczeń
 										cstrNameHeaderTranslates[] = {"Nazwa tłumaczenia", "Typ tłumaczenia"},
 										//Nazwy nagłówków dla grafik
@@ -68,6 +71,23 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 */
 {
 	TTabSheet *pTSheet=nullptr;
+	const int ciDummy=1;
+
+	this->ImageGraphics->Width = this->ImageGraphics->Width;
+	this->ImageComments->Width = this->ImageComments->Width;
+  this->ImageFavVerses->Width = this->ImageFavVerses->Width;
+	this->ImageTranslates->Width = this->ImageTranslates->Width;
+	this->ImagePDFDoc->Width = this->ImageGraphics->Width;
+	this->ImageWWWLink->Width = this->ImageGraphics->Width;
+
+	this->CListWWWLinks->ItemHeight = this->ImgListAllView->Height;
+	this->CListWWWLinks->Tag = enTag_WWWLinks;
+	this->CListPDFDocs->ItemHeight = this->ImgListAllView->Height;
+	this->CListPDFDocs->Tag = enTag_PDFDocs;
+	this->CListFavVerses->ItemHeight = this->ImgListAllView->Height;
+	this->CListComments->ItemHeight = this->ImgListAllView->Height;
+	this->CListGraphics->ItemHeight = this->ImgListAllView->Height;
+	this->CListTranlates->ItemHeight = this->ImgListAllView->Height;
 
 	for(int i=0; i<this->PControlAllMultimedia->PageCount; ++i)
 	{
@@ -84,14 +104,20 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 	if(!this->_pHListFavVerses) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	this->_pListAllFullTranslates = new TList();
 	if(!this->_pListAllFullTranslates) throw(Exception("Błąd inicjalizacji objektu TList"));
+	this->_pHListPDFDocs = new THashedStringList();
+	if(!this->_pHListPDFDocs) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	this->_pHListWWWLinksList = new THashedStringList();
+	if(!this->_pHListWWWLinksList) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 
 	this->_SetTagsAndHints();
 	this->_LoadAllTraslates(); //Tworzenie listy katalogów z grafiką
 	this->_LoadAllGraphics();	 //Tworzenie listy grafik
 	this->_LoadAllComments();	 //Tworzenie listy komentarzy
 	this->_LoadAllFavVerses(); //Tworzenie listy ulubionych
+	this->_LoadAllPDFDocs();    //Tworzenie listy dokumentów PDF
+	this->_LoadAllWWWLinks();       //Tworzenie listy odnośników
 
-	this->_pDisplayWindow = new TForm(this);
+	this->_pDisplayWindow = new TForm(this, ciDummy); // ? [05-07-2026]
 	if(!this->_pDisplayWindow) throw(Exception("Błąd inicjalizacji objektu TForm"));
 
 	this->_pDisplayWindow->Width = Screen->Width;
@@ -122,6 +148,8 @@ void __fastcall TAllMultimediaView::FormDestroy(TObject *Sender)
 	if(this->_pDisplayWindow) {delete this->_pDisplayWindow; this->_pDisplayWindow = nullptr;}
 	if(this->_pHListFavVerses) {delete this->_pHListFavVerses; this->_pHListFavVerses = nullptr;}
 	if(this->_pListAllFullTranslates) {delete this->_pListAllFullTranslates; this->_pListAllFullTranslates = nullptr;}
+	if(this->_pHListPDFDocs) {delete this->_pHListPDFDocs; this->_pHListPDFDocs = nullptr;}
+	if(this->_pHListWWWLinksList) {delete this->_pHListWWWLinksList; this->_pHListWWWLinksList = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::FormClose(TObject *Sender, TCloseAction &Action)
@@ -181,7 +209,6 @@ void __fastcall TAllMultimediaView::_LoadAllTraslates()
 
 	//Parametry list tłumaczeń
 	this->CListTranlates->ItemCount = this->_pListAllFullTranslates->Count;
-	this->CListTranlates->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Translates, this->ImageTranslates->Picture->Icon);
 	//THeaderControlTranslates
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderTranslates); ++i)
@@ -208,6 +235,7 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
 	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
 	SListTemp->Add(GlobalVar::Global_custrPathMultimediaFilesData);
+  // Dodatkowe, oprócz domyślnego katalogi z grafiką
 	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1, ""));
 	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM2, ""));
 	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM3, ""));
@@ -240,7 +268,6 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 	}
 	//Parametry listy grafik
 	this->CListGraphics->ItemCount = this->_pHListGraphics->Count;
-	this->CListGraphics->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Graphics, this->ImageGraphics->Picture->Icon);
 	//THeaderControlGraphics
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderGraphics); ++i)
@@ -272,7 +299,6 @@ void __fastcall TAllMultimediaView::_LoadAllComments()
 	SDCommentFile.Length = 0;
 	//Parametry listy komentarzy
 	this->CListComments->ItemCount = this->_pHListComments->Count;
-	this->CListComments->ItemHeight = this->ImgListAllView->Height;
 	this->ImgListAllView->GetIcon(enImage_Comments, this->ImageComments->Picture->Icon);
 	//HeaderControlComments
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderComments); ++i)
@@ -305,7 +331,6 @@ void __fastcall TAllMultimediaView::_LoadAllFavVerses()
 	}
 	//Parametry listy ulubionych
 	this->CListFavVerses->ItemCount = this->_pHListFavVerses->Count;
-	this->CListFavVerses->ItemHeight = this->ImgListAllView->Height;;
 	this->ImgListAllView->GetIcon(enImage_FavVerses, this->ImageFavVerses->Picture->Icon);
 	//HeaderControlFavVerses
 	for(int i=0; i<ARRAYSIZE(cstrNameHeaderFav); ++i)
@@ -315,6 +340,59 @@ void __fastcall TAllMultimediaView::_LoadAllFavVerses()
 	}
 
 	if(SListTemp) {delete SListTemp; SListTemp = nullptr;}
+}
+//---------------------------------------------------------------------------
+void __fastcall TAllMultimediaView::_LoadAllPDFDocs()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TStringDynArray SDPdfDocs;
+	UnicodeString ustrPathAddDoc, ustrTempLowerName;
+
+	SDPdfDocs = TDirectory::GetFiles(GlobalVar::Global_custrPathPDFDocsWork);
+
+	for(int i=0; i<SDPdfDocs.Length; ++i)
+	{
+    ustrTempLowerName = LowerCase(SDPdfDocs[i]);
+		if((TPath::GetExtension(ustrTempLowerName) != ".pdf") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".doc") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".docx") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".txt")) continue;
+		this->_pHListPDFDocs->Add(SDPdfDocs[i]);
+	}
+
+	ustrPathAddDoc = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathAddDoc, ""); //[10-07-2026]
+	SDPdfDocs = TDirectory::GetFiles(ustrPathAddDoc);
+
+	for(int i=0; i<SDPdfDocs.Length; ++i)
+	{
+		ustrTempLowerName = LowerCase(SDPdfDocs[i]);
+		if((TPath::GetExtension(ustrTempLowerName) != ".pdf") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".doc") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".docx") &&
+				 (TPath::GetExtension(ustrTempLowerName) != ".txt")) continue;
+		this->_pHListPDFDocs->Add(SDPdfDocs[i]);
+	}
+
+	this->CListPDFDocs->ItemCount = this->_pHListPDFDocs->Count;
+}
+//---------------------------------------------------------------------------
+void __fastcall TAllMultimediaView::_LoadAllWWWLinks()
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	if(!TFile::Exists(GlobalVar::Global_custrListLinksWork)) return;
+
+	this->_pHListWWWLinksList->LoadFromFile(GlobalVar::Global_custrListLinksWork, TEncoding::UTF8);
+	this->CListWWWLinks->ItemCount = this->_pHListWWWLinksList->Count;
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeString ustrCodeVers)
@@ -425,7 +503,6 @@ void __fastcall TAllMultimediaView::CListTranlatesBeforeDrawItem(int AIndex,
 	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
 	UnicodeString ustrExt, ustrInfo;
 
-	this->ImageTranslates->Width = this->ImageTranslates->Height;
 	pGsReadBibleTextItem = static_cast<GsReadBibleTextItem *>(this->_pListAllFullTranslates->Items[AIndex]);
 	if(pGsReadBibleTextItem)
 	{
@@ -459,7 +536,6 @@ void __fastcall TAllMultimediaView::CListGraphicsBeforeDrawItem(int AIndex, TCan
 	THeaderSection *Section=nullptr;
 	TColor cSelectImg = clHighlight;
 
-	this->ImageGraphics->Width = this->ImageGraphics->Height;
 	this->LabelNameGraphics->Caption = this->_pHListGraphics->Names[AIndex];
 
 	this->LabelSizeGraphics->Caption = this->_pHListGraphics->ValueFromIndex[AIndex];
@@ -490,7 +566,6 @@ void __fastcall TAllMultimediaView::CListCommentsBeforeDrawItem(int AIndex, TCan
 	iChap = ustrComm.SubString(4, 3).ToInt();
 	iVers = ustrComm.SubString(7, 3).ToInt();
 
-	this->ImageComments->Width = this->ImageComments->Height;
 	this->LabelComments->Caption = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChap, iVers)));
 
 	for(int i=0; i<this->HeaderControlComments->Sections->Count; ++i)
@@ -518,7 +593,6 @@ void __fastcall TAllMultimediaView::CListFavVersesBeforeDrawItem(int AIndex,
 	iChapt = _ustrFavCodeVers.SubString(4, 3).ToInt();
 	iVers = _ustrFavCodeVers.SubString(7, 3).ToInt();
 
-	this->ImageFavVerses->Width = this->ImageFavVerses->Height;
 	this->LabelFavVerses->Caption =	 Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
 	for(int i=0; i<this->HeaderControlFavVerses->Sections->Count; ++i)
@@ -575,6 +649,32 @@ void __fastcall TAllMultimediaView::CListAllItemClick(TObject *Sender)
 			break;
 		//---
 	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TAllMultimediaView::CListPDFDocsBeforeDrawItem(int AIndex, TCanvas *ACanvas,
+					TRect &ARect, TOwnerDrawState AState)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->LabelPDFDoc->Caption = this->_pHListPDFDocs->Strings[AIndex];
+	this->ImgListAllView->GetIcon(enImage_PDFDocs, this->ImagePDFDoc->Picture->Icon);
+}
+//---------------------------------------------------------------------------
+void __fastcall TAllMultimediaView::CListWWWLinksBeforeDrawItem(int AIndex, TCanvas *ACanvas,
+					TRect &ARect, TOwnerDrawState AState)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	this->ImgListAllView->GetIcon(enImageWWWLinks, this->ImageWWWLink->Picture->Icon);
+	this->LabelWWWLink->Caption = this->_pHListWWWLinksList->Strings[AIndex];
 }
 //---------------------------------------------------------------------------
 void __fastcall TAllMultimediaView::PanelDisplayResize(TObject *Sender)
@@ -761,5 +861,27 @@ void __fastcall TAllMultimediaView::_OnKeyPress(TObject *Sender, System::WideCha
 	}
 }
 //---------------------------------------------------------------------------
-
+void __fastcall TAllMultimediaView::CListDblClick(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TControlList *pCCList = dynamic_cast<TControlList *>(Sender);
+	if(!pCCList) return;
+	//---
+	UnicodeString ustrDblItem;
+	if(pCCList->Tag == enTag_PDFDocs)
+	{
+		ustrDblItem = this->_pHListPDFDocs->Strings[pCCList->ItemIndex];
+	}
+	else if(pCCList->Tag == enTag_WWWLinks)
+	{
+		ustrDblItem = this->_pHListWWWLinksList->Strings[pCCList->ItemIndex];
+  }
+	ShellExecute(this->Handle, nullptr , ustrDblItem.c_str(), NULL, NULL, SW_SHOWNORMAL);
+}
+//---------------------------------------------------------------------------
 
