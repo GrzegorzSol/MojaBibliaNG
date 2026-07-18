@@ -96,8 +96,8 @@ __fastcall SuperDictionaryItemHbr::~SuperDictionaryItemHbr()
 /****************************************************************************
  * 											 KLASA BaseSuperDictionarys                         *
  ****************************************************************************/
-__fastcall BaseSuperDictionaries::BaseSuperDictionaries(const UnicodeString _pathGrecSDict, const UnicodeString _pactHbrSDict)
-	: pathGrecSDict(_pathGrecSDict), pactHbrSDict(_pactHbrSDict)
+__fastcall BaseSuperDictionaries::BaseSuperDictionaries(const UnicodeString _pathGrecSDict, const UnicodeString _pathHbrSDict)
+	: pathGrecSDict(_pathGrecSDict), pathHbrSDict(_pathHbrSDict)
 /**
 	OPIS METOD(FUNKCJI):
 	OPIS ARGUMENTÓW:
@@ -345,7 +345,6 @@ void __fastcall ManagerSuperDictionaries::ReadGrecDictionary()
 
 			for(int iIndex=1; iIndex<ciMaxStrongGrecCount; ++iIndex)
 			{
-				iInd = iIndex - 1;
 				pSuperDictionaryItemGrec = new SuperDictionaryItemGrec();
 				if(!pSuperDictionaryItemGrec) throw(Exception("Błąd inicjalizacji objektu SuperDictionaryItemGrec"));
 
@@ -391,7 +390,7 @@ void __fastcall ManagerSuperDictionaries::ReadHbrDictionary()
 {
 	SuperDictionaryItemHbr *pSuperDictionaryItemHbr=nullptr;
 
-	if(!TFile::Exists(this->pactHbrSDict))
+	if(!TFile::Exists(this->pathHbrSDict))
 	{
 		MessageBox(NULL, L"Brak słownika hebrajsko-polskiego: SuperHbrDict.mbdict!", L"Błąd aplikacji", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		return;
@@ -403,7 +402,7 @@ void __fastcall ManagerSuperDictionaries::ReadHbrDictionary()
 	{
 		try
 		{
-			this->_pHSListFullDictHbr->LoadFromFile(this->pactHbrSDict, TEncoding::UTF8);
+			this->_pHSListFullDictHbr->LoadFromFile(this->pathHbrSDict, TEncoding::UTF8);
 			int iInd=0;
 
 			for(int iIndex=1; iIndex<ciMaxStrongHbrCount; ++iIndex)

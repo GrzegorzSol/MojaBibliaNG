@@ -27,7 +27,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
     Caption = 'PanelListStrong'
     ShowCaption = False
     TabOrder = 0
-    ExplicitHeight = 861
     object LabelInfoDictionary: TLabel
       AlignWithMargins = True
       Left = 3
@@ -100,7 +99,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       TabOrder = 1
       OnBeforeDrawItem = ControlListStrongBeforeDrawItem
       OnItemClick = ControlListStrongItemClick
-      ExplicitHeight = 778
       object LabelStrongNumber: TLabel
         AlignWithMargins = True
         Left = 43
@@ -141,7 +139,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
     Caption = 'PanelInfoDisplay'
     ShowCaption = False
     TabOrder = 1
-    ExplicitHeight = 861
     object WebBrowserVers: TWebBrowser
       AlignWithMargins = True
       Left = 3
@@ -150,7 +147,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       Height = 224
       Align = alClient
       TabOrder = 1
-      ExplicitHeight = 368
       ControlData = {
         4C00000070540000271700000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -180,7 +176,7 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       Width = 817
       Height = 238
       Align = alBottom
-      TabOrder = 8
+      TabOrder = 2
       ControlData = {
         4C00000070540000991800000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -199,7 +195,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
     Caption = 'PanelListvers'
     ShowCaption = False
     TabOrder = 2
-    ExplicitHeight = 861
     object ControlListApperances: TControlList
       AlignWithMargins = True
       Left = 3
@@ -228,7 +223,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
       TabOrder = 0
       OnBeforeDrawItem = ControlListApperancesBeforeDrawItem
       OnItemClick = ControlListApperancesItemClick
-      ExplicitHeight = 855
       object LabelApperances: TLabel
         AlignWithMargins = True
         Left = 43

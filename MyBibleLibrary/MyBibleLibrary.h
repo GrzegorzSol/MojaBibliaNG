@@ -35,6 +35,7 @@
 #include "uGlobalVar.h"
 #include "GsComponents\GsEditorClass.h"
 #include "MyBibleLibrary\InitMBAppConst.h"
+#include "GsComponents\GsSuperDictionarysClass.h"
 
 //#define _TESTING_
 
@@ -578,6 +579,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		UnicodeString _ustrSelectNumberStrong; //[01-06-2026]
 		GsBarSelectVers *_pGsBarSelectVers=nullptr;
 		GsEditorClass *_pEditComment=nullptr;
+    ManagerSuperDictionaries *_pManagerSuperDictionaries=nullptr;
 		TWebBrowser *_pWebBrowser=nullptr;
     //---
 		TPanel *_pPanelSGridInterlinearVers=nullptr, //[31-05-2026]
@@ -585,6 +587,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		TButton *_pButtonStrongWeb=nullptr, //[31-05-2026]
 						*_pButtonStrongAplic=nullptr; //[02-06-2026]
 		TStringGrid *_pSGridInterlinearVers=nullptr; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
+    TLabel *_pLabelTransWord=nullptr; // Objekt, klasy TLabel, z tłumaczeniem zaznaczonego słowa w wersecie //[12-07-2026]
 		//---
 		void __fastcall _OnClickButtonSGrid(System::TObject* Sender);
 		void __fastcall _DisplayInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla greckiego oryginału

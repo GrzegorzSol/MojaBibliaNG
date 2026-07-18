@@ -646,8 +646,6 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_SetupsApplic->Hint = Format("Ustawienia|Wszystkie ustawienia aplikacji.|%u", ARRAYOFCONST((this->Act_SetupsApplic->ImageIndex)));
 	this->Act_SelectVers->Tag = enTagSelectVers;			 //Wybór pojedyńczego wersetu
 	this->Act_SelectVers->Hint = Format("Wybór wersetu|Umożliwia wybór pojedyńczego wersetu.|%u", ARRAYOFCONST((this->Act_SelectVers->ImageIndex)));
-	this->Act_CorcordanceDictionaryGrec->Tag = enTagCorcondance;
-	this->Act_CorcordanceDictionaryGrec->Hint = Format("Korkondancja grecka|Korkondancja grecka Nowego Testament, z kodami Stronga.|%u", ARRAYOFCONST((this->Act_CorcordanceDictionaryGrec->ImageIndex)));
 	this->Act_ProjectSchemeVers->Tag = enTagSchemeVers;
 	this->Act_ProjectSchemeVers->Hint = Format("Powiązania między wersetami|Projektowanie logicznych powiązań między wersetami.|%u", ARRAYOFCONST((this->Act_ProjectSchemeVers->ImageIndex)));
 	this->Act_Infomations->Tag = enTagInformations;
@@ -664,8 +662,6 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_EditChapter->Hint = Format("Otwarcie okna do edycji rozdziału|Otwarcie okna, do edycji aktalnie aktywnego razdziału.|%u", ARRAYOFCONST((this->Act_EditChapter->ImageIndex)));
 	this->Act_MailChapt->Tag = enTagMailChapt;
 	this->Act_MailChapt->Hint = Format("Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
-	//this->Act_ImageAndText->Tag = enTagImageAndText;
-	//this->Act_ImageAndText->Hint = Format("Tworzenie grafiki z tekstem biblijnym, lub innym|Moduł do tworzenia grafiki w formie podkładu i dowolnego tekstu.|%u", ARRAYOFCONST((this->Act_ImageAndText->ImageIndex)));
 	this->Act_ReadingPlan->Tag = enTagImage_ReadingPlan;
 	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
 	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
@@ -678,7 +674,7 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->Act_SpecBooks->Tag = enTagImage_BooksSpec;
 	this->Act_SpecBooks->Hint = Format("Okno tłumaczeń specjalistycznych|Otwiera okno z dostępnymi tłumaczeniami specjalistycznymi, Pisma Świetego.|%u", ARRAYOFCONST((this->Act_SpecBooks->ImageIndex)));
 	this->Act_StrongDictionary->Tag = enTagImage_StrongDictionary;
-	this->Act_StrongDictionary->Hint = Format("Okno słownika Stronga|Otwarcie okna przeznaczonego do pracy ze słownikiem stronga.|%u", ARRAYOFCONST((this->Act_StrongDictionary->ImageIndex)));
+	this->Act_StrongDictionary->Hint = Format("Okno słownika Stronga|Otwarcie okna przeznaczonego do pracy ze słownikiem Stronga,\ndla języka greckiego i hebrajskiego.|%u", ARRAYOFCONST((this->Act_StrongDictionary->ImageIndex)));
 	this->Act_HelpVideo->Tag = enTagImage_HelpVideo;
 	this->Act_HelpVideo->Hint = Format("Pomocnicy video dla aplikacji.|Otwarcie kanału filmów instruktażowych dla aplikacji.|%u", ARRAYOFCONST((this->Act_HelpVideo->ImageIndex)));
 
@@ -1128,19 +1124,6 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
 	pSelectVersWindow->ShowModal(); //Musi być okno modalne!
 	//Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	this->pGsLViewCommentsAllClass->ReloadAllVersComments(false);
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainBibleWindow::Act_CorcordanceDictionaryGrecExecute(TObject *Sender)
-/**
-	OPIS METOD(FUNKCJI): Akcja otwierająca okno konkordancji grecko-polskiej i słownika
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	TAction *pAction = dynamic_cast<TAction *>(Sender);
-	if(!pAction) return;
-	//---
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)

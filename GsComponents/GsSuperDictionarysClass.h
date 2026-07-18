@@ -77,7 +77,7 @@ class BaseSuperDictionaries : public TObject
 		__fastcall BaseSuperDictionaries(const UnicodeString _pathGrecSDict, const UnicodeString _pactHbrSDict);
 		virtual __fastcall ~BaseSuperDictionaries();
 		//---
-		const UnicodeString pathGrecSDict, pactHbrSDict;
+		const UnicodeString pathGrecSDict, pathHbrSDict;
 	private:
 		THashedStringList *_pHSListFullDictGrek=nullptr,
                       *_pHSListFullDictHbr=nullptr;

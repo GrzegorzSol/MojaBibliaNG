@@ -43,7 +43,6 @@ __published:	// IDE-managed Components
 	TTaskbar *TaskbarMain;
 	TCoolBar *CoolBarMain;
 	TActionToolBar *ActionToolBarTools;
-	TAction *Act_CorcordanceDictionaryGrec;
 	TImageList *ImageListSmall;
 	TAction *Act_ProjectSchemeVers;
 	TAction *Act_Infomations;
@@ -86,7 +85,6 @@ __published:	// IDE-managed Components
 	void __fastcall TrayIconMainBalloonClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 	void __fastcall PageControlAllChange(TObject *Sender);
-	void __fastcall Act_CorcordanceDictionaryGrecExecute(TObject *Sender);
 	void __fastcall Act_ProjectSchemeVersExecute(TObject *Sender);
 	void __fastcall Act_InfomationsExecute(TObject *Sender);
 	void __fastcall Act_ViewAllResourcesExecute(TObject *Sender);

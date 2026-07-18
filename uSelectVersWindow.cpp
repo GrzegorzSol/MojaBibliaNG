@@ -66,6 +66,17 @@ void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
   this->_pGsPanelSelectVers->OnStrongSelect = this->_OnClickButtonSelectStrong;
 }
 //---------------------------------------------------------------------------
+void __fastcall TSelectVersWindow::FormDestroy(TObject *Sender)
+/**
+	OPIS METOD(FUNKCJI):
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	///
+}
+//---------------------------------------------------------------------------
 void __fastcall TSelectVersWindow::FormClose(TObject *Sender, TCloseAction &Action)
 /**
 	OPIS METOD(FUNKCJI):

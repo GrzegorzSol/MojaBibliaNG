@@ -330,12 +330,6 @@ object MainBibleWindow: TMainBibleWindow
             Caption = '-'
           end
           item
-            Action = Act_CorcordanceDictionaryGrec
-            Caption = '&Konkordancja grecko-polska'
-            ImageIndex = 6
-            ShowCaption = False
-          end
-          item
             Action = Act_StrongDictionary
             Caption = 'S'#322'ow&nik grecko-hebrajsko-polski, Stronga'
             ImageIndex = 21
@@ -413,11 +407,6 @@ object MainBibleWindow: TMainBibleWindow
       Caption = 'Wyb'#243'r pojedy'#324'czego wersetu'
       ImageIndex = 4
       OnExecute = Act_SelectVersExecute
-    end
-    object Act_CorcordanceDictionaryGrec: TAction
-      Caption = 'Konkordancja grecko-polska'
-      ImageIndex = 6
-      OnExecute = Act_CorcordanceDictionaryGrecExecute
     end
     object Act_ProjectSchemeVers: TAction
       Caption = 'Projektowanie powi'#261'za'#324' mi'#281'dzy wersetami...'

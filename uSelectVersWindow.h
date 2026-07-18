@@ -7,6 +7,7 @@
 #include <Vcl.Forms.hpp>
 #include "MyBibleLibrary\MyBibleLibrary.h"
 #include <Vcl.ExtCtrls.hpp> //Główna klasa do pracy z tekstem biblijnym
+//#include "GsComponents\GsSuperDictionarysClass.h"
 //---------------------------------------------------------------------------
 class TSelectVersWindow : public TForm
 {
@@ -15,6 +16,7 @@ __published:	// IDE-managed Components
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
+	void __fastcall FormDestroy(TObject *Sender);
 private:	// User declarations
 	GsPanelSelectVers *_pGsPanelSelectVers=nullptr;
 	const unsigned char _InputCucStartBook,

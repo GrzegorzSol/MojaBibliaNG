@@ -18,6 +18,7 @@ object SelectVersWindow: TSelectVersWindow
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 16
 end

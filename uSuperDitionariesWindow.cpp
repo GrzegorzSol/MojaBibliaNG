@@ -246,12 +246,13 @@ void __fastcall TSuperDitionariesWindow::ControlListStrongItemClick(TObject *Sen
 	if(!pCList) return;
 	//---
 	if(pCList->ItemIndex == -1) return;
+	int iStrongNumber = pCList->ItemIndex + 1; //[15-07-2026]
 	//---
 	SuperDictionaryItemGrec *pSuperDictionaryItemGrec=nullptr;
 	SuperDictionaryItemHbr *pSuperDictionaryItemHbr=nullptr;
 
   this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
-	this->ControlListApperances->ItemIndex = -1; // Nowe wyszukiwanie więc brak zaznaczonego elementu
+	this->ControlListApperances->ItemIndex = -1; // Nowe wyszukiwanie więc brak zaznaczonego elementu z listy wystąpień
 	this->_pHListVerses->BeginUpdate();
 	this->_pHListVerses->Clear();
 
@@ -262,26 +263,34 @@ void __fastcall TSuperDitionariesWindow::ControlListStrongItemClick(TObject *Sen
 	pStringStream->WriteString(custrHeadTransHTML); //Zapis nagłówka kodu html do strumienia
 	if(this->ActionGrec->Checked)
 	{
-		pSuperDictionaryItemGrec = this->_pManagerSuperDictionaries->GetStrongGrec(pCList->ItemIndex + 1);
-		pStringStream->WriteString(Format("<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrecWord))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrPhonetically))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrammForm))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Ilość wystąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrNumberApp))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Pochodzenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrOrigin))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrTranslate))));
-		// Wyodrębnianie miejsca wystapień wybranego słowa greckiego
-		this->_pHListVerses->DelimitedText = pSuperDictionaryItemGrec->ustrApperDecode;
+		pSuperDictionaryItemGrec = this->_pManagerSuperDictionaries->GetStrongGrec(iStrongNumber);
+		if((iStrongNumber > 3202) && (iStrongNumber < 3303))
+		// Brak słowa o wybranym zakresie numeru Stronga. //[15-07-2026]
+		{
+			pStringStream->WriteString(Format("<span class=\"styleStrongWord\">Brak słowa o numerze Stronga: %d</span>", ARRAYOFCONST((iStrongNumber))));
+		}
+		else
+		{
+  		pStringStream->WriteString(Format("<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrecWord))));
+  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrPhonetically))));
+  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrammForm))));
+  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Ilość wystąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrNumberApp))));
+  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Pochodzenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrOrigin))));
+  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrTranslate))));
+  		// Wyodrębnianie miejsca wystapień wybranego słowa greckiego
+			this->_pHListVerses->DelimitedText = pSuperDictionaryItemGrec->ustrApperDecode;
+		}
 	}
 	else
 	{
-		pSuperDictionaryItemHbr = this->_pManagerSuperDictionaries->GetStrongHbr(pCList->ItemIndex + 1);
+		pSuperDictionaryItemHbr = this->_pManagerSuperDictionaries->GetStrongHbr(iStrongNumber);
 		pStringStream->WriteString(Format("<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrHbrWord))));
 		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrPhonetically))));
 		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrGrammForm))));
 		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Ilość wytąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrNumberApp))));
 		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie 1: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrTranslate1))));
 		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie 2: </span></span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrTranslate2))));
-		// Wyodrębnianie miejsca wystapień wybranego słowa greckiego
+		// Wyodrębnianie miejsca wystapień wybranego słowa hebrajskiego
 		this->_pHListVerses->DelimitedText = pSuperDictionaryItemHbr->ustrApperDecode;
 	}
   this->_pHListVerses->EndUpdate();

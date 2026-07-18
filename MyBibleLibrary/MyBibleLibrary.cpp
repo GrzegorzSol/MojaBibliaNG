@@ -434,6 +434,7 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_P
 //		GsDebugClass::WriteDebug(Format("gnt: \"%s\" - %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear,
 //			GlobalVar::Global_custrPathFileWordVersesExistHbr))));
 //	#endif
+  // Wczytanie słownika interlinearnego, grecko-polskiego
 	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
 		{this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);}
 	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
@@ -3241,7 +3242,7 @@ void __fastcall GsBarSelectVers::_OnClickButtonSelect(System::TObject* Sender)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	return;
+	//return;
 	TToolButton *pToolButton = dynamic_cast<TToolButton *>(Sender);
 	if(!pToolButton) return;
 	//---
@@ -3411,6 +3412,7 @@ enum{enRow_StrongNumber, enRow_GreckWord, enRow_PolWord, enRow_Count //Numery rz
 		};
 // Rdzeń adresu strony z tłumaczeniami kodów Stronga //[01-06-2026]
 const UnicodeString custrRunHTMLNumberStrongGreek = "https://bibliaapologety.com/Projekt_Grecki/Greckie_strongi_html/";//G233.html";
+const int ciDefaultColumnsWidth = 168; // Domyślna szerokość kolumn w objekcie this->_pSGridInterlinearVers, klasy TStringGrid
 
 __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigned char _cucBook, const unsigned char _cucChapt,
 																								const unsigned char _cucVers)
@@ -3426,6 +3428,11 @@ __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigne
 		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->ParentFont = true;
+	//---
+  this->_pManagerSuperDictionaries = new ManagerSuperDictionaries(GlobalVar::Global_custrPathGrecSuperDictionary,
+		GlobalVar::Global_custrPathHbrSuperDictionary);
+  this->_pManagerSuperDictionaries->ReadGrecDictionary();
+	this->_pManagerSuperDictionaries->ReadHbrDictionary();
 }
 //---------------------------------------------------------------------------
 __fastcall GsPanelSelectVers::~GsPanelSelectVers()
@@ -3436,7 +3443,7 @@ __fastcall GsPanelSelectVers::~GsPanelSelectVers()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-
+  if(this->_pManagerSuperDictionaries) {delete this->_pManagerSuperDictionaries; this->_pManagerSuperDictionaries = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::CreateWnd()
@@ -3450,6 +3457,8 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	TCustomPanel::CreateWnd();
 	//Własny kod.
 	this->Font->Size = 12;
+	//---
+	if(!this->_pManagerSuperDictionaries) throw(Exception("Błąd inicjalizacji objektu ManagerSuperDictionarys"));
 		//---Przyciski główne
 	this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers);
 	if(!this->_pGsBarSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsBarSelectVers"));
@@ -3463,7 +3472,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pPanelSGridInterlinearVers->Align = alBottom;
 	this->_pPanelSGridInterlinearVers->AlignWithMargins = true;
 	this->_pPanelSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
-	this->_pPanelSGridInterlinearVers->Height = 12 * -this->_pPanelSGridInterlinearVers->Font->Height;
+	this->_pPanelSGridInterlinearVers->Height = 18 * -this->_pPanelSGridInterlinearVers->Font->Height;
 	this->_pPanelSGridInterlinearVers->Visible = false;
 	this->_pPanelSGridInterlinearVers->BevelOuter = bvNone;
 	// Panel na przyciski dla objektu, klasy TStringGrid //[01-06-2026]
@@ -3512,14 +3521,21 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pSGridInterlinearVers->FixedCols = 0;
 	this->_pSGridInterlinearVers->FixedRows = 0;
 	this->_pSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
+  this->_pSGridInterlinearVers->Font->Size = 11;
 	this->_pSGridInterlinearVers->DefaultRowHeight = 2 * -this->_pSGridInterlinearVers->Font->Height;
-	this->_pSGridInterlinearVers->DefaultColWidth = 500;
+	this->_pSGridInterlinearVers->DefaultColWidth = ciDefaultColumnsWidth;
 	this->_pSGridInterlinearVers->Options = TGridOptions() << goVertLine >> goHorzLine;
 	this->_pSGridInterlinearVers->OnDrawCell = this->_DrawGridInterlinearVersCell;
 	this->_pSGridInterlinearVers->OnSelectCell = this->_SelectGridInterlinearVersCell;
 	this->_pSGridInterlinearVers->GridLineWidth = 2;
 	this->_pSGridInterlinearVers->DefaultDrawing = false;
 	this->_pSGridInterlinearVers->StyleElements = TStyleElements(); //[17-06-2024]
+	// Objekt, klasy TLabel, z tłumaczeniem zaznaczonego słowa w wersecie //[12-07-2026]
+	this->_pLabelTransWord = new TLabel(this->_pPanelSGridInterlinearVers);
+	if(!this->_pLabelTransWord) throw(Exception("Nie dokonano inicjalizacji objektu TSLabel"));
+	this->_pLabelTransWord->Parent = this->_pPanelSGridInterlinearVers;
+	this->_pLabelTransWord->Align = alBottom;
+  this->_pLabelTransWord->WordWrap = true;
 	//---Wyświetlenie wersetów
 	this->_pWebBrowser = new TWebBrowser(this);
 	if(!this->_pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
@@ -3535,7 +3551,7 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pEditComment->Parent = this;
 	this->_pEditComment->Align = alBottom;
 	this->_pEditComment->AlignWithMargins = true;
-	this->_pEditComment->Height = 240;
+	this->_pEditComment->Height = 140;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::DestroyWnd()
@@ -3559,6 +3575,11 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 	//[12-06-2026]
 */
 {
+	SuperDictionaryItemGrec *pSuperDictionaryItemGrec=nullptr; //[17-07-2026]
+	SuperDictionaryItemHbr *pSuperDictionaryItemHbr=nullptr; //[17-07-2026]
+	int iHeight=0, iTempHeight=0, iStrongNumber=1; //[12-07-2026] //[17-07-2026]
+	TRect DefMyRect = TRect(0, 0, this->_pSGridInterlinearVers->DefaultColWidth, 0); //[12-07-2026]
+
 	if((cucBook < GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStartRange+1) || (cucBook > GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStopRange+1))
 	{
 		//Wyczyszczenie zawartości objektu, klasy TStringGrid
@@ -3577,25 +3598,50 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 		throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
 	//---
 	unsigned char ucBook, ucChapt, ucVers; //Numery odczytane
-
+	this->_pSGridInterlinearVers->Canvas->Font = this->_pSGridInterlinearVers->Font;
+	// Pętla przez wszystkie linie interlinearnego słownika, grecko-polskiego.
+	// Słownik został wczytany do objektu, klasy THashedStringList: GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear
 	for(int i=0; i<GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Count; ++i)
 	{
 		ucBook = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(1, 3).ToInt();
 		ucChapt = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(4, 3).ToInt();
 		ucVers = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(7, 3).ToInt();
 		if((ucBook==cucBook) && (ucChapt==cucChapt) && (ucVers==cucVers))
+			// Zliczanie słów w wersecie
 			{pHSListSelectVers->Add(GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i]);}
 	}
 	if(pHSListSelectVers->Count > 0) this->_pSGridInterlinearVers->ColCount = pHSListSelectVers->Count;	//Kolumn tyle, ile słów w wersecie
 	for(int iIndex=0; iIndex<pHSListSelectVers->Count; ++iIndex)
 	{
-		this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(1, 5);
-		this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pHSListSelectVers->Names[iIndex].Delete(1, 10).SubString(7, 20);
-		this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pHSListSelectVers->ValueFromIndex[iIndex];
+		TRect MyRect = DefMyRect;
+    // Odczyt danych dla konkretnego słowa, według numeru Stronga //[17-07-2026]
+		iStrongNumber = pHSListSelectVers->Strings[iIndex].Delete(1, 10).SubString(2, 4).ToIntDef(1); //[17-07-2026]
+		pSuperDictionaryItemGrec = this->_pManagerSuperDictionaries->GetStrongGrec(iStrongNumber); //[17-07-2026]
+		if(pSuperDictionaryItemGrec)
+		{
+			this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Strings[iIndex].Delete(1, 10).SubString(1, 5); //G0123
+			this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pSuperDictionaryItemGrec->ustrGrecWord; //Słowo greckie
 
-		this->_pSGridInterlinearVers->RowHeights[enRow_PolWord] = 98;
+			iTempHeight = DrawText(this->_pSGridInterlinearVers->Canvas->Handle, pSuperDictionaryItemGrec->ustrTranslate.c_str(), //Tłumaczenie
+  			-1, &MyRect, DT_CALCRECT | DT_WORDBREAK); //[17-07-2026]
+  		if(iTempHeight > iHeight) iHeight = iTempHeight;
+
+  		this->_pSGridInterlinearVers->ColWidths[enRow_PolWord] = MyRect.Right;
+  		this->_pSGridInterlinearVers->RowHeights[enRow_PolWord] = iHeight;
+			this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pSuperDictionaryItemGrec->ustrTranslate; //[17-07-2026]
+		}
 	}
 	if(pHSListSelectVers) {delete pHSListSelectVers; pHSListSelectVers = nullptr;}
+
+	/*
+	DT_CALCRECT:
+	kreśla szerokość i wysokość prostokąta. Jeśli tekst jest wielokrotny,
+	DrawText wykorzystuje szerokość prostokąta wskazanego parametrem lpRect i rozszerza podstawę prostokąta,
+	aby ograniczyć ostatnią linijkę tekstu. Jeśli największe słowo jest szersze niż prostokąt, szerokość jest rozszerzana.
+	Jeśli tekst jest mniejszy niż szerokość prostokąta, szerokość jest zmniejszana. Jeśli tekst jest tylko jeden wiersz,
+	DrawText modyfikuje prawą stronę prostokąta tak, aby ograniczała ostatni znak w linii.
+	W obu przypadkach DrawText zwraca wysokość sformatowanego tekstu, ale nie rysuje tekstu.
+	*/
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_DrawGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol, System::LongInt ARow, const System::Types::TRect &Rect, TGridDrawState State)
@@ -3661,6 +3707,11 @@ void __fastcall GsPanelSelectVers::_SelectGridInterlinearVersCell(System::TObjec
 	this->_ustrSelectNumberStrong = pSGrid->Cells[ACol][0];
 	this->_pButtonStrongWeb->Caption = this->_ustrSelectNumberStrong;
 	this->_pButtonStrongAplic->Caption = this->_ustrSelectNumberStrong; //[02-06-2026]
+
+	if(ARow == enRow_PolWord) //[12-07-2026]
+	{
+		this->_pLabelTransWord->Caption =  pSGrid->Cells[ACol][enRow_PolWord];
+	} else this->_pLabelTransWord->Caption = "";
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_OnClickButtonSGrid(System::TObject* Sender)
