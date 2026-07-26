@@ -169,7 +169,7 @@ void __fastcall GsSearchFavFilesClass::DblClick()
 	if(mainForm)
 	{
 		WideString wstrSelectFileToWeb = "file://" + this->SelectFile;
-		TForm *pWindowTextSearch = new TForm(mainForm);
+		TForm *pWindowTextSearch = new TForm(mainForm, 1); //[25-07-2026]
 		if(pWindowTextSearch)
 		{
 			pWindowTextSearch->Height = 900; pWindowTextSearch->Width = 1100;

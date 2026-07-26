@@ -15,7 +15,6 @@ object SelectVersWindow: TSelectVersWindow
   Font.Style = []
   Font.Quality = fqClearType
   Position = poScreenCenter
-  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy

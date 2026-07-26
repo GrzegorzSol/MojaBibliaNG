@@ -77,14 +77,20 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 1.Ikona wersetu skopiowanego z modułu wyborów wersetów. //[01-06-2026]
+		//--- 1.Ikona otwarcia modułu słownika i konkordancji grecko-polkiej i hebrajsko-polskiego. //[01-06-2026]
 		pMemoryStr->WriteBuffer(ID_SEARCHSTRONGINTERLINEAR_LARGEICON, ARRAYSIZE(ID_SEARCHSTRONGINTERLINEAR_LARGEICON)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
-		//--- 2.Ikona wersetu skopiowanego z modułu wyborów wersetów. //[02-06-2026]
+		//--- 2.Ikona otwarcia strony słownika i korkondancji //[02-06-2026]
 		pMemoryStr->WriteBuffer(ID_SEARCHSTRONGWEB_LARGEICON, ARRAYSIZE(ID_SEARCHSTRONGWEB_LARGEICON)); //Zapis do strumienia danych
+		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
+		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
+		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		pMemoryStr->Clear();
+		//--- 3.Ikona otwarcia edytora komentarzy //[02-06-2026]
+		pMemoryStr->WriteBuffer(ID_EDITCOMMENTS_LARGEICON, ARRAYSIZE(ID_EDITCOMMENTS_LARGEICON)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
 		GsReadBibleTextData::_GsImgListDataLarge->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
@@ -401,7 +407,7 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 		pMemoryStr->WriteBuffer(ID_EXIT_APPLIC_DIS, ARRAYSIZE(ID_EXIT_APPLIC_DIS));							//Zapis do strumienia danych
 		pMemoryStr->Position = 0;																					//Ustawienia wskażnika strumienia na początek
 		pIcon->LoadFromStream(pMemoryStr);																//Wczytanie danych ze strumienia do objektu, klasy TIcon
-		GsReadBibleTextData::_GsImgListData->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
+		GsReadBibleTextData::_GsImgListDataDisable->AddIcon(pIcon);										//Dodanie ikony do listu, objektu klasy TImageList
 		pMemoryStr->Clear();
 	}
 	__finally
@@ -587,6 +593,8 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	/**/
 
 	UnicodeString		//Styl dla głównego tekstu
+//								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;display: inline-block;line-height: %upx;}\n",
+//									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain, iSizeFontMain+4))),
 								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n",
 									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów

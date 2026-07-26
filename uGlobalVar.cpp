@@ -43,7 +43,8 @@ const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(Globa
 										GlobalVar::Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"), // Logo główne podkładu
 										GlobalVar::Global_custrPathBackgroundSDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundSuperDict.gli"), // Podkład graficzny w słowniku gp i hp
 										//---
-										GlobalVar::Global_custrPathFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),			// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+										GlobalVar::Global_custrPathGrecFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+										GlobalVar::Global_custrPathHbrFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "hst.intrl"), // Ścieżka dostępu do pliku ze słownikiem interlinearnym hebrajsko-polskim, do wyświetlenia tłumaczenia interlinearnego //[21-07-2026]
 										//[18-06-2026] // Scieżki dostępu do słowników i korkondancji
 										GlobalVar::Global_custrPathGrecSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperGrecDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
 										GlobalVar::Global_custrPathHbrSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperHbrDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)

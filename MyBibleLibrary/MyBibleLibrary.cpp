@@ -345,8 +345,12 @@ GsReadBibleTextClass::GsReadBibleTextClass(const UnicodeString &_PathDir)
 	this->_ListAllTrChap = new TList();
 	if(!this->_ListAllTrChap) throw(Exception("Błąd allokacji TList"));
 	//Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
-	this->_SListInterLinear = new THashedStringList();
-	if(!this->_SListInterLinear) throw(Exception("Błąd allokacji THashedStringList."));
+	this->_SListGrecInterLinear = new THashedStringList();
+	if(!this->_SListGrecInterLinear) throw(Exception("Błąd allokacji THashedStringList."));
+	//Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Starego Testamentu, w formie interlinearne, hebrajsko-polskiej //[21-07-2026]
+	this->_SListHbrInterlinear = new THashedStringList();
+	if(!this->_SListHbrInterlinear) throw(Exception("Błąd allokacji THashedStringList."));
+
 	this->_LoadAllTranslates(_PathDir);//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału
 }
 //--------------------------------------------------------------------------
@@ -366,7 +370,28 @@ GsReadBibleTextClass::~GsReadBibleTextClass()
 	//		tłumaczeń i wybranego rozdziału
 	this->_ClearListAllTrChap(true); //Lista wybranego rozdziału i księgi, jest czyszczona i likwidowana!!!
 	//Likwidacja objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
-	if(this->_SListInterLinear) {delete this->_SListInterLinear; this->_SListInterLinear = nullptr;}
+	if(this->_SListGrecInterLinear) {delete this->_SListGrecInterLinear; this->_SListGrecInterLinear = nullptr;}
+  //Likwidacja objektu, klasy THashedStringList z danymi do wyświetlenia tekstu Starego Testamentu, w formie interlinearne, hebrajsko-polskiej //[21-07-2026]
+	THashedStringList *pHSListVers=nullptr; // Wskaźnik na bjekt tymczasowy
+  #if defined(_DEBUGINFO_)
+		int iLicz=0;
+	#endif
+	for(int i=0; i<this->_SListHbrInterlinear->Count; ++i)
+	{
+		if(this->_SListHbrInterlinear->Objects[i] == nullptr) continue;
+		pHSListVers = dynamic_cast<THashedStringList *>(this->_SListHbrInterlinear->Objects[i]);
+		if(pHSListVers)
+		{
+			delete pHSListVers; pHSListVers = nullptr;
+			#if defined(_DEBUGINFO_)
+				iLicz++;
+			#endif
+    }
+	}
+  #if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("%d elementów z wieloma pozycjami", ARRAYOFCONST((iLicz))));
+	#endif
+	if(this->_SListHbrInterlinear) {delete this->_SListHbrInterlinear; this->_SListHbrInterlinear = nullptr;}
 	GsReadBibleTextData::GsFreeGlobalImageList();	 //Likwidacja zmiennych klasy
 }
 //---------------------------------------------------------------------------
@@ -384,6 +409,9 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_P
 	this->uiCountPol=0; this->uiCountOryg=0;
 	TStringList *pSListExcludeTrans = new TStringList();
 	if(!pSListExcludeTrans) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+
+	THashedStringList *pSListTempHbrInterlinear = new THashedStringList(); // Tymczasowy objekt pomocniczy do intrlini hebrajsko-polskiej //[21-07-2026]
+	if(!pSListTempHbrInterlinear) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
 	//Odczyt z pliku ini, tłumaczeń wykluczonych
 	pSListExcludeTrans->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_TranslatesSection_Main, GlobalVar::GlobalIni_ExcludeTranslates, "");
 	//Odczyt wszystkich dostępnych tłumaczeń
@@ -397,7 +425,6 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_P
 	GlobalVar::SDirTranslatesList = pSortedListFileTrans->ToStringArray();
 	UnicodeString ustrNameTranslate; //[09-12-2023]
 	//---
-	//for(int i=0; i<pSortedListFileTrans->Count; ++i)
 	for(int i=0; i<pSortedListFileTrans->Count; ++i)
 	{
 		//Dodanie opisów tłumaczeń, niezależnie od ich aktyawacji
@@ -434,12 +461,46 @@ bool __fastcall GsReadBibleTextClass::_LoadAllTranslates(const UnicodeString &_P
 //		GsDebugClass::WriteDebug(Format("gnt: \"%s\" - %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear,
 //			GlobalVar::Global_custrPathFileWordVersesExistHbr))));
 //	#endif
-  // Wczytanie słownika interlinearnego, grecko-polskiego
-	if(TFile::Exists(GlobalVar::Global_custrPathFileInterlinear))
-		{this->_SListInterLinear->LoadFromFile(GlobalVar::Global_custrPathFileInterlinear, TEncoding::UTF8);}
-	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+	// Wczytanie danych intrlinearnych grecko-polskich
+	if(TFile::Exists(GlobalVar::Global_custrPathGrecFileInterlinear))
+		{this->_SListGrecInterLinear->LoadFromFile(GlobalVar::Global_custrPathGrecFileInterlinear, TEncoding::UTF8);}
+	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathGrecFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
+	// Wczytanie danych intrlinearnych hebrajsko-polskich //[21-07-2026]
+	THashedStringList *pHSListManyStrong=nullptr;
+	const unsigned char cucDelimit = '|'; // Znak cięcia lini;
+	#if defined(_DEBUGINFO_)
+		int iLicz=0;
+	#endif
+	if(TFile::Exists(GlobalVar::Global_custrPathHbrFileInterlinear))
+	{
+		pSListTempHbrInterlinear->LoadFromFile(GlobalVar::Global_custrPathHbrFileInterlinear, TEncoding::UTF8);
+		for(int i=0; i<pSListTempHbrInterlinear->Count; ++i)
+		//for(int i=0; i<100; ++i)
+		{
+			if(pSListTempHbrInterlinear->Strings[i].Pos("|") > 0)
+			{
+				pHSListManyStrong = new THashedStringList();
+				if(!pHSListManyStrong) throw(Exception("Błąd inicjalizacji danych THashedStringList"));
+
+				pHSListManyStrong->Delimiter = cucDelimit;
+				pHSListManyStrong->StrictDelimiter = true;
+				pHSListManyStrong->DelimitedText = pSListTempHbrInterlinear->Strings[i].SubString(11, 100);
+
+				this->_SListHbrInterlinear->AddObject(pSListTempHbrInterlinear->Strings[i], pHSListManyStrong);
+				#if defined(_DEBUGINFO_)
+					iLicz++;
+				#endif
+			}
+			else this->_SListHbrInterlinear->AddObject(pSListTempHbrInterlinear->Strings[i], nullptr);
+		}
+	}
+	else MessageBox(NULL, Format("Brak pliku: %s", ARRAYOFCONST((GlobalVar::Global_custrPathHbrFileInterlinear))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 	//---
+	#if defined(_DEBUGINFO_)
+		GsDebugClass::WriteDebug(Format("%d elementów z wieloma pozycjami", ARRAYOFCONST((iLicz))));
+	#endif
 	if(pSListExcludeTrans) {delete pSListExcludeTrans; pSListExcludeTrans = nullptr;}
+	if(pSListTempHbrInterlinear) {delete pSListTempHbrInterlinear; pSListTempHbrInterlinear = nullptr;} // Tymczasowy objekt pomocniczy do intrlini hebrajsko-polskiej //[21-07-2026]
 	if(pSortedListFileTrans) {delete pSortedListFileTrans; pSortedListFileTrans = nullptr;}
 	//---
 	return true;
@@ -3211,22 +3272,22 @@ void __fastcall GsBarSelectVers::_DisplayVers()
 		if(((this->_FucSelectBook) > ciMinSelectBookNewTestament) && ((this->_FucSelectBook) < ciMaxSelectBookNewTestament))
 		{
 			pGsPanelSelectVers->_pPanelSGridInterlinearVers->Visible = true; //[01-06-2026]
-			pGsPanelSelectVers->_DisplayInterlinear(this->_FucSelectBook+1, this->_FucSelectChapt+1, this->_FucSelectVers);
+			pGsPanelSelectVers->_EnTypeSelectVers = enTypeSelectV_Grec; //[24-07-2026]
+			pGsPanelSelectVers->_DisplayGrecInterlinear(this->_FucSelectBook+1, this->_FucSelectChapt+1, this->_FucSelectVers);
 		}
-		else
+		else // Wyświetlenie w sposób interlinearny wersetu  Starego Testamentu - Księgi liczone od "0"
 		{
-			pGsPanelSelectVers->_pPanelSGridInterlinearVers->Visible = false; //[01-06-2026]
+			pGsPanelSelectVers->_pPanelSGridInterlinearVers->Visible = true;//false; //[01-06-2026]
+			pGsPanelSelectVers->_EnTypeSelectVers = enTypeSelectV_Hbr; //[24-07-2026]
+			pGsPanelSelectVers->_DisplayHbrInterlinear(this->_FucSelectBook+1, this->_FucSelectChapt+1, this->_FucSelectVers); //[22-07-2026]
 		}
 		//Odczyt komentarza
 		ustrCreateName = Format("%.3u%.3u%.3u%s",
 			ARRAYOFCONST((this->_FucSelectBook + 1, this->_FucSelectChapt + 1, this->_FucSelectVers, GlobalVar::Global_custrExtendCommentsFiles)));
 		ustrCreateFullPathName = TPath::Combine(GlobalVar::Global_custrPathDirComments, ustrCreateName);
 
-		if(pGsPanelSelectVers && pGsPanelSelectVers->_pEditComment->Visible)
-		{
-			pGsPanelSelectVers->_pEditComment->ClearEditor(); //[28-10-2023]
-			pGsPanelSelectVers->_pEditComment->LoadEditorFromFile(ustrCreateFullPathName);
-		}
+		pGsPanelSelectVers->_pEditComment->ClearEditor(); //[28-10-2023]
+		pGsPanelSelectVers->_pEditComment->LoadEditorFromFile(ustrCreateFullPathName);
 	}
 	__finally
 	{
@@ -3408,11 +3469,14 @@ void __fastcall GsBarSelectVers::Resize()
 /****************************************************************************
  *													KLASA GsPanelSelectVers													*
  ****************************************************************************/
-enum{enRow_StrongNumber, enRow_GreckWord, enRow_PolWord, enRow_Count //Numery rzędów w objekcie TStringGrid w widoku interlinearnym
+enum{enRow_StrongNumber, enRow_OrginalWord, enRow_PolWord, enRow_Count, //Numery rzędów w objekcie TStringGrid w widoku interlinearnym
 		};
 // Rdzeń adresu strony z tłumaczeniami kodów Stronga //[01-06-2026]
-const UnicodeString custrRunHTMLNumberStrongGreek = "https://bibliaapologety.com/Projekt_Grecki/Greckie_strongi_html/";//G233.html";
-const int ciDefaultColumnsWidth = 168; // Domyślna szerokość kolumn w objekcie this->_pSGridInterlinearVers, klasy TStringGrid
+const UnicodeString custrRunHTMLNumberStrongGreek = "https://bibliaapologety.com/Projekt_Grecki/Greckie_strongi_html/",//G233.html"
+										custrRunHTMLNumberStrongHbr = "https://bibliaapologety.com/Projekt_Hebrajski/Hebrajskie_strongi_html/"; //H3.html" //[24-07-2026]
+const int ciGsPSelectDefaultColumnsWidth = 168, // Domyślna szerokość kolumn w objekcie this->_pSGridInterlinearVers, klasy TStringGrid
+					ciGsPSelectWinCommentsMaxHeight = 200, ciGsPSelectWinCommentsMaxWidth=1100, //[25-07-2026]
+					ciGsPSelectWinHeightTopBar = GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION); //[25-07-2026]
 
 __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigned char _cucBook, const unsigned char _cucChapt,
 																								const unsigned char _cucVers)
@@ -3431,7 +3495,8 @@ __fastcall GsPanelSelectVers::GsPanelSelectVers(TComponent* Owner, const unsigne
 	//---
   this->_pManagerSuperDictionaries = new ManagerSuperDictionaries(GlobalVar::Global_custrPathGrecSuperDictionary,
 		GlobalVar::Global_custrPathHbrSuperDictionary);
-  this->_pManagerSuperDictionaries->ReadGrecDictionary();
+	if(!this->_pManagerSuperDictionaries) throw(Exception("Błąd inicjalizacji objektu ManagerSuperDictionarys"));
+	this->_pManagerSuperDictionaries->ReadGrecDictionary();
 	this->_pManagerSuperDictionaries->ReadHbrDictionary();
 }
 //---------------------------------------------------------------------------
@@ -3457,23 +3522,43 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	TCustomPanel::CreateWnd();
 	//Własny kod.
 	this->Font->Size = 12;
-	//---
-	if(!this->_pManagerSuperDictionaries) throw(Exception("Błąd inicjalizacji objektu ManagerSuperDictionarys"));
-		//---Przyciski główne
+	//---Przyciski główne
 	this->_pGsBarSelectVers = new GsBarSelectVers(this, this->ucSetBook, this->ucSetChapt, this->ucSetVers);
 	if(!this->_pGsBarSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsBarSelectVers"));
 	this->_pGsBarSelectVers->Parent = this;
 	this->_pGsBarSelectVers->Align = alTop;
 	this->_pGsBarSelectVers->_pGsPanelSelectVers = this;
-	// Panel dla TStringGrida, this->_pSGridInterlinearVers //[01-06-2026]
-	this->_pPanelSGridInterlinearVers = new TPanel(this);
+		//---Wyświetlenie wersetów
+	this->_pWebBrowser = new TWebBrowser(this);
+	if(!this->_pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+	this->_pWebBrowser->TOleControl::Parent = this;
+	this->_pWebBrowser->Align = alClient;
+	this->_pWebBrowser->AlignWithMargins = true;
+	this->_pWebBrowser->Offline = true;
+	this->_pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
+	this->_pWebBrowser->SetFocus();
+	// Stworzenie panelu z objektem klasy TStringGrid, z widokiem interlinearnym wybranego wersetu
+	this->_CreatePanelViewInterlinearSelectVers(); //[20-07-2026]
+  // Stworzenie okna z edytorem notatek
+	this->_CreateWindowCommentVers(); //25-07-2026]
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelSelectVers::_CreatePanelViewInterlinearSelectVers() //[20-07-2026]
+/**
+	OPIS METOD(FUNKCJI): Stworzenie panelu z objektem klasy TStringGrid, z widokiem interlinearnym wybranego wersetu
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+  this->_pPanelSGridInterlinearVers = new TPanel(this);
 	if(!this->_pPanelSGridInterlinearVers) throw(Exception("Nie dokonano inicjalizacji objektu TPanel"));
 	this->_pPanelSGridInterlinearVers->Parent = this;
 	this->_pPanelSGridInterlinearVers->Align = alBottom;
 	this->_pPanelSGridInterlinearVers->AlignWithMargins = true;
 	this->_pPanelSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
-	this->_pPanelSGridInterlinearVers->Height = 18 * -this->_pPanelSGridInterlinearVers->Font->Height;
-	this->_pPanelSGridInterlinearVers->Visible = false;
+	this->_pPanelSGridInterlinearVers->Height = this->Height / 2;//18 * -this->_pPanelSGridInterlinearVers->Font->Height;
+	//this->_pPanelSGridInterlinearVers->Visible = true;
 	this->_pPanelSGridInterlinearVers->BevelOuter = bvNone;
 	// Panel na przyciski dla objektu, klasy TStringGrid //[01-06-2026]
 	this->_pPanelButtons = new TPanel(this->_pPanelSGridInterlinearVers);
@@ -3511,7 +3596,25 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pButtonStrongAplic->StyleElements = TStyleElements() << seClient << seBorder;
 	this->_pButtonStrongAplic->Enabled = false;
 	this->_pButtonStrongAplic->OnClick = this->_OnClickButtonSGrid;
-	//Objekt klasy TStringGrid z interlinearnym widokiem polsko-greckim
+  // Przycisk pokazywania lub ukrywania okna edycji komentarzy //[25-07-2026]
+	this->_pButtonWindowComment = new TSpeedButton(this->_pPanelButtons);
+	if(!this->_pButtonWindowComment) throw(Exception("Błąd inicjalizacji klasy TSpeedButton"));
+	this->_pButtonWindowComment->Parent = this->_pPanelButtons;
+	this->_pButtonWindowComment->Font->Style = TFontStyles() << fsBold;
+	this->_pButtonWindowComment->Font->Color = clRed;
+	this->_pButtonWindowComment->Align = alTop;
+	this->_pButtonWindowComment->Top = this->_pButtonStrongWeb->Top + this->_pButtonStrongWeb->Height;
+	this->_pButtonWindowComment->AlignWithMargins = true;
+	this->_pButtonWindowComment->Height = GsReadBibleTextData::_GsImgListDataLarge->Height + 8;
+	this->_pButtonWindowComment->Images = GsReadBibleTextData::_GsImgListDataLarge;
+	this->_pButtonWindowComment->ImageIndex = enImageLargeIndex_EditComments;
+	this->_pButtonWindowComment->StyleElements = TStyleElements() << seClient << seBorder;
+  this->_pButtonWindowComment->Caption = "Okno\nedytora";
+  this->_pButtonWindowComment->GroupIndex = 1;
+	this->_pButtonWindowComment->Down = true;
+	this->_pButtonWindowComment->AllowAllUp = true;
+	this->_pButtonWindowComment->OnClick = this->_OnClickSpeedButtonSGrid;
+	//Objekt klasy TStringGrid z interlinearnym widokiem grecko-polskim i hebrajsko-polskim
 	this->_pSGridInterlinearVers = new TStringGrid(this->_pPanelSGridInterlinearVers);
 	if(!this->_pSGridInterlinearVers) throw(Exception("Nie dokonano inicjalizacji objektu TStringGrid"));
 	this->_pSGridInterlinearVers->Parent = this->_pPanelSGridInterlinearVers;
@@ -3521,9 +3624,9 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	this->_pSGridInterlinearVers->FixedCols = 0;
 	this->_pSGridInterlinearVers->FixedRows = 0;
 	this->_pSGridInterlinearVers->Font->Quality = TFontQuality::fqClearType;
-  this->_pSGridInterlinearVers->Font->Size = 11;
+	this->_pSGridInterlinearVers->Font->Size = 11;
 	this->_pSGridInterlinearVers->DefaultRowHeight = 2 * -this->_pSGridInterlinearVers->Font->Height;
-	this->_pSGridInterlinearVers->DefaultColWidth = ciDefaultColumnsWidth;
+	this->_pSGridInterlinearVers->DefaultColWidth = ciGsPSelectDefaultColumnsWidth;
 	this->_pSGridInterlinearVers->Options = TGridOptions() << goVertLine >> goHorzLine;
 	this->_pSGridInterlinearVers->OnDrawCell = this->_DrawGridInterlinearVersCell;
 	this->_pSGridInterlinearVers->OnSelectCell = this->_SelectGridInterlinearVersCell;
@@ -3535,23 +3638,35 @@ void __fastcall GsPanelSelectVers::CreateWnd()
 	if(!this->_pLabelTransWord) throw(Exception("Nie dokonano inicjalizacji objektu TSLabel"));
 	this->_pLabelTransWord->Parent = this->_pPanelSGridInterlinearVers;
 	this->_pLabelTransWord->Align = alBottom;
-  this->_pLabelTransWord->WordWrap = true;
-	//---Wyświetlenie wersetów
-	this->_pWebBrowser = new TWebBrowser(this);
-	if(!this->_pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
-	this->_pWebBrowser->TOleControl::Parent = this;
-	this->_pWebBrowser->Align = alClient;
-	this->_pWebBrowser->AlignWithMargins = true;
-	this->_pWebBrowser->Offline = true;
-	this->_pWebBrowser->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą stroną.
-	this->_pWebBrowser->SetFocus();
+	this->_pLabelTransWord->WordWrap = true;
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelSelectVers::_CreateWindowCommentVers()
+/**
+	OPIS METOD(FUNKCJI): Stworzenie okna z edytorem notatek [25-07-2026]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	const int ciDummy=1, ciTopStart=48;
+	this->_pWindowComment = new TForm(this, ciDummy);
+	if(!this->_pWindowComment) throw(Exception("Nie dokonano inicjalizacji objektu TForm"));
+	this->_pWindowComment->Parent = this;
+	this->_pWindowComment->BorderStyle = bsSingle; //bsToolWindow
+	this->_pWindowComment->Caption = "Edytor komentarzy do wybranego wersetu";
+	this->_pWindowComment->Width = ciGsPSelectWinCommentsMaxWidth;
+	this->_pWindowComment->Height = ciGsPSelectWinCommentsMaxHeight;
+	this->_pWindowComment->Show();
+	this->_pWindowComment->Left = (Screen->Width / 2 - (this->_pWindowComment->Width / 2)) - this->Parent->Left;
+	this->_pWindowComment->Top = ciTopStart;
+  this->_pWindowComment->BorderIcons = TBorderIcons();
 	//---Edycja komentarza
-	this->_pEditComment = new GsEditorClass(this);
+	this->_pEditComment = new GsEditorClass(this->_pWindowComment);
 	if(!this->_pEditComment) throw(Exception("Błąd inicjalizacji klasy GsEditorClass"));
-	this->_pEditComment->Parent = this;
-	this->_pEditComment->Align = alBottom;
+	this->_pEditComment->Parent = this->_pWindowComment;
+	this->_pEditComment->Align = alClient;
 	this->_pEditComment->AlignWithMargins = true;
-	this->_pEditComment->Height = 140;
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::DestroyWnd()
@@ -3566,7 +3681,7 @@ void __fastcall GsPanelSelectVers::DestroyWnd()
 	TCustomPanel::DestroyWnd();
 }
 //---------------------------------------------------------------------------
-void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers)
+void __fastcall GsPanelSelectVers::_DisplayGrecInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers)
 /**
 	OPIS METOD(FUNKCJI): Wyświetlenie interlinearnego układu dla greckiego oryginału
 	OPIS ARGUMENTÓW:
@@ -3576,22 +3691,22 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 */
 {
 	SuperDictionaryItemGrec *pSuperDictionaryItemGrec=nullptr; //[17-07-2026]
-	SuperDictionaryItemHbr *pSuperDictionaryItemHbr=nullptr; //[17-07-2026]
 	int iHeight=0, iTempHeight=0, iStrongNumber=1; //[12-07-2026] //[17-07-2026]
 	TRect DefMyRect = TRect(0, 0, this->_pSGridInterlinearVers->DefaultColWidth, 0); //[12-07-2026]
 
-	if((cucBook < GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStartRange+1) || (cucBook > GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStopRange+1))
-	{
-		//Wyczyszczenie zawartości objektu, klasy TStringGrid
-		for(int iRow=0; iRow<this->_pSGridInterlinearVers->RowCount; ++iRow)
-		{
-			for(int iCol=0; iCol<this->_pSGridInterlinearVers->ColCount; ++iCol)
-			{
-				this->_pSGridInterlinearVers->Cells[iCol][iRow] = "";
-			}
-		}
-		return;
-	}
+//	if((cucBook < GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStartRange+1) ||
+//		(cucBook > GsReadBibleTextData::GsPairsGroupBible[en_GrSearch_New].ucStopRange+1))
+//	{
+//		//Wyczyszczenie zawartości objektu, klasy TStringGrid
+//		for(int iRow=0; iRow<this->_pSGridInterlinearVers->RowCount; ++iRow)
+//		{
+//			for(int iCol=0; iCol<this->_pSGridInterlinearVers->ColCount; ++iCol)
+//			{
+//				this->_pSGridInterlinearVers->Cells[iCol][iRow] = "";
+//			}
+//		}
+//		return;
+//	}
 	//---
 	THashedStringList *pHSListSelectVers = new THashedStringList();
 	if(!pHSListSelectVers)
@@ -3600,34 +3715,34 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 	unsigned char ucBook, ucChapt, ucVers; //Numery odczytane
 	this->_pSGridInterlinearVers->Canvas->Font = this->_pSGridInterlinearVers->Font;
 	// Pętla przez wszystkie linie interlinearnego słownika, grecko-polskiego.
-	// Słownik został wczytany do objektu, klasy THashedStringList: GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear
-	for(int i=0; i<GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Count; ++i)
+	// Słownik został wczytany do objektu, klasy THashedStringList: GsReadBibleTextData::pGsReadBibleTextClass->_SListGrecInterLinear
+	for(int i=0; i<GsReadBibleTextData::pGsReadBibleTextClass->_SListGrecInterLinear->Count; ++i)
 	{
-		ucBook = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(1, 3).ToInt();
-		ucChapt = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(4, 3).ToInt();
-		ucVers = GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i].SubString(7, 3).ToInt();
+		ucBook = GsReadBibleTextData::pGsReadBibleTextClass->_SListGrecInterLinear->Strings[i].SubString(1, 3).ToInt();
+		ucChapt = GsReadBibleTextData::pGsReadBibleTextClass->_SListGrecInterLinear->Strings[i].SubString(4, 3).ToInt();
+		ucVers = GsReadBibleTextData::pGsReadBibleTextClass->_SListGrecInterLinear->Strings[i].SubString(7, 3).ToInt();
 		if((ucBook==cucBook) && (ucChapt==cucChapt) && (ucVers==cucVers))
 			// Zliczanie słów w wersecie
-			{pHSListSelectVers->Add(GsReadBibleTextData::pGsReadBibleTextClass->_SListInterLinear->Strings[i]);}
+			{pHSListSelectVers->Add(GsReadBibleTextData::pGsReadBibleTextClass->_SListGrecInterLinear->Strings[i]);}
 	}
 	if(pHSListSelectVers->Count > 0) this->_pSGridInterlinearVers->ColCount = pHSListSelectVers->Count;	//Kolumn tyle, ile słów w wersecie
 	for(int iIndex=0; iIndex<pHSListSelectVers->Count; ++iIndex)
 	{
 		TRect MyRect = DefMyRect;
-    // Odczyt danych dla konkretnego słowa, według numeru Stronga //[17-07-2026]
+		// Odczyt danych dla konkretnego słowa, według numeru Stronga //[17-07-2026]
 		iStrongNumber = pHSListSelectVers->Strings[iIndex].Delete(1, 10).SubString(2, 4).ToIntDef(1); //[17-07-2026]
 		pSuperDictionaryItemGrec = this->_pManagerSuperDictionaries->GetStrongGrec(iStrongNumber); //[17-07-2026]
 		if(pSuperDictionaryItemGrec)
 		{
 			this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Strings[iIndex].Delete(1, 10).SubString(1, 5); //G0123
-			this->_pSGridInterlinearVers->Cells[iIndex][enRow_GreckWord] = pSuperDictionaryItemGrec->ustrGrecWord; //Słowo greckie
+			this->_pSGridInterlinearVers->Cells[iIndex][enRow_OrginalWord] = pSuperDictionaryItemGrec->ustrGrecWord; //Słowo greckie
 
 			iTempHeight = DrawText(this->_pSGridInterlinearVers->Canvas->Handle, pSuperDictionaryItemGrec->ustrTranslate.c_str(), //Tłumaczenie
   			-1, &MyRect, DT_CALCRECT | DT_WORDBREAK); //[17-07-2026]
   		if(iTempHeight > iHeight) iHeight = iTempHeight;
 
-  		this->_pSGridInterlinearVers->ColWidths[enRow_PolWord] = MyRect.Right;
-  		this->_pSGridInterlinearVers->RowHeights[enRow_PolWord] = iHeight;
+			this->_pSGridInterlinearVers->ColWidths[enRow_PolWord] = MyRect.Right;
+			this->_pSGridInterlinearVers->RowHeights[enRow_PolWord] = iHeight;
 			this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pSuperDictionaryItemGrec->ustrTranslate; //[17-07-2026]
 		}
 	}
@@ -3642,6 +3757,84 @@ void __fastcall GsPanelSelectVers::_DisplayInterlinear(const unsigned char cucBo
 	DrawText modyfikuje prawą stronę prostokąta tak, aby ograniczała ostatni znak w linii.
 	W obu przypadkach DrawText zwraca wysokość sformatowanego tekstu, ale nie rysuje tekstu.
 	*/
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelSelectVers::_DisplayHbrInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers)
+/**
+	OPIS METOD(FUNKCJI): Wyświetlenie interlinearnego układu dla hebrajskiego oryginału
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+	//[22-07-2026]
+*/
+{
+	SuperDictionaryItemHbr *pSuperDictionaryItemHbr=nullptr; //[23-07-2026]
+	int iHeight=0, iTempHeight=0, iStrongNumber=1; //[23-07-2026]
+	TRect DefMyRect = TRect(0, 0, this->_pSGridInterlinearVers->DefaultColWidth, 0);
+	//---
+	THashedStringList *pHSListManyStrong=nullptr;
+  THashedStringList *pHSListSelectVers = new THashedStringList();
+	if(!pHSListSelectVers)
+		throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
+	//---
+  unsigned char ucBook, ucChapt, ucVers; //Numery odczytane
+	this->_pSGridInterlinearVers->Canvas->Font = this->_pSGridInterlinearVers->Font;
+	// Pętla przez wszystkie linie interlinearnego słownika, hebrajsko-polskiego.
+	// Słownik został wczytany do objektu, klasy THashedStringList: GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear
+	for(int i=0; i<GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear->Count; ++i)
+	{
+		ucBook = GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear->Strings[i].SubString(1, 3).ToInt();
+		ucChapt = GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear->Strings[i].SubString(4, 3).ToInt();
+		ucVers = GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear->Strings[i].SubString(7, 3).ToInt();
+		if((ucBook==cucBook) && (ucChapt==cucChapt) && (ucVers==cucVers))
+		// Zliczanie słów w wersecie
+		{
+			pHSListSelectVers->AddObject(GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear->Strings[i],
+				GsReadBibleTextData::pGsReadBibleTextClass->_SListHbrInterlinear->Objects[i]);
+		}
+	}
+	if(pHSListSelectVers->Count > 0) this->_pSGridInterlinearVers->ColCount = pHSListSelectVers->Count;	//Kolumn tyle, ile słów w wersecie
+
+  for(int iIndex=0; iIndex<pHSListSelectVers->Count; ++iIndex)
+	{
+		TRect MyRect = DefMyRect;
+
+		// Czy stnieje podstrinlista z lista numerów Stronga
+		pHSListManyStrong = dynamic_cast<THashedStringList *>(pHSListSelectVers->Objects[iIndex]);
+		if(pHSListManyStrong == nullptr)
+		// Jeden numer Stronga
+		{
+			this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListSelectVers->Strings[iIndex].Delete(1, 10).SubString(1, 5); //H0123
+			// Odczyt danych dla konkretnego słowa, według numeru Stronga //[23-07-2026]
+			iStrongNumber = pHSListSelectVers->Strings[iIndex].Delete(1, 10).SubString(2, 4).ToIntDef(1); //[23-07-2026]
+			pSuperDictionaryItemHbr = this->_pManagerSuperDictionaries->GetStrongHbr(iStrongNumber); //[23-07-2026]
+
+			if(pSuperDictionaryItemHbr)
+			{
+				this->_pSGridInterlinearVers->Cells[iIndex][enRow_OrginalWord] = pSuperDictionaryItemHbr->ustrHbrWord;
+			}
+		}
+		else // Wiele numerów Stronga
+		{
+			this->_pSGridInterlinearVers->Cells[iIndex][enRow_StrongNumber] = pHSListManyStrong->Strings[0];
+			iStrongNumber = pHSListManyStrong->Strings[0].SubString(2, 4).ToIntDef(1); // Pierwszy numer Stronga z wielu //[23-07-2026]
+			pSuperDictionaryItemHbr = this->_pManagerSuperDictionaries->GetStrongHbr(iStrongNumber); //[23-07-2026]
+
+			if(pSuperDictionaryItemHbr)
+			{
+				this->_pSGridInterlinearVers->Cells[iIndex][enRow_OrginalWord] = pSuperDictionaryItemHbr->ustrHbrWord;
+			}
+		}
+		iTempHeight = DrawText(this->_pSGridInterlinearVers->Canvas->Handle, pSuperDictionaryItemHbr->ustrTranslate1.c_str(), //Tłumaczenie
+				-1, &MyRect, DT_CALCRECT | DT_WORDBREAK); //[24-07-2026]
+		if(iTempHeight > iHeight) iHeight = iTempHeight;
+
+    this->_pSGridInterlinearVers->ColWidths[enRow_PolWord] = MyRect.Right;
+		this->_pSGridInterlinearVers->RowHeights[enRow_PolWord] = iHeight;
+		this->_pSGridInterlinearVers->Cells[iIndex][enRow_PolWord] = pSuperDictionaryItemHbr->ustrTranslate1; //[24-07-2026]
+	}
+
+	if(pHSListSelectVers) {delete pHSListSelectVers; pHSListSelectVers = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsPanelSelectVers::_DrawGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol, System::LongInt ARow, const System::Types::TRect &Rect, TGridDrawState State)
@@ -3671,7 +3864,7 @@ void __fastcall GsPanelSelectVers::_DrawGridInterlinearVersCell(System::TObject*
 	pSGrid->Canvas->Font = pSGrid->Font;;
 	pSGrid->Canvas->Font->Style = TFontStyles(); // [30-05-2026]
 
-	if(ARow == enRow_GreckWord)
+	if(ARow == enRow_OrginalWord)
 	{
 		pSGrid->Canvas->Font->Color = clRed;
 		pSGrid->Canvas->Font->Style = TFontStyles() << fsBold;
@@ -3733,15 +3926,40 @@ void __fastcall GsPanelSelectVers::_OnClickButtonSGrid(System::TObject* Sender)
 		case enImageLargeIndex_SearchStrongInterlinear:
 		{
 			if(this->_FSetStrongSelect) this->_FSetStrongSelect(pButton); //[02-06-2026]
-    }
+		}
 		break;
 		//---
 		case enImageLargeIndex_SearchStrongWeb:
 		{
-			ustrGetHTML = Format("%sG%d.html", ARRAYOFCONST((custrRunHTMLNumberStrongGreek, iNumberStrong)));
+			if(this->_EnTypeSelectVers == enTypeSelectV_Grec) ustrGetHTML = Format("%sG%d.html", ARRAYOFCONST((custrRunHTMLNumberStrongGreek, iNumberStrong)));
+			else if(this->_EnTypeSelectVers == enTypeSelectV_Hbr) ustrGetHTML = Format("%sH%d.html", ARRAYOFCONST((custrRunHTMLNumberStrongHbr, iNumberStrong)));
+
 			ShellExecute(this->Handle, nullptr , ustrGetHTML.c_str(), NULL, NULL, SW_SHOWNORMAL);
     }
 		break;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall GsPanelSelectVers::_OnClickSpeedButtonSGrid(System::TObject* Sender)
+/**
+	OPIS METOD(FUNKCJI): Wywołanie okna z edycja komentarzy //[25-07-2026]
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI):
+*/
+{
+	TSpeedButton *pSButton = dynamic_cast<TSpeedButton *>(Sender);
+	if(!pSButton) return;
+	//---
+	if(!pSButton->Down)
+	{
+		this->_pWindowComment->Height = ciGsPSelectWinHeightTopBar;
+		this->_pWindowComment->Top = this->_pSGridInterlinearVers->Top + this->_pSGridInterlinearVers->Height - this->_pWindowComment->Height;
+	}
+	else
+	{
+		this->_pWindowComment->Height = ciGsPSelectWinCommentsMaxHeight;
+		this->_pWindowComment->Top = (Screen->Height / 2 - (this->_pWindowComment->Height / 2)) - this->Parent->Top;
 	}
 }
 /****************************************************************************

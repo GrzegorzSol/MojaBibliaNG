@@ -13,15 +13,14 @@ class TSelectVersWindow : public TForm
 {
 __published:	// IDE-managed Components
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
-	void __fastcall FormShow(TObject *Sender);
-	void __fastcall FormActivate(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
 	GsPanelSelectVers *_pGsPanelSelectVers=nullptr;
 	const unsigned char _InputCucStartBook,
 											_InputCucStartChapt,
-											_InputCucStarVers;
+											_InputCucStartVers;
 	bool _InputBSelectComment;
 	void __fastcall _OnClickButtonSelectStrong(System::TObject* Sender);
 public:		// User declarations

@@ -55,7 +55,8 @@ struct GlobalVar
 														 Global_custrPathSetupsLogo, // Logo w oknie ustawień
 														 Global_custrPathBacgroundImageText, // Logo główne podkładu
 														 Global_custrPathBackgroundSDict, // Podkład graficzny w słowniku gp i hp
-														 Global_custrPathFileInterlinear, // Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+														 Global_custrPathGrecFileInterlinear, // Ścieżka dostępu do pliku ze słownikiem interlinearnym gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+														 Global_custrPathHbrFileInterlinear, // Ścieżka dostępu do pliku ze słownikiem interlinearnym hebrajsko-polskim, do wyświetlenia tłumaczenia interlinearnego //[21-07-2026]
 														 //[18-06-2026] // Scieżki dostępu do słowników i korkondancji
 														 Global_custrPathGrecSuperDictionary, // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
 														 Global_custrPathHbrSuperDictionary, // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)

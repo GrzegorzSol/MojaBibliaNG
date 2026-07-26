@@ -47,7 +47,8 @@ enum enReturnError {enR_NoError,					 //Brak błędu
 enum {//--- Ikony 32x32
 			enImageLargeIndex_SelectVers=0,
 			enImageLargeIndex_SearchStrongInterlinear,
-      enImageLargeIndex_SearchStrongWeb,
+			enImageLargeIndex_SearchStrongWeb,
+      enImageLargeIndex_EditComments,
 			//--- Ikony 16x16
 			//--- Grafika dla drzewa ksiąg biblijnych
 			enImageIndex_Root=0,						//0.Główny korzeń drzew
@@ -290,7 +291,7 @@ class GsReadBibleTextClass : public TObject
 	void __fastcall _GetNameIndependentTranslate(const int i, UnicodeString &NameTranslate); //Zwraca nazwę tłumaczenia niezależnie od jego statusu (aktywny, lub nie)
 	THashedStringList *__fastcall GetSelectBookTranslate(const int iGetTranslate, const int iGetBook); //Metoda zwraca wskażnik THashedStringList na pozycje określonej księgi i tłumaczenia
 	THashedStringList *__fastcall GetSelectBookOrgTranslate(int _iBook); //Metoda zwraca string listę greckiego tłumaczenia i wybranej, CAŁEJ księgi oryginalnej.
-	inline THashedStringList *GetListInterlinearGrec() {return this->_SListInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
+	inline THashedStringList *GetListInterlinearGrec() {return this->_SListGrecInterLinear;};	//Uzyskanie wskaźnika na listę z zawartościa pliku z danymi interlinearnymi, grecko-polskimi
 	void __fastcall _ViewSListBibleToHTML(TWebBrowser *_cWebBrowser, THashedStringList *_HStringInput, const DataDisplayTextAnyBrowser &DataDisplay);	//Przekształcenie dowolnej String listy wersetów, w wizualny tekst html
 	bool __fastcall _LoadAllTranslates(const UnicodeString &_PathDir);	//Załadowanie całego tekstu biblii, z odpowiednim wykonaniem ich podziału.
 	void __fastcall _ClearListAllTrChap(const bool bIsRemoveList=false);	//Zwolnienie zawartości listy _ListAllTrChap.
@@ -301,7 +302,8 @@ class GsReadBibleTextClass : public TObject
 	GsListItemTranslates *_GsListItemsTranslates=nullptr;	//Lista tłumaczeń aktywnych. Klas GsReadBibleTextItem
 	TStringList *_pSListAllNamesTranslates=nullptr; //[09-12-2023]String lista opisów wszystkich tłumaczeń, niezależnie od aktywacji tłumaczenia
 	TList *_ListAllTrChap=nullptr; //Lista klasy TList, zawierających tekst wszystkich dostępnych tłumaczeń, z wybranego rodziału.
-	THashedStringList *_SListInterLinear=nullptr; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
+	THashedStringList *_SListGrecInterLinear=nullptr, //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Nowego Testamentu, w formie interlinearne, grecko-polskiej
+										*_SListHbrInterlinear=nullptr; //Objekt, klasy THashedStringList z danymi do wyświetlenia tekstu Starego Testamentu, w formie interlinearne, hebrajsko-polskiej //[21-07-2026]
 	unsigned int uiCountPol, uiCountOryg; //Ilość polskich i oryginalnych tłumaczeń
 
 	public:
@@ -555,6 +557,8 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
  *	Klasa wizualna do wyświetlania wybranego wersetu,												*
  *	wybranego za pomocą objektu, klasy GsBarSelectVers											*
  ****************************************************************************/
+enum EnTypeSelectVers {enTypeSelectV_Grec=1000, enTypeSelectV_Hbr}; // Informacja czy otwarty werset Starego, czy Nowego Testamenu //[24-07-2026]
+
 class GsPanelSelectVers	: public TCustomPanel
 {
 	friend class GsBarSelectVers;
@@ -563,6 +567,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		__fastcall virtual ~GsPanelSelectVers();
 		//---
 		__property TNotifyEvent OnStrongSelect = {write = _FSetStrongSelect}; //[02-06-2026]
+		__property EnTypeSelectVers TypeSelectVers = {read = _EnTypeSelectVers}; //[26-07-2026]
 		//---
 		inline void __fastcall DisplayStart() {this->_pGsBarSelectVers->_DisplayVers();}; //Wyświetla wybrany werset
 		inline TStringGrid * __fastcall GetSGridInterlinearVers() {return this->_pSGridInterlinearVers;};
@@ -575,6 +580,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		virtual void __fastcall DestroyWnd();
 	private:
 		TNotifyEvent _FSetStrongSelect; //[02-06-2026]
+		EnTypeSelectVers _EnTypeSelectVers=enTypeSelectV_Hbr; //[24-07-2026]
 		//---
 		UnicodeString _ustrSelectNumberStrong; //[01-06-2026]
 		GsBarSelectVers *_pGsBarSelectVers=nullptr;
@@ -586,11 +592,17 @@ class GsPanelSelectVers	: public TCustomPanel
 					 *_pPanelButtons=nullptr; //[01-06-2026]
 		TButton *_pButtonStrongWeb=nullptr, //[31-05-2026]
 						*_pButtonStrongAplic=nullptr; //[02-06-2026]
+		TSpeedButton *_pButtonWindowComment=nullptr; //[25-07-2026]
 		TStringGrid *_pSGridInterlinearVers=nullptr; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
-    TLabel *_pLabelTransWord=nullptr; // Objekt, klasy TLabel, z tłumaczeniem zaznaczonego słowa w wersecie //[12-07-2026]
+		TLabel *_pLabelTransWord=nullptr; // Objekt, klasy TLabel, z tłumaczeniem zaznaczonego słowa w wersecie //[12-07-2026]
+    TForm *_pWindowComment=nullptr; // Okno z edytorem komentarzy //[25-07-2026]
 		//---
+		void __fastcall _CreatePanelViewInterlinearSelectVers(); // Stworzenie panelu z objektem klasy TStringGrid, z widokiem interlinearnym wybranego wersetu
+    void __fastcall _CreateWindowCommentVers(); // Stworzenie okna z edytorem notatek [25-07-2026]
 		void __fastcall _OnClickButtonSGrid(System::TObject* Sender);
-		void __fastcall _DisplayInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla greckiego oryginału
+		void __fastcall _OnClickSpeedButtonSGrid(System::TObject* Sender); //[25-07-2026]
+		void __fastcall _DisplayGrecInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla greckiego oryginału
+		void __fastcall _DisplayHbrInterlinear(const unsigned char cucBook, const unsigned char cucChapt, const unsigned char cucVers); //Wyświetlenie interlinearnego układu dla hebrajskiego oryginału //[22-07-2026]
 		void __fastcall _DrawGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol, System::LongInt ARow, const System::Types::TRect &Rect, TGridDrawState State);
 		void __fastcall _SelectGridInterlinearVersCell(System::TObject* Sender, System::LongInt ACol, System::LongInt ARow, bool &CanSelect);
 };
