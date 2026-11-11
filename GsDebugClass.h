@@ -2,6 +2,7 @@
 #define GsDebugClassH
 
 #include <winuser.h>
+#include <strsafe.h>
 //---------------------------------------------------------------------------
 class GsDebugClass
 {
@@ -15,17 +16,36 @@ class GsDebugClass
 		*/
 		{
 			// Utwórz lub przypnij konsolę
-			if(!AttachConsole(ATTACH_PARENT_PROCESS)) {AllocConsole();}
+			BOOL bAttached = AttachConsole(ATTACH_PARENT_PROCESS);
+      if(!bAttached)
+			{
+				AllocConsole();
+			}
+			else
+			{
+        // Sprawdź, czy STDOUT faktycznie istnieje
+				HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+				if(hOut == nullptr || hOut == INVALID_HANDLE_VALUE)
+				{
+					// Konsola rodzica jest bezużyteczna → utwórz własną
+					FreeConsole();
+					AllocConsole();
+				}
+			}
 
 			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
 			HWND hConsole = GetConsoleWindow();
 			if(hConsole && hOut)
 			{
 				// Usuń menu systemowe z paska okna
-				LONG style = GetWindowLong(hConsole, GWL_STYLE);
+				LONG style = GetWindowLongPtr(hConsole, GWL_STYLE);
 				style &= ~WS_SYSMENU; // Wyczyść flagę WS_SYSMENU
 				style &= ~WS_SIZEBOX; // Usuń możliwość przeciągania krawędzi
-				SetWindowLong(hConsole, GWL_STYLE, style);
+				SetWindowLongPtr(hConsole, GWL_STYLE, style);
+
+        SetWindowPos(hConsole, nullptr, 0, 0, 0, 0,
+					SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
 				SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_INTENSITY); //Tekst konsoli
 
@@ -57,7 +77,9 @@ class GsDebugClass
       cfi.FontFamily = FF_DONTCARE;
 			cfi.FontWeight = FW_NORMAL;
 
-			std::wcscpy_s(cfi.FaceName, LF_FACESIZE, L"Consolas"); // lub np. L"Lucida Console"
+      ZeroMemory(cfi.FaceName, sizeof(cfi.FaceName));
+			//std::wcscpy_s(cfi.FaceName, LF_FACESIZE, L"Consolas"); // lub np. L"Lucida Console"
+			StringCchCopy(cfi.FaceName, LF_FACESIZE, L"Consolas");
 
 			SetCurrentConsoleFontEx(hOut, FALSE, &cfi);
     }
@@ -71,10 +93,11 @@ class GsDebugClass
 		*/
 		{
 			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
+			DWORD written;
 			if(hOut)
 			{
 				_inStrWrite += "\n";
-				WriteConsole(hOut, _inStrWrite.c_str(), _inStrWrite.Length(), 0, 0);
+				WriteConsole(hOut, _inStrWrite.c_str(), _inStrWrite.Length(), &written, 0);
       }
 		}
 		//-----------------------------------------------------------------------
@@ -91,7 +114,7 @@ class GsDebugClass
 			DWORD written;
 
 			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt do konsoli
-			GetConsoleScreenBufferInfo(hOut, &screen);
+			if(!GetConsoleScreenBufferInfo(hOut, &screen)) return;
 			FillConsoleOutputCharacter(hOut, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
 			FillConsoleOutputAttribute(hOut, screen.wAttributes, screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
 			SetConsoleCursorPosition(hOut, topLeft);

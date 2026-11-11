@@ -29,7 +29,7 @@ enum { //Tag i dla TComboBox (wyborów: Tłumaczenia, księgi, rozdziału)
 };
 // Translinearne tłumaczenie hebrajskiej bibli (IBHP+) posiada w ksiedze Malachiasza czwarty rozdział,
 // który zawiera końcowe wersety trzeciego rozdziału w tłumaczeniach polskich
-const UnicodeString Gl_NameModifyChapterBook = "IBHP+"; //[10-08-2024]
+const UnicodeString Gl_NameModifyChapterBook = L"IBHP+"; //[10-08-2024]
 //---------------------------------------------------------------------------
 __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 	: TForm(Owner)
@@ -49,7 +49,7 @@ __fastcall TBooksSpecjalistWindow::TBooksSpecjalistWindow(TComponent* Owner)
 	this->ToolButtonPrevChapt->Tag = enToolButton_Prev;
 
 	this->pImageList16 = GsReadBibleTextData::GetImageList();
-	this->WebBrowserSpecText->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserSpecText->Navigate(WideString(L"about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	// Licznik okien tlumaczeń specjalistycznych
 	if(TBooksSpecjalistWindow::_siIndexSpecWindow < (GlobalVar::Global_cucMaxTranslatesSpecjalist - 1))
 	{
@@ -70,7 +70,7 @@ void __fastcall TBooksSpecjalistWindow::FormCreate(TObject *Sender)
 	GsReadBibleTextItem *pGsReadBibleTextItem=nullptr;
 
 	this->_pListSelectChapt = new THashedStringList();
-	if(!this->_pListSelectChapt) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pListSelectChapt) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	// Tworzenie PopupMenu
 	if(pGsObjectItemsSpec)
 	{
@@ -82,7 +82,7 @@ void __fastcall TBooksSpecjalistWindow::FormCreate(TObject *Sender)
 			if(pGsReadBibleTextItem)
 			{
 				TMenuItem *NewItem = new TMenuItem(this->PMenuSelectTrSpec);
-				if(!NewItem) throw(Exception("Błąd inicjalizacji klasy TMenuItem"));
+				if(!NewItem) throw(Exception(L"Błąd inicjalizacji klasy TMenuItem"));
 				this->PMenuSelectTrSpec->Items->Add(NewItem);
 				NewItem->Caption = pGsReadBibleTextItem->NameTranslate;
 				this->CBoxTranslatesList->AddItem(pGsReadBibleTextItem->NameTranslate, pGsReadBibleTextItem);
@@ -188,7 +188,7 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 				this->CBoxChaptersList->Items->BeginUpdate();
 				//for(int i=0; i<GsReadBibleTextData::GsInfoAllBooks[this->_iSelectBoks].ucCountChapt; ++i)
 				for(int i=0; i<ucTempMaxChapt; ++i)
-					{this->CBoxChaptersList->AddItem(Format("Rozdział: %d", ARRAYOFCONST(( i + 1))), nullptr);}
+					{this->CBoxChaptersList->AddItem(Format(L"Rozdział: %d", ARRAYOFCONST(( i + 1))), nullptr);}
 				this->CBoxChaptersList->Items->EndUpdate();
 				this->CBoxChaptersList->ItemIndex = 0;
 				this->CBoxSelectAllChange(this->CBoxChaptersList);
@@ -211,13 +211,13 @@ void __fastcall TBooksSpecjalistWindow::CBoxSelectAllChange(TObject *Sender)
 				}
 				this->_pListSelectChapt->EndUpdate();
 
-				this->STextInfoLoaded->Caption = Format("%s - %s, rozdział: %d", ARRAYOFCONST(( this->_pGsReadBibleTextItem->NameTranslate,
+				this->STextInfoLoaded->Caption = Format(L"%s - %s, rozdział: %d", ARRAYOFCONST(( this->_pGsReadBibleTextItem->NameTranslate,
 						 AppCTable_InfoAllBooks[this->_iSelectBoks].FullNameBook, pCBox->ItemIndex + 1)));
 
 				DataDisplayTextAnyBrowser SetDataDisplay;
 				SecureZeroMemory(&SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
 				SetDataDisplay.strBackgroundColor = GlobalVar::Global_ColorsAllTranslates[TBooksSpecjalistWindow::_siIndexSpecWindow - 1];//[19-05-2024]
-				SetDataDisplay.strNameFont = "Times New Roman";
+				SetDataDisplay.strNameFont = L"Times New Roman";
 				SetDataDisplay.iSizeFont = 14;
 				SetDataDisplay.pMemoryStream = nullptr;
 				SetDataDisplay.bIsHorizontLine = false;

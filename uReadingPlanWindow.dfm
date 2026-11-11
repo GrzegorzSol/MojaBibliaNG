@@ -147,8 +147,6 @@ object ReadingPlanWindow: TReadingPlanWindow
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 1
-    ExplicitWidth = 1228
-    ExplicitHeight = 846
     object SplitterSizeJournaling: TSplitter
       AlignWithMargins = True
       Left = 966

@@ -112,6 +112,7 @@ private:	// User declarations
 	GsLViewCommentsAllClass *pGsLViewCommentsAllClass=nullptr;
 	GsListBoxFavoritiesClass *pGsListBoxFavoritiesClass=nullptr;
 	GsSearchFavFilesClass *pGsSearchFavFilesClass=nullptr; //[12-10-2023]
+  static void __fastcall _GetVersionAllResources();
 	void __fastcall _AppException(TObject *Sender, Exception *pException);	//Obsługa błędów całej aplikacji
 	bool __fastcall _AppHelp(System::Word Command, NativeInt Data, bool &CallHelp);
 	void __fastcall _AppOnHint(TObject *Sender);

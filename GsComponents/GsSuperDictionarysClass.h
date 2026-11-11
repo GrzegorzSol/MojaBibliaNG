@@ -8,8 +8,8 @@
 #endif
 //#define _CREATESDICT_
 //---------------------------------------------------------------------------
-
-static const int ciMaxStrongGrecCount=5625, //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
+static UnicodeString sustrVersionGsSuperDictionary = "1.00.0176";
+static constexpr int ciMaxStrongGrecCount=5625, //Maksymalny numer słowa w greckim nowym testamencie, według numeracji Stronga
 								 ciMaxStrongHbrCount=8674;  //Maksymalny numer słowa w hebrajskim starym testamencie, według numeracji Stronga
 
 //KLASY DLA OBJEKTÓW DLA KAŻDEGO SŁOWA W JĘZUKU HEBRAJSKIM I GRECKIM, WEDŁÓG KODÓW STRONGA

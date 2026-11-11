@@ -196,19 +196,19 @@ struct GlobalVar
                                         GlobalIni_SetIsTransparent="SetupIsTransparent", // Czy objekty maja być przezroczyste
 																		Global_ustrFileReadingPlanExtend=".rpf";	 //Zmienić na stałą!? Rozszerzenie plików planów czytania = "*.rpf";
  //----- Wersje plików i bibliotek
-	inline static UnicodeString Global_ustrVerGsReadBibleTextClass, //Wersja biblioteki GsReadBibleTextClass
-															Global_ustrVerAplicMain,							//Wersja głównej biblioteki
+	inline static UnicodeString Global_ustrVerAplicMain,							//Wersja głównej biblioteki
 															//--- Ustawienia parametrów połączenia z siecią, w celu akyualizacji
 															Global_custrLocalVersionFile, //Ścieżka dostępu lokalna, do pobranego pliku wersji
 															Global_custrLocalApplicFile; //Ścieżka dostępu lokalna, do pobranej aplikacji
 	const static unsigned char cuchABlendValue; //Współczynnik przezroczystości okna, gdy jest nieaktywne
 	inline bool static IsWindows10=false, //Zmienna wskazuje czy klasa została uruchomiona na systemie Windows 10
 										 IsRunReload=false; //Czy potrzeba przeładować aplikcje po zmianie konfiguracji
-	static const unsigned char Global_NumberBooks = 73; //Maksymalna ilość ksiąg w Piśmie Świętym
-	static const int Global_MaxlengthVers = 10240; //Maksymalna długość pojedyńczego wersetu
+	static constexpr unsigned char Global_NumberBooks = 73; //Maksymalna ilość ksiąg w Piśmie Świętym
+	static constexpr int Global_MaxlengthVers = 10240; //Maksymalna długość pojedyńczego wersetu
 //***************************************************************************
 	inline static TStringList *Global_SListPathMultiM=nullptr,	//Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
-														*Global_ItemsColor=nullptr;       //Lista kolorów do wyboru, dla objektu klasy TColorBox
+														*Global_ItemsColor=nullptr,       //Lista kolorów do wyboru, dla objektu klasy TColorBox
+														*Global_SListAllVersionLibrary=nullptr; //Lista informacji o wersji wszystkich bibliotek //[01-08-2026]
 	inline static TMemIniFile *Global_ConfigFile=nullptr;			 //Globalny wskażnik na plik konfiguracyjny
 	inline static TStringDynArray SDirTranslatesList;		//Lista ścieżek dostępu do, wszystkich dostępnych tłumaczeń
 	inline static THashedStringList *Global_HSListAllFavoritiesVers=nullptr, //String lista do wszystkich ulubionych wesrsetów
@@ -217,7 +217,7 @@ struct GlobalVar
 														// iReturnUpdate == -1, wersja na komputarze jest nowsza niż na serwerze
 														// iReturnUpdate == 0, obje wersje są jednakowe, nie potrzeba aktualizacji
 														// iReturnUpdate == 1, wersja na komputerze jest starsza niż na serwerze, potrzeba zaktualizować
-	inline static const unsigned char Global_cucMaxCountTranslates=22, // Maksymalna ilość tłumaczeń
+	inline static constexpr unsigned char Global_cucMaxCountTranslates=22, // Maksymalna ilość tłumaczeń
 																		Global_cucMaxTranslatesSpecjalist=16; // Maksymalna ilość tłumaczeń specjalistycznych //[19-05-2024]
 	inline static const UnicodeString Global_ColorsAllTranslates[GlobalVar::Global_cucMaxTranslatesSpecjalist] = //[19-05-2024]
 		{RGBToWebColorStr(clWebAzure),

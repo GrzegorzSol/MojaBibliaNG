@@ -28,7 +28,7 @@ __fastcall TSendingMailWindow::TSendingMailWindow(TComponent* Owner, const Unico
 */
 {
 	this->ButtSendingMail->Tag = enTag_ButtSendingMail;
-	this->ButtSendingMail->Hint = "Wyślij tekst emailem|Wysyłanie wybranego tekstu biblijneo mailem, na wybrany adres";
+	this->ButtSendingMail->Hint = L"Wyślij tekst emailem|Wysyłanie wybranego tekstu biblijneo mailem, na wybrany adres";
 	//---
 	if(TFile::Exists(GlobalVar::Global_custrPathLastUsedAddressFile))
 	{
@@ -70,13 +70,13 @@ void __fastcall TSendingMailWindow::ButtSendingMailClick(TObject *Sender)
 	if(!hMAPI) throw(Exception("Błąd załadowania biblioteki \"mapi32.dll\""));
 
 	LPMAPISENDMAILW lpfnMAPISendMailW = (LPMAPISENDMAILW)GetProcAddress(hMAPI, "MAPISendMailW");
-	if(!lpfnMAPISendMailW) throw(Exception("Błąd załadowania funkcji \"MAPISendMailW\" z biblioteki \"mapi32.dll\""));
+	if(!lpfnMAPISendMailW) throw(Exception(L"Błąd załadowania funkcji \"MAPISendMailW\" z biblioteki \"mapi32.dll\""));
 
 	UnicodeString ustrTo;
 	ustrTo += this->LEditAdressMail->Text;
 
 	UnicodeString ustrName;
-	ustrName += "Tekst biblijny";
+	ustrName += L"Tekst biblijny";
 
 	MapiRecipDescW recipient[1] = {0};
 	recipient[0].ulRecipClass = MAPI_TO;
@@ -84,7 +84,7 @@ void __fastcall TSendingMailWindow::ButtSendingMailClick(TObject *Sender)
 	recipient[0].lpszName = ustrName.c_str();
 
 	UnicodeString ustrSubject;
-	ustrSubject += "Tekst biblijny";
+	ustrSubject += L"Tekst biblijny";
 
 	UnicodeString ustrText;
 	ustrText += this->_ustrTextHTML;

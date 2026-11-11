@@ -17,65 +17,65 @@
 #endif
 */
 // DEFINICJE STATYCZNYCH STAŁYCH KLASY GlobalVar
-const UnicodeString GlobalVar::Global_custrNameIVerFile="MBibleNG.iver",				 //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
+const UnicodeString GlobalVar::Global_custrNameIVerFile=L"MBibleNG.iver",				 //Nazwa pliku z wersją aplikacji. Plik słuzy do sparawdzamia aktualnej wersji
 										GlobalVar::Global_custrGetExeDir = System::Sysutils::ExtractFilePath(Application->ExeName); // Ścieżka dostępu do katalogu głównego programu;
 #if defined(_DEBUGINFO_)
 	//Jeśli projekt jest kompilowany z oknem konsoli, dane dla aplikacji są pobierane nie standartowo z zewnętrznego katalogu
-	const UnicodeString GlobalVar::Global_custrGetDataDir= "f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\";					 // Ścieżka dostępu do katalogu z danymi aplikacji
+	const UnicodeString GlobalVar::Global_custrGetDataDir= L"f:\\DevelopGS\\Dane dla MojaBiblia\\Data\\";					 // Ścieżka dostępu do katalogu z danymi aplikacji
 #else
 	//Kompilowanie bez kosoli, dane są umieszczone w standartowym miejscu
-	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, "Data");  // Ścieżka dostępu do katalogu z danymi aplikacji
+	const UnicodeString GlobalVar::Global_custrGetDataDir = TPath::Combine(GlobalVar::Global_custrGetExeDir, L"Data");  // Ścieżka dostępu do katalogu z danymi aplikacji
 #endif
 const UnicodeString GlobalVar::Global_custrGetVersionUpdate=TPath::Combine(GlobalVar::Global_custrGetExeDir, GlobalVar::Global_custrNameIVerFile),	 // Ścieżka dostepu do pilku tekstowego z wersją, do aktualizacji
-										GlobalVar::Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, "PreviewsStyles"),		 // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
-										GlobalVar::Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ReadingPlan"),	// Ścieżka dostępu do katalogu z planami czytania biblii
-										GlobalVar::Global_custrPathJavaScripts=TPath::Combine(GlobalVar::Global_custrGetDataDir, "JVScripts"), // Ścieżka dostępu do katalogu z plikami Java script
-										GlobalVar::Global_custrPathActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, "AktualnyPlan.jcp"),		 // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
-										GlobalVar::Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchFavorities"), // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
-										GlobalVar::Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, "ConfigFileMyBibleNG.ini"),				// Ścieżka do pliku konfiguracyjnego
-										GlobalVar::Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, "LastUsedAddress.lud"),// Ścieżka dostępu do pliku z ostatnio używanymi adresami
-										GlobalVar::Global_custrPathGlobalHelp=TPath::Combine(GlobalVar::Global_custrGetExeDir, "HelpMojaBibliaNT.chm"),			// Ścieżka dostępu do pliku pomocy
-										GlobalVar::Global_custrPathHistory=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistoryChaptersOpen.hco"),					// Ścieżka dostępu do pliku historii
+										GlobalVar::Global_custrPathImagesStyles=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"PreviewsStyles"),		 // Ścieżka do katalogu z podglądem stylów graficznych aplikacji
+										GlobalVar::Global_custrPathAllReadingPlan=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"ReadingPlan"),	// Ścieżka dostępu do katalogu z planami czytania biblii
+										GlobalVar::Global_custrPathJavaScripts=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"JVScripts"), // Ścieżka dostępu do katalogu z plikami Java script
+										GlobalVar::Global_custrPathActivePlan=TPath::Combine(GlobalVar::Global_custrPathAllReadingPlan, L"AktualnyPlan.jcp"),		 // Ścieżka dostepu do pliku z dziennikiem czytania aktualnego planu
+										GlobalVar::Global_custrPathSearchFavorities=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"SearchFavorities"), // Ścieżka dostę[u do katalogu z ulubionymi plikami wyników wyszukiwania
+										GlobalVar::Global_custrGetConfigFile=TPath::Combine(GlobalVar::Global_custrGetExeDir, L"ConfigFileMyBibleNG.ini"),				// Ścieżka do pliku konfiguracyjnego
+										GlobalVar::Global_custrPathLastUsedAddressFile=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"LastUsedAddress.lud"),// Ścieżka dostępu do pliku z ostatnio używanymi adresami
+										GlobalVar::Global_custrPathGlobalHelp=TPath::Combine(GlobalVar::Global_custrGetExeDir, L"HelpMojaBibliaNT.chm"),			// Ścieżka dostępu do pliku pomocy
+										GlobalVar::Global_custrPathHistory=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"HistoryChaptersOpen.hco"),					// Ścieżka dostępu do pliku historii
 //Graficzne loga z rozszerzeniem .gli
-										GlobalVar::Global_custrPathBackgroundWindow=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundWindowImg.gli"),// Grafika z podkładem okna głównego
-										GlobalVar::Global_custrPathSearchLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SearchLogo.gli"),// Logo w oknie wyszukiwania
-										GlobalVar::Global_custrPathSetupsLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SetupsLogo.gli"),// Logo w oknie ustawień
-										GlobalVar::Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, "Tora.png"), // Logo główne podkładu
-										GlobalVar::Global_custrPathBackgroundSDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, "BackgroundSuperDict.gli"), // Podkład graficzny w słowniku gp i hp
+										GlobalVar::Global_custrPathBackgroundWindow=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"BackgroundWindowImg.gli"),// Grafika z podkładem okna głównego
+										GlobalVar::Global_custrPathSearchLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"SearchLogo.gli"),// Logo w oknie wyszukiwania
+										GlobalVar::Global_custrPathSetupsLogo=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"SetupsLogo.gli"),// Logo w oknie ustawień
+										GlobalVar::Global_custrPathBacgroundImageText=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"Tora.png"), // Logo główne podkładu
+										GlobalVar::Global_custrPathBackgroundSDict=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"BackgroundSuperDict.gli"), // Podkład graficzny w słowniku gp i hp
 										//---
-										GlobalVar::Global_custrPathGrecFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "gnt.intrl"),// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
-										GlobalVar::Global_custrPathHbrFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, "hst.intrl"), // Ścieżka dostępu do pliku ze słownikiem interlinearnym hebrajsko-polskim, do wyświetlenia tłumaczenia interlinearnego //[21-07-2026]
+										GlobalVar::Global_custrPathGrecFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"gnt.intrl"),// Ścieżka dostępu do pliku ze słownikiem gracko-polskim, do wyświetlenia tłumaczenia interlinearnego
+										GlobalVar::Global_custrPathHbrFileInterlinear=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"hst.intrl"), // Ścieżka dostępu do pliku ze słownikiem interlinearnym hebrajsko-polskim, do wyświetlenia tłumaczenia interlinearnego //[21-07-2026]
 										//[18-06-2026] // Scieżki dostępu do słowników i korkondancji
-										GlobalVar::Global_custrPathGrecSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperGrecDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
-										GlobalVar::Global_custrPathHbrSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, "SuperHbrDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)
+										GlobalVar::Global_custrPathGrecSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"SuperGrecDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika grecko-polskiego(wersja binarna)
+										GlobalVar::Global_custrPathHbrSuperDictionary=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"SuperHbrDict.mbdict"), // Ścieżka dostępu do ostatecznego i zunifikowanego słownika hebrajsko-polskiego(wersja binarna)
 
-										GlobalVar::Global_custrPathMultimediaFilesData=TPath::Combine(GlobalVar::Global_custrGetExeDir, "MultiMediaFiles"),// Ścieżka dostępu do danych multimedialnych
-										GlobalVar::Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, "FavoritesVerses.fmb"),		// Ścieżka dostępu do pliku z listą ulubionych wersetów
-										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, "CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów
-										GlobalVar::Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, "HistorySearch.fhs"),		 // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
-										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, "backgroundmaintext.png"),  // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
+										GlobalVar::Global_custrPathMultimediaFilesData=TPath::Combine(GlobalVar::Global_custrGetExeDir, L"MultiMediaFiles"),// Ścieżka dostępu do danych multimedialnych
+										GlobalVar::Global_custrPathFileFavoriteVers=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"FavoritesVerses.fmb"),		// Ścieżka dostępu do pliku z listą ulubionych wersetów
+										GlobalVar::Global_custrPathDirComments=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"CommentsFile"),			// Katalog do pojedyńczych plików z komentarzami do wersetów
+										GlobalVar::Global_custrPathHistorySearch=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"HistorySearch.fhs"),		 // Ścieżka dostępu do pliku z zapisaną historia tekstów wyszukiwanych
+										GlobalVar::Global_custrPathImageBackgroundMainText=TPath::Combine(Global_custrGetDataDir, L"backgroundmaintext.png"),  // Ściezka dostepu do grafiki jako podkładu dla głównego tekstu
 										// [05-07-2026]
-										GlobalVar::Global_custrPathPDFDocsWork=TPath::Combine(GlobalVar::Global_custrGetExeDir, "PDFTextDocsWork"), // Ścieżka dostepu do dokumentów, komentarzy , przekładów idt. w formacie pdf
-										GlobalVar::Global_custrListLinksWork=TPath::Combine(GlobalVar::Global_custrGetDataDir, "ListLinksWork.fll"), // Ścieżka dostępu do pliku z różnymi linkami na tematy Pisma Świętego (przekłady, teksty, itd.)
+										GlobalVar::Global_custrPathPDFDocsWork=TPath::Combine(GlobalVar::Global_custrGetExeDir, L"PDFTextDocsWork"), // Ścieżka dostepu do dokumentów, komentarzy , przekładów idt. w formacie pdf
+										GlobalVar::Global_custrListLinksWork=TPath::Combine(GlobalVar::Global_custrGetDataDir, L"ListLinksWork.fll"), // Ścieżka dostępu do pliku z różnymi linkami na tematy Pisma Świętego (przekłady, teksty, itd.)
 										//----- Zabezpieczenie przed uruchomieniem drugiej kopi aplikacji
-										GlobalVar::Global_ustrMutexName="MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
+										GlobalVar::Global_ustrMutexName=L"MutexName_" + System::Sysutils::ExtractFileName(Application->ExeName),	//Mutekst główny aplikacji
 										// ----- Rozszerzenia plików (Przeniesione z GsReadBibleTextData.h) //[09-05-2026]
-										GlobalVar::GsExtendFileTranslateFull="*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
-										GlobalVar::GsExtendFileTranslateGrecOrg="*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
-										GlobalVar::GsExtendFileTranslateHbrOrg="*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
-										GlobalVar::GsExtendFileTranslateAll="*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
-										GlobalVar::GsExtendNoAsteriskFileTranslateFull=".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
-										GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg=".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
-										GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg =".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
-										GlobalVar::GsExtendNoAsteriskTextInfoTranslate=".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
+										GlobalVar::GsExtendFileTranslateFull=L"*.pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym JAKO WZORZEC!!!
+										GlobalVar::GsExtendFileTranslateGrecOrg=L"*.grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim JAKO WZORZEC!!!
+										GlobalVar::GsExtendFileTranslateHbrOrg=L"*.hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim JAKO WZORZEC!!!
+										GlobalVar::GsExtendFileTranslateAll=L"*tmb",//Stałą z końcówką (bez dwuch pierwszych liter) rozszerzenia pliku z KAŻDYM tłumaczeniem JAKO WZORZEC!!!
+										GlobalVar::GsExtendNoAsteriskFileTranslateFull=L".pltmb", //Rozszerzenie właściwego pliku z tłumaczeniem biblijnym BEZ WZORCA!!!
+										GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg=L".grtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, greckim BEZ WZORCA!!!
+										GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg =L".hbtmb",//Stałą z rozszerzeniem pliku z tłumaczeniem oryginalnym, hebrajskim BEZ WZORCA!!!
+										GlobalVar::GsExtendNoAsteriskTextInfoTranslate=L".mbin"; //Rozszerzenie pliku typu txt z informacją o danym tłumaczeniu BEZ WZORCA!!!
 
 										//--- Nagłówki dla plików html (Przeniesione z GsReadBibleTextData.h) //[09-05-2026]
-UnicodeString GlobalVar::GsHTMLHeaderText="",	// Tekst nagłówka dla tekstu zwykłego
-							GlobalVar::GsHTMLTitle="<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", // [03-08-2023]
-							GlobalVar::GsHTMLHeaderSearch="",// Tekst nagłówka dla tekstu, wyniku wyszukiwania
-							GlobalVar::GsHTMLHeaderDisplayVer="",// Tekst nagłówka dla tekstu wybranego wersetu
-							GlobalVar::GsHTMLJavaScripts="", // Kody Java Script
-							GlobalVar::GsHTML_FileJavaSc_SelectWord=""; // Funkcja java script umożliwiająca klikalność słów [25-08-2025]
+UnicodeString GlobalVar::GsHTMLHeaderText=L"",	// Tekst nagłówka dla tekstu zwykłego
+							GlobalVar::GsHTMLTitle=L"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>", // [03-08-2023]
+							GlobalVar::GsHTMLHeaderSearch=L"",// Tekst nagłówka dla tekstu, wyniku wyszukiwania
+							GlobalVar::GsHTMLHeaderDisplayVer=L"",// Tekst nagłówka dla tekstu wybranego wersetu
+							GlobalVar::GsHTMLJavaScripts=L"", // Kody Java Script
+							GlobalVar::GsHTML_FileJavaSc_SelectWord=L""; // Funkcja java script umożliwiająca klikalność słów [25-08-2025]
 
 void __fastcall GlobalVar::Global_InitGlobalVariables()
 /**

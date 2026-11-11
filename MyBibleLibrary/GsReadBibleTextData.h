@@ -19,6 +19,8 @@
 	TWORZENIE NAZW SKŁADOWYCH KLASY GsReadBibleTextData
 	Gs + Typ + Data
 */
+static UnicodeString sustrVersionGsReadBibleTextDataLibrary = "1.00.4726";
+
 class GsReadBibleTextData : public TObject
 {
 	//Klasa GsReadBibleTextData, musi mieć deklaracje przyjaźni, prawie z każdą klasą modułu
@@ -60,7 +62,7 @@ class GsReadBibleTextData : public TObject
 	public:
 		static inline GsReadBibleTextClass* pGsReadBibleTextClass=nullptr;	//Wskaźnik na główną klasę
     static inline GsReadBibleSpecTextClass* pGsReadBibleSpecTextClass=nullptr; //w Wskaxnik na klase tłumaczeń specjalistycznych
-		static const unsigned char inline GsNumberAllGroups = en_GrSearch_Count,//Ilość grup biblii, do wyszukiwania
+		static constexpr unsigned char inline GsNumberAllGroups = en_GrSearch_Count,//Ilość grup biblii, do wyszukiwania
 															 GsNumberGroups = 3,	//Ilość grup w drzewie struktury bibli
 															 //Ilość ksiąg w poszczególnych grupach
 															 GsTableNameGroupBook[GsReadBibleTextData::GsNumberGroups] = {39, 27, 7}; //Ilość ksiąg w poszczególnych grupach bibli
@@ -84,7 +86,6 @@ class GsReadBibleTextData : public TObject
 		//---
 		//Metoda zwraca wskaźnik na globalną listę grafik
 		//inline static TImageList *__fastcall GetImageListData() {if(GsReadBibleTextData::IsInitLibrary)	 return GsReadBibleTextData::_GsImgListData; else return 0;}
-		static UnicodeString __fastcall GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 		static void __fastcall InitGlobalVariables(); //Ustawienie globalnych zmiennych dla całej aplikacji
 		static void __fastcall InitMyBible(TForm *MainWindow); //Inicjalizacja pracy z biblioteką do analizy Pisma Świętego
 		static void __fastcall CloseMyBible();	//Zamknięcie bilioteki do analizy Pisma Świętego

@@ -4,7 +4,7 @@ object SelectVersWindow: TSelectVersWindow
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Wyb'#243'r pojedy'#324'czego wersetu'
-  ClientHeight = 733
+  ClientHeight = 761
   ClientWidth = 1272
   Color = clBtnFace
   DoubleBuffered = True

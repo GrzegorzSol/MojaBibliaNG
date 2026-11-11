@@ -82,41 +82,41 @@ enum {	// Numery zakładek w ustawieniach wyszukiwania
 				enTypeAction_ORWordSearch
 		 };
 // Stałe do zaznaczania kolorem szukanego tekstu w wersecie
-const UnicodeString Gl_custrStyleF = "<span class=\"styleFound\">",
-										Gl_custrStyleEnd = "</span>";
+const UnicodeString Gl_custrStyleF = L"<span class=\"styleFound\">",
+										Gl_custrStyleEnd = L"</span>";
 // Stałe potrzebne do wyszukiwania
-const int Gl_ciSizeCutString=512, // Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
+constexpr int Gl_ciSizeCutString=512, // Ilość znaków skopiowanych z całej zawartosci wersetu(razem z adresem)
 					Gl_ciStartVers = 11,		// Początek wersetu
 					Gl_ciOffsetTextVers = 10; // Od tej pozycji wersetu zaczyna sie tekst
 //Tekst opisu dla skłdni wyrażeń regularnych
-const static UnicodeString Gl_ustrInoRegSearch = UnicodeString(". - (kropka)=dowolny znak\n") +
-		"^ - dopasuj występujące po operatorze wyrażenie do początku wiersza (początek linii)\n" +
-		"$ - dopasuj poprzedzające wyrażenie do końca wiersza (koniec linii)\n" +
-		"\\x - znaki specjalne, gdzie	 x to znak specjalny np. \\$ zastąpi znak dolara\n" +
-		"[lista] - wyszukuje dowolny znak spośród tych wymienionych na liście, mogą to być, przedziały np. [0-9] lub [a-d]\n" +
-		"[^lista] - pasuje do znaku nie podanego na liście\n" +
-		"\\< - początek słowa\n" +
-		"\\> - koniec słowa\n" +
-		"\\w - jest równoważne [0-9a-zA-Z] lub [[:alnum:]] – zastępuje dowolną liczbę lub cyfrę\n" +
-		"\\W - oznacza to samo co $[^[[:alnum:]]]\n" +
-		"()	 - grupowanie wyrażeń regularnych\n" +
-		"|	 - operator LUB\n" +
-		"?	 - dokładnie zero lub jeden element wcześniejszy\n" +
-		"a|b - dopasuje wyrażenie	 a lub wyrażenie	b\n" +
-		"*	 - dopasuj zero lub więcej wyrażeń znaku poprzedzający operator\n" +
-		"+	 - jeden lub więcej elementów poprzedzających operator\n" +
-		"{n} - poprzedzający element pasuje dokładnie n razy\n\n" +
-		"\tGRUPOWANIE - kilka zastosowań grupowań:\n" + //[11-12-2024]
-		"\" [0-7]\" – znajdź dowolną liczbę pomiędzy 0 a 7 poprzedzoną spacją.\n" +
-		"\"a.[0-9]\" – poszukaj ciąg zaczynający się od \"a\", po którym następuje dowolny znak, a następnie cyfra.\n" +
-		"\"[A-Z, ]\" – znajdź wszystkie duże litery, przecinki i spacje\n" +
-		"\"(a|b|r)* \" – ciąg, który składa się z samych liter \"a\" lub \"b\" lub \"r\" i kończy się spacją\n",
-													ustrTextLogoSearch = "DzAp 17:11\n\"...przyjęli oni Słowo z całą gotowością i codziennie BADALI Pisma, czy tak się rzeczy mają\"";
+const static UnicodeString Gl_ustrInoRegSearch = UnicodeString(L". - (kropka)=dowolny znak\n") +
+		L"^ - dopasuj występujące po operatorze wyrażenie do początku wiersza (początek linii)\n" +
+		L"$ - dopasuj poprzedzające wyrażenie do końca wiersza (koniec linii)\n" +
+		L"\\x - znaki specjalne, gdzie	 x to znak specjalny np. \\$ zastąpi znak dolara\n" +
+		L"[lista] - wyszukuje dowolny znak spośród tych wymienionych na liście, mogą to być, przedziały np. [0-9] lub [a-d]\n" +
+		L"[^lista] - pasuje do znaku nie podanego na liście\n" +
+		L"\\< - początek słowa\n" +
+		L"\\> - koniec słowa\n" +
+		L"\\w - jest równoważne [0-9a-zA-Z] lub [[:alnum:]] – zastępuje dowolną liczbę lub cyfrę\n" +
+		L"\\W - oznacza to samo co $[^[[:alnum:]]]\n" +
+		L"()	 - grupowanie wyrażeń regularnych\n" +
+		L"|	 - operator LUB\n" +
+		L"?	 - dokładnie zero lub jeden element wcześniejszy\n" +
+		L"a|b - dopasuje wyrażenie	 a lub wyrażenie	b\n" +
+		L"*	 - dopasuj zero lub więcej wyrażeń znaku poprzedzający operator\n" +
+		L"+	 - jeden lub więcej elementów poprzedzających operator\n" +
+		L"{n} - poprzedzający element pasuje dokładnie n razy\n\n" +
+		L"\tGRUPOWANIE - kilka zastosowań grupowań:\n" + //[11-12-2024]
+		L"\" [0-7]\" – znajdź dowolną liczbę pomiędzy 0 a 7 poprzedzoną spacją.\n" +
+		L"\"a.[0-9]\" – poszukaj ciąg zaczynający się od \"a\", po którym następuje dowolny znak, a następnie cyfra.\n" +
+		L"\"[A-Z, ]\" – znajdź wszystkie duże litery, przecinki i spacje\n" +
+		L"\"(a|b|r)* \" – ciąg, który składa się z samych liter \"a\" lub \"b\" lub \"r\" i kończy się spacją\n",
+													ustrTextLogoSearch = L"DzAp 17:11\n\"...przyjęli oni Słowo z całą gotowością i codziennie BADALI Pisma, czy tak się rzeczy mają\"";
 //Nazwy kolumn dla listy statystyki
-const static UnicodeString Gl_ustrNameColumn[] = {"Nazwa księgi", "Ilość wystąpień", "Wskaźnik"},
-													 Gl_ustrTypeActionSearchList[] = {"Wszystkie wyrażenia", "Dowolne wyażenie"},
-													 Gl_ustrInfosTypesActionSearch[] = {"Podczas wyszukiwanie w poszczególnuch wersetach, muszą być znalezine wszystkie wyrażenia z listy",
-																															"Podczas wyszukiwania w poszczególnych wersetach, musi wytąpić dowolne wyrażenie z listy"};
+const static UnicodeString Gl_ustrNameColumn[] = {L"Nazwa księgi", L"Ilość wystąpień", L"Wskaźnik"},
+													 Gl_ustrTypeActionSearchList[] = {L"Wszystkie wyrażenia", L"Dowolne wyażenie"},
+													 Gl_ustrInfosTypesActionSearch[] = {L"Podczas wyszukiwanie w poszczególnuch wersetach, muszą być znalezine wszystkie wyrażenia z listy",
+																															L"Podczas wyszukiwania w poszczególnych wersetach, musi wytąpić dowolne wyrażenie z listy"};
 //---------------------------------------------------------------------------
 __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner)
 /**
@@ -127,9 +127,9 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 */
 {
 	//if(Screen->DesktopHeight > 800) this->Height = 860; else this->Height = 600; //Wysokość okna, zależna od wysokości ekranu
-	this->WBrowserResultSearch->Navigate(WideString("about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
-	this->WBrowserSelectItemResult->Navigate(WideString("about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
-	this->WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
+	this->WBrowserResultSearch->Navigate(WideString(L"about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
+	this->WBrowserSelectItemResult->Navigate(WideString(L"about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
+	this->WebBrowserSelectBookStatistic->Navigate(WideString(L"about:blank").c_bstr());	//Wypełnienie kontrolki pustą stroną, obowiązkowo!!!
 	this->PControlSetupsSearch->ActivePageIndex = enIndexSetInputSearch; //Domyślnie aktywna zakładka, po stworzeniu okna
 	this->PControlViewsText->ActivePageIndex = enIndexResultListHtml; //Domyślnie aktywna zakładka, wyników przeglądania
 	//Nadawanie numerów identyfikacyjnych kontrolkom
@@ -169,20 +169,20 @@ __fastcall TSearchTextWindow::TSearchTextWindow(TComponent* Owner) : TForm(Owner
 		}
 		this->CBoxSelectTranslates->ItemIndex = 0;	//Domyślne pierwsze, dostępne tłumaczenie
 	}
-	this->CBoxHistorySearchText->Hint = "Pole tekstowe do wprowadzania szukanego tekstu.";
-	this->ChBoxIsRegEx->Hint = "Czy wyszukiwanie będzie używało wyrażeń regularnych";
-	this->ButtonHelpRegExp->Hint = "Pomoc w wyszukiwaniu za pomocą wyrażeń regularnych.";
-	this->CBoxSelectRangeSearch->Hint = Format("Zakres wyszukiwania|Wybór zakresu ksiąg, które będą brane pod uwagę podczas wyszukiwania|%u", ARRAYOFCONST((enImageSearch_SelectRange)));
-	this->CBoxStartSelectRange->Hint = Format("Początkowa księga w wyszukiwaniu|Początkowa księga w zakresie wyszukiwania, zdefiniowanym przez użytkownika|%u", ARRAYOFCONST((enImageSearch_StartSelect)));
-	this->CBoxStopSelectRange->Hint = Format("Końcowa księga w wyszukiwaniu|Początkowa księga w zakresie wyszukiwania, zdefiniowanym przez użytkownika|%u", ARRAYOFCONST((enImageSearch_StopSelect)));
-	this->CBoxSelectTranslates->Hint = Format("Wybór tłumaczenia|Wybór tłumaczenia do przeszukania|%u", ARRAYOFCONST((enImageSearch_Translates)));
-	this->ButtonSearchStart->Hint = Format("Rozpoczęcie wyszukiwania|Rozpoczęcie wyszukiwania według ustawionych parametrów|%u", ARRAYOFCONST((this->ButtonSearchStart->ImageIndex)));
-	this->ButtonSaveSearch->Hint = Format("Zapis wyników wyszukiwania|Zapisanie ulubionych wyników wyszukiwania|%u", ARRAYOFCONST((this->ButtonSaveSearch->ImageIndex)));
+	this->CBoxHistorySearchText->Hint = L"Pole tekstowe do wprowadzania szukanego tekstu.";
+	this->ChBoxIsRegEx->Hint = L"Czy wyszukiwanie będzie używało wyrażeń regularnych";
+	this->ButtonHelpRegExp->Hint = L"Pomoc w wyszukiwaniu za pomocą wyrażeń regularnych.";
+	this->CBoxSelectRangeSearch->Hint = Format(L"Zakres wyszukiwania|Wybór zakresu ksiąg, które będą brane pod uwagę podczas wyszukiwania|%u", ARRAYOFCONST((enImageSearch_SelectRange)));
+	this->CBoxStartSelectRange->Hint = Format(L"Początkowa księga w wyszukiwaniu|Początkowa księga w zakresie wyszukiwania, zdefiniowanym przez użytkownika|%u", ARRAYOFCONST((enImageSearch_StartSelect)));
+	this->CBoxStopSelectRange->Hint = Format(L"Końcowa księga w wyszukiwaniu|Początkowa księga w zakresie wyszukiwania, zdefiniowanym przez użytkownika|%u", ARRAYOFCONST((enImageSearch_StopSelect)));
+	this->CBoxSelectTranslates->Hint = Format(L"Wybór tłumaczenia|Wybór tłumaczenia do przeszukania|%u", ARRAYOFCONST((enImageSearch_Translates)));
+	this->ButtonSearchStart->Hint = Format(L"Rozpoczęcie wyszukiwania|Rozpoczęcie wyszukiwania według ustawionych parametrów|%u", ARRAYOFCONST((this->ButtonSearchStart->ImageIndex)));
+	this->ButtonSaveSearch->Hint = Format(L"Zapis wyników wyszukiwania|Zapisanie ulubionych wyników wyszukiwania|%u", ARRAYOFCONST((this->ButtonSaveSearch->ImageIndex)));
 	//Logo wyszukiwania
 	if(TFile::Exists(GlobalVar::Global_custrPathSearchLogo))
 	{
 		TWICImage *pWICImage = new TWICImage();
-		if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+		if(!pWICImage) throw(Exception(L"Błąd inicjalizacji objektu TWICImage"));
 		pWICImage->LoadFromFile(GlobalVar::Global_custrPathSearchLogo);
 		this->ImageLogoSearch->Picture->Assign(pWICImage);
 		delete pWICImage; pWICImage = nullptr;
@@ -224,7 +224,7 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 	//----- Ustawienia objektu, klasy TListView dla statystyki
 	TListColumn *NewColumn=nullptr;
 	TImageList *pImgList = GsReadBibleTextData::GetImageList();
-	if(!pImgList) throw(Exception("Błąd wyłuskania objektu TImageList"));
+	if(!pImgList) throw(Exception(L"Błąd wyłuskania objektu TImageList"));
 	this->LViewStatistic->SmallImages = pImgList;
 	//this->STW_LViewStatistic->GroupHeaderImages = pImgList;
 	for(int i=0; i<GsReadBibleTextData::GsNumberGroups; ++i)
@@ -269,14 +269,14 @@ void __fastcall TSearchTextWindow::FormCreate(TObject *Sender)
 		//Zaalokowanie prywatnych danych w każdej pozycji, która reprezentuje kolejną księgę biblijną.
 		//W tych danych będą przechowywane ilości wystąpień szukanego słowa w danej księdze
 		PStatisticFindView MyDataStatistic = new StatisticFindView();
-		if(!MyDataStatistic) throw(Exception("Błąd inicjalizacji objektu PStatisticFindView"));
+		if(!MyDataStatistic) throw(Exception(L"Błąd inicjalizacji objektu PStatisticFindView"));
 		MyDataStatistic->uiCountFind = 0;
 		NewItem->Data = MyDataStatistic;
 	}
 	this->LViewStatistic->Items->EndUpdate();
 	// Lista zawierające wszystkie znalezione wersety
 	this->_pHSListSearchResult = new THashedStringList();
-	if(!this->_pHSListSearchResult) throw(Exception("Błąd tworzenia tymczasowego objektu THashedStringList"));
+	if(!this->_pHSListSearchResult) throw(Exception(L"Błąd tworzenia tymczasowego objektu THashedStringList"));
 	// Lista dotyczczasowych tekstów wyszukiwanych
 		//Odczyt pliku histori wyszukiwania
 	if(TFile::Exists(GlobalVar::Global_custrPathHistorySearch))
@@ -470,11 +470,11 @@ void __fastcall TSearchTextWindow::ButtonSearchStartClick(TObject *Sender)
 	}
 	this->LViewResultSearch->Items->EndUpdate();
 	this->WBrowserResultSearch->SetFocus();
-	this->StBarInfos->SimpleText = Format("Znaleziono %u pozycji", ARRAYOFCONST((this->_pHSListSearchResult->Count)));
+	this->StBarInfos->SimpleText = Format(L"Znaleziono %u pozycji", ARRAYOFCONST((this->_pHSListSearchResult->Count)));
 	this->ButtonSaveSearch->Enabled = (this->_pHSListSearchResult->Count > 0);	//[10-10-2023]
 	//Dodawanie do objekstu, klasy TComboBox sów wyszukiwanych 15-04-2021
 	bool bIsDuplicate=false; //Zmienna oznaczająca że jest(true), lub nie (false) duplicat w słowie szukanym
-	const int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
+	constexpr int ciMaxHistorySearchText=24; //Maksymalna liczba zapamiętanej histori szukanego tekstu.
 																			 //Gdy zostanie ona przekroczona, zostanie usunięte najstarsze słowo, by dodać najnowsze
 
 	for(int i=0; i<this->CBoxHistorySearchText->Items->Count; ++i)
@@ -491,7 +491,7 @@ void __fastcall TSearchTextWindow::ButtonSearchStartClick(TObject *Sender)
 		this->CBoxHistorySearchText->Items->Add(CBoxHistorySearchText->Text);	 //Lista dotyczczasowych tekstów wyszukiwanych
 	}
 	//Wyczyszczenie objektu klasy TWebBrowser, po wyszukaniu nowego słowa
-	this->WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
+	this->WebBrowserSelectBookStatistic->Navigate(WideString(L"about:blank").c_bstr());
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::_IsMatchRegSearch(const UnicodeString &custrFullVers, const UnicodeString &custrTextSearch,
@@ -521,7 +521,7 @@ void __fastcall TSearchTextWindow::_IsMatchRegSearch(const UnicodeString &custrF
 			{
 				do
 				{
-					ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, MyMatch.Value, Gl_custrStyleEnd )));
+					ustrReplaced = Format(L"%s%s%s", ARRAYOFCONST((Gl_custrStyleF, MyMatch.Value, Gl_custrStyleEnd )));
 					ustrFullVersReplaced = StringReplace(ustrFullVersReplaced, MyMatch.Value,
 						ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 					// Usunięcie podwójnych znaczników zaznaczenia
@@ -594,7 +594,7 @@ bool __fastcall TSearchTextWindow::_IsMatchNormalSearch(const UnicodeString &cus
 		}
 
 		//Wstawianie znacznika koloru, podkładu. MUSI być modyfikowana kopia //[19-06-2024]
-		ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, custrTextSearch, Gl_custrStyleEnd )));
+		ustrReplaced = Format(L"%s%s%s", ARRAYOFCONST((Gl_custrStyleF, custrTextSearch, Gl_custrStyleEnd )));
 		ustrAddingFullVers = StringReplace(custrFullVers, custrTextSearch, ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 
 		// Dodanie wersetu do listy znalezionych
@@ -669,7 +669,7 @@ bool __fastcall TSearchTextWindow::_IsMatchSearchListTexts(const UnicodeString &
 				if(!bIsSameWord) return false;
 			} // Nie dokończone // 20-07-2025
 
-			ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
+			ustrReplaced = Format(L"%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
 			ustrFullVersReplaced = StringReplace(ustrFullVersReplaced, this->LBoxSearchTexts->Items->Strings[i],
 				ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 		}
@@ -684,7 +684,7 @@ bool __fastcall TSearchTextWindow::_IsMatchSearchListTexts(const UnicodeString &
 			_iPositionSearch = custrFullVers.Pos(this->LBoxSearchTexts->Items->Strings[i]);
 			if(_iPositionSearch > 0) bIsSearch = true;
 
-      ustrReplaced = Format("%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
+			ustrReplaced = Format(L"%s%s%s", ARRAYOFCONST((Gl_custrStyleF, this->LBoxSearchTexts->Items->Strings[i], Gl_custrStyleEnd )));
 			ustrFullVersReplaced = StringReplace(ustrFullVersReplaced, this->LBoxSearchTexts->Items->Strings[i],
 				ustrReplaced, TReplaceFlags() << rfReplaceAll << rfIgnoreCase);
 		}
@@ -708,7 +708,7 @@ void __fastcall TSearchTextWindow::CBoxCloseUp(TObject *Sender)
 	TComboBox *pCBox = dynamic_cast<TComboBox *>(Sender);
 	if(!pCBox) return;
 	//Wyczyszczenie objekty klasy TWebBrowser, do przeglądania znalezionych wersetów w wybranek księdze
-	this->WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
+	this->WebBrowserSelectBookStatistic->Navigate(WideString(L"about:blank").c_bstr());
 	for(unsigned char i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TListItem *MyItem = this->LViewStatistic->Items->Item[i];
@@ -787,7 +787,7 @@ void __fastcall TSearchTextWindow::ChBoxIsRegExClick(TObject *Sender)
 	TCheckBox *pChBox = dynamic_cast<TCheckBox *>(Sender);
 	if(!pChBox) return;
 	//---
-	this->CBoxHistorySearchText->Text = "";
+	this->CBoxHistorySearchText->Text = L"";
 	this->ButtonHelpRegExp->Enabled = pChBox->Checked;
 	// Zmiana stanu wyszukiwań, które zastępuje wyszukiwanie za pomocą wyrażeń regularnych // 13-07-2025
 	this->ChBoxSizeTextSearch->Enabled = !pChBox->Checked;
@@ -802,7 +802,7 @@ void __fastcall TSearchTextWindow::ChBoxIsRegExClick(TObject *Sender)
 	this->LBoxSearchTexts->Enabled = !pChBox->Checked;
 
   //Wyczyszczenie objektu klasy TWebBrowser, po wyszukaniu nowego słowa
-	this->WBrowserResultSearch->Navigate(WideString("about:blank").c_bstr());
+	this->WBrowserResultSearch->Navigate(WideString(L"about:blank").c_bstr());
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::ChBoxAllSearchTextsClick(TObject *Sender)
@@ -822,7 +822,7 @@ void __fastcall TSearchTextWindow::ChBoxAllSearchTextsClick(TObject *Sender)
 	this->ButtGrSelectActionList->Enabled = pChBox->Checked;
 
   //Wyczyszczenie objektu klasy TWebBrowser, po wyszukaniu nowego słowa
-	this->WBrowserResultSearch->Navigate(WideString("about:blank").c_bstr());
+	this->WBrowserResultSearch->Navigate(WideString(L"about:blank").c_bstr());
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::FormKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
@@ -920,7 +920,7 @@ void __fastcall TSearchTextWindow::LViewAllSelectItem(TObject *Sender,
 				try
 				{
 					_tempHSLst = new THashedStringList();
-					if(!_tempHSLst) throw(Exception("Błąd tworzenia tymczasowego objektu THashedStringList"));
+					if(!_tempHSLst) throw(Exception(L"Błąd tworzenia tymczasowego objektu THashedStringList"));
 					//Skopiowanie wersetów dla wybranej księgi, z lsty wszystkich znalezionych werstów
 					for(int i=0; i<this->_pHSListSearchResult->Count; ++i)
 					{
@@ -941,13 +941,13 @@ void __fastcall TSearchTextWindow::LViewAllSelectItem(TObject *Sender,
 					{
             // Wyswietlenie listy wyszukanych wersetów, z możliwoscia zaznaczenie w wersecie szukanego wyrażenia
 						this->_DisplayListTextHTML(this->WebBrowserSelectBookStatistic, _tempHSLst, enTypeDisplay_ResultSearchSelectBook);
-						this->STextInfoSelectBookSearch->Caption = Format("W księdze o nazwie: \"%s\" znaleziono: %u wersetów", ARRAYOFCONST(( Item->Caption, _tempHSLst->Count )));
+						this->STextInfoSelectBookSearch->Caption = Format(L"W księdze o nazwie: \"%s\" znaleziono: %u wersetów", ARRAYOFCONST(( Item->Caption, _tempHSLst->Count )));
 					}
 					else
 					//Wyczyszczenie objektu klasy TWebBrowser, gdy lista dla danej księgi jest pusta
 					{
-						this->WebBrowserSelectBookStatistic->Navigate(WideString("about:blank").c_bstr());
-						this->STextInfoSelectBookSearch->Caption = "Brak wyników wyszukiwania";
+						this->WebBrowserSelectBookStatistic->Navigate(WideString(L"about:blank").c_bstr());
+						this->STextInfoSelectBookSearch->Caption = L"Brak wyników wyszukiwania";
 					}
 				}
 				catch(Exception &e)
@@ -1232,46 +1232,46 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 {
 	MyObjectVers *pMyOjectVers=nullptr;
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
-	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	if(!pStringStream) throw(Exception(L"Błąd inicjalizacji objektu TStringStream"));
 
 	UnicodeString ustrTemp;
 	//---
-	const UnicodeString ustrDisplayHeaderHTMLSearchAll = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-		"<html>\n<head>\n" +
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-		"<title>Wyniki wyszukiwania</title>\n" +
-		"<style type=\"text/css\">\n" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:12pt;font-family:Times New Roman;}\n" +
+	const UnicodeString ustrDisplayHeaderHTMLSearchAll = UnicodeString(L"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+		L"<html>\n<head>\n" +
+		L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+		L"<title>Wyniki wyszukiwania</title>\n" +
+		L"<style type=\"text/css\">\n" +
+		L".styleColorAdressTranslates {color: #FF0000; font-size:12pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
-		".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
-		".styleFound {background-color: #FFFF00;}\n" +
-		"body {background-color:" + RGBToWebColorStr(this->ColorBoxBackGroundSearchList->Selected) +
-			";font-size:12pt;font-family:Times New Roman;}\n" +
-		"</style>\n</head>\n<body>\n",
+		L".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
+		L".styleFound {background-color: #FFFF00;}\n" +
+		L"body {background-color:" + RGBToWebColorStr(this->ColorBoxBackGroundSearchList->Selected) +
+			L";font-size:12pt;font-family:Times New Roman;}\n" +
+		L"</style>\n</head>\n<body>\n",
 	ustrDisplayHeaderHTMLSearchBook = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-		"<html>\n<head>\n" +
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-		"<title>Wyniki wyszukiwania</title>\n" +
-		"<style type=\"text/css\">\n" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:12pt;font-family:Times New Roman;}\n" +
+		L"<html>\n<head>\n" +
+		L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+		L"<title>Wyniki wyszukiwania</title>\n" +
+		L"<style type=\"text/css\">\n" +
+		L".styleColorAdressTranslates {color: #FF0000; font-size:12pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
-		".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
-		".styleFound {background-color: #FFFF00;}\n" +
-		"body {background-color:" + RGBToWebColorStr(this->ColorBoxBackGroundStatisticList->Selected) +
-			";font-size:12pt;font-family:Times New Roman;}\n" +
-		"</style>\n</head>\n<body>\n",
+		L".styleText {color: #000000;font-size:14pt;font-family:Times New Roman;}\n" +
+		L".styleFound {background-color: #FFFF00;}\n" +
+		L"body {background-color:" + RGBToWebColorStr(this->ColorBoxBackGroundStatisticList->Selected) +
+			L";font-size:12pt;font-family:Times New Roman;}\n" +
+		L"</style>\n</head>\n<body>\n",
 	ustrDisplayHeaderHTMLSelectSearchVers = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-		"<html>\n<head>\n" +
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-		"<title>Wyniki wyszukiwania</title>\n" +
-		"<style type=\"text/css\">\n" +
-		".styleColorAdressTranslates {color: #FF0000; font-size:24pt;font-family:Times New Roman;}\n" +
+		L"<html>\n<head>\n" +
+		L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+		L"<title>Wyniki wyszukiwania</title>\n" +
+		L"<style type=\"text/css\">\n" +
+		L".styleColorAdressTranslates {color: #FF0000; font-size:24pt;font-family:Times New Roman;}\n" +
 		//".styleTranslates {color: #AAAAAA;font-size:12pt;font-family:Times New Roman;}" +
-		".styleText {color: #000000;font-size:24pt;font-family:Times New Roman;}\n" +
-		".styleFound {background-color: #FFFF00;}\n" +
-		"body {background-color:" + RGBToWebColorStr(this->ColorBoxBackGroundSelectVers->Selected) +
-			";font-size:16pt;font-family:Times New Roman;}\n" +
-		"</style>\n</head>\n<body>\n";
+		L".styleText {color: #000000;font-size:24pt;font-family:Times New Roman;}\n" +
+		L".styleFound {background-color: #FFFF00;}\n" +
+		L"body {background-color:" + RGBToWebColorStr(this->ColorBoxBackGroundSelectVers->Selected) +
+			L";font-size:16pt;font-family:Times New Roman;}\n" +
+		L"</style>\n</head>\n<body>\n";
 	UnicodeString ustrDefineDisplayHTML;
 	//---
 	switch(_TypeDisplayHTML)
@@ -1301,22 +1301,22 @@ void __fastcall TSearchTextWindow::_DisplayListTextHTML(TWebBrowser *_pWebBrowse
 			{
 				if((iSelectDisplayVerset > -1) && (i != iSelectDisplayVerset)) continue;
 				pMyOjectVers = static_cast<MyObjectVers *>(_pHListAnyVers->Objects[i]);
-				if(!pMyOjectVers) throw(Exception("Błąd odczytu objektu MyObjectVers"));
+				if(!pMyOjectVers) throw(Exception(L"Błąd odczytu objektu MyObjectVers"));
 				//Dodawanie kolejnego wersetu
-				ustrTemp = Format(UnicodeString("<p>\n") +
-					"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
+				ustrTemp = Format(UnicodeString(L"<p>\n") +
+					L"<span class=\"styleColorAdressTranslates\">\n%s\n</span>\n<span class=\"styleText\">\n%s\n</span>\n",
 					ARRAYOFCONST((pMyOjectVers->BookChaptVers, _pHListAnyVers->Strings[i])));
 				pStringStream->WriteString(ustrTemp);
 				//pStringStream->WriteString("<br>");
-				pStringStream->WriteString("</p>\n\n");
+				pStringStream->WriteString(L"</p>\n\n");
 			}
-			pStringStream->WriteString("</body>\n</html>\n");
+			pStringStream->WriteString(L"</body>\n</html>\n");
 			//----- Posłużenie sie pomocniczym TStringList, dla zapisania do strumienia, jako UTF-8
 			pStringStream->Position = 0;
 			//--- Zmienna do zapisu zawartości zakładki w postaci kodu html, z wybranym rozdziałem, do ewentualnego zapisu jako samodzielnej strony.
 			if(_TypeDisplayHTML == enTypeDisplay_ResultsearchAll)
 			{
-				this->_ustrResultSearchHTML = ""; //[10-10-2023]
+				this->_ustrResultSearchHTML = L""; //[10-10-2023]
 				this->_ustrResultSearchHTML += pStringStream->DataString; //[10-10-2023]
 			}
 			//---
@@ -1348,32 +1348,32 @@ void __fastcall TSearchTextWindow::ColorBoxGetColors(TCustomColorBox *Sender,
 	TColorBox *pColorBox = dynamic_cast<TColorBox *>(Sender);
 	if(!pColorBox) return;
 	//---
-	Items->AddObject("clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
-	Items->AddObject("clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
-	Items->AddObject("clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
-	Items->AddObject("clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
-	Items->AddObject("clWebDarkOrange", reinterpret_cast<TObject*>(clWebDarkOrange));
-	Items->AddObject("clWebDarkRed", reinterpret_cast<TObject*>(clWebDarkRed));
-	Items->AddObject("clWebCoral", reinterpret_cast<TObject*>(clWebCoral));
-	Items->AddObject("clWebGold", reinterpret_cast<TObject*>(clWebGold));
-	Items->AddObject("clWebRosyBrown", reinterpret_cast<TObject*>(clWebRosyBrown));
-	Items->AddObject("clWebForestGreen", reinterpret_cast<TObject*>(clWebForestGreen));
-	Items->AddObject("clWebChartreuse", reinterpret_cast<TObject*>(clWebChartreuse));
-	Items->AddObject("clWebSeaGreen", reinterpret_cast<TObject*>(clWebSeaGreen));
-	Items->AddObject("clWebMediumAquamarine", reinterpret_cast<TObject*>(clWebMediumAquamarine));
-	Items->AddObject("clWebLightCyan", reinterpret_cast<TObject*>(clWebLightCyan));
-	Items->AddObject("clWebCornFlowerBlue", reinterpret_cast<TObject*>(clWebCornFlowerBlue));
-	Items->AddObject("clWebIndigo", reinterpret_cast<TObject*>(clWebIndigo));
-	Items->AddObject("clWebAqua", reinterpret_cast<TObject*>(clWebAqua));
-	Items->AddObject("clWebRoyalBlue", reinterpret_cast<TObject*>(clWebRoyalBlue));
-	Items->AddObject("clWebMidnightBlue", reinterpret_cast<TObject*>(clWebMidnightBlue));
-	Items->AddObject("clWebDarkViolet", reinterpret_cast<TObject*>(clWebDarkViolet));
-	Items->AddObject("clWebDarkMagenta", reinterpret_cast<TObject*>(clWebDarkMagenta));
-	Items->AddObject("clWebDeepPink", reinterpret_cast<TObject*>(clWebDeepPink));
-	Items->AddObject("clWebMediumSlateBlue", reinterpret_cast<TObject*>(clWebMediumSlateBlue));
-	Items->AddObject("clWebSteelBlue", reinterpret_cast<TObject*>(clWebSteelBlue));
-	Items->AddObject("clWebSlateBlue", reinterpret_cast<TObject*>(clWebSlateBlue));
-	Items->AddObject("clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
+	Items->AddObject(L"clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
+	Items->AddObject(L"clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
+	Items->AddObject(L"clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
+	Items->AddObject(L"clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
+	Items->AddObject(L"clWebDarkOrange", reinterpret_cast<TObject*>(clWebDarkOrange));
+	Items->AddObject(L"clWebDarkRed", reinterpret_cast<TObject*>(clWebDarkRed));
+	Items->AddObject(L"clWebCoral", reinterpret_cast<TObject*>(clWebCoral));
+	Items->AddObject(L"clWebGold", reinterpret_cast<TObject*>(clWebGold));
+	Items->AddObject(L"clWebRosyBrown", reinterpret_cast<TObject*>(clWebRosyBrown));
+	Items->AddObject(L"clWebForestGreen", reinterpret_cast<TObject*>(clWebForestGreen));
+	Items->AddObject(L"clWebChartreuse", reinterpret_cast<TObject*>(clWebChartreuse));
+	Items->AddObject(L"clWebSeaGreen", reinterpret_cast<TObject*>(clWebSeaGreen));
+	Items->AddObject(L"clWebMediumAquamarine", reinterpret_cast<TObject*>(clWebMediumAquamarine));
+	Items->AddObject(L"clWebLightCyan", reinterpret_cast<TObject*>(clWebLightCyan));
+	Items->AddObject(L"clWebCornFlowerBlue", reinterpret_cast<TObject*>(clWebCornFlowerBlue));
+	Items->AddObject(L"clWebIndigo", reinterpret_cast<TObject*>(clWebIndigo));
+	Items->AddObject(L"clWebAqua", reinterpret_cast<TObject*>(clWebAqua));
+	Items->AddObject(L"clWebRoyalBlue", reinterpret_cast<TObject*>(clWebRoyalBlue));
+	Items->AddObject(L"clWebMidnightBlue", reinterpret_cast<TObject*>(clWebMidnightBlue));
+	Items->AddObject(L"clWebDarkViolet", reinterpret_cast<TObject*>(clWebDarkViolet));
+	Items->AddObject(L"clWebDarkMagenta", reinterpret_cast<TObject*>(clWebDarkMagenta));
+	Items->AddObject(L"clWebDeepPink", reinterpret_cast<TObject*>(clWebDeepPink));
+	Items->AddObject(L"clWebMediumSlateBlue", reinterpret_cast<TObject*>(clWebMediumSlateBlue));
+	Items->AddObject(L"clWebSteelBlue", reinterpret_cast<TObject*>(clWebSteelBlue));
+	Items->AddObject(L"clWebSlateBlue", reinterpret_cast<TObject*>(clWebSlateBlue));
+	Items->AddObject(L"clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
 }
 //---------------------------------------------------------------------------
 void __fastcall TSearchTextWindow::ColorBoxChange(TObject *Sender)
@@ -1431,7 +1431,7 @@ void __fastcall TSearchTextWindow::ButtonSaveSearchClick(TObject *Sender)
 								ustrPathInfos = TPath::ChangeExtension(ustrPathToSave, GlobalVar::Global_custrFileSearchInfoExtand);
 	TFile::WriteAllText(ustrPathToSave, this->_ustrResultSearchHTML, TEncoding::UTF8);
 	TMemIniFile *pIni = new TMemIniFile(ustrPathInfos, TEncoding::UTF8);
-	if(!pIni) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
+	if(!pIni) throw(Exception(L"Błąd inicjalizacji objektu TMemIniFile"));
 
 	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, this->CBoxHistorySearchText->Text);
 	pIni->WriteString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, this->CBoxSelectTranslates->Text);

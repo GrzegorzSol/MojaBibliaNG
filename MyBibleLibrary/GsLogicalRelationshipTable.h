@@ -2,7 +2,7 @@
 #define GsLogicalRelationshipTableH
 //---------------------------------------------------------------------------
 #include <Vcl.ExtCtrls.hpp>
-
+static UnicodeString sustrVersionGsLogicalRelationshipTable = "1.01.1460";
 enum {
 //--- Numery identyfikacyjne kolorów
 			enColorSchemeNum_Line=0,
@@ -17,7 +17,7 @@ enum {
 *			 Stara struktura _ReadWriteDataObject do zapisu i odczytu objektu			*
 *****************************************************************************/
 //Struktura tymczasowa do zapisu i odczytu pliku z projektem schematu
-const int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
+constexpr int SIZE_ADDR_VERS = 16, //Długość miejsca na adres wersetu
 					SIZE_CHILD_COMMENT = 255, //Długość komentarza do pojedyńczego elementu
 					NSIZE_TEXT = 255; // Długość tekstu pozycji, w nowej wersji danych do zapisu
 const UnicodeString custrOldExtFilesScheme = ".nsvp", // Stare rozszerzenie plików projektu

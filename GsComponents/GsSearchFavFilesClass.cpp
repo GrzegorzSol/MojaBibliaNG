@@ -11,7 +11,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-const UnicodeString custrPMenu[] = {"Sakasuj plik wyszukiwania"};
+const UnicodeString custrPMenu[] = {L"Sakasuj plik wyszukiwania"};
 enum	{
 				enSelectPopup_Delete = 100,
 			};
@@ -25,16 +25,16 @@ __fastcall GsSearchFavFilesClass::GsSearchFavFilesClass(TComponent* Owner) : TCu
 */
 {
 	this->_pHSListSelect = new THashedStringList();
-	if(!this->_pHSListSelect) throw(Exception("Nie dokonano inicjalizacji objektu THashedStringList"));
+	if(!this->_pHSListSelect) throw(Exception(L"Nie dokonano inicjalizacji objektu THashedStringList"));
 
 	this->_pImages = new TImageList(this);
-	if(!this->_pImages) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
+	if(!this->_pImages) throw(Exception(L"Nie dokonano inicjalizacji objektu TImageList"));
 	this->_pImages->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	this->_pImages->DrawingStyle = dsTransparent;
 	this->_pImages->Height = 32; this->_pImages->Width = 32;
 
 	this->_pImages16 = new TImageList(this);
-	if(!this->_pImages16) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
+	if(!this->_pImages16) throw(Exception(L"Nie dokonano inicjalizacji objektu TImageList"));
 	this->_pImages16->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	this->_pImages16->DrawingStyle = dsTransparent;
 
@@ -49,14 +49,14 @@ __fastcall GsSearchFavFilesClass::GsSearchFavFilesClass(TComponent* Owner) : TCu
 	this->LargeImages = this->_pImages;
 	//PopupMenu [13-10-2023]
 	this->_pPopupM = new TPopupMenu(this);
-	if(!this->_pPopupM) throw(Exception("Błąd inicjalizacji objektu klasy TPopupMenu"));
+	if(!this->_pPopupM) throw(Exception(L"Błąd inicjalizacji objektu klasy TPopupMenu"));
 	this->_pPopupM->AutoHotkeys = maManual; //Brak podkreśleń
 	this->_pPopupM->AutoPopup = false;
 	this->_pPopupM->Images = this->_pImages16;
 	for(int i=0; i<ARRAYSIZE(custrPMenu); ++i)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->_pPopupM);
-		if(!NewItem) throw(Exception("Błąd funkcji TMenuItem"));
+		if(!NewItem) throw(Exception(L"Błąd funkcji TMenuItem"));
 		this->_pPopupM->Items->Add(NewItem);
 		NewItem->Caption = custrPMenu[i];
 		NewItem->Tag = enSelectPopup_Delete + i;
@@ -90,9 +90,9 @@ void __fastcall GsSearchFavFilesClass::_InitAllImage()
 	try
 	{
 		pIcon = new TIcon();
-		if(!pIcon) throw(Exception("Błąd metody TIcon"));
+		if(!pIcon) throw(Exception(L"Błąd metody TIcon"));
 		pMemoryStr = new TMemoryStream();
-		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
+		if(!pMemoryStr) throw(Exception(L"Błąd metody TMemoryStream"));
 
 		pMemoryStr->WriteBuffer(chDataGfxSearchFavFiles, ARRAYSIZE(chDataGfxSearchFavFiles)); //Zapis do strumienia danych
 		pMemoryStr->Position = 0;															//Ustawienia wskażnika strumienia na początek
@@ -168,7 +168,7 @@ void __fastcall GsSearchFavFilesClass::DblClick()
 	TForm *mainForm = Application->MainForm;
 	if(mainForm)
 	{
-		WideString wstrSelectFileToWeb = "file://" + this->SelectFile;
+		WideString wstrSelectFileToWeb = L"file://" + this->SelectFile;
 		TForm *pWindowTextSearch = new TForm(mainForm, 1); //[25-07-2026]
 		if(pWindowTextSearch)
 		{
@@ -176,7 +176,7 @@ void __fastcall GsSearchFavFilesClass::DblClick()
 			pWindowTextSearch->Caption = TPath::GetFileNameWithoutExtension(this->SelectFile);
 
 			TWebBrowser* pWebBrowser = new TWebBrowser(pWindowTextSearch);
-			if(!pWebBrowser) throw(Exception("Błąd inicjalizacji klasy TWebBrowser"));
+			if(!pWebBrowser) throw(Exception(L"Błąd inicjalizacji klasy TWebBrowser"));
 			pWebBrowser->TOleControl::Parent = pWindowTextSearch;
 			pWebBrowser->Align = alClient;
 			pWebBrowser->Offline = true;
@@ -282,7 +282,7 @@ void __fastcall GsSearchFavFilesClass::DeleteSelectFile()
 {
 	if(this->_FustrSelectFile.IsEmpty()) return;
 	//---
-	UnicodeString ustrTemp = Format("Czy rzeczywiście chcesz skasować plik: \"%s\"?", ARRAYOFCONST(( this->_FustrSelectFile )));
+	UnicodeString ustrTemp = Format(L"Czy rzeczywiście chcesz skasować plik: \"%s\"?", ARRAYOFCONST(( this->_FustrSelectFile )));
 	int iResult = MessageBox(NULL, ustrTemp.c_str(), TEXT("Pytanie aplikacji"), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL | MB_DEFBUTTON2);
 	if(iResult == IDNO) return;
 

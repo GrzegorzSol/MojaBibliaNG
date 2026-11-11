@@ -24,9 +24,14 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 {
 	if(Application->MainForm)
 	{
+		UnicodeString ustrAllVersion;
 		//Istnieje główne okno
-		this->LabelHeaderInfos->Caption = Format("%s.", ARRAYOFCONST((Application->MainForm->Caption)));
-		this->STextInfoVersions->Caption = Format("Wersje zasobów:\n%s.", ARRAYOFCONST((GlobalVar::Global_ustrVerGsReadBibleTextClass)));
+		this->LabelHeaderInfos->Caption = Format(L"%s.", ARRAYOFCONST((Application->MainForm->Caption)));
+		for(int iLicz=0; iLicz<GlobalVar::Global_SListAllVersionLibrary->Count; ++iLicz)
+		{
+			ustrAllVersion += GlobalVar::Global_SListAllVersionLibrary->Strings[iLicz]; ustrAllVersion += "\n";
+		}
+		this->STextInfoVersions->Caption = Format(L"Wersje zasobów:\n%s", ARRAYOFCONST((ustrAllVersion)));
 		this->TimerInfoSystem->Enabled = false;
 	}
 	else
@@ -34,30 +39,30 @@ __fastcall TInformationsAppWindow::TInformationsAppWindow(TComponent* Owner)
 		//Nie istnieje główne okno
 		this->FormStyle = fsStayOnTop;
 		//this->AlphaBlendValue = 190;
-		this->LabelHeaderInfos->Caption = "Uruchamianie aplikacji...";
+		this->LabelHeaderInfos->Caption = L"Uruchamianie aplikacji...";
 		this->TimerInfoSystem->Enabled = true;
 	}
 	//---
-	UnicodeString ustrTextInfo = UnicodeString("Aplikacja do studiowania Pisma Świętego.") +
-		"W jej skład wchodzą polskie przekłady biblii, w wersji protestanckiej jak i katolickiej (zawierającej apokryfy)." +
-		"Aplikacja również posiada dostęp do tekstów oryginalnych, w języku greckim (Nowy Testament, Septuaginta), jak i hebrajskim (Stary Testament).\n" +
-		"OSTRZEŻENIE: Aktualna wersja jest wersją rozwojową (tzw. beta), dlatego może działać niestabilnie!\n\n" +
-		"\tOpis licencji dla aplikacji Moja Biblia NG:\n" +
-		"Produkt ten posiada licencje FreeWare, więc jest przeznaczony do darmowego rozpowszechniania, ale bez czerpania jakichkolwiek korzyści finansowych.\n" +
-		"Kod źródłowy projektu jest upubliczniony na stronie: „https://github.com/GrzegorzSol/MojaBibliaNG_Git”, można go dowolnie modyfikować," +
-		"jednak o wszystkich takich zabiegach autor pragnie być poinformowany, razem z przedstawieniem zmodyfikowanego kodu.\n" +
-		"Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik.\n\n" +
-		"Jej rozwój rozpoczął się od 2007 roku (kolejne wersje były przeprojektowywane, zmieniane itd.). Więcej informacji znajduje się pod adresem \"https://www.facebook.com/MojaBiblia/\"\n\n",
-								ustrInfoVerCompilation = UnicodeString("Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder Community 12.1 Version 29.0.52631.8427.\n") +
-																				 "Skompilowany został za pomocą kompilatora C++ z powyższego pakietu, w wersji CLang\n",
-								ustrInfox64 = "\nAktualna wersja jest w wersji 64 bitowej!\n\n";
+	UnicodeString ustrTextInfo = UnicodeString(L"Aplikacja do studiowania Pisma Świętego.") +
+		L"W jej skład wchodzą polskie przekłady biblii, w wersji protestanckiej jak i katolickiej (zawierającej apokryfy)." +
+		L"Aplikacja również posiada dostęp do tekstów oryginalnych, w języku greckim (Nowy Testament, Septuaginta), jak i hebrajskim (Stary Testament).\n" +
+		L"OSTRZEŻENIE: Aktualna wersja jest wersją rozwojową (tzw. beta), dlatego może działać niestabilnie!\n\n" +
+		L"\tOpis licencji dla aplikacji Moja Biblia NG:\n" +
+		L"Produkt ten posiada licencje FreeWare, więc jest przeznaczony do darmowego rozpowszechniania, ale bez czerpania jakichkolwiek korzyści finansowych.\n" +
+		L"Kod źródłowy projektu jest upubliczniony na stronie: „https://github.com/GrzegorzSol/MojaBibliaNG_Git”, można go dowolnie modyfikować," +
+		L"jednak o wszystkich takich zabiegach autor pragnie być poinformowany, razem z przedstawieniem zmodyfikowanego kodu.\n" +
+		L"Aplikacja jest rozwijana pod patronatem zboru Kościoła Zielonoświątkowego w Oświęcimiu, a jej wyłącznym autorem jest Grzegorz Sołtysik.\n\n" +
+		L"Jej rozwój rozpoczął się od 2007 roku (kolejne wersje były przeprojektowywane, zmieniane itd.). Więcej informacji znajduje się pod adresem \"https://www.facebook.com/MojaBiblia/\"\n\n",
+								ustrInfoVerCompilation = UnicodeString(L"Cały projekt aplikacji, ze wszystkimi jego składnikami został stworzony za pomocą pakietu programistycznego firmy Embarcadero® C++Builder Community 12.1 Version 29.0.52631.8427.\n") +
+																				 L"Skompilowany został za pomocą kompilatora C++ z powyższego pakietu, w wersji CLang\n",
+								ustrInfox64 = L"\nAktualna wersja jest w wersji 64 bitowej!\n\n";
 	//---
 	#if defined(_WIN64)
-		this->STextInfoLicence->Caption = Format("%s%s%s", ARRAYOFCONST((ustrTextInfo, ustrInfoVerCompilation, ustrInfox64)));
+		this->STextInfoLicence->Caption = Format(L"%s%s%s", ARRAYOFCONST((ustrTextInfo, ustrInfoVerCompilation, ustrInfox64)));
 	#else
-		this->STextInfoLicence->Caption = Format("%s%s", ARRAYOFCONST((ustrTextInfo, ustrInfoVerCompilation)));
+		this->STextInfoLicence->Caption = Format(L"%s%s", ARRAYOFCONST((ustrTextInfo, ustrInfoVerCompilation)));
 	#endif
-	this->STextInfoSystem->Caption =	Format("Wersja systemu operacyjnego:\n%s", ARRAYOFCONST((TOSVersion::ToString())));
+	this->STextInfoSystem->Caption =	Format(L"Wersja systemu operacyjnego:\n%s", ARRAYOFCONST((TOSVersion::ToString())));
 }
 //---------------------------------------------------------------------------
 void __fastcall TInformationsAppWindow::FormClose(TObject *Sender, TCloseAction &Action)

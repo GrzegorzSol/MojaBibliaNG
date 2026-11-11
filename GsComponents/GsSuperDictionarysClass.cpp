@@ -109,16 +109,16 @@ __fastcall BaseSuperDictionaries::BaseSuperDictionaries(const UnicodeString _pat
 //		GsDebugClass::WriteDebug("Konstruktor BaseSuperDictionarys");
 //	#endif
 	this->_pHSListFullDictGrek = new THashedStringList();
-	if(!this->_pHSListFullDictGrek) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHSListFullDictGrek) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 	this->_pHSListFullDictHbr = new THashedStringList();
-	if(!this->_pHSListFullDictHbr) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHSListFullDictHbr) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 	this->_pListGrecItems = new TList();
-	if(!this->_pListGrecItems) throw(Exception("Błąd inicjalizacji objektu TList"));
+	if(!this->_pListGrecItems) throw(Exception(L"Błąd inicjalizacji objektu TList"));
 
 	this->_pListHbrItems = new TList();
-	if(!this->_pListHbrItems) throw(Exception("Błąd inicjalizacji objektu TList"));
+	if(!this->_pListHbrItems) throw(Exception(L"Błąd inicjalizacji objektu TList"));
 }
 //---------------------------------------------------------------------------
 __fastcall BaseSuperDictionaries::~BaseSuperDictionaries()
@@ -203,11 +203,11 @@ void __fastcall CreateSuperDictionaries::CreateGrecDictionaries()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	const UnicodeString custrPath = TPath::Combine(System::Sysutils::ExtractFilePath(Application->ExeName), "StrongFiles");
+	const UnicodeString custrPath = TPath::Combine(System::Sysutils::ExtractFilePath(Application->ExeName), L"StrongFiles");
 	UnicodeString ustrFileRead;
 
 	THashedStringList *_pHSListStrongDictGrek = new THashedStringList();
-	if(!_pHSListStrongDictGrek) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!_pHSListStrongDictGrek) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 	this->_pHSListFullDictGrek->Clear();
 	try
@@ -217,11 +217,11 @@ void __fastcall CreateSuperDictionaries::CreateGrecDictionaries()
 			this->_pHSListFullDictGrek->BeginUpdate();
 			for(int iIndex=1; iIndex<ciMaxStrongGrecCount; ++iIndex) // ciMaxStrongCount
 			{
-				ustrFileRead = TPath::Combine(custrPath, Format("G%d.txt", ARRAYOFCONST((iIndex))));
+				ustrFileRead = TPath::Combine(custrPath, Format(L"G%d.txt", ARRAYOFCONST((iIndex))));
 				if(TFile::Exists(ustrFileRead))
 				{
 					_pHSListStrongDictGrek->LoadFromFile(ustrFileRead, TEncoding::UTF8);
-					_pHSListStrongDictGrek->Insert(0, Format("#G%d", ARRAYOFCONST((iIndex))));
+					_pHSListStrongDictGrek->Insert(0, Format(L"#G%d", ARRAYOFCONST((iIndex))));
 					this->_pHSListFullDictGrek->AddStrings(_pHSListStrongDictGrek);
 				}
 			}
@@ -236,7 +236,7 @@ void __fastcall CreateSuperDictionaries::CreateGrecDictionaries()
 	__finally
 	{
 		if(_pHSListStrongDictGrek) {delete _pHSListStrongDictGrek; _pHSListStrongDictGrek = nullptr;}
-		this->_pHSListFullDictGrek->SaveToFile("SuperGrecDict.mbdict", TEncoding::UTF8);
+		this->_pHSListFullDictGrek->SaveToFile(L"SuperGrecDict.mbdict", TEncoding::UTF8);
 	}
 }
 //---------------------------------------------------------------------------
@@ -248,11 +248,11 @@ void __fastcall CreateSuperDictionaries::CreateHbrDictionaries()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  const UnicodeString custrPath = TPath::Combine(System::Sysutils::ExtractFilePath(Application->ExeName), "StrongFiles");
+	const UnicodeString custrPath = TPath::Combine(System::Sysutils::ExtractFilePath(Application->ExeName), L"StrongFiles");
 	UnicodeString ustrFileRead;
 
 	THashedStringList *_pHSListStrongDictHbr = new THashedStringList();
-	if(!_pHSListStrongDictHbr) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!_pHSListStrongDictHbr) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 	this->_pHSListFullDictHbr->Clear();
 	try
@@ -262,11 +262,11 @@ void __fastcall CreateSuperDictionaries::CreateHbrDictionaries()
 			this->_pHSListFullDictHbr->BeginUpdate();
 			for(int iIndex=1; iIndex<ciMaxStrongHbrCount; ++iIndex) // ciMaxStrongCount
 			{
-				ustrFileRead = TPath::Combine(custrPath, Format("H%d.txt", ARRAYOFCONST((iIndex))));
+				ustrFileRead = TPath::Combine(custrPath, Format(L"H%d.txt", ARRAYOFCONST((iIndex))));
 				if(TFile::Exists(ustrFileRead))
 				{
 					_pHSListStrongDictHbr->LoadFromFile(ustrFileRead, TEncoding::UTF8);
-					_pHSListStrongDictHbr->Insert(0, Format("#H%d", ARRAYOFCONST((iIndex))));
+					_pHSListStrongDictHbr->Insert(0, Format(L"#H%d", ARRAYOFCONST((iIndex))));
 					_pHSListStrongDictHbr->Strings[enLineHbr_Apperances] = StringReplace(_pHSListStrongDictHbr->Strings[enLineHbr_Apperances], "_", ":", TReplaceFlags() << rfReplaceAll);
 					this->_pHSListFullDictHbr->AddStrings(_pHSListStrongDictHbr);
         }
@@ -283,7 +283,7 @@ void __fastcall CreateSuperDictionaries::CreateHbrDictionaries()
 	__finally
 	{
 		if(_pHSListStrongDictHbr) {delete _pHSListStrongDictHbr; _pHSListStrongDictHbr = nullptr;}
-		this->_pHSListFullDictHbr->SaveToFile("SuperHbrDict.mbdict", TEncoding::UTF8);
+		this->_pHSListFullDictHbr->SaveToFile(L"SuperHbrDict.mbdict", TEncoding::UTF8);
   }
 }
 #endif
@@ -346,7 +346,7 @@ void __fastcall ManagerSuperDictionaries::ReadGrecDictionary()
 			for(int iIndex=1; iIndex<ciMaxStrongGrecCount; ++iIndex)
 			{
 				pSuperDictionaryItemGrec = new SuperDictionaryItemGrec();
-				if(!pSuperDictionaryItemGrec) throw(Exception("Błąd inicjalizacji objektu SuperDictionaryItemGrec"));
+				if(!pSuperDictionaryItemGrec) throw(Exception(L"Błąd inicjalizacji objektu SuperDictionaryItemGrec"));
 
 				if((iIndex > 3202) && (iIndex < 3303))
 				{
@@ -409,7 +409,7 @@ void __fastcall ManagerSuperDictionaries::ReadHbrDictionary()
 			{
 				iInd = iIndex - 1;
 				pSuperDictionaryItemHbr = new SuperDictionaryItemHbr();
-				if(!pSuperDictionaryItemHbr) throw(Exception("Błąd inicjalizacji objektu SuperDictionaryItemHbr"));
+				if(!pSuperDictionaryItemHbr) throw(Exception(L"Błąd inicjalizacji objektu SuperDictionaryItemHbr"));
 
 				pSuperDictionaryItemHbr->StrongNumber = iIndex;
 				pSuperDictionaryItemHbr->ustrHbrWord = this->_pHSListFullDictHbr->Strings[(iInd * enLineHbr_Count) + enLineHbr_HbrWord];

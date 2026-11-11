@@ -30,16 +30,16 @@ enum {//Indeksy głównych zakładek
 			enTag_PDFDocs=100, enTag_WWWLinks};
 //Nazwy zakładek
 const UnicodeString //Nazwy zakładek
-										cstrGroupName[] = {"Dostępne tłumaczenia", "Zarejestrowana grafika", "Lista komentarzy do wersetów", "Lista ulubionych wersetów",
-																			 "Dokumenty w formacie PDF", "Lista odnośników"},
+										cstrGroupName[] = {L"Dostępne tłumaczenia", L"Zarejestrowana grafika", L"Lista komentarzy do wersetów", L"Lista ulubionych wersetów",
+																			 L"Dokumenty w formacie PDF", L"Lista odnośników"},
 										//Nazwy nagłówków dla tłumaczeń
-										cstrNameHeaderTranslates[] = {"Nazwa tłumaczenia", "Typ tłumaczenia"},
+										cstrNameHeaderTranslates[] = {L"Nazwa tłumaczenia", L"Typ tłumaczenia"},
 										//Nazwy nagłówków dla grafik
-										cstrNameHeaderGraphics[] = {"Nazwa grafiki", "Wielkość grafiki"},
+										cstrNameHeaderGraphics[] = {L"Nazwa grafiki", L"Wielkość grafiki"},
 										//Nazwy nagłówków komentarzy
-										cstrNameHeaderComments[] = {"Werset, z komentarzem"},
+										cstrNameHeaderComments[] = {L"Werset, z komentarzem"},
 										//Nazwy nagłówków ulubionych wersetów
-										cstrNameHeaderFav[] = {"Ulubione wersety"};
+										cstrNameHeaderFav[] = {L"Ulubione wersety"};
 
 /*
 #if defined(_DEBUGINFO_)
@@ -71,7 +71,7 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 */
 {
 	TTabSheet *pTSheet=nullptr;
-	const int ciDummy=1;
+	constexpr int ciDummy=1;
 
 	this->ImageGraphics->Width = this->ImageGraphics->Width;
 	this->ImageComments->Width = this->ImageComments->Width;
@@ -97,17 +97,17 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 	this->PControlAllMultimedia->ActivePage = this->TabSheetTranslates;
 
 	this->_pHListGraphics = new THashedStringList();
-	if(!this->_pHListGraphics) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHListGraphics) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListComments	 = new THashedStringList();
-	if(!this->_pHListComments) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHListComments) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListFavVerses	= new THashedStringList();
-	if(!this->_pHListFavVerses) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHListFavVerses) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	this->_pListAllFullTranslates = new TList();
-	if(!this->_pListAllFullTranslates) throw(Exception("Błąd inicjalizacji objektu TList"));
+	if(!this->_pListAllFullTranslates) throw(Exception(L"Błąd inicjalizacji objektu TList"));
 	this->_pHListPDFDocs = new THashedStringList();
-	if(!this->_pHListPDFDocs) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHListPDFDocs) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListWWWLinksList = new THashedStringList();
-	if(!this->_pHListWWWLinksList) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHListWWWLinksList) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 	this->_SetTagsAndHints();
 	this->_LoadAllTraslates(); //Tworzenie listy katalogów z grafiką
@@ -118,7 +118,7 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 	this->_LoadAllWWWLinks();       //Tworzenie listy odnośników
 
 	this->_pDisplayWindow = new TForm(this, ciDummy); // ? [05-07-2026]
-	if(!this->_pDisplayWindow) throw(Exception("Błąd inicjalizacji objektu TForm"));
+	if(!this->_pDisplayWindow) throw(Exception(L"Błąd inicjalizacji objektu TForm"));
 
 	this->_pDisplayWindow->Width = Screen->Width;
 	this->_pDisplayWindow->Height = Screen->Height;
@@ -130,7 +130,7 @@ void __fastcall TAllMultimediaView::FormCreate(TObject *Sender)
 	this->_pDisplayWindow->Color = clBlack;
 
 	this->_pImageScr = new TImage(this->_pDisplayWindow);
-	if(!this->_pImageScr) throw(Exception("Błąd inicjalizacji objektu TImage"));
+	if(!this->_pImageScr) throw(Exception(L"Błąd inicjalizacji objektu TImage"));
 	this->_pImageScr->Parent = this->_pDisplayWindow;
 	this->_pImageScr->Stretch = true;
 }
@@ -233,7 +233,7 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 	int iSize=0;
 
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
-	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+	if(!SListTemp) throw(Exception(L"Błąd inicjalizacji objektu TStringList"));
 	SListTemp->Add(GlobalVar::Global_custrPathMultimediaFilesData);
   // Dodatkowe, oprócz domyślnego katalogi z grafiką
 	SListTemp->Add(GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_PathMultiM1, ""));
@@ -248,10 +248,10 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 		for(int i=0; i<SDirMultiMList.Length; ++i)
 		{
 			ustrTempLowerName = LowerCase(SDirMultiMList[i]);
-			if((TPath::GetExtension(ustrTempLowerName) != ".jpg") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".jpeg") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".png") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".bmp")) continue;
+			if((TPath::GetExtension(ustrTempLowerName) != L".jpg") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".jpeg") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".png") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".bmp")) continue;
 
 			try
 			{
@@ -262,7 +262,7 @@ void __fastcall TAllMultimediaView::_LoadAllGraphics()
 			{
 				if(nuiFile) FileClose(nuiFile);
 			}
-			this->_pHListGraphics->Add(Format("%s=%d", ARRAYOFCONST((SDirMultiMList[i], iSize))));
+			this->_pHListGraphics->Add(Format(L"%s=%d", ARRAYOFCONST((SDirMultiMList[i], iSize))));
 		}
 		SDirMultiMList.Length = 0;
 	}
@@ -318,7 +318,7 @@ void __fastcall TAllMultimediaView::_LoadAllFavVerses()
 {
 	THeaderSection *Section=nullptr;
 	TStringList *SListTemp = new TStringList(); //Tymczasowy objekt, z zawartością wszystkich ścieżek dostępu do katalogów z multimediami
-	if(!SListTemp) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+	if(!SListTemp) throw(Exception(L"Błąd inicjalizacji objektu TStringList"));
 
 	//Lista ulubionych wersetów
 	if(TFile::Exists(GlobalVar::Global_custrPathFileFavoriteVers))
@@ -358,10 +358,10 @@ void __fastcall TAllMultimediaView::_LoadAllPDFDocs()
 	for(int i=0; i<SDPdfDocs.Length; ++i)
 	{
     ustrTempLowerName = LowerCase(SDPdfDocs[i]);
-		if((TPath::GetExtension(ustrTempLowerName) != ".pdf") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".doc") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".docx") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".txt")) continue;
+		if((TPath::GetExtension(ustrTempLowerName) != L".pdf") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".doc") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".docx") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".txt")) continue;
 		this->_pHListPDFDocs->Add(SDPdfDocs[i]);
 	}
 
@@ -371,10 +371,10 @@ void __fastcall TAllMultimediaView::_LoadAllPDFDocs()
 	for(int i=0; i<SDPdfDocs.Length; ++i)
 	{
 		ustrTempLowerName = LowerCase(SDPdfDocs[i]);
-		if((TPath::GetExtension(ustrTempLowerName) != ".pdf") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".doc") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".docx") &&
-				 (TPath::GetExtension(ustrTempLowerName) != ".txt")) continue;
+		if((TPath::GetExtension(ustrTempLowerName) != L".pdf") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".doc") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".docx") &&
+				 (TPath::GetExtension(ustrTempLowerName) != L".txt")) continue;
 		this->_pHListPDFDocs->Add(SDPdfDocs[i]);
 	}
 
@@ -407,25 +407,25 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 	int iBook, iChapt, iVers;
 	UnicodeString ustrAdress, ustrNameTr, ustrText;
 	const UnicodeString GlobalSizeFontText = "\\fs32",
-											GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
-																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;\\red200\\green0\\blue200;}" +
-																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
-																		 "\\pard\\sa200\\sl276\\slmult1\\cf4\\fs45\\b Podgląd wersetu z listy ulubionych, lub wersetu, który posiada komentarz\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",// + GlobalSizeFontText,
-											GlobalAdressVersRtf = "\\f1\\cf2\\b",
-											GlobalVersRtf = "\\cf1\\b0\\f0",
-											GlobalNameTransRtf = "\\cf5\\f1",
-											GlobalSizeNameTransRtf = "\\fs26";
+											GlobalHeaderRtf = UnicodeString(L"{\\urtf1\\ansi\\ansicpg1250\\deff0\\nouicompat\\deflang1045{\\fonttbl{\\f0\\fnil\\fcharset238 Calibri;}{\\f1\\fnil\\fcharset0 Calibri;}}") +
+																		 L"{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;\\red200\\green0\\blue200;}" +
+																		 L"{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1" +
+																		 L"\\pard\\sa200\\sl276\\slmult1\\cf4\\fs45\\b Podgląd wersetu z listy ulubionych, lub wersetu, który posiada komentarz\\cf0\\b0\\f1\\fs22\\lang21\\par\\fs28",// + GlobalSizeFontText,
+											GlobalAdressVersRtf = L"\\f1\\cf2\\b",
+											GlobalVersRtf = L"\\cf1\\b0\\f0",
+											GlobalNameTransRtf = L"\\cf5\\f1",
+											GlobalSizeNameTransRtf = L"\\fs26";
 
 	this->ImageSelectDisplay->Picture->Assign(nullptr);
 	this->ImageSelectDisplay->Visible = false;
 
-	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
-	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	TStringStream *pStringStream = new TStringStream(L"", TEncoding::UTF8, true);
+	if(!pStringStream) throw(Exception(L"Błąd inicjalizacji objektu TStringStream"));
 
 	iBook = ustrCodeVers.SubString(1, 3).ToInt()-1;
 	iChapt = ustrCodeVers.SubString(4, 3).ToInt();
 	iVers = ustrCodeVers.SubString(7, 3).ToInt();
-	ustrAdress = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
+	ustrAdress = Format(L"%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
 	pStringStream->WriteString(GlobalHeaderRtf);
 
@@ -438,14 +438,14 @@ void __fastcall TAllMultimediaView::_DisplaySelectVersAllTrans(const UnicodeStri
 
 		if(ustrText.Length() > 0)
 		{
-			pStringStream->WriteString(Format("%s%s %s " ,ARRAYOFCONST((GlobalSizeFontText, GlobalAdressVersRtf, ustrAdress))));
-			pStringStream->WriteString(Format("%s %s" ,ARRAYOFCONST((GlobalVersRtf, ustrText))));
-			ustrNameTr = Format("%s%s	[%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, "\\line")));
+			pStringStream->WriteString(Format(L"%s%s %s " ,ARRAYOFCONST((GlobalSizeFontText, GlobalAdressVersRtf, ustrAdress))));
+			pStringStream->WriteString(Format(L"%s %s" ,ARRAYOFCONST((GlobalVersRtf, ustrText))));
+			ustrNameTr = Format(L"%s%s	[%s]%s" ,ARRAYOFCONST((GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, "\\line")));
 			pStringStream->WriteString(ustrNameTr);
 		}
 	}
 
-	pStringStream->WriteString("}");
+	pStringStream->WriteString(L"}");
 	pStringStream->Position = 0;
 	this->RichEditInfo->Lines->LoadFromStream(pStringStream);
 
@@ -469,14 +469,14 @@ void __fastcall TAllMultimediaView::_DisplayImage(const UnicodeString _pathImage
 		try
 		{
 			pWICImage = new TWICImage();
-			if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			if(!pWICImage) throw(Exception(L"Błąd inicjalizacji objektu TWICImage"));
 			//---
 			pWICImage->LoadFromFile(_pathImages);
 			this->_fFactorProp = (float)pWICImage->Width / (float)pWICImage->Height;
 			this->ImageSelectDisplay->Picture->Assign(pWICImage);
 			this->PanelDisplay->OnResize(this->PanelDisplay);
 
-			ustrSelectItem = Format("Ścieżka dostępu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
+			ustrSelectItem = Format(L"Ścieżka dostępu do pliku graficznego: \"%s\" - Rozmiar: %d x %d", ARRAYOFCONST((_pathImages, pWICImage->Width, pWICImage->Height)));
 			this->RichEditInfo->Lines->Text = ustrSelectItem;
 		}
 		catch(Exception &e)
@@ -512,9 +512,9 @@ void __fastcall TAllMultimediaView::CListTranlatesBeforeDrawItem(int AIndex,
 	}
 
 	//Rozróżnianie typu tłumaczenia po rozszerzeniu plików
-	if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateFull) this->LabelTypeTranslate->Caption = "Pełne tłumaczenie";
-			else if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg) this->LabelTypeTranslate->Caption = "Oryginalne greckie tłumaczenie";
-			else if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg) this->LabelTypeTranslate->Caption = "Oryginalne hebrajskie tłumaczenie";
+	if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateFull) this->LabelTypeTranslate->Caption = L"Pełne tłumaczenie";
+			else if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateGrecOrg) this->LabelTypeTranslate->Caption = L"Oryginalne greckie tłumaczenie";
+			else if(ustrExt == GlobalVar::GsExtendNoAsteriskFileTranslateHbrOrg) this->LabelTypeTranslate->Caption = L"Oryginalne hebrajskie tłumaczenie";
 
 	for(int i=0; i<this->HeaderControlTranslates->Sections->Count; ++i)
 	{
@@ -566,7 +566,7 @@ void __fastcall TAllMultimediaView::CListCommentsBeforeDrawItem(int AIndex, TCan
 	iChap = ustrComm.SubString(4, 3).ToInt();
 	iVers = ustrComm.SubString(7, 3).ToInt();
 
-	this->LabelComments->Caption = Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChap, iVers)));
+	this->LabelComments->Caption = Format(L"%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChap, iVers)));
 
 	for(int i=0; i<this->HeaderControlComments->Sections->Count; ++i)
 	{
@@ -593,7 +593,7 @@ void __fastcall TAllMultimediaView::CListFavVersesBeforeDrawItem(int AIndex,
 	iChapt = _ustrFavCodeVers.SubString(4, 3).ToInt();
 	iVers = _ustrFavCodeVers.SubString(7, 3).ToInt();
 
-	this->LabelFavVerses->Caption =	 Format("%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
+	this->LabelFavVerses->Caption =	 Format(L"%s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[iBook].FullNameBook, iChapt, iVers)));
 
 	for(int i=0; i<this->HeaderControlFavVerses->Sections->Count; ++i)
 	{
@@ -791,7 +791,7 @@ void __fastcall TAllMultimediaView::ImageSelectDisplayDblClick(TObject *Sender)
 		try
 		{
 			pWICImg = new TWICImage();
-			if(!pWICImg) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+			if(!pWICImg) throw(Exception(L"Błąd inicjalizacji objektu TWICImage"));
 
 			pWICImg->LoadFromFile(_ustrCurrentPathImage);
 			float fSizeFactorWH = (float)pWICImg->Width / (float)pWICImg->Height, //Proporcje szerokości do wysokości, wczytanej grafiki

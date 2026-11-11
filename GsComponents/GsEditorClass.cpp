@@ -52,17 +52,17 @@ enum {
 				EnImage_Count
 		 };
 enum {EnPanel_FileInfo, EnPanel_Info, EnPanel_Count};
-const UnicodeString custrSep = "SEP", //Nazwa domyślna separatora
+const UnicodeString custrSep = L"SEP", //Nazwa domyślna separatora
 										//Nazwy przycislów
-										ustrHintButtons[] = {"Zapisz", "Zapisz jako...", "Otwórz...", "Drukuj zawartość...", "Wyczyść", custrSep, "Kopiuj", "Wytnij", "Wstaw",
-																				 custrSep, "Szukaj...", "Szukaj i podmień...", custrSep, "Cofnij", "Powróć", custrSep,
-																				 "Nazwa czcionki", "Wielkość czcionki", "Pogrubiona", "Pochylona", "Podkreślona", "Przekreślona",
-																				 custrSep, "Kolor czcionki", "Kolor podkładu czcionki", custrSep, "Dosunięcie do lewej",
-																				 "Wycentrowanie", "Dosunięcie do prawej", custrSep, "Punktowanie"},
+										ustrHintButtons[] = {L"Zapisz", L"Zapisz jako...", L"Otwórz...", L"Drukuj zawartość...", L"Wyczyść", custrSep, L"Kopiuj", L"Wytnij", L"Wstaw",
+																				 custrSep, L"Szukaj...", L"Szukaj i podmień...", custrSep, L"Cofnij", L"Powróć", custrSep,
+																				 L"Nazwa czcionki", L"Wielkość czcionki", L"Pogrubiona", L"Pochylona", L"Podkreślona", L"Przekreślona",
+																				 custrSep, "Kolor czcionki", L"Kolor podkładu czcionki", custrSep, L"Dosunięcie do lewej",
+																				 L"Wycentrowanie", L"Dosunięcie do prawej", custrSep, L"Punktowanie"},
 										//Nazwy czcionek
-										ustrNameFont[] = {"Arial", "Tahoma", "Verdana", "Times New Roman", "Courier New", "DejaVu Sans"},
+										ustrNameFont[] = {L"Arial", L"Tahoma", L"Verdana", L"Times New Roman", L"Courier New", L"DejaVu Sans"},
 										//Wielkości czcionek
-										ustrSizeFont[] = {"8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "28"};
+										ustrSizeFont[] = {L"8", L"9", L"10", L"11", L"12", L"14", L"16", L"18", L"20", L"24", L"28"};
 enum {EnSizeFont_8, EnSizeFont_9, EnSizeFont_10, EnSizeFont_11, EnSizeFont_12, EnSizeFont_14,
 			EnSizeFont_16, EnSizeFont_18, EnSizeFont_20, EnSizeFont_24, EnSizeFont_28, EnSizeFont_Count};
 
@@ -75,32 +75,32 @@ __fastcall GsEditorClass::GsEditorClass(TComponent* Owner) : TCustomPanel(Owner)
 */
 {
 	this->pTImageListActive = new TImageList(this);
-	if(!this->pTImageListActive) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
+	if(!this->pTImageListActive) throw(Exception(L"Nie dokonano inicjalizacji objektu TImageList"));
 	this->Font->Quality = TFontQuality::fqClearType;
 	this->ParentFont = true;
 	this->pTImageListActive->ColorDepth = cd32Bit;		 //Głębia kolorów przyszłych obrazków
 	this->pTImageListActive->DrawingStyle = dsTransparent;
 		//
 	this->pTImageListInActive = new TImageList(this);
-	if(!this->pTImageListInActive) throw(Exception("Nie dokonano inicjalizacji objektu TImageList"));
+	if(!this->pTImageListInActive) throw(Exception(L"Nie dokonano inicjalizacji objektu TImageList"));
 	this->pTImageListInActive->ColorDepth = cd32Bit;		 //Głębia kolorów przyszłych obrazków
 	this->pTImageListInActive->DrawingStyle = dsTransparent;
 	this->_InitImageList();
 	//---
 	this->pBalloonHint = new TBalloonHint(this);
-	if(!this->pBalloonHint) throw(Exception("Nie dokonano inicjalizacji objektu TBalloonHint"));
+	if(!this->pBalloonHint) throw(Exception(L"Nie dokonano inicjalizacji objektu TBalloonHint"));
 	this->pBalloonHint->Images = this->pTImageListActive;
 	//---
 	this->pSBar = new TStatusBar(this);
-	if(!this->pSBar) throw(Exception("Nie dokonano inicjalizacji objektu TStatusBar"));
+	if(!this->pSBar) throw(Exception(L"Nie dokonano inicjalizacji objektu TStatusBar"));
 	this->pSBar->Parent = this;
 	this->pSBar->ParentFont = true;
 	this->pSBar->ShowHint = true;
-	this->pSBar->Hint = "Informacje";
+	this->pSBar->Hint = L"Informacje";
 	this->pSBar->Font->Quality = TFontQuality::fqClearType;
 	//---
 	this->pTRichEdit = new TRichEdit(this);
-	if(!this->pTRichEdit) throw(Exception("Nie dokonano inicjalizacji objektu TRichEdit"));
+	if(!this->pTRichEdit) throw(Exception(L"Nie dokonano inicjalizacji objektu TRichEdit"));
 	this->pTRichEdit->Parent = this;
 	this->pTRichEdit->ParentFont = true;
 	this->pTRichEdit->Align = alClient;
@@ -174,7 +174,7 @@ void __fastcall GsEditorClass::ClearEditor()
 	//Ustawienia innych przycisków w stan nieaktywny
 	this->pTRichEdit->Modified = false;
 	this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+	this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 	this->pTButtSave->Enabled = false;
 	this->pTButtInsert->Enabled = false;
 }
@@ -190,7 +190,7 @@ void __fastcall GsEditorClass::_InitInterface()
 	TLabel *pLabel;//=0;
 	//---
 	this->pToolBar = new TToolBar(this);
-	if(!this->pToolBar) throw(Exception("Błąd inicjalizacji klasy TToolBar"));
+	if(!this->pToolBar) throw(Exception(L"Błąd inicjalizacji klasy TToolBar"));
 
 	this->pToolBar->Parent = this;
 	this->pToolBar->AutoSize = true;
@@ -210,7 +210,7 @@ void __fastcall GsEditorClass::_InitInterface()
 		if(i == EnTag_FontName) //Nazwa czcionki
 		{
 			this->pCBoxSelectFontName = new TComboBox(this->pToolBar);
-			if(!this->pCBoxSelectFontName) throw(Exception("Błąd inicjalizacji klasy TComboBox"));
+			if(!this->pCBoxSelectFontName) throw(Exception(L"Błąd inicjalizacji klasy TComboBox"));
 			this->pCBoxSelectFontName->Parent = this->pToolBar;
 			this->pCBoxSelectFontName->Hint = ustrHintButtons[i];
 			this->pCBoxSelectFontName->Tag = i;
@@ -223,7 +223,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pCBoxSelectFontName->ItemIndex = 0;
 			//---
 			pLabel = new TLabel(this->pToolBar);
-			if(!pLabel) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+			if(!pLabel) throw(Exception(L"Błąd inicjalizacji klasy TLabel"));
 			pLabel->Parent = this->pToolBar;
 			pLabel->Caption = ustrHintButtons[EnTag_FontName];
 			//pLabel->StyleElements = TStyleElements();
@@ -238,7 +238,7 @@ void __fastcall GsEditorClass::_InitInterface()
 		if(i == EnTag_FontSize) //Wielkość czcionki
 		{
 			this->pCBoxSelectFontSize = new TComboBox(this->pToolBar);
-			if(!this->pCBoxSelectFontSize) throw(Exception("Błąd inicjalizacji klasy TComboBox"));
+			if(!this->pCBoxSelectFontSize) throw(Exception(L"Błąd inicjalizacji klasy TComboBox"));
 			this->pCBoxSelectFontSize->Parent = this->pToolBar;
 			this->pCBoxSelectFontSize->Width = 42;
 			this->pCBoxSelectFontSize->Hint = ustrHintButtons[i];
@@ -252,7 +252,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pCBoxSelectFontSize->ItemIndex = EnSizeFont_12;
 			//---
 			pLabel = new TLabel(this->pToolBar);
-			if(!pLabel) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+			if(!pLabel) throw(Exception(L"Błąd inicjalizacji klasy TLabel"));
 			pLabel->Parent = this->pToolBar;
 			pLabel->Caption = ustrHintButtons[EnTag_FontSize];
 			pLabel->Layout = tlCenter;
@@ -266,7 +266,7 @@ void __fastcall GsEditorClass::_InitInterface()
 		if(i == EnImage_FontColour)
 		{
 			this->pColBoxFont = new TColorBox(this->pToolBar);
-			if(!this->pColBoxFont) throw(Exception("Błąd inicjalizacji klasy TColorBox"));
+			if(!this->pColBoxFont) throw(Exception(L"Błąd inicjalizacji klasy TColorBox"));
 			this->pColBoxFont->Parent = this->pToolBar;
 			this->pColBoxFont->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames;
 			this->pColBoxFont->Hint = ustrHintButtons[EnImage_FontColour];
@@ -274,7 +274,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pColBoxFont->OnChange = this->_OnChangeColor;
 			//---
 			pLabel = new TLabel(this->pToolBar);
-			if(!pLabel) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+			if(!pLabel) throw(Exception(L"Błąd inicjalizacji klasy TLabel"));
 			pLabel->Parent = this->pToolBar;
 			pLabel->Caption = ustrHintButtons[EnImage_FontColour];
 			pLabel->Layout = tlCenter;
@@ -288,7 +288,7 @@ void __fastcall GsEditorClass::_InitInterface()
 		if(i == EnImage_FontBackgroundColour)
 		{
 			this->pColBoxBackground = new TColorBox(this->pToolBar);
-			if(!this->pColBoxBackground) throw(Exception("Błąd inicjalizacji klasy TColorBox"));
+			if(!this->pColBoxBackground) throw(Exception(L"Błąd inicjalizacji klasy TColorBox"));
 			this->pColBoxBackground->Parent = this->pToolBar;
 			this->pColBoxBackground->Style = TColorBoxStyle() << cbStandardColors << cbExtendedColors << cbPrettyNames;
 			//this->pColBoxBackground->CustomHint = this->pBalloonHint;
@@ -297,7 +297,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pColBoxBackground->OnChange = this->_OnChangeColor;
 			//---
 			pLabel = new TLabel(this->pToolBar);
-			if(!pLabel) throw(Exception("Błąd inicjalizacji klasy TLabel"));
+			if(!pLabel) throw(Exception(L"Błąd inicjalizacji klasy TLabel"));
 			pLabel->Parent = this->pToolBar;
 			pLabel->Caption = ustrHintButtons[EnImage_FontBackgroundColour];
 			pLabel->Layout = tlCenter;
@@ -309,7 +309,7 @@ void __fastcall GsEditorClass::_InitInterface()
 			continue;
 		}
 		TToolButton *pToolButton = new TToolButton(this->pToolBar);
-		if(!pToolButton) throw(Exception("Błąd inicjalizacji klasy TToolButton"));
+		if(!pToolButton) throw(Exception(L"Błąd inicjalizacji klasy TToolButton"));
 		pToolButton->Parent = this->pToolBar;
 		if(ustrHintButtons[i] == custrSep) //Separator
 		{
@@ -341,94 +341,94 @@ void __fastcall GsEditorClass::_InitInterface()
 			this->pTButtSave = pToolButton; //Zapis pod tą samą nazwą
 			this->pTButtSave->Enabled = false;
 			this->pTButtSave->Visible = this->IsVisibleAllIOButton && this->FDisplaySelectIOButtons.Contains(enSetButton_Save);
-			this->pTButtSave->Hint = Format("Zapis pod tą samą nazwą|Zapis zawartości edytora pod nazwą, pod którą została wczytana.|%u", ARRAYOFCONST((this->pTButtSave->ImageIndex)));
+			this->pTButtSave->Hint = Format(L"Zapis pod tą samą nazwą|Zapis zawartości edytora pod nazwą, pod którą została wczytana.|%u", ARRAYOFCONST((this->pTButtSave->ImageIndex)));
 		}
 		if(i == EnImage_SaveAs)
 		{
 			this->pTButtSaveAs = pToolButton;	 //Zapis pod zmienioną nazwą
 			this->pTButtSaveAs->Visible = this->IsVisibleAllIOButton && this->FDisplaySelectIOButtons.Contains(enSetButton_SaveAs);
-			this->pTButtSaveAs->Hint = Format("Zapis pod tą wybraną nazwą|Zapis zawartości edytora pod nową nazwą, którą można wybrać.|%u", ARRAYOFCONST((this->pTButtSaveAs->ImageIndex)));
+			this->pTButtSaveAs->Hint = Format(L"Zapis pod tą wybraną nazwą|Zapis zawartości edytora pod nową nazwą, którą można wybrać.|%u", ARRAYOFCONST((this->pTButtSaveAs->ImageIndex)));
 		}
 		if(i == EnImage_Open)
 		{
 			this->pTButtLoad = pToolButton;		 //Otwórz
 			this->pTButtLoad->Visible = this->IsVisibleAllIOButton && this->FDisplaySelectIOButtons.Contains(enSetButton_Open);
-			this->pTButtLoad->Hint = Format("Wczytanie danych z pliku|Wczytanie zawartości wybranego pliku.|%u", ARRAYOFCONST((this->pTButtLoad->ImageIndex)));
+			this->pTButtLoad->Hint = Format(L"Wczytanie danych z pliku|Wczytanie zawartości wybranego pliku.|%u", ARRAYOFCONST((this->pTButtLoad->ImageIndex)));
 		}
-		if(i == EnImage_Print) pToolButton->Hint = Format("Wydrukuj|Wydrukowanie całego tekstu w edytorze.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_Print) pToolButton->Hint = Format(L"Wydrukuj|Wydrukowanie całego tekstu w edytorze.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 		//---
-		if(i == EnImage_Copy)	pToolButton->Hint = Format("Skopiuj|Skopiowanie zaznaczonego tekstu.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
-		if(i == EnImage_Cut) pToolButton->Hint = Format("Wytnij|Wycięcie zaznaczonego tekstu.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_Copy)	pToolButton->Hint = Format(L"Skopiuj|Skopiowanie zaznaczonego tekstu.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_Cut) pToolButton->Hint = Format(L"Wytnij|Wycięcie zaznaczonego tekstu.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 		if(i == EnImage_Insert)
 		{
 			this->pTButtInsert = pToolButton; //Tryb wstawiania na początku wyłączony
 			this->pTButtInsert->Enabled = false;
-			this->pTButtInsert->Hint = Format("Wstaw tekst|Wstawienie poprzednio skopiowanego tekstu w miejsce kursora.|%u", ARRAYOFCONST((this->pTButtInsert->ImageIndex)));
+			this->pTButtInsert->Hint = Format(L"Wstaw tekst|Wstawienie poprzednio skopiowanego tekstu w miejsce kursora.|%u", ARRAYOFCONST((this->pTButtInsert->ImageIndex)));
 		}
-		if(i == EnImage_Find) pToolButton->Hint = Format("Wyszukaj|Wyszukiwanie wybranej frazy, we wczytanym tekscie.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
-		if(i == EnImage_FindReplace) pToolButton->Hint = Format("Wyszukaj i podmień|Wyszukiwanie i zamiana wybranej frazy, na nową fraze, we wczytanym tekscie.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_Find) pToolButton->Hint = Format(L"Wyszukaj|Wyszukiwanie wybranej frazy, we wczytanym tekscie.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
+		if(i == EnImage_FindReplace) pToolButton->Hint = Format(L"Wyszukaj i podmień|Wyszukiwanie i zamiana wybranej frazy, na nową fraze, we wczytanym tekscie.|%u", ARRAYOFCONST((pToolButton->ImageIndex)));
 		//Przyciski Undo, Redo
 		if(i == EnImage_Undo)
 		{
 			this->pTButtUndo = pToolButton; //Cofnij
 			this->pTButtUndo->Enabled = false;
-			this->pTButtUndo->Hint = Format("Cofnij|Cofanie do ostatniej zawartości edytora.|%u", ARRAYOFCONST((this->pTButtUndo->ImageIndex)));
+			this->pTButtUndo->Hint = Format(L"Cofnij|Cofanie do ostatniej zawartości edytora.|%u", ARRAYOFCONST((this->pTButtUndo->ImageIndex)));
 		}
 		if(i == EnImage_Redo) //Wróć
 		{
 			this->pTButtRedo = pToolButton;
 			this->pTButtRedo->Enabled = false;
-			this->pTButtRedo->Hint = Format("Wróć|Rezygnacja z operacji wycofania.|%u", ARRAYOFCONST((this->pTButtRedo->ImageIndex)));
+			this->pTButtRedo->Hint = Format(L"Wróć|Rezygnacja z operacji wycofania.|%u", ARRAYOFCONST((this->pTButtRedo->ImageIndex)));
 		}
 		//Przyciski atrybutów tekstu
 		if(i == EnImage_Bold)
 		{
 			this->pTButtBold = pToolButton; //Pogrubienie
-			this->pTButtBold->Hint = Format("Pogrubienie|Pogrubienie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtBold->ImageIndex)));
+			this->pTButtBold->Hint = Format(L"Pogrubienie|Pogrubienie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtBold->ImageIndex)));
 		}
 		if(i == EnImage_Italic)
 		{
 			this->pTButtItalic = pToolButton;		//Pochylona
-			this->pTButtItalic->Hint = Format("Pochylenie|Pochylenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtItalic->ImageIndex)));
+			this->pTButtItalic->Hint = Format(L"Pochylenie|Pochylenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtItalic->ImageIndex)));
 		}
 		if(i == EnImage_Underline)
 		{
 			this->pTButtUnderline = pToolButton;//Podkreślona
-			this->pTButtUnderline->Hint = Format("Podkreślenie|Podkreślenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtUnderline->ImageIndex)));
+			this->pTButtUnderline->Hint = Format(L"Podkreślenie|Podkreślenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtUnderline->ImageIndex)));
 		}
 		if(i == EnImage_StrikeOut)
 		{
 			this->pTButtStrikeOut = pToolButton;//Przekreślona
-			this->pTButtStrikeOut->Hint = Format("Przekreślenie|Przekreślenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtStrikeOut->ImageIndex)));
+			this->pTButtStrikeOut->Hint = Format(L"Przekreślenie|Przekreślenie zaznaczonego tekstu.|%u", ARRAYOFCONST((this->pTButtStrikeOut->ImageIndex)));
 		}
 		//Przyciski formatowania tekstu
 		if(i == EnImage_LeftAl)
 		{
 			this->pTButtLeft = pToolButton; //Dosunięcie tekstu do lewego marginesu
-			this->pTButtLeft->Hint = Format("Do lewego marginesu|Dosunięcie tekstu do lewego marginesu.|%u", ARRAYOFCONST((this->pTButtLeft->ImageIndex)));
+			this->pTButtLeft->Hint = Format(L"Do lewego marginesu|Dosunięcie tekstu do lewego marginesu.|%u", ARRAYOFCONST((this->pTButtLeft->ImageIndex)));
 		}
 		if(i == EnImage_CentreAl)
 		{
 			this->pTButtCenter = pToolButton; //Dosunięcie tekstu do centrum
-			this->pTButtCenter->Hint = Format("Do środka|Dosunięcie tekstu do środka.|%u", ARRAYOFCONST((this->pTButtCenter->ImageIndex)));
+			this->pTButtCenter->Hint = Format(L"Do środka|Dosunięcie tekstu do środka.|%u", ARRAYOFCONST((this->pTButtCenter->ImageIndex)));
 		}
 		if(i == EnImage_RightAl)
 		{
 			this->pTButtRight = pToolButton;	 //Dosunięcie tekstu do prawego marginesu
-			this->pTButtRight->Hint = Format("Do prawego marginesu|Dosunięcie tekstu do prawego marginesu.|%u", ARRAYOFCONST((this->pTButtRight->ImageIndex)));
+			this->pTButtRight->Hint = Format(L"Do prawego marginesu|Dosunięcie tekstu do prawego marginesu.|%u", ARRAYOFCONST((this->pTButtRight->ImageIndex)));
 		}
 		//Paragraf
 		if(i == EnImage_Paragraph)
 		{
 			this->pTButtParagraf = pToolButton; //Paragraf
 			pToolButton->Style = tbsCheck;
-			this->pTButtParagraf->Hint = Format("Wypunktowanie|Wstawienie wypunktowania tekstu.|%u", ARRAYOFCONST((this->pTButtParagraf->ImageIndex)));
+			this->pTButtParagraf->Hint = Format(L"Wypunktowanie|Wstawienie wypunktowania tekstu.|%u", ARRAYOFCONST((this->pTButtParagraf->ImageIndex)));
 		}
 		//Skasowanie zawartości //[27-10-2023]
 		if(i == EnImage_Clear)
 		{
 			this->pTButtClear = pToolButton;
-			this->pTButtClear->Hint = Format("Skasuj|Skasowanie zawartości edytora.|%u", ARRAYOFCONST((this->pTButtClear->ImageIndex)));
+			this->pTButtClear->Hint = Format(L"Skasuj|Skasowanie zawartości edytora.|%u", ARRAYOFCONST((this->pTButtClear->ImageIndex)));
 		}
 	}
 	//Panele
@@ -438,11 +438,11 @@ void __fastcall GsEditorClass::_InitInterface()
 		if(i==EnPanel_FileInfo) Panel->Width = (float)this->Parent->Width * 0.66;
 		else Panel->Width = (float)this->Parent->Width * 0.33;
 	}
-	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+	this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 	//this->pTRichEdit->SelAttributes->Name = this->pCBoxSelectFontName->Text;
 	//this->pTRichEdit->SelAttributes->Size = StrToIntDef(this->pCBoxSelectFontSize->Items->Strings[this->pCBoxSelectFontSize->ItemIndex], 8);
 	this->pTRichEdit->Font->Size = this->pCBoxSelectFontSize->Text.ToIntDef(12);
-	this->pTRichEdit->Font->Name = "Arial";
+	this->pTRichEdit->Font->Name = L"Arial";
 	this->pTRichEdit->Font->Color = clBlack;
 	this->pTRichEdit->Color = clWhite;
 	this->pColBoxFont->Selected = this->pTRichEdit->SelAttributes->Color;
@@ -485,10 +485,10 @@ void __fastcall GsEditorClass::LoadEditorFromFile(const UnicodeString _ustrInFil
 	}
 	this->FEditorFileName = _ustrInFilePath; //Zapamiętanie pliku wczytanego, lub nowego
 	this->pTButtSave->Enabled = false; //Plik dopiero co wczytany, więc niema możliwości zapisu
-	this->pSBar->Panels->Items[EnPanel_FileInfo]->Text = Format("Aktualny plik: \"%s\"", ARRAYOFCONST((_ustrInFilePath)));
+	this->pSBar->Panels->Items[EnPanel_FileInfo]->Text = Format(L"Aktualny plik: \"%s\"", ARRAYOFCONST((_ustrInFilePath)));
 	this->pTRichEdit->Modified = false;
 	this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+	this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 	this->pTRichEdit->SetFocus();
 }
 //---------------------------------------------------------------------------
@@ -517,7 +517,7 @@ void __fastcall GsEditorClass::LoadEditorFromStream(TStream* Stream)
 
 	this->pTRichEdit->Lines->LoadFromStream(Stream);
 	this->pTRichEdit->Modified = false;
-	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+	this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 	this->pTButtSave->Enabled = false;
 	this->pTRichEdit->SetFocus();
 }
@@ -535,7 +535,7 @@ void __fastcall GsEditorClass::SaveEditorToFile(const UnicodeString _ustrInFileP
 	this->pTButtSave->Enabled = false; //Plik dopiero co wczytany, więc niema możliwości zapisu
 	this->pTRichEdit->Modified = false;
 	this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-	this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+	this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 	this->pTRichEdit->SetFocus();
 	//Jeśli istnieje zewnętrzna metoda OnSave() to ją wywołaj
 	if(this->FOnSave) this->FOnSave(this);
@@ -551,11 +551,11 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 {
 	TToolButton *pTButt = dynamic_cast<TToolButton *>(Sender);
 	if(!pTButt) return;
-	const UnicodeString ustrFileTypes[] = {"Pliki typy rtf", "*.rtf",
-																				 "Każdy plik", "*.*"};
+	const UnicodeString ustrFileTypes[] = {L"Pliki typy rtf", L"*.rtf",
+																				 L"Każdy plik", L"*.*"};
 	//---
 	int iTag = pTButt->Tag / 10 - 1;
-	const UnicodeString ustrFileFilter = "Pliki typu rtf(*.rtf)|*.RTF|Każdy plik (*.*)|*.*";
+	const UnicodeString ustrFileFilter = L"Pliki typu rtf(*.rtf)|*.RTF|Każdy plik (*.*)|*.*";
 	//---
 	switch(iTag)
 	{
@@ -565,7 +565,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 			this->pTRichEdit->Lines->SaveToFile(this->FEditorFileName);
 			this->pTRichEdit->Modified = false;
 			this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-			this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+			this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 			this->pTButtSave->Enabled = false; //Plik dopiero co wczytany, więc niema możliwości zapisu
 			//Jeśli istnieje zewnętrzna metoda OnSave() to ją wywołaj
 			if(this->FOnSave) this->FOnSave(this);
@@ -575,8 +575,8 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		case EnImage_SaveAs:	 //Zapis pod zmienioną nazwą
 		{
 			TFileSaveDialog	 *pFileSaveDialog = new TFileSaveDialog (this);
-			if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
-			pFileSaveDialog->Title = "Podaj nazwę pliku do zapisu";
+			if(!pFileSaveDialog) throw(Exception(L"Błąd inicjalizacji objektu TFileSaveDialog "));
+			pFileSaveDialog->Title = L"Podaj nazwę pliku do zapisu";
 			for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
 			{
 				TFileTypeItem *pTFileTypeItem = pFileSaveDialog->FileTypes->Add();
@@ -585,8 +585,8 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 			}
 
 			pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
-			pFileSaveDialog->DefaultExtension	 = "rtf";
-			pFileSaveDialog->FileName = "Bez nazwy";
+			pFileSaveDialog->DefaultExtension	 = L"rtf";
+			pFileSaveDialog->FileName = L"Bez nazwy";
 
 			try
 			{
@@ -598,14 +598,14 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 						this->pTButtSave->Enabled = false;
 						this->pTRichEdit->Modified = false;
 						this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-						this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+						this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 						//Jeśli istnieje zewnętrzna metoda OnSave() to ją wywołaj
 						if(this->FOnSave) this->FOnSave(this); //Nie jestem pewny
 					}
 				}
 				catch(const Exception& e)
 				{
-					MessageBox(NULL, Format("Błąd otwarcia pliku, do zapisu, o nazwie: %s", ARRAYOFCONST((pFileSaveDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+					MessageBox(NULL, Format(L"Błąd otwarcia pliku, do zapisu, o nazwie: %s", ARRAYOFCONST((pFileSaveDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 				}
 			}
 			__finally
@@ -618,9 +618,9 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 		case EnImage_Open:		 //Otwórz
 		{
 			TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
-			if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
+			if(!pFileOpenDialog) throw(Exception(L"Błąd inicjalizacji objektu TFileOpenDialog"));
 
-			pFileOpenDialog->Title = "Podaj nazwę pliku do odczytu";
+			pFileOpenDialog->Title = L"Podaj nazwę pliku do odczytu";
 			for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
 			{
 				TFileTypeItem *pTFileTypeItem = pFileOpenDialog->FileTypes->Add();
@@ -638,16 +638,16 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 					{
 						this->pTRichEdit->Lines->LoadFromFile(pFileOpenDialog->FileName);
 						this->FEditorFileName = pFileOpenDialog->FileName;
-						this->pSBar->Panels->Items[EnPanel_FileInfo]->Text = Format("Aktualny plik: \"%s\"", ARRAYOFCONST((this->FEditorFileName)));
+						this->pSBar->Panels->Items[EnPanel_FileInfo]->Text = Format(L"Aktualny plik: \"%s\"", ARRAYOFCONST((this->FEditorFileName)));
 						this->pTRichEdit->Modified = false;
 						this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-						this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+						this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 						this->pTButtSave->Enabled = false; //Plik dopiero co wczytany, więc niema możliwości zapisu
 					}
 				}
 				catch(const Exception& e)
 				{
-					MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pFileOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+					MessageBox(NULL, Format(L"Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pFileOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 				}
 			}
 			__finally
@@ -712,7 +712,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 				{
 					this->pTRichEdit->Modified = false;
 					this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
-					this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik niezmodyfikowany";
+					this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik niezmodyfikowany";
 					this->pTButtSave->Enabled = false;
 					this->pTButtUndo->Enabled = false;
 					this->pTButtRedo->Enabled = true;
@@ -731,7 +731,7 @@ void __fastcall GsEditorClass::_OnClickTButt(System::TObject* Sender)
 				this->pTRichEdit->Perform(EM_REDO, 0, 0);
 			#endif
 			this->pTRichEdit->Modified = true;
-			if(this->pTRichEdit->CanUndo) this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik zmodyfikowany";
+			if(this->pTRichEdit->CanUndo) this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik zmodyfikowany";
 			//this->pTButtSave->Enabled = true;
 			//this->pTButtUndo->Enabled = true;
 		}
@@ -814,7 +814,7 @@ void __fastcall GsEditorClass::_OnSelectionChangeEdit(System::TObject *Sender)
 	//---
 	if(this->pTRichEdit->Modified)
 	{
-		this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik zmodyfikowany";
+		this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik zmodyfikowany";
 		this->pTButtSave->Enabled = true;
 	}
 	this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
@@ -865,7 +865,7 @@ void __fastcall GsEditorClass::_OnChangeEdit(System::TObject *Sender)
 	//---
 	if(this->pTRichEdit->Modified)
 	{
-		this->pSBar->Panels->Items[EnPanel_Info]->Text = "Plik zmodyfikowany";
+		this->pSBar->Panels->Items[EnPanel_Info]->Text = L"Plik zmodyfikowany";
 		this->pTButtSave->Enabled = true;
 	}
 	this->pTButtUndo->Enabled = this->pTRichEdit->Modified;
@@ -952,9 +952,9 @@ void __fastcall GsEditorClass::_InitImageList()
 	try
 	{
 		pIcon = new TIcon();
-		if(!pIcon) throw(Exception("Błąd metody TIcon"));
+		if(!pIcon) throw(Exception(L"Błąd metody TIcon"));
 		pMemoryStr = new TMemoryStream();
-		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
+		if(!pMemoryStr) throw(Exception(L"Błąd metody TMemoryStream"));
 		//****************************************** WERSJA IKON AKTYWNYCH ****************************************
 		//--- 0.Ikona - zapis pod tą samą nazwą
 		pMemoryStr->WriteBuffer(ID_SAVE, ARRAYSIZE(ID_SAVE)); //Zapis do strumienia danych
@@ -1215,11 +1215,11 @@ void __fastcall GsEditorClass::_PrintEditor()
 */
 {
 	TPrintDialog *PrintDialogMainMan = new TPrintDialog(this);
-	if(!PrintDialogMainMan) throw(Exception("Nie dokonano inicjalizacji objektu TPrintDialog"));
+	if(!PrintDialogMainMan) throw(Exception(L"Nie dokonano inicjalizacji objektu TPrintDialog"));
 	//---
 	if(PrintDialogMainMan->Execute())
 	{
-		this->pTRichEdit->Print("");
+		this->pTRichEdit->Print(L"");
 	}
 }
 //---------------------------------------------------------------------------

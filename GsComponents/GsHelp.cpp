@@ -4,7 +4,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-const int ciAddHeight = 6, // Dodanie wysokości do pozycji by tekst zaczynał sie od górnego marginesu = ciAddHeight / 2
+constexpr int ciAddHeight = 6, // Dodanie wysokości do pozycji by tekst zaczynał sie od górnego marginesu = ciAddHeight / 2
 					ciAddWidth = 12; // Dodanie szerokosci do pozycji by tekst zaczynał sie od lewego marginesu = ciAddWidth / 2
 
 __fastcall GsHelp::GsHelp(TComponent* Owner) : TGraphicControl(Owner)

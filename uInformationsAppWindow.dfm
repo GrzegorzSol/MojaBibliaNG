@@ -4,7 +4,7 @@ object InformationsAppWindow: TInformationsAppWindow
   AlphaBlend = True
   BorderStyle = bsSingle
   Caption = 'Informacja o aplikacji'
-  ClientHeight = 668
+  ClientHeight = 721
   ClientWidth = 649
   Color = clBtnFace
   DoubleBuffered = True
@@ -22,7 +22,7 @@ object InformationsAppWindow: TInformationsAppWindow
     Left = 0
     Top = 0
     Width = 234
-    Height = 668
+    Height = 721
     Align = alLeft
     Picture.Data = {
       07544269746D6170DE6D0200424DDE6D0200000000003604000028000000EA00
@@ -5007,14 +5007,15 @@ object InformationsAppWindow: TInformationsAppWindow
     Left = 234
     Top = 0
     Width = 415
-    Height = 668
+    Height = 721
     Align = alClient
     ShowCaption = False
     TabOrder = 0
+    ExplicitLeft = 240
     object BevelPartSystemInfo: TBevel
       AlignWithMargins = True
       Left = 13
-      Top = 578
+      Top = 626
       Width = 389
       Height = 3
       Margins.Left = 12
@@ -5037,38 +5038,35 @@ object InformationsAppWindow: TInformationsAppWindow
       Align = alTop
       AutoSize = False
       TabOrder = 0
-      ExplicitLeft = 15
-      ExplicitTop = 121
     end
     object STextInfoVersions: TStaticText
       AlignWithMargins = True
       Left = 13
-      Top = 518
+      Top = 512
       Width = 389
-      Height = 45
+      Height = 99
       Margins.Left = 12
-      Margins.Top = 12
+      Margins.Top = 6
       Margins.Right = 12
       Align = alTop
       Alignment = taCenter
       AutoSize = False
       TabOrder = 1
-      ExplicitTop = 507
     end
     object STextInfoSystem: TStaticText
       AlignWithMargins = True
       Left = 13
-      Top = 596
+      Top = 638
       Width = 389
-      Height = 49
+      Height = 61
       Margins.Left = 12
-      Margins.Top = 12
+      Margins.Top = 6
       Margins.Right = 12
       Align = alTop
       Alignment = taCenter
       AutoSize = False
       TabOrder = 2
-      ExplicitTop = 585
+      ExplicitTop = 596
     end
     object PanelHeaderInfos: TPanel
       AlignWithMargins = True
@@ -5081,13 +5079,12 @@ object InformationsAppWindow: TInformationsAppWindow
       Caption = 'PanelHeaderInfos'
       ShowCaption = False
       TabOrder = 3
-      ExplicitTop = 104
       object LabelHeaderInfos: TLabel
         AlignWithMargins = True
         Left = 4
         Top = 4
-        Width = 399
-        Height = 97
+        Width = 5
+        Height = 19
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -5098,15 +5095,13 @@ object InformationsAppWindow: TInformationsAppWindow
         ParentFont = False
         Layout = tlCenter
         WordWrap = True
-        ExplicitWidth = 5
-        ExplicitHeight = 19
       end
     end
   end
   object TimerInfoSystem: TTimer
     Interval = 500
     OnTimer = TimerInfoSystemTimer
-    Left = 402
-    Top = 528
+    Left = 410
+    Top = 392
   end
 end

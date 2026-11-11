@@ -39,7 +39,7 @@
 
 //#define _TESTING_
 
-static UnicodeString sustrVersionGsReadBibleTextClass = "1.9.9892456";
+static UnicodeString sustrVersionMyBibleLibrary = "1.10.91276";
 enum enReturnError {enR_NoError,					 //Brak błędu
 										enR_GSelectBoook=1000	 //Błąd zwracany gdy szukany rozdział nie mieści sie w tłumaczeniu oryginalnym
 									 };
@@ -98,7 +98,7 @@ class GsLViewCommentsAllClass;
 class GsControlListPasteSelectVers;
 class GsControlListDictionaryClass;
 
-const int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
+constexpr int ciSelectViewAll = -1; //Ma wyświetlana cała lista wyników, stała dla metody DisplayListTextHTML()
 ///*============================================================================
 // =													STRUKTURA InfoAllBooks													 =
 // ============================================================================*/
@@ -174,7 +174,7 @@ typedef struct _DataDisplayTextAnyBrowser//Struktura danych jako argument dla wy
 /****************************************************************************
  *										KLASA MyObjectVers																		*
  ****************************************************************************/
-static const int CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER = 3;
+static constexpr int CISIZE_REPLACEADRESS_ISNOTVALIDNUMBER = 3;
 class MyObjectVers : public TObject
 {
 	friend class GsReadBibleTextClass; //Klasa GsReadBibleTextClass ma pełny dostęp
@@ -280,7 +280,6 @@ class GsReadBibleTextClass : public TObject
 	GsReadBibleTextClass(const UnicodeString &_PathDir);
 	virtual ~GsReadBibleTextClass();
 		//---
-	inline static UnicodeString __fastcall GetVersionClass() {return Format("Biblioteka: \"GsReadBibleTextClass\" v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextClass)));};	//Metoda inline zwracająca wersje klasy
 	bool __fastcall GetAllTranslatesChapter(const int iGetBook, const int iGetChap); //Wczytanie wybranego rozdziału dla wszystkich przekładów
 	void __fastcall DisplayAllTextInHTML(TWebBrowser *_pWebBrowser, const int iSelectTranslate=-1); //Metoda łączy w jedną całość jako kod Html tekst, ze wszystkich tłumaczeń, wybranej księgi i rozdziału.
 	void __fastcall SaveCurrentSheetText(const UnicodeString &custrPath); //Zapisuje zawartość aktualnej zakładki
@@ -547,10 +546,29 @@ class GsBarSelectVers : public TToolBar //Klasa całkowicie prywatna
   	void __fastcall _DisplayVers(); //Wyświetlenie wybranego tekstu
   	void __fastcall _VerifyVarset(); //Sprawdzenie wyświetlanego wersetu, czy jest na liście ulubionych i czy posiada komentarz. Jeśli jest
   																	 //przycisk _pSelectFavCBox jest wciśniety
-  	protected:
-  		virtual void __fastcall CreateWnd();
-  		virtual void __fastcall DestroyWnd();
-			DYNAMIC void __fastcall Resize();
+	protected:
+		virtual void __fastcall CreateWnd();
+		virtual void __fastcall DestroyWnd();
+		DYNAMIC void __fastcall Resize();
+};
+/****************************************************************************
+ *													KLASA GsWindowEditCommentsVers									*
+ *	Klasa wizualna do edycji komontarza do wersetu,													*
+ *	klasa jest składową klasy	GsPanelSelectVers															*
+ ****************************************************************************/
+ class GsWindowEditCommentsVers : public TForm
+{
+	 friend class GsPanelSelectVers;
+   friend class GsBarSelectVers;
+
+	 __fastcall GsWindowEditCommentsVers(TComponent* Owner);
+	 __fastcall virtual ~GsWindowEditCommentsVers();
+	protected:
+		virtual void __fastcall CreateWnd();
+		virtual void __fastcall DestroyWnd();
+		virtual void __fastcall WndProc(Winapi::Messages::TMessage &Message);
+	private:
+		GsEditorClass *_pEditComment=nullptr;
 };
 /****************************************************************************
  *													KLASA GsPanelSelectVers													*
@@ -584,7 +602,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		//---
 		UnicodeString _ustrSelectNumberStrong; //[01-06-2026]
 		GsBarSelectVers *_pGsBarSelectVers=nullptr;
-		GsEditorClass *_pEditComment=nullptr;
+		//GsEditorClass *_pEditComment=nullptr;
     ManagerSuperDictionaries *_pManagerSuperDictionaries=nullptr;
 		TWebBrowser *_pWebBrowser=nullptr;
     //---
@@ -595,7 +613,7 @@ class GsPanelSelectVers	: public TCustomPanel
 		TSpeedButton *_pButtonWindowComment=nullptr; //[25-07-2026]
 		TStringGrid *_pSGridInterlinearVers=nullptr; //Objekt klasy TStringGrid z interlinearnym widokiem polsko-gerckim
 		TLabel *_pLabelTransWord=nullptr; // Objekt, klasy TLabel, z tłumaczeniem zaznaczonego słowa w wersecie //[12-07-2026]
-    TForm *_pWindowComment=nullptr; // Okno z edytorem komentarzy //[25-07-2026]
+    GsWindowEditCommentsVers *_pGsWindowEditCommentsVers=nullptr; // Okno z edytorem komentarzy //[25-07-2026]
 		//---
 		void __fastcall _CreatePanelViewInterlinearSelectVers(); // Stworzenie panelu z objektem klasy TStringGrid, z widokiem interlinearnym wybranego wersetu
     void __fastcall _CreateWindowCommentVers(); // Stworzenie okna z edytorem notatek [25-07-2026]

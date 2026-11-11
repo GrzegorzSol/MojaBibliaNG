@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2008,2009,2010,2011,2012,2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 //
-//							 2022,2023, 2024																															 //
+//							 2022,2023, 2024, 2025, 2026																									 //
 //																		 Grzegorz Sołtysik																			 //
 //																		 All rights reserved.																		 //
 //																		grzegorzsol@gmail.com																		 //
@@ -55,10 +55,10 @@ TMainBibleWindow *MainBibleWindow;
 int Global_WidthTabTools = 0;
 /*
 #if defined(_DEBUGINFO_)
-	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
+	GsDebugClass::WriteDebug(Format(L"", ARRAYOFCONST(( ))));
 #endif
 #if defined(_DEBUGINFO_)
-	GsDebugClass::WriteDebug("");
+	GsDebugClass::WriteDebug(L"");
 #endif
 #if defined(_FULLAPLIC_)
 #endif
@@ -149,7 +149,7 @@ enum {enImageMainIndex_CloseSheet,		 //0.Zamknięcie aktywnej zakładki
 			enTagSearchFav_DeleteFile = 200 //200.Przycisk kasowania zaznaczonego pliku w zakładce ulubionych plików wyszukiwania
 		 };
 
-const UnicodeString Gl_custrNameAppReload = "MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
+const UnicodeString Gl_custrNameAppReload = L"MBRestart.exe"; //Nazwa aplikacji odpowiedzialnej za restart głównego programu po zmianie nie których ustawień konfiguracyjnych
 TDisplayPreviewWindow *Gl_pDisplayPreviewWindow=nullptr; // Wyjątkowo wskaźnik na okno(TForm) jest zmienną globalną / 08-11-2025
 //---------------------------------------------------------------------------
 __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
@@ -174,13 +174,13 @@ __fastcall TMainBibleWindow::TMainBibleWindow(TComponent* Owner)
 	//if(!TDirectory::Exists(GlobalVar::Global_custrPathTranslatesNotUse)) TDirectory::CreateDirectory(GlobalVar::Global_custrPathTranslatesNotUse);
 	//----- Tworzenie globalnego wskaźnika, do pliku konfiguracyjnego
 	GlobalVar::Global_ConfigFile = new TMemIniFile(GlobalVar::Global_custrGetConfigFile, TEncoding::UTF8);
-	if(!GlobalVar::Global_ConfigFile) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
+	if(!GlobalVar::Global_ConfigFile) throw(Exception(L"Błąd inicjalizacji objektu TMemIniFile"));
 	//----- Ścieżki dostępu do wybranych, przez użytkownika katalogów z multimediami
 	GlobalVar::Global_SListPathMultiM = new TStringList();
-	if(!GlobalVar::Global_SListPathMultiM) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+	if(!GlobalVar::Global_SListPathMultiM) throw(Exception(L"Błąd inicjalizacji objektu TStringList"));
 	//----- String lista histori otwieranych rozdziałow księg biblijnych
 	GlobalVar::Global_HListHistoryChapterOpen = new THashedStringList();
-	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	//Odczyt pliku historii
 	this->Act_HistoryChapters->Enabled = TFile::Exists(GlobalVar::Global_custrPathHistory);
 	if(TFile::Exists(GlobalVar::Global_custrPathHistory))
@@ -253,7 +253,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 			{
 				//--- Wczytanie grafiki podkładu głównego okna(dopuszczalne jest jej brak)
 				pWICImage = new TWICImage();
-				if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+				if(!pWICImage) throw(Exception(L"Błąd inicjalizacji objektu TWICImage"));
 				pWICImage->LoadFromFile(ustrGraphicsBackground);
 				this->ImageBackgroundWindow->Picture->Assign(pWICImage);
 			}
@@ -272,7 +272,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	//--- Tworzenie głównego objektu z tłmaczeniami, klasy GsReadBibleTextClass.
 	//		KLASA MUSI BYĆ ZAINICOWANA METODĄ InitMyBible(), PRZED JAKIM KOLWIEK UŻYWANIEM BIBLIOTEKI GsReadBibleTextClass
 	GsReadBibleTextData::InitMyBible(this);
-	if(!GsReadBibleTextData::IsInitLibrary) throw(Exception("Błąd inicjalizacji głównej bilioteki do pracy i analizy pisma Świętego!"));
+	if(!GsReadBibleTextData::IsInitLibrary) throw(Exception(L"Błąd inicjalizacji głównej bilioteki do pracy i analizy pisma Świętego!"));
 	GsReadBibleTextData::CreateTreeBooks(this->TabSheetBooks, this->PageControlBibleText);
 	//----- Odzcyt wersji biblioteki
 	UnicodeString ustrVersion = Library::GetInfo();
@@ -280,33 +280,34 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	GlobalVar::Global_ustrVerAplicMain = ustrVersion;
 
 	#if defined(_WIN64) //10-11-2024
-		this->Caption = Format("%s wersja x64 v%s © Grzegorz Sołtysik [Oświęcim Date: %s Time: %s.]",
+		this->Caption = Format(L"%s wersja x64 v%s © Grzegorz Sołtysik [Oświęcim Date: %s Time: %s.]",
 			ARRAYOFCONST((custrNameMod, ustrVersion, __DATE__, __TIME__)));
 	#else //10-11-2024
-		this->Caption = Format("%s wersja x32 v%s © Grzegorz Sołtysik [Oświęcim Date: %s Time: %s.]",
+		this->Caption = Format(L"%s wersja x32 v%s © Grzegorz Sołtysik [Oświęcim Date: %s Time: %s.]",
 			ARRAYOFCONST((custrNameMod, ustrVersion, __DATE__, __TIME__)));
 	#endif
+	this->_GetVersionAllResources();
 	//Zapis pliku tekstowego z wersją
 	TFile::WriteAllText(GlobalVar::Global_custrGetVersionUpdate, GlobalVar::Global_ustrVerAplicMain, TEncoding::UTF8);
 	//----- Nagłówek listy wersetów z komentarzami
-	this->STextHeaderListCommentVers->Caption = "Lista wersetów do, których istnieją\n komentarze";
+	this->STextHeaderListCommentVers->Caption = L"Lista wersetów do, których istnieją\n komentarze";
 	//--- Tworzenie objektu, klasy listy komentarzy (klasa GsLViewCommentsAllClass) i nagłówka
 	this->pGsLViewCommentsAllClass = new GsLViewCommentsAllClass(this->TabSheetAllCommentsVers);
-	if(!pGsLViewCommentsAllClass) throw(Exception("Błąd inicjalizacji objektu GsLViewCommentsAllClass"));
+	if(!pGsLViewCommentsAllClass) throw(Exception(L"Błąd inicjalizacji objektu GsLViewCommentsAllClass"));
 	this->pGsLViewCommentsAllClass->Parent = this->TabSheetAllCommentsVers;
 	this->pGsLViewCommentsAllClass->Align = alTop;
 	this->pGsLViewCommentsAllClass->Height = 360;
 	this->pGsLViewCommentsAllClass->OnDblClick = this->_OnDblClick_ListComment;
 	//--- Tworzenie listy ulubionych wersetów (klasa GsListBoxFavoritiesClass) i nagłówka
-	this->STextHeaderFavorteListVers->Caption = "Lista ulubionych wersetów";
+	this->STextHeaderFavorteListVers->Caption = L"Lista ulubionych wersetów";
 	this->pGsListBoxFavoritiesClass = new GsListBoxFavoritiesClass(this->TabSheetAllCommentsVers);
-	if(!this->pGsListBoxFavoritiesClass) throw(Exception("Błąd inicjalizacji objektu GsListBoxFavoritiesClass"));
+	if(!this->pGsListBoxFavoritiesClass) throw(Exception(L"Błąd inicjalizacji objektu GsListBoxFavoritiesClass"));
 	this->pGsListBoxFavoritiesClass->Parent = this->TabSheetAllCommentsVers;
 	this->pGsListBoxFavoritiesClass->Align = alClient;
 	this->pGsListBoxFavoritiesClass->OnDblClick = this->_OnDblClick_ListFavorities;
 	//--- Tworzenie listy ulubionych wyników wyszukiwania //[12-10-2023]
 	this->pGsSearchFavFilesClass = new GsSearchFavFilesClass(this->TabSheetFavResultSearch);
-	if(!this->pGsSearchFavFilesClass) throw(Exception("Błąd inicjalizacji objektu, klasy GsViewAllResourcesClass"));
+	if(!this->pGsSearchFavFilesClass) throw(Exception(L"Błąd inicjalizacji objektu, klasy GsViewAllResourcesClass"));
 	this->pGsSearchFavFilesClass->Parent = this->TabSheetFavResultSearch;
 	this->pGsSearchFavFilesClass->Align = alClient;
 	this->pGsSearchFavFilesClass->OnSelectItem = this->_OnSelectItemSearchFile; //[15-10-2023]
@@ -314,13 +315,13 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	if(GlobalVar::Global_ConfigFile->ReadBool(GlobalVar::GlobalIni_FlagsSection_Main, GlobalVar::GlobalIni_IsDisplayStartInfoTray, true))
 		//Czy wyświetlac informacje o aplikacji w polu traja, w momencie jej uruchamiania
 		{this->TrayIconMain->ShowBalloonHint();}
-	this->TrayIconMain->Hint = Format("Moja Biblia NG wersja beta v%s © Grzegorz Sołtysik.", ARRAYOFCONST((ustrVersion)));
+	this->TrayIconMain->Hint = Format(L"Moja Biblia NG wersja beta v%s © Grzegorz Sołtysik.", ARRAYOFCONST((ustrVersion)));
 	this->TrayIconMain->BalloonTitle = this->TrayIconMain->Hint;
-	this->TrayIconMain->BalloonHint = "Oprogramowanie do studiowania Pisma Świętego";
+	this->TrayIconMain->BalloonHint = L"Oprogramowanie do studiowania Pisma Świętego";
 	//this->MBW_TrayIconMain->Icon = Application->Icon;
 	this->_CreatePopupTrayIcon(); //Tworzenie menu podręcznego dla traya
 	this->PageControlTools->ActivePage = this->TabSheetBooks;	 //Domyślnie aktywna zakładka
-	static UnicodeString ustrHintTBarButtons[] = {"Informacje o aktualnie wczytanym rozdziele", "Informacje o aplikacji"};
+	static UnicodeString ustrHintTBarButtons[] = {L"Informacje o aktualnie wczytanym rozdziele", L"Informacje o aplikacji"};
 	//---
 	this->Width = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppWidth, this->Constraints->MinWidth);
 	this->Height = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_AppHeight, this->Constraints->MinHeight);
@@ -358,7 +359,7 @@ void __fastcall TMainBibleWindow::FormCreate(TObject *Sender)
 	this->ToolButtDeleteFile->Tag = enTagSearchFav_DeleteFile;
 
 	Gl_pDisplayPreviewWindow = new TDisplayPreviewWindow(this);
-	if(!Gl_pDisplayPreviewWindow) throw(Exception("Błąd inicjalizacji objektu TDisplayPreviewWindow"));
+	if(!Gl_pDisplayPreviewWindow) throw(Exception(L"Błąd inicjalizacji objektu TDisplayPreviewWindow"));
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
@@ -384,8 +385,8 @@ void __fastcall TMainBibleWindow::FormActivate(TObject *Sender)
 	{
 		//Odczyt otwartych ksiąg podczas ostatniego zamknięcia aplikacji
 		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
-		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
-		pHSListOpenBooksInExit->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, "");
+		if(!pHSListOpenBooksInExit) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
+		pHSListOpenBooksInExit->CommaText = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_MainSection_Main, GlobalVar::GlobalIni_LoadBooksOnExit, L"");
 		for(int i=0; i<pHSListOpenBooksInExit->Count; ++i)
 		{
 			iBook = pHSListOpenBooksInExit->Strings[i].SubString(1, 3).ToIntDef(1);
@@ -421,8 +422,8 @@ void __fastcall TMainBibleWindow::FormCloseQuery(TObject *Sender, bool &CanClose
     // Aplikacja nie jest zamykana po kliknięciu na przycsk zamknięcia, lecz chowana.
 		// Podgląd wybranego tekstu został zainicjowany.
 		UnicodeString ustrTempPreviewText;
-    const UnicodeString custrStartScript = "<script",
-												custrStopScript = "</script>";
+		const UnicodeString custrStartScript = L"<script",
+												custrStopScript = L"</script>";
 		int iPosStart=0, iPosStop=0, iDelChars=0;
 		const int ciLengthScript=custrStopScript.Length();
 
@@ -472,11 +473,11 @@ bool __fastcall TMainBibleWindow::_RequestExit()
 {
 	bool bIsClose=true;
 	TTaskDialog *pTaskDialog = new TTaskDialog(this);
-	if(!pTaskDialog) throw(Exception("Błąd inicjalizacji objektu TTaskDialog"));
-	pTaskDialog->Caption = "Pytanie aplikacji";
-	pTaskDialog->Title = "Czy rzeczywiście chcesz opuścić apilkacje?";
+	if(!pTaskDialog) throw(Exception(L"Błąd inicjalizacji objektu TTaskDialog"));
+	pTaskDialog->Caption = L"Pytanie aplikacji";
+	pTaskDialog->Title = L"Czy rzeczywiście chcesz opuścić apilkacje?";
 
-	pTaskDialog->ExpandedText = "Naciśnięcie przycisku OK, spowoduje opuszczenie aplikacji. To pytania można wyłączyć w jej ustawieniach, wtedy aplikacja zostanie zaknięta bez pytania!";
+	pTaskDialog->ExpandedText = L"Naciśnięcie przycisku OK, spowoduje opuszczenie aplikacji. To pytania można wyłączyć w jej ustawieniach, wtedy aplikacja zostanie zaknięta bez pytania!";
 	pTaskDialog->MainIcon = tdiWarning;
 	pTaskDialog->DefaultButton = tcbNo;
 	pTaskDialog->CommonButtons = TTaskDialogCommonButtons() << tcbYes << tcbNo;
@@ -506,7 +507,7 @@ void __fastcall TMainBibleWindow::FormClose(TObject *Sender, TCloseAction &Actio
 	//Zapis listy otwartych ksiąg i rozdziałów w momencie zamknięcia aplikacji
 	{
 		THashedStringList *pHSListOpenBooksInExit = new THashedStringList();
-		if(!pHSListOpenBooksInExit) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+		if(!pHSListOpenBooksInExit) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 		UnicodeString ustrAdress;
 		for(int i=0; i<this->PageControlBibleText->PageCount; ++i)
 		{
@@ -575,6 +576,22 @@ void __fastcall TMainBibleWindow::FormKeyUp(TObject *Sender, WORD &Key, TShiftSt
 	}
 }
 //---------------------------------------------------------------------------
+void __fastcall TMainBibleWindow::_GetVersionAllResources()
+ /**
+	OPIS METOD(FUNKCJI): Odczyt wersji wszystkich modułów
+	OPIS ARGUMENTÓW:
+	OPIS ZMIENNYCH:
+	OPIS WYNIKU METODY(FUNKCJI): TStringLista wersji wszystkich modułów
+*/
+{
+	GlobalVar::Global_SListAllVersionLibrary->Add(Format(L"MojaBibliaLibrary v%s", ARRAYOFCONST((sustrVersionMyBibleLibrary))));
+	GlobalVar::Global_SListAllVersionLibrary->Add(Format(L"GsReadBibleTextData v%s", ARRAYOFCONST((sustrVersionGsReadBibleTextDataLibrary ))));
+	GlobalVar::Global_SListAllVersionLibrary->Add(Format(L"GsEditor v%s", ARRAYOFCONST((sustrVersionGsEditor))));
+	GlobalVar::Global_SListAllVersionLibrary->Add(Format(L"GsSuperDictionary v%s", ARRAYOFCONST((sustrVersionGsSuperDictionary))));
+	GlobalVar::Global_SListAllVersionLibrary->Add(Format(L"GsSearchFavFiles v%s", ARRAYOFCONST((sustrVersionGsSearchFavFiles))));
+	GlobalVar::Global_SListAllVersionLibrary->Add(Format(L"GsLogicalRelationshipTable v%s", ARRAYOFCONST((sustrVersionGsLogicalRelationshipTable))));
+}
+//---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_AppException(TObject *Sender, Exception *pException)
 /**
 	OPIS METOD(FUNKCJI): Obsługa błędów całej aplikacji
@@ -637,48 +654,48 @@ void __fastcall TMainBibleWindow::_InitAllTagAndHint()
 	this->ImageBackgroundWindow->Tag = enTagPic_Backgound; //[12-12-2023]
 	//Podpowiedzi i tagi akcji
 	this->Act_CloseSheetActive->Tag = enTagCloseSheet;	//Zamknięcie aktywnej zakładki
-	this->Act_CloseSheetActive->Hint = Format("Zamknięcie zakładki|Zamknięcie aktualnie aktywnej zakładki z tekstem|%u", ARRAYOFCONST((this->Act_CloseSheetActive->ImageIndex)));
+	this->Act_CloseSheetActive->Hint = Format(L"Zamknięcie zakładki|Zamknięcie aktualnie aktywnej zakładki z tekstem|%u", ARRAYOFCONST((this->Act_CloseSheetActive->ImageIndex)));
 	this->Act_SaveChaptToHTML->Tag = enTagSaveChaptToHTML; //Zapis rozdziału z bierzącej zakładki, jako pliku html
-	this->Act_SaveChaptToHTML->Hint = Format("Zapis do pliku|Zapis zawartości aktualnej zakładki, do pliku w formacie html.|%u", ARRAYOFCONST((this->Act_SaveChaptToHTML->ImageIndex)));
+	this->Act_SaveChaptToHTML->Hint = Format(L"Zapis do pliku|Zapis zawartości aktualnej zakładki, do pliku w formacie html.|%u", ARRAYOFCONST((this->Act_SaveChaptToHTML->ImageIndex)));
 	this->Act_SearchBibleText->Tag	= enTagSearchBibleText; //Zaawansowane wyszukiwanie tekstu
-	this->Act_SearchBibleText->Hint = Format("Wyszukiwanie|Otwiera okno do wyszukiwanie wyrażeń i fraz w tekście biblijnym.|%u", ARRAYOFCONST((this->Act_SearchBibleText->ImageIndex)));
+	this->Act_SearchBibleText->Hint = Format(L"Wyszukiwanie|Otwiera okno do wyszukiwanie wyrażeń i fraz w tekście biblijnym.|%u", ARRAYOFCONST((this->Act_SearchBibleText->ImageIndex)));
 	this->Act_SetupsApplic->Tag	 = enTagSetupsApplic;		 //Wszystkie ustawienia aplikacji.
-	this->Act_SetupsApplic->Hint = Format("Ustawienia|Wszystkie ustawienia aplikacji.|%u", ARRAYOFCONST((this->Act_SetupsApplic->ImageIndex)));
+	this->Act_SetupsApplic->Hint = Format(L"Ustawienia|Wszystkie ustawienia aplikacji.|%u", ARRAYOFCONST((this->Act_SetupsApplic->ImageIndex)));
 	this->Act_SelectVers->Tag = enTagSelectVers;			 //Wybór pojedyńczego wersetu
-	this->Act_SelectVers->Hint = Format("Wybór wersetu|Umożliwia wybór pojedyńczego wersetu.|%u", ARRAYOFCONST((this->Act_SelectVers->ImageIndex)));
+	this->Act_SelectVers->Hint = Format(L"Wybór wersetu|Umożliwia wybór pojedyńczego wersetu.|%u", ARRAYOFCONST((this->Act_SelectVers->ImageIndex)));
 	this->Act_ProjectSchemeVers->Tag = enTagSchemeVers;
-	this->Act_ProjectSchemeVers->Hint = Format("Powiązania między wersetami|Projektowanie logicznych powiązań między wersetami.|%u", ARRAYOFCONST((this->Act_ProjectSchemeVers->ImageIndex)));
+	this->Act_ProjectSchemeVers->Hint = Format(L"Powiązania między wersetami|Projektowanie logicznych powiązań między wersetami.|%u", ARRAYOFCONST((this->Act_ProjectSchemeVers->ImageIndex)));
 	this->Act_Infomations->Tag = enTagInformations;
-	this->Act_Infomations->Hint = Format("Informacje o aplikacji|Wyświetlanie informacji o aplikacjii.|%u", ARRAYOFCONST((this->Act_Infomations->ImageIndex)));
+	this->Act_Infomations->Hint = Format(L"Informacje o aplikacji|Wyświetlanie informacji o aplikacjii.|%u", ARRAYOFCONST((this->Act_Infomations->ImageIndex)));
 	this->Act_ViewAllResources->Tag = enTagViewAllResources;
-	this->Act_ViewAllResources->Hint = Format("Przegląd zasobów|Wyświetlanie okna z lista wszystkich, dostępnych zasobów aplikacji.|%u", ARRAYOFCONST((this->Act_ViewAllResources->ImageIndex)));
+	this->Act_ViewAllResources->Hint = Format(L"Przegląd zasobów|Wyświetlanie okna z lista wszystkich, dostępnych zasobów aplikacji.|%u", ARRAYOFCONST((this->Act_ViewAllResources->ImageIndex)));
 	this->Act_ResizeWork->Tag = enTagResizeWork;
-	this->Act_ResizeWork->Hint = Format("Poszerzenie obszaru tekstu.|Przełącznik powodujący poszerzenie obszaru tekstu biblijnego, przez schowanie zakładek.|%u", ARRAYOFCONST((this->Act_ResizeWork->ImageIndex)));
+	this->Act_ResizeWork->Hint = Format(L"Poszerzenie obszaru tekstu.|Przełącznik powodujący poszerzenie obszaru tekstu biblijnego, przez schowanie zakładek.|%u", ARRAYOFCONST((this->Act_ResizeWork->ImageIndex)));
 	this->Act_FacePage->Tag = enTagFacePage;
-	this->Act_FacePage->Hint = Format("Otwarcie strony na Facebooku.|Otwarcie strony aplikacji na Facebooku, w domyślnej przeglądarce.|%u", ARRAYOFCONST((this->Act_FacePage->ImageIndex)));
+	this->Act_FacePage->Hint = Format(L"Otwarcie strony na Facebooku.|Otwarcie strony aplikacji na Facebooku, w domyślnej przeglądarce.|%u", ARRAYOFCONST((this->Act_FacePage->ImageIndex)));
 	this->Act_Update->Tag = enTagUpdate;
-	this->Act_Update->Hint = Format("Otwarcie okna sprawdzania i akualizacji.|Otwarcie okna, do sprawdzania wersji na serwerze i ewentualnej aktualizacji.|%u", ARRAYOFCONST((this->Act_Update->ImageIndex)));
+	this->Act_Update->Hint = Format(L"Otwarcie okna sprawdzania i akualizacji.|Otwarcie okna, do sprawdzania wersji na serwerze i ewentualnej aktualizacji.|%u", ARRAYOFCONST((this->Act_Update->ImageIndex)));
 	this->Act_EditChapter->Tag = enTagEditChapter;
-	this->Act_EditChapter->Hint = Format("Otwarcie okna do edycji rozdziału|Otwarcie okna, do edycji aktalnie aktywnego razdziału.|%u", ARRAYOFCONST((this->Act_EditChapter->ImageIndex)));
+	this->Act_EditChapter->Hint = Format(L"Otwarcie okna do edycji rozdziału|Otwarcie okna, do edycji aktalnie aktywnego razdziału.|%u", ARRAYOFCONST((this->Act_EditChapter->ImageIndex)));
 	this->Act_MailChapt->Tag = enTagMailChapt;
-	this->Act_MailChapt->Hint = Format("Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
+	this->Act_MailChapt->Hint = Format(L"Wysłanie rozdziału emailem|Wysłanie aktualnie wczytanego rozdziału emailem, na wybrany adres.|%u", ARRAYOFCONST((this->Act_MailChapt->ImageIndex)));
 	this->Act_ReadingPlan->Tag = enTagImage_ReadingPlan;
-	this->Act_ReadingPlan->Hint = Format("Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
+	this->Act_ReadingPlan->Hint = Format(L"Okno planu czytania Biblii|Otwiera okno czytania Pisma Świętego, według ustawionego planu.|%u", ARRAYOFCONST((this->Act_ReadingPlan->ImageIndex)));
 	this->Act_HistoryChapters->Tag = enTagImage_HistoryTextOpen;
-	this->Act_HistoryChapters->Hint = Format("Okno histori otwieranych rozdziałów|Otwiera okno z historia rozdziałów otwartych w aplikacji.|%u", ARRAYOFCONST((this->Act_HistoryChapters->ImageIndex)));
+	this->Act_HistoryChapters->Hint = Format(L"Okno histori otwieranych rozdziałów|Otwiera okno z historia rozdziałów otwartych w aplikacji.|%u", ARRAYOFCONST((this->Act_HistoryChapters->ImageIndex)));
 	this->Act_OpenInWord->Tag = enTagImage_OpenInWord;
 	if(this->_bIsWordInstalled) //[28-08-2023]
-		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
+		this->Act_OpenInWord->Hint = Format(L"Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji Ms Word.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	else
-		this->Act_OpenInWord->Hint = Format("Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
+		this->Act_OpenInWord->Hint = Format(L"Otwarcie rozdziału w Ms Wordzie|Otwarcie aktywnego rozdziału w aplikacji MS Word jest niemożliwe.\nBrak zainstalowanego oprogramowania.|%u", ARRAYOFCONST((this->Act_OpenInWord->ImageIndex)));
 	this->Act_SpecBooks->Tag = enTagImage_BooksSpec;
-	this->Act_SpecBooks->Hint = Format("Okno tłumaczeń specjalistycznych|Otwiera okno z dostępnymi tłumaczeniami specjalistycznymi, Pisma Świetego.|%u", ARRAYOFCONST((this->Act_SpecBooks->ImageIndex)));
+	this->Act_SpecBooks->Hint = Format(L"Okno tłumaczeń specjalistycznych|Otwiera okno z dostępnymi tłumaczeniami specjalistycznymi, Pisma Świetego.|%u", ARRAYOFCONST((this->Act_SpecBooks->ImageIndex)));
 	this->Act_StrongDictionary->Tag = enTagImage_StrongDictionary;
-	this->Act_StrongDictionary->Hint = Format("Okno słownika Stronga|Otwarcie okna przeznaczonego do pracy ze słownikiem Stronga,\ndla języka greckiego i hebrajskiego.|%u", ARRAYOFCONST((this->Act_StrongDictionary->ImageIndex)));
+	this->Act_StrongDictionary->Hint = Format(L"Okno słownika Stronga|Otwarcie okna przeznaczonego do pracy ze słownikiem Stronga,\ndla języka greckiego i hebrajskiego.|%u", ARRAYOFCONST((this->Act_StrongDictionary->ImageIndex)));
 	this->Act_HelpVideo->Tag = enTagImage_HelpVideo;
-	this->Act_HelpVideo->Hint = Format("Pomocnicy video dla aplikacji.|Otwarcie kanału filmów instruktażowych dla aplikacji.|%u", ARRAYOFCONST((this->Act_HelpVideo->ImageIndex)));
+	this->Act_HelpVideo->Hint = Format(L"Pomocnicy video dla aplikacji.|Otwarcie kanału filmów instruktażowych dla aplikacji.|%u", ARRAYOFCONST((this->Act_HelpVideo->ImageIndex)));
 
-	this->ToolButtDeleteFile->Hint = "Usunięcie zaznaczonego pliku z ulubionym wyszukiwaniem"; //[14-10-2023]
+	this->ToolButtDeleteFile->Hint = L"Usunięcie zaznaczonego pliku z ulubionym wyszukiwaniem"; //[14-10-2023]
 	//---
 	this->PageControlBibleText->Tag = enTagPageControlBibleText; //Zakładki z tekstem
 	this->PageControlTools->Tag = enTagPageControlTools;						//Zakładka z narzędziami
@@ -693,10 +710,10 @@ bool __fastcall TMainBibleWindow::_IsWordInstalled()
 */
 {
 	bool bIsInstalled=false;
-	const UnicodeString custrReg = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Winword.exe";
+	const UnicodeString custrReg = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Winword.exe";
 
 	TRegistry *pRegistry = new TRegistry(KEY_READ);
-	if(!pRegistry) throw(Exception("Błąd załadowania objektu klasy TRegistry"));
+	if(!pRegistry) throw(Exception(L"Błąd załadowania objektu klasy TRegistry"));
 
 	pRegistry->RootKey = HKEY_LOCAL_MACHINE;
 	if(pRegistry->KeyExists(custrReg))
@@ -746,14 +763,14 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 */
 {
 	TImageList *pImageList = GsReadBibleTextData::GetImageList(); //Wyłuskanie listy ikon
-	if(!pImageList) throw(Exception("Błąd wyłuskania listy grafik"));
+	if(!pImageList) throw(Exception(L"Błąd wyłuskania listy grafik"));
 	this->PMenuTray->Images = pImageList;
 	unsigned int i;
 	//---
 	for(i=0; i<GlobalVar::Global_NumberBooks; ++i)
 	{
 		TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
-		if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));
+		if(!NewItem) throw(Exception(L"Błąd inicjalizacji objektu TMenuItem"));
 		this->PMenuTray->Items->Add(NewItem);
 		NewItem->Caption = AppCTable_InfoAllBooks[i].FullNameBook;
 		NewItem->OnClick = this->_OnClick_PMenuTray;
@@ -763,9 +780,9 @@ void __fastcall TMainBibleWindow::_CreatePopupTrayIcon()
 	}
 	//--- // 08-11-2025
   TMenuItem *NewItem = new TMenuItem(this->PMenuTray);
-	if(!NewItem) throw(Exception("Błąd inicjalizacji objektu TMenuItem"));
+	if(!NewItem) throw(Exception(L"Błąd inicjalizacji objektu TMenuItem"));
 	this->PMenuTray->Items->Add(NewItem);
-	NewItem->Caption = "Wyjście z aplikacji";
+	NewItem->Caption = L"Wyjście z aplikacji";
 	NewItem->OnClick = this->_OnClick_PMenuTray;
 	NewItem->Tag = enPMenuTray + i;
 	NewItem->ImageIndex = enImageIndex_Exit;
@@ -781,7 +798,7 @@ void __fastcall TMainBibleWindow::ImageBackgroundWindowDragOver(TObject *Sender,
 */
 {
 	//Akceptacja jeśli jest to objekt odpowiedniej klasy
-	Accept = Source->ClassNameIs("GsTreeBibleClass");
+	Accept = Source->ClassNameIs(L"GsTreeBibleClass");
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainBibleWindow::_DisplayHelp(TAction *_pAction)
@@ -937,7 +954,7 @@ void __fastcall TMainBibleWindow::_OnDblClick_ListComment(System::TObject* Sende
 	ListComments *pListComments = this->pGsLViewCommentsAllClass->GetSelectComent(pGsLViewCommentsAllClass->ItemIndex);
 	//return;
 	TSelectVersWindow *pSelectVersWindow = new TSelectVersWindow(this, pListComments->LC_ucBook, pListComments->LC_ucChapt - 1, pListComments->LC_ucVers, true);
-	if(!pSelectVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
+	if(!pSelectVersWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
 	pSelectVersWindow->ShowModal();
 	//Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	this->pGsLViewCommentsAllClass->ReloadAllVersComments(false); //Ponowne wszytanie zawartości katalogu z plikami komentarzy
@@ -959,7 +976,7 @@ void __fastcall TMainBibleWindow::_OnDblClick_ListFavorities(System::TObject* Se
 								ucChapt = AdressString.SubString(4, 3).ToInt(),
 								ucVers = AdressString.SubString(7, 3).ToIntDef(0);
 	TSelectVersWindow *pSelectVersWindow = new TSelectVersWindow(this, ucBook, ucChapt - 1, ucVers, true);
-	if(!pSelectVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
+	if(!pSelectVersWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
 	pSelectVersWindow->ShowModal();
 	//Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	pGsLViewCommentsAllClass->ReloadAllVersComments(false);
@@ -981,7 +998,7 @@ void __fastcall TMainBibleWindow::Act_CloseSheetActiveExecute(TObject *Sender)
 	TTabSheet* pActiveSheet = this->PageControlBibleText->ActivePage;
 	if(pActiveSheet)
 	{
-		if(pActiveSheet->ClassNameIs("GsTabSheetSelectVersClass")) GsReadBibleTextData::GsSheetListVers = 0; //Jeśli to zakładka z listą wybranych wersetów,
+		if(pActiveSheet->ClassNameIs(L"GsTabSheetSelectVersClass")) GsReadBibleTextData::GsSheetListVers = 0; //Jeśli to zakładka z listą wybranych wersetów,
 																																																				 //globalny wskaźnik na zakładkę zostanie wyzerowany
 		delete pActiveSheet; pActiveSheet = nullptr;
 		pAction->Enabled = (this->PageControlBibleText->PageCount > 0);
@@ -1021,15 +1038,15 @@ void __fastcall TMainBibleWindow::Act_SaveChaptToHTMLExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	TFileSaveDialog	 *pFileSaveDialog	 = new TFileSaveDialog (this);
-	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog "));
+	if(!pFileSaveDialog) throw(Exception(L"Błąd inicjalizacji objektu TFileSaveDialog"));
 	//---
-	UnicodeString ustrTypesFile[] = {"Wszystkie pliki", "*.*", "Pliki typu html", "*.html"},
+	UnicodeString ustrTypesFile[] = {L"Wszystkie pliki", L"*.*", L"Pliki typu html", L"*.html"},
 								ustrSelect;
 	TFileTypeItem *pFileTypeItem = nullptr;
-	pFileSaveDialog->Title = "Wybierz nazwę pliku do zapisu...";
+	pFileSaveDialog->Title = L"Wybierz nazwę pliku do zapisu...";
 	pFileSaveDialog->Options << fdoOverWritePrompt << fdoNoDereferenceLinks;
-	pFileSaveDialog->DefaultExtension = ".html";
-	pFileSaveDialog->OkButtonLabel = "Zapisz otwarty rozdział do pliku";
+	pFileSaveDialog->DefaultExtension = L".html";
+	pFileSaveDialog->OkButtonLabel = L"Zapisz otwarty rozdział do pliku";
 
 	for(int i=0; i<ARRAYSIZE(ustrTypesFile); i+=2)
 	{
@@ -1064,7 +1081,7 @@ void __fastcall TMainBibleWindow::Act_SearchBibleTextExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	TSearchTextWindow *pTSearchTextWindow = new TSearchTextWindow(this);
-	if(!pTSearchTextWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSearchTextWindow"));
+	if(!pTSearchTextWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSearchTextWindow"));
 	pTSearchTextWindow->ShowModal();
 	this->pGsSearchFavFilesClass->ReadDirectoryFavSearch();
 }
@@ -1081,7 +1098,7 @@ void __fastcall TMainBibleWindow::Act_SetupsApplicExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	TSetupsWindow *pSetupsWindow = new TSetupsWindow(this);
-	if(!pSetupsWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSetupsWindow"));
+	if(!pSetupsWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSetupsWindow"));
 	pSetupsWindow->ShowModal();
 	//Przeładowanie aplikacji po zminie ustawień o aktywnych tłumaczeniach
 
@@ -1120,7 +1137,7 @@ void __fastcall TMainBibleWindow::Act_SelectVersExecute(TObject *Sender)
 	//w aktualnej zakładce, w oknie głównym. [23-10-2023]
 	else {pSelectVersWindow = new TSelectVersWindow(this, pGsTabSheetClass->_ShucIndexBook, pGsTabSheetClass->_ShucIndexChapt, 1, true);}
 	//---
-	if(!pSelectVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
+	if(!pSelectVersWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSelectVersWindow"));
 	pSelectVersWindow->ShowModal(); //Musi być okno modalne!
 	//Odświerzemie listy wersetów, po ewemtualnych zmianach w edytorze wersetów.
 	this->pGsLViewCommentsAllClass->ReloadAllVersComments(false);
@@ -1141,7 +1158,7 @@ void __fastcall TMainBibleWindow::Act_ProjectSchemeVersExecute(TObject *Sender)
 //	if(!pTSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSchemeVersWindow"));
 //	pTSchemeVersWindow->ShowModal();
 	TNewSchemeVersWindow *pNewSchemeVersWindow = new TNewSchemeVersWindow(this);
-	if(!pNewSchemeVersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TNewSchemeVersWindow"));
+	if(!pNewSchemeVersWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TNewSchemeVersWindow"));
 	pNewSchemeVersWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
@@ -1160,7 +1177,7 @@ void __fastcall TMainBibleWindow::Act_InfomationsExecute(TObject *Sender)
 	if(sbIsOpenInfo) return;
 	//---
 	TInformationsAppWindow *pTInformationsAppWindow = new TInformationsAppWindow(this);
-	if(!pTInformationsAppWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TInformationsAppWindow"));
+	if(!pTInformationsAppWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TInformationsAppWindow"));
 	sbIsOpenInfo = true;
 	pTInformationsAppWindow->ShowModal();
 	sbIsOpenInfo = false;
@@ -1178,7 +1195,7 @@ void __fastcall TMainBibleWindow::Act_ViewAllResourcesExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	TAllMultimediaView *pAllMultimediaView = new TAllMultimediaView(this);
-	if(!pAllMultimediaView) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TAllMultimediaView"));
+	if(!pAllMultimediaView) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TAllMultimediaView"));
 	pAllMultimediaView->ShowModal();
 }
 //---------------------------------------------------------------------------
@@ -1250,10 +1267,10 @@ void __fastcall TMainBibleWindow::Act_UpdateExecute(TObject *Sender)
 	TAction *pAction = dynamic_cast<TAction *>(Sender);
 	if(!pAction) return;
 	//---
-	MessageBox(NULL, (UnicodeString("Niestety moduł pobierania aktualizacji został wyłączony ze względu na problemy z serwerem. ") +
-			"Proszę o pobieranie pełnej paczki z pod adresu \"https://sourceforge.net/projects/moja-biblia-ng/\" \n" +
-			"Po zamknięciu okienka, zostanie uruchomiona domyślna przeglądarka, z załadowaną stroną, do pobierania całej paczki z aplikacją."
-			"Przepraszam za utrudnienia, ale nie wynikają one z mojej winy :(").c_str(),
+	MessageBox(NULL, (UnicodeString(L"Niestety moduł pobierania aktualizacji został wyłączony ze względu na problemy z serwerem. ") +
+			L"Proszę o pobieranie pełnej paczki z pod adresu \"https://sourceforge.net/projects/moja-biblia-ng/\" \n" +
+			L"Po zamknięciu okienka, zostanie uruchomiona domyślna przeglądarka, z załadowaną stroną, do pobierania całej paczki z aplikacją."
+			L"Przepraszam za utrudnienia, ale nie wynikają one z mojej winy :(").c_str(),
 			TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 
 	ShellExecute(this->Handle, NULL , TEXT("https://sourceforge.net/projects/moja-biblia-ng/"), NULL, NULL, SW_SHOWNORMAL);
@@ -1277,7 +1294,7 @@ void __fastcall TMainBibleWindow::Act_EditChapterExecute(TObject *Sender)
 	if(!pTabSheet) return;
 	//---
 	TChapterEditWindow *pChapterEditWindow = new TChapterEditWindow(this, pTabSheet);
-	if(!pChapterEditWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TChapterEditWindow"));
+	if(!pChapterEditWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TChapterEditWindow"));
 	pChapterEditWindow->ShowModal();
 
 	//this->PageControlBibleText->SetFocus(); pTabSheet->SetFocus(); pTabSheet->SetFocusText();
@@ -1298,7 +1315,7 @@ void __fastcall TMainBibleWindow::Act_MailChaptExecute(TObject *Sender)
 	GsReadBibleTextData::GetTextHTMLCurrentSheet(ustrTextHTML);
 
 	TSendingMailWindow *pTSendingMailWindow = new TSendingMailWindow(this, ustrTextHTML);
-	if(!pTSendingMailWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TChapterEditWindow"));
+	if(!pTSendingMailWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TChapterEditWindow"));
 	pTSendingMailWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
@@ -1320,7 +1337,7 @@ void __fastcall TMainBibleWindow::Act_ReadingPlanExecute(TObject *Sender)
 		return;
 	}
 	TReadingPlanWindow *pTReadingPlanWindow = new TReadingPlanWindow(this);
-	if(!pTReadingPlanWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
+	if(!pTReadingPlanWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TFastTipsWindow"));
 	pTReadingPlanWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
@@ -1336,7 +1353,7 @@ void __fastcall TMainBibleWindow::Act_HistoryChaptersExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	THistoryOpenChaptersWindow *pHistoryOpenChaptersWindow = new THistoryOpenChaptersWindow(this, pAction);
-	if(!pHistoryOpenChaptersWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
+	if(!pHistoryOpenChaptersWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna THistoryOpenChaptersWindow"));
 	//pHistoryOpenChaptersWindow->ShowModal();
 	pHistoryOpenChaptersWindow->Show();
 	//pAction->Enabled = false;
@@ -1357,14 +1374,14 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 					vWRange, vMFont;
 	int iStart=0, iStop=0;
 	UnicodeString ustrAddressVers, ustrTextVers;
-	const int wdRed=6;
+	constexpr int wdRed=6;
 
 	MyObjectVers *pMyOjectVers=nullptr;
 	TForm *pMainForm = Application->MainForm;
-	if(!pMainForm) throw(Exception("Nie można wyłuskać wskaźnika na główne okno"));
+	if(!pMainForm) throw(Exception(L"Nie można wyłuskać wskaźnika na główne okno"));
 
 	THashedStringList *pHSListGetText = new THashedStringList();
-	if(!pHSListGetText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!pHSListGetText) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 	GsReadBibleTextData::GetCurentListText(pHSListGetText);
 	int iASize = pHSListGetText->Count; //Ilość wersetów (lini w liście)
@@ -1376,13 +1393,13 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 	pPBar->Top = pMainForm->ClientHeight / 2 - (pPBar->Height / 2);
 	pPBar->Max = iASize;
 
-	vMApplication = Variant::CreateObject("Word.Application");
-	vMApplication.OlePropertySet("Visible", (Variant)true);
+	vMApplication = Variant::CreateObject(L"Word.Application");
+	vMApplication.OlePropertySet(L"Visible", (Variant)true);
 
-	vWDocuments = vMApplication.OlePropertyGet("Documents");
-	vWAdd = vWDocuments.OleFunction("Add");
-	vWActiveDoc = vMApplication.OlePropertyGet("ActiveDocument");
-	vWWords = vWActiveDoc.OlePropertyGet("Words");
+	vWDocuments = vMApplication.OlePropertyGet(L"Documents");
+	vWAdd = vWDocuments.OleFunction(L"Add");
+	vWActiveDoc = vMApplication.OlePropertyGet(L"ActiveDocument");
+	vWWords = vWActiveDoc.OlePropertyGet(L"Words");
 
 	for(int i=0; i<iASize; ++i)
 	{
@@ -1395,25 +1412,25 @@ void __fastcall TMainBibleWindow::Act_OpenInWordExecute(TObject *Sender)
 			iStart = iStop;
 			iStop += ustrAddressVers.Length();
 
-			vWLast = vWWords.OlePropertyGet("Last");
-			vWLast.OlePropertySet("Text", (Variant)ustrAddressVers);
-			vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
+			vWLast = vWWords.OlePropertyGet(L"Last");
+			vWLast.OlePropertySet(L"Text", (Variant)ustrAddressVers);
+			vWRange = vWActiveDoc.OleFunction(L"Range", iStart, iStop);
 
-			vMFont = vWRange.OlePropertyGet("Font");
-			vMFont.OleFunction("Reset");
-			vMFont.OlePropertySet("Bold", (Variant)true);
-			vMFont.OlePropertySet("ColorIndex", (Variant)wdRed);
+			vMFont = vWRange.OlePropertyGet(L"Font");
+			vMFont.OleFunction(L"Reset");
+			vMFont.OlePropertySet(L"Bold", (Variant)true);
+			vMFont.OlePropertySet(L"ColorIndex", (Variant)wdRed);
 			//---
 			iStart = iStop;
-			if(i<(iASize-1)) ustrTextVers = pHSListGetText->Strings[i] + "\n";
+			if(i<(iASize-1)) ustrTextVers = pHSListGetText->Strings[i] + L"\n";
 			else ustrTextVers = pHSListGetText->Strings[i];
 			iStop += ustrTextVers.Length();
 
-			vWLast = vWWords.OlePropertyGet("Last");
-			vWLast.OlePropertySet("Text", (Variant)ustrTextVers);
-			vWRange = vWActiveDoc.OleFunction("Range", iStart, iStop);
-			vMFont = vWRange.OlePropertyGet("Font");
-			vMFont.OleFunction("Reset");
+			vWLast = vWWords.OlePropertyGet(L"Last");
+			vWLast.OlePropertySet(L"Text", (Variant)ustrTextVers);
+			vWRange = vWActiveDoc.OleFunction(L"Range", iStart, iStop);
+			vMFont = vWRange.OlePropertyGet(L"Font");
+			vMFont.OleFunction(L"Reset");
 		}
 	}
 
@@ -1433,7 +1450,7 @@ void __fastcall TMainBibleWindow::Act_SpecBooksExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	TBooksSpecjalistWindow *pBooksSpecjalistWindow = new TBooksSpecjalistWindow(this);
-	if(!pBooksSpecjalistWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TBooksSpecjalistWindow"));
+	if(!pBooksSpecjalistWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TBooksSpecjalistWindow"));
 	pBooksSpecjalistWindow->Show();
 }
 //---------------------------------------------------------------------------
@@ -1449,7 +1466,7 @@ void __fastcall TMainBibleWindow::Act_StrongDictionaryExecute(TObject *Sender)
 	if(!pAction) return;
 	//---
 	TSuperDitionariesWindow *pSuperDitionariesWindow = new TSuperDitionariesWindow(this);
-	if(!pSuperDitionariesWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSuperDitionariesWindow"));
+	if(!pSuperDitionariesWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSuperDitionariesWindow"));
 	pSuperDitionariesWindow->ShowModal();
 }
 //---------------------------------------------------------------------------
@@ -1502,15 +1519,15 @@ void __fastcall TMainBibleWindow::_OnSelectItemSearchFile(System::TObject* Sende
 		UnicodeString ustrTemp = TPath::ChangeExtension(pSelect->SelectFile, GlobalVar::Global_custrFileSearchInfoExtand);
 
 		TMemIniFile *pIni = new TMemIniFile(ustrTemp, TEncoding::UTF8);
-		if(!pIni) throw(Exception("Błąd inicjalizacji objektu TMemIniFile"));
+		if(!pIni) throw(Exception(L"Błąd inicjalizacji objektu TMemIniFile"));
 
 		this->MemoInfosSearchFile->Lines->BeginUpdate();
 		this->MemoInfosSearchFile->Clear(); //[17-10-2023]
-		this->MemoInfosSearchFile->Lines->Add(Format("Szukane słowo: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, "Brak") ))));
-		this->MemoInfosSearchFile->Lines->Add(Format("Tłumaczenie: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, "Brak") ))));
-		this->MemoInfosSearchFile->Lines->Add(Format("Nazwa zakresu wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_RangeName, "Brak") ))));
-		this->MemoInfosSearchFile->Lines->Add(Format("Dokładny zakres wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Range, "Brak") ))));
-		this->MemoInfosSearchFile->Lines->Add(Format("Ilość wystąpień szukanego wyrażenia: %d", ARRAYOFCONST(( pIni->ReadInteger(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Count, 0) ))));
+		this->MemoInfosSearchFile->Lines->Add(Format(L"Szukane słowo: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Name, L"Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format(L"Tłumaczenie: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Translate, L"Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format(L"Nazwa zakresu wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_RangeName, L"Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format(L"Dokładny zakres wyszukiwania: %s", ARRAYOFCONST(( pIni->ReadString(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Range, L"Brak") ))));
+		this->MemoInfosSearchFile->Lines->Add(Format(L"Ilość wystąpień szukanego wyrażenia: %d", ARRAYOFCONST(( pIni->ReadInteger(GlobalVar::GlobalInfoSearch_Header, GlobalVar::GlobalInfoSearch_Count, 0) ))));
 		this->MemoInfosSearchFile->Lines->EndUpdate();
 
 		if(pIni) {delete pIni; pIni = nullptr;}

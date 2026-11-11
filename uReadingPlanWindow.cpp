@@ -24,7 +24,7 @@ MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFO
 TReadingPlanWindow *ReadingPlanWindow;
 enum {enImage_NoSpeakReadingText, enImage_SpeakReadingText, enImage_NoViewJournalingPlan, enImage_ViewJournalingPlan};
 enum enumErrors {enErrorEndPlan = 100};
-const int Gl_ciMaxShets = 8, //Maksymalna ilość par i zakładek
+constexpr int Gl_ciMaxShets = 8, //Maksymalna ilość par i zakładek
 					Gl_ciMaxLengthPair = 6, //Minimalna długość pary (9+1+9)
 					Gl_MaxNotReadingText=100;
 UnicodeString Gl_ustrTableText[Gl_ciMaxShets]; //Tablica tekstów z zakładek
@@ -67,23 +67,23 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 */
 {
 	this->_pListWebBrowsers = new TList();
-	if(!this->_pListWebBrowsers) throw(Exception("Błąd tworzenia objektu, klasy TList"));
+	if(!this->_pListWebBrowsers) throw(Exception(L"Błąd tworzenia objektu, klasy TList"));
 
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan1); this->WebBrowserReadingPlan1->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan2); this->WebBrowserReadingPlan2->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan3); this->WebBrowserReadingPlan3->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan4); this->WebBrowserReadingPlan4->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan5); this->WebBrowserReadingPlan5->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan6); this->WebBrowserReadingPlan6->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan7); this->WebBrowserReadingPlan7->Navigate(WideString("about:blank").c_bstr());
-	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan8); this->WebBrowserReadingPlan8->Navigate(WideString("about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan1); this->WebBrowserReadingPlan1->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan2); this->WebBrowserReadingPlan2->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan3); this->WebBrowserReadingPlan3->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan4); this->WebBrowserReadingPlan4->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan5); this->WebBrowserReadingPlan5->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan6); this->WebBrowserReadingPlan6->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan7); this->WebBrowserReadingPlan7->Navigate(WideString(L"about:blank").c_bstr());
+	this->_pListWebBrowsers->Add(this->WebBrowserReadingPlan8); this->WebBrowserReadingPlan8->Navigate(WideString(L"about:blank").c_bstr());
 	//Podpowiedzi
-	this->SButtonJournaling->Hint = Format("%s|Pokazuje wszystkie wersety w wybranym planie czytania.|%u",
-		ARRAYOFCONST(("Pokaż wersety plany", this->SButtonJournaling->ImageIndex)));
+	this->SButtonJournaling->Hint = Format(L"%s|Pokazuje wszystkie wersety w wybranym planie czytania.|%u",
+		ARRAYOFCONST((L"Pokaż wersety plany", this->SButtonJournaling->ImageIndex)));
 	this->SButtonStartSpeak->Hint = Format("%s|Rozpoczyna czytanie aktualnego wersetu.|%u",
-		ARRAYOFCONST(("Czytanie wersetu", this->SButtonStartSpeak->ImageIndex)));
-	this->SButtonStopSpeak->Hint = Format("%s|Przerywa lub wznawia czytanie aktualnego wersetu.|%u",
-		ARRAYOFCONST(("Przyrywanie lub wznawianie czytania", this->SButtonStopSpeak->ImageIndex)));
+		ARRAYOFCONST((L"Czytanie wersetu", this->SButtonStartSpeak->ImageIndex)));
+	this->SButtonStopSpeak->Hint = Format(L"%s|Przerywa lub wznawia czytanie aktualnego wersetu.|%u",
+		ARRAYOFCONST((L"Przyrywanie lub wznawianie czytania", this->SButtonStopSpeak->ImageIndex)));
 	//Właściwe wyświetlenie tłumaczenia, księgi i rozdziału
 	SecureZeroMemory(&Gl_SetDataDisplay, sizeof(DataDisplayTextAnyBrowser));
 	Gl_SetDataDisplay.strBackgroundColor = ColorToWebColorStr(Gl_TablePagesColors[0]);
@@ -95,7 +95,7 @@ void __fastcall TReadingPlanWindow::FormCreate(TObject *Sender)
 	this->_iDayPlan = DaysBetween(TDateTime::CurrentDate(), dt); //Jako argument dla this->_ReadSelectPlan
 
 	this->_pHSListJournaling = new THashedStringList();
-	if(!this->_pHSListJournaling) throw(Exception("Błąd funkcji THashedStringList"));
+	if(!this->_pHSListJournaling) throw(Exception(L"Błąd funkcji THashedStringList"));
 	this->_ReadSetupsJournal(); //Odczyt i ustawienia dziennika
 	this->_ReadSelectPlan();
 }
@@ -124,9 +124,9 @@ void __fastcall TReadingPlanWindow::FormActivate(TObject *Sender)
 	{
 		if((i<=(this->_iDayPlan + 1)) && (!this->ChListBoxJournaling->Checked[i]))
 		{
-			MessageBox(NULL, UnicodeString(Format(UnicodeString("Opuściłeś tekst przeznaczony na dzień: %d. Jeśli przeczytałeś go, zaznacz odpowiednią pozycje w dzienniku.") +
-				 "Jeśli nie przeczytałeś odpowiedniego tekstu na zaległy dzień, wybierz go z listy. Pozycje nieprzeczytane nie mają zaznaczenia w kwadraciku, po lewej stronie pozycji. "+
-				 "Po nadrobieniu zaległości zaznacz odpowiednie pozycje z listy",
+			MessageBox(NULL, UnicodeString(Format(UnicodeString(L"Opuściłeś tekst przeznaczony na dzień: %d. Jeśli przeczytałeś go, zaznacz odpowiednią pozycje w dzienniku.") +
+				 L"Jeśli nie przeczytałeś odpowiedniego tekstu na zaległy dzień, wybierz go z listy. Pozycje nieprzeczytane nie mają zaznaczenia w kwadraciku, po lewej stronie pozycji. "+
+				 L"Po nadrobieniu zaległości zaznacz odpowiednie pozycje z listy",
 				ARRAYOFCONST((i)))).c_str(), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 			this->_bIsSelectDay = true;
 			break;
@@ -176,13 +176,13 @@ void __fastcall TReadingPlanWindow::_ReadSelectPlan(const int iSetDayPlan)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	const UnicodeString custrSeparator = "|";
+	const UnicodeString custrSeparator = L"|";
 	THashedStringList *pHSLFilePlan=nullptr, *pHSList=nullptr;
 	UnicodeString ustrNameTraPlan = GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_TranslateRPlan, "bwa.pltmb - Biblia Warszawska");
 	//Odczyt indeksu tłumaczenia używanego w planie czytania
-	int iPosDescription = ustrNameTraPlan.Pos("- "), //Opis tłumaczenia po nazwie pliku t€maczenia (nazwa pliku - Opis tłumaczenia)
+	int iPosDescription = ustrNameTraPlan.Pos(L"- "), //Opis tłumaczenia po nazwie pliku t€maczenia (nazwa pliku - Opis tłumaczenia)
 			iReadIDTr = GlobalVar::Global_ConfigFile->ReadInteger(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_IDTranslateRPlan, -1),
-			iPosName = ustrNameTraPlan.Pos(" "),
+			iPosName = ustrNameTraPlan.Pos(L" "),
 			iLengthPair, iCurrentDayPlan=-1;
 	TDateTime dt = GlobalVar::Global_ConfigFile->ReadDate(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_StartDate, TDateTime::CurrentDate());
 
@@ -215,15 +215,15 @@ void __fastcall TReadingPlanWindow::_ReadSelectPlan(const int iSetDayPlan)
 					GlobalVar::Global_ConfigFile->ReadString(GlobalVar::GlobalIni_ReadingPlan_Main, GlobalVar::GlobalIni_SelectPlan, ""));
 
 				pHSLFilePlan = new THashedStringList(); //Lista odczytanych lini zakresów z pliku planu (max. 8)
-				if(!pHSLFilePlan) throw(Exception("Błąd funkcji THashedStringList"));
+				if(!pHSLFilePlan) throw(Exception(L"Błąd funkcji THashedStringList"));
 				pHSList = new THashedStringList(); //Lista par granic tekstu, odczytanych z pliku planu
-				if(!pHSList) throw(Exception("Błąd funkcji THashedStringList"));
+				if(!pHSList) throw(Exception(L"Błąd funkcji THashedStringList"));
 
 				pHSLFilePlan->LoadFromFile(ustrPathFileReadingPlan, TEncoding::UTF8);
-				UnicodeString ustrInfosCurrentPlan = "Aktualny plan czytania: \"%s\". Tłumczenie: \"%s\". Aktualna data: %s. Data rozpoczęcia aktualnego planu: %s. Dzień %d czytania z %d dni.";
+				UnicodeString ustrInfosCurrentPlan = L"Aktualny plan czytania: \"%s\". Tłumczenie: \"%s\". Aktualna data: %s. Data rozpoczęcia aktualnego planu: %s. Dzień %d czytania z %d dni.";
 				this->LabelInfosReadingPlan->Caption = Format(ustrInfosCurrentPlan,
 					ARRAYOFCONST((pHSLFilePlan->Strings[0], ustrNameTraPlan.SubString(iPosDescription+2, 100), TDateTime::CurrentDate().FormatString("dd-mm-yyyy"),
-					dt.FormatString("dd-mm-yyyy"), iCurrentDayPlan+1, pHSLFilePlan->Count-1)));
+					dt.FormatString(L"dd-mm-yyyy"), iCurrentDayPlan+1, pHSLFilePlan->Count-1)));
 
 				if(iCurrentDayPlan >= pHSLFilePlan->Count-1)
 				{
@@ -269,7 +269,7 @@ void __fastcall TReadingPlanWindow::_ReadSelectPlan(const int iSetDayPlan)
 					case enErrorEndPlan:
 						MessageBox(NULL, TEXT("Wybrany Plan czytania Pisma Świętego został zakończony"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
 						this->LabelInfosReadingPlan->Alignment = taCenter;
-						this->LabelInfosReadingPlan->Caption = "Wybrany Plan czytania Pisma Świętego został zakończony, rozpocznij inny plan, lub powtórz aktualny";
+						this->LabelInfosReadingPlan->Caption = L"Wybrany Plan czytania Pisma Świętego został zakończony, rozpocznij inny plan, lub powtórz aktualny";
 						break;
 				}
 			}
@@ -323,7 +323,7 @@ void __fastcall TReadingPlanWindow::_SpeakText(const UnicodeString ustrTextSpeak
 			try
 			{
 				hResult = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-				if(FAILED(hResult)) throw(Exception("Błąd funkcji syntezy mowy"));
+				if(FAILED(hResult)) throw(Exception(L"Błąd funkcji syntezy mowy"));
 
 				hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&Gl_pVoice);
 				if(SUCCEEDED(hr))
@@ -434,11 +434,11 @@ void __fastcall TReadingPlanWindow::ChListBoxJournalingClickCheck(TObject *Sende
 	//---
 	if(pChLBox->Checked[pChLBox->ItemIndex])
 	{
-		this->_pHSListJournaling->ValueFromIndex[pChLBox->ItemIndex] = "1";
+		this->_pHSListJournaling->ValueFromIndex[pChLBox->ItemIndex] = L"1";
 	}
 	else
 	{
-		this->_pHSListJournaling->ValueFromIndex[pChLBox->ItemIndex] = "0";
+		this->_pHSListJournaling->ValueFromIndex[pChLBox->ItemIndex] = L"0";
 	}
 }
 //---------------------------------------------------------------------------

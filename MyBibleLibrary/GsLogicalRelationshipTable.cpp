@@ -25,7 +25,7 @@ if(pGsChild && (pGsChild != this))
 
 static GsDrawChildren *GlGsDrawChildren=nullptr;
 static GsMaster *GlGsMaster=nullptr;
-const UnicodeString custrNameBackground = "BackGroundScheme.gli",
+const UnicodeString custrNameBackground = L"BackGroundScheme.gli",
 										custrPathBackground = TPath::Combine(GlobalVar::Global_custrGetDataDir, custrNameBackground);
 
 /****************************************************************************
@@ -47,13 +47,13 @@ __fastcall GsChild::GsChild(TComponent* Owner, const UnicodeString &custrAdr, co
 	this->_IDChild = reinterpret_cast<int>(this);
 	//Inicjalizacja listy potomków
 	this->_pListChildren = new TList();
-	if(!this->_pListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	if(!this->_pListChildren) throw(Exception(L"Nie dokonano inicjalizacji objektu TList"));
 	// Umieszczenie pozycji na przodku (właścicielu)
 	this->Parent = dynamic_cast<TWinControl *>(Owner);
-	if(!this->Parent) throw(Exception("Błąd tworzenia objektu, klasy GsChildLogicalRelationship"));
+	if(!this->Parent) throw(Exception(L"Błąd tworzenia objektu, klasy GsChildLogicalRelationship"));
 	this->Canvas->Font->Quality = TFontQuality::fqClearType;
 	this->Canvas->Font->Size = 11;
-	this->Text = Format("%s \"%s\"", ARRAYOFCONST(( _ustrNameVers, _ustrTextVers )));
+	this->Text = Format(L"%s \"%s\"", ARRAYOFCONST(( _ustrNameVers, _ustrTextVers )));
 	this->Hint = this->_ustrNameVers;
 	this->ShowHint = true;
 
@@ -75,10 +75,10 @@ __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteD
 	this->Cursor = crSizeAll;
 	//Inicjalizacja listy potomków
 	this->_pListChildren = new TList();
-	if(!this->_pListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	if(!this->_pListChildren) throw(Exception(L"Nie dokonano inicjalizacji objektu TList"));
 	// Umieszczenie pozycji na przodku (właścicielu)
 	this->Parent = dynamic_cast<TWinControl *>(Owner);
-	if(!this->Parent) throw(Exception("Błąd tworzenia objektu, klasy GsChildLogicalRelationship"));
+	if(!this->Parent) throw(Exception(L"Błąd tworzenia objektu, klasy GsChildLogicalRelationship"));
 	this->Canvas->Font->Quality = TFontQuality::fqClearType;
 	this->Canvas->Font->Size = 11;
 
@@ -87,10 +87,10 @@ __fastcall GsChild::GsChild(TComponent* Owner, PReadWriteDataObject _PReadWriteD
 
 	GsReadBibleTextData::GetTextVersOfAdress(_PReadWriteDataObject->RW_Book, _PReadWriteDataObject->RW_Chapt+1,
 		_PReadWriteDataObject->RW_Vers, 1, ustrText);
-	this->_ustrNameVers = Format("%s %u:%u", ARRAYOFCONST((AppCTable_InfoAllBooks[_PReadWriteDataObject->RW_Book].ShortNameBook,
+	this->_ustrNameVers = Format(L"%s %u:%u", ARRAYOFCONST((AppCTable_InfoAllBooks[_PReadWriteDataObject->RW_Book].ShortNameBook,
 			_PReadWriteDataObject->RW_Chapt+1, _PReadWriteDataObject->RW_Vers)));
 	this->_ustrTextVers = ustrText;
-	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
+	this->Text = Format(L"%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
 	this->ShowHint = true;
 	this->Hint = this->_ustrNameVers;
 
@@ -110,10 +110,10 @@ __fastcall GsChild::GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewRead
 	this->Cursor = crSizeAll;
 	//Inicjalizacja listy potomków
 	this->_pListChildren = new TList();
-	if(!this->_pListChildren) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	if(!this->_pListChildren) throw(Exception(L"Nie dokonano inicjalizacji objektu TList"));
 	// Umieszczenie pozycji na przodku (właścicielu)
 	this->Parent = dynamic_cast<TWinControl *>(Owner);
-	if(!this->Parent) throw(Exception("Błąd tworzenia objektu, klasy GsChildLogicalRelationship"));
+	if(!this->Parent) throw(Exception(L"Błąd tworzenia objektu, klasy GsChildLogicalRelationship"));
 	this->Canvas->Font->Quality = TFontQuality::fqClearType;
 	this->Canvas->Font->Size = 11;
 
@@ -122,7 +122,7 @@ __fastcall GsChild::GsChild(TComponent* Owner, PNewReadWriteDataObject _PNewRead
 	this->_TypeObj = _PNewReadWriteDataObject->NRW_Type;
 	this->_ustrNameVers = _PNewReadWriteDataObject->NRW_NameVers;
 	this->_ustrTextVers = _PNewReadWriteDataObject->NRW_Text;
-	this->Text = Format("%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
+	this->Text = Format(L"%s \"%s\"", ARRAYOFCONST((this->_ustrNameVers, this->_ustrTextVers)));
 	this->ShowHint = true;
 	this->Hint = this->_ustrNameVers;
 
@@ -175,7 +175,7 @@ void __fastcall GsChild::Paint()
 	// Kolor pozycji zależnie od jej stanu
 	TColor clFrameColor=clRed;
 	int iWidth=1;
-	const int ciDefaultWidthSelect=3;
+	constexpr int ciDefaultWidthSelect=3;
 
 	if(this == GlGsDrawChildren->_pRootObject)
 	// Root nie zmienia koloru?
@@ -322,7 +322,7 @@ void __fastcall GsChild::_RefreshText(bool bPosition)
 {
 	int l=0, t=0;
 	if(bPosition) {l = this->Left; t = this->Top;}
-	const int ciAddWidthHeight=12;
+	constexpr int ciAddWidthHeight=12;
 	this->Width = 200;
 
 	this->_RectText = this->ClientRect;
@@ -352,10 +352,10 @@ __fastcall GsDrawChildren::GsDrawChildren(TComponent* Owner) : TCustomPanel(Owne
 {
 	this->DoubleBuffered = true;
 	this->_pMainChildrenList = new TList();
-	if(!this->_pMainChildrenList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	if(!this->_pMainChildrenList) throw(Exception(L"Nie dokonano inicjalizacji objektu TList"));
 	//---
 	this->_pBrushBitmap = new Graphics::TBitmap();
-	if(!this->_pBrushBitmap) throw(Exception("Nie dokonano inicjalizacji objektu TBitmap"));
+	if(!this->_pBrushBitmap) throw(Exception(L"Nie dokonano inicjalizacji objektu TBitmap"));
 	if(TFile::Exists(custrPathBackground)) this->_pBrushBitmap->LoadFromFile(custrPathBackground);
 	// Wspólny wskaźnik na klase do rysowania
 	GlGsDrawChildren = this;
@@ -429,7 +429,7 @@ void __fastcall GsDrawChildren::Paint()
 	TCustomPanel::Paint();
 	//Własny kod
 	GsChild *pGsChild=nullptr, *pPrevChild=nullptr;
-	const int ciWidthEl=6;
+	constexpr int ciWidthEl=6;
 
 	this->Canvas->Brush->Bitmap = this->_pBrushBitmap;
 	this->Canvas->FillRect(this->ClientRect);
@@ -509,7 +509,7 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 	int iSizeFile = pFileStream->Size, //Wielkość pliku
 			iSizeStructData = sizeof(ReadWriteDataObject), //Wielkość struktury
 			iShiftLeft; // Obliczana wartość by wycentrowac wykres
-	const int ciShiftAllTp = 60, // Dodatkowe przesunięcie odległości w pionie miedzy pozycjami
+	constexpr int ciShiftAllTp = 60, // Dodatkowe przesunięcie odległości w pionie miedzy pozycjami
 						ciShiftLeftRight = 160, // Przesunięcie dodatkowe w lewo lub w prawo gałęzi
 						ciReference = 24; // Minimalna różnica między potomkiem a głównym węzłem,
 															// by zorientoweać się, w która stronę dodatkowo przesunąć potomka.
@@ -517,7 +517,7 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 
 	//Struktura pomocnicza pojedyńczego objektu
 	pDataToOpen = new ReadWriteDataObject();
-	if(!pDataToOpen) throw(Exception("Nie dokonano inicjalizacji objektu ReadWriteDataObject"));
+	if(!pDataToOpen) throw(Exception(L"Nie dokonano inicjalizacji objektu ReadWriteDataObject"));
 
 	for(int i=0; i<iSizeFile; i+=iSizeStructData)
 	{
@@ -526,7 +526,7 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 		pFileStream->ReadBuffer(pDataToOpen, iSizeStructData);
 		//--- Stworzenie objektu
 		pGsChild = new GsChild(this, pDataToOpen);
-		if(!pGsChild) throw(Exception("Błąd inicjalizacji objektu GsChild"));
+		if(!pGsChild) throw(Exception(L"Błąd inicjalizacji objektu GsChild"));
 		pGsChild->Parent = this;
 		if(pDataToOpen->RW_IDListParent == -1) // Korzeń
 			{iShiftLeft = pDataToOpen->RW_Left - (this->Width / 2) + (pGsChild->Width / 2);}
@@ -540,7 +540,7 @@ bool __fastcall GsDrawChildren::_OpenOldProject(TFileStream *pFileStream)
 			pGsChild->Left = pDataToOpen->RW_Left;
 			//Tworzenie korzenia drzewa
 			TrNode = GlGsMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
-			if(!TrNode) throw(Exception("Błąd inicjalizacji klasy AddObject"));
+			if(!TrNode) throw(Exception(L"Błąd inicjalizacji klasy AddObject"));
 			pGsChild->_TreeNodeChild = TrNode;
 		}
 		else if(pDataToOpen->RW_IDListParent > -1)// Potomstwo
@@ -604,7 +604,7 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 
 	//Struktura pomocnicza pojedyńczego objektu
 	pDataToOpen = new NewReadWriteDataObject();
-	if(!pDataToOpen) throw(Exception("Nie dokonano inicjalizacji objektu NewReadWriteDataObject"));
+	if(!pDataToOpen) throw(Exception(L"Nie dokonano inicjalizacji objektu NewReadWriteDataObject"));
 
 	for(int i=0; i<iSizeFile; i+=iSizeStructData)
 	{
@@ -613,7 +613,7 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 		pFileStream->ReadBuffer(pDataToOpen, iSizeStructData);
 		//--- Stworzenie objektu
 		pGsChild = new GsChild(this, pDataToOpen);
-		if(!pGsChild) throw(Exception("Błąd inicjalizacji objektu GsChild"));
+		if(!pGsChild) throw(Exception(L"Błąd inicjalizacji objektu GsChild"));
 		pGsChild->Parent = this;
 
 		pGsChild->Top = pDataToOpen->NRW_Top;
@@ -624,7 +624,7 @@ bool __fastcall GsDrawChildren::_OpenNewProject(TFileStream *pFileStream)
 			this->_pRootObject = pGsChild;		// To jest korzeń
 			//Tworzenie korzenia drzewa
 			TrNode = GlGsMaster->_pTreeView->Items->AddObject(NULL, pGsChild->_ustrNameVers, pGsChild);
-			if(!TrNode) throw(Exception("Błąd inicjalizacji klasy AddObject"));
+			if(!TrNode) throw(Exception(L"Błąd inicjalizacji klasy AddObject"));
 			pGsChild->_TreeNodeChild = TrNode;
 		}
 		else if(pDataToOpen->NRW_IDListParent > -1)// Potomstwo
@@ -725,10 +725,10 @@ __fastcall GsMaster::GsMaster(TComponent* Owner, TTreeView *pTrView)
 {
 	// Lista dla wielokrotnego wyboru
 	this->FGsChildrensSelectList = new TList();
-	if(!this->FGsChildrensSelectList) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	if(!this->FGsChildrensSelectList) throw(Exception(L"Nie dokonano inicjalizacji objektu TList"));
 	// Lista zaznaczonych pozycji dla multiselect, w drzewie TTreeView
 	this->_pMultiSelectTreeNodes = new TList();
-	if(!this->_pMultiSelectTreeNodes) throw(Exception("Nie dokonano inicjalizacji objektu TList"));
+	if(!this->_pMultiSelectTreeNodes) throw(Exception(L"Nie dokonano inicjalizacji objektu TList"));
 
 	this->StyleElements = TStyleElements();
 	this->AutoScroll = true;
@@ -767,7 +767,7 @@ void __fastcall GsMaster::CreateWnd()
 	//Własny kod
 	//Stworzenie panelu do rysowania połączeń i objektów
 	this->_pGsDrawChildren = new GsDrawChildren(this);
-	if(!this->_pGsDrawChildren) throw(Exception("Błąd inicjalizacji objektu GsDrawLogicalRelationship"));
+	if(!this->_pGsDrawChildren) throw(Exception(L"Błąd inicjalizacji objektu GsDrawLogicalRelationship"));
 	this->_pGsDrawChildren->Parent = this;
 	this->_pGsDrawChildren->DoubleBuffered = true;
 	//---
@@ -810,7 +810,7 @@ bool __fastcall GsMaster::DoMouseWheel(System::Classes::TShiftState Shift, int W
 */
 {
 	TPoint PointComp = ScreenToClient(MousePos);
-	const int ciShift = 12, // Przesunięcie kółkiem myszy
+	constexpr int ciShift = 12, // Przesunięcie kółkiem myszy
 						ciOffset = 86; // Kiedy reagowac na obracanie kółkiem myszy
 
 	bool IsVertical = (PointComp.X > (this->ClientWidth - ciOffset));
@@ -838,18 +838,18 @@ bool __fastcall GsMaster::OpenProject(UnicodeString &ustrGetFileName)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	const UnicodeString ustrFileTypes[] = {"Pliki starego projektu", "*" + custrOldExtFilesScheme,
-																				 "Pliki nowego projektu", "*" + custrNewExtFileScheme,
-																				 "Każdy plik", "*.*"};
+	const UnicodeString ustrFileTypes[] = {L"Pliki starego projektu", L"*" + custrOldExtFilesScheme,
+																				 L"Pliki nowego projektu", L"*" + custrNewExtFileScheme,
+																				 L"Każdy plik", L"*.*"};
 	bool bReturn=false;
 	//---
 	TFileStream *pOpenFile=nullptr;
 
 	//---
 	TFileOpenDialog *pFileOpenDialog = new TFileOpenDialog(this);
-	if(!pFileOpenDialog) throw(Exception("Błąd inicjalizacji objektu TFileOpenDialog"));
+	if(!pFileOpenDialog) throw(Exception(L"Błąd inicjalizacji objektu TFileOpenDialog"));
 
-	pFileOpenDialog->Title = "Podaj nazwę projektu do odczytu";
+	pFileOpenDialog->Title = L"Podaj nazwę projektu do odczytu";
 	for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
 	{
 		TFileTypeItem *pTFileTypeItem = pFileOpenDialog->FileTypes->Add();
@@ -879,7 +879,7 @@ bool __fastcall GsMaster::OpenProject(UnicodeString &ustrGetFileName)
 				this->_pGsDrawChildren->_pSelectObject = nullptr;
 
 				pOpenFile = new TFileStream(pFileOpenDialog->FileName, fmOpenRead);
-				if(!pOpenFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));
+				if(!pOpenFile) throw(Exception(L"Błąd inicjalizacji objektu TFileStream"));
 
 				if(ustrExt == custrOldExtFilesScheme)
 					{this->_pGsDrawChildren->_OpenOldProject(pOpenFile);}
@@ -896,7 +896,7 @@ bool __fastcall GsMaster::OpenProject(UnicodeString &ustrGetFileName)
 		catch(const Exception& e)
 		{
 			//MessageBox(NULL, Format("Błąd otwarcia pliku, do odczytu, o nazwie: %s", ARRAYOFCONST((pFileOpenDialog->FileName))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
-			MessageBox(NULL, Format("Błąd: %s", ARRAYOFCONST((e.Message))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			MessageBox(NULL, Format(L"Błąd: %s", ARRAYOFCONST((e.Message))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
 	}
 	__finally
@@ -918,16 +918,16 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 		[in] STRSAFE_LPCSTR pszSrc);
 */
 {
-	const UnicodeString ustrFileTypes[] = {"Pliki projektu schematu", "*" + custrNewExtFileScheme,
-																				 "Każdy plik", "*.*"};
+	const UnicodeString ustrFileTypes[] = {L"Pliki projektu schematu", L"*" + custrNewExtFileScheme,
+																				 L"Każdy plik", L"*.*"};
 	UnicodeString ustrPathSave;
 	TFileStream *pSaveFile=nullptr;
 	PNewReadWriteDataObject pDataToSave=nullptr;
 	bool bReturn=false;
 	//---
 	TFileSaveDialog *pFileSaveDialog = new TFileSaveDialog(this);
-	if(!pFileSaveDialog) throw(Exception("Błąd inicjalizacji objektu TFileSaveDialog"));
-	pFileSaveDialog->Title = "Podaj nazwę projektu do zapisu";
+	if(!pFileSaveDialog) throw(Exception(L"Błąd inicjalizacji objektu TFileSaveDialog"));
+	pFileSaveDialog->Title = L"Podaj nazwę projektu do zapisu";
 	for(int i=0; i<ARRAYSIZE(ustrFileTypes); i+=2)
 	{
 		TFileTypeItem *pTFileTypeItem = pFileSaveDialog->FileTypes->Add();
@@ -937,7 +937,7 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 	pFileSaveDialog->Options = TFileDialogOptions() << fdoOverWritePrompt << fdoFileMustExist;
 	pFileSaveDialog->DefaultFolder = GlobalVar::Global_custrGetExeDir; //Katalog aplikacji
 	//if(
-	pFileSaveDialog->FileName = Format("%s%s", ARRAYOFCONST((custrProjectNameDefault, custrNewExtFileScheme)));
+	pFileSaveDialog->FileName = Format(L"%s%s", ARRAYOFCONST((custrProjectNameDefault, custrNewExtFileScheme)));
 	pFileSaveDialog->DefaultExtension = custrNewExtFileScheme;
 
 	try
@@ -953,11 +953,11 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 					//ustrGetFileName = pFileSaveDialog->FileName;
 
 					pSaveFile = new TFileStream(ustrPathSave, fmCreate);
-					if(!pSaveFile) throw(Exception("Błąd inicjalizacji objektu TFileStream"));
+					if(!pSaveFile) throw(Exception(L"Błąd inicjalizacji objektu TFileStream"));
 					int iSizeStructData = sizeof(NewReadWriteDataObject); //Wielkość struktury
 					//Struktura pomocnicza pojedyñczego objektu
 					pDataToSave = new NewReadWriteDataObject();
-					if(!pDataToSave) throw(Exception("Nie dokonano inicjalizacji objektu NewReadWriteDataObject"));
+					if(!pDataToSave) throw(Exception(L"Nie dokonano inicjalizacji objektu NewReadWriteDataObject"));
 					//---
 					for(int i=0; i<this->_pGsDrawChildren->_pMainChildrenList->Count; ++i)
 					{
@@ -992,7 +992,7 @@ bool __fastcall GsMaster::SaveProject(UnicodeString &ustrGetFileName)
 		}
 		catch(const Exception& e)
 		{
-			MessageBox(NULL, Format("Błąd otwarcia pliku, do zapisu, o nazwie: \"%s\"", ARRAYOFCONST((ustrPathSave))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
+			MessageBox(NULL, Format(L"Błąd otwarcia pliku, do zapisu, o nazwie: \"%s\"", ARRAYOFCONST((ustrPathSave))).c_str(), TEXT("Błąd aplikacji"), MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		}
 	}
 	__finally
@@ -1017,7 +1017,7 @@ void __fastcall GsMaster::SaveToAllText(const UnicodeString &ustrPathSave)
 	try
 	{
 		pSListFile = new TStringList();
-		if(!pSListFile) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+		if(!pSListFile) throw(Exception(L"Błąd inicjalizacji objektu TStringList"));
 
 		if(this->_pGsDrawChildren->_pRootObject)
 		{
@@ -1044,7 +1044,7 @@ void __fastcall GsMaster::RenameTextItem(const UnicodeString &custrNewAdr, const
 	{
 		pGsChild->_ustrNameVers = custrNewAdr;
 		pGsChild->_ustrTextVers = custrNewVers;
-		pGsChild->Text = Format("%s \"%s\"", ARRAYOFCONST(( custrNewAdr, custrNewVers )));
+		pGsChild->Text = Format(L"%s \"%s\"", ARRAYOFCONST(( custrNewAdr, custrNewVers )));
 
 		pGsChild->_RefreshText(true);
     this->bIsModify = true; // Czy plik relacji został zmodyfikowany
@@ -1101,13 +1101,13 @@ void __fastcall GsMaster::AddNewObjectScheme(const UnicodeString &custrAdr, cons
 {
 	static int sbPlaseRight;
 	int _iTop=20;
-	const int ciVertSpace = 24, // Odległość w pionie od poprzednie elementu
+	constexpr int ciVertSpace = 24, // Odległość w pionie od poprzednie elementu
 						ciHorSpace = 12;	// Odległość w poziomie od poprzedniego elementu;
 	TTreeNode *TrNode=nullptr;
 	GsChild *pGsChild=nullptr, *prevGsChild=nullptr; //Domyślnie to korzeń
 
 	pGsChild = new GsChild(this->_pGsDrawChildren, custrAdr, custrVers);
-	if(!pGsChild) throw(Exception("Nie dokonano inicjalizacji objektu GsChildLogicalRelationship"));
+	if(!pGsChild) throw(Exception(L"Nie dokonano inicjalizacji objektu GsChildLogicalRelationship"));
 	int _left = this->_pGsDrawChildren->Width / 2 - (pGsChild->Width / 2);
 
 	this->_pTreeView->Visible = true;
@@ -1200,10 +1200,10 @@ void __fastcall GsMaster::SaveToGfx(const UnicodeString &ustrPathSave)
 	GsChild *pGsChild=nullptr, *pPrevChild=nullptr;
 
 	bmp = new Graphics::TBitmap();
-	if(!bmp) throw(Exception("Błąd inicjalizacji objektu grafiki bmp"));
+	if(!bmp) throw(Exception(L"Błąd inicjalizacji objektu grafiki bmp"));
 
 	pWICImage = new TWICImage();
-	if(!pWICImage) throw(Exception("Błąd inicjalizacji objektu TWICImage"));
+	if(!pWICImage) throw(Exception(L"Błąd inicjalizacji objektu TWICImage"));
 
 	bmp->Canvas->Font->Quality = TFontQuality::fqClearType;
 	bmp->Canvas->Font->Size = 11;
@@ -1217,8 +1217,8 @@ void __fastcall GsMaster::SaveToGfx(const UnicodeString &ustrPathSave)
 	this->_pGsDrawChildren->PaintTo(bmp->Canvas, 0, 0);
 
 	TWICImageFormat myFormat=wifPng;
-	if(TPath::GetExtension(ustrPathSave) == ".png") {myFormat = wifPng;}
-	else if(TPath::GetExtension(ustrPathSave) == ".jpg") {myFormat = wifJpeg;}
+	if(TPath::GetExtension(ustrPathSave) == L".png") {myFormat = wifPng;}
+	else if(TPath::GetExtension(ustrPathSave) == L".jpg") {myFormat = wifJpeg;}
 
 	pWICImage->Assign(bmp);
 	//pWICImage->Transparent = false;
@@ -1327,7 +1327,7 @@ void __fastcall GsMaster::_CreateHierarchyText(const GsChild *pChild, TStrings *
 {
 	GsChild *pChildChild=nullptr;
 
-	pStrings->Add(Format("%s%s \"%s\"", ARRAYOFCONST((DupeString("\t", pChild->_Level), pChild->_ustrNameVers, pChild->_ustrTextVers))));
+	pStrings->Add(Format(L"%s%s \"%s\"", ARRAYOFCONST((DupeString(L"\t", pChild->_Level), pChild->_ustrNameVers, pChild->_ustrTextVers))));
 	for(int i=0; i<pChild->_pListChildren->Count; ++i)
 	{
 		pChildChild = static_cast<GsChild *>(pChild->_pListChildren->Items[i]);

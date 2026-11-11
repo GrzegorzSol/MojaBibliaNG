@@ -4,6 +4,7 @@
 #include <Vcl.ComCtrls.hpp>
 #include <System.IniFiles.hpp>
 //---------------------------------------------------------------------------
+static UnicodeString sustrVersionGsSearchFavFiles = "1.00.0257";
 enum	{
 				enIndexImage16_Delete = 0,
 				enImageImage16_Count

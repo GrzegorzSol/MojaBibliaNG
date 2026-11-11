@@ -8,7 +8,9 @@
 /****************************************************************************
  *							Całkowicie statyczna KLASA GsReadBibleTextData							*
  ****************************************************************************/
-void __fastcall GsReadBibleTextData::InitGlobalVariables()
+
+ //--------------------------------------------------------------------------
+ void __fastcall GsReadBibleTextData::InitGlobalVariables()
 /**
 	OPIS METOD(FUNKCJI): Ustawienie globalnych zmiennych dla całej aplikacji
 	OPIS ARGUMENTÓW:
@@ -42,21 +44,21 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!pMainForm) throw(Exception("Błąd wyłuskania objektu głównego oka aplikacji"));
+	if(!pMainForm) throw(Exception(L"Błąd wyłuskania objektu głównego oka aplikacji"));
 
 	//Inicjalizacja objektu klasy TImageList, z określeniem wymierów przyszłych obrazków na 16x16 pikseli w wersji aktywnej
 	GsReadBibleTextData::_GsImgListData = new TImageList(pMainForm);
-	if(! GsReadBibleTextData::_GsImgListData) throw(Exception("Błąd otwarcia objektu TImageList"));
+	if(! GsReadBibleTextData::_GsImgListData) throw(Exception(L"Błąd otwarcia objektu TImageList"));
 	GsReadBibleTextData::_GsImgListData->ColorDepth = cd32Bit;		 //Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListData->DrawingStyle = dsTransparent;
 	//Inicjalizacja objektu klasy TImageList, z określeniem wymierów przyszłych obrazków na 16x16 pikseli w wersji nieaktywnej
 	GsReadBibleTextData::_GsImgListDataDisable = new TImageList(pMainForm);
-	if(!GsReadBibleTextData::_GsImgListDataDisable) throw(Exception("Błąd otwarcia objektu TImageLists"));
+	if(!GsReadBibleTextData::_GsImgListDataDisable) throw(Exception(L"Błąd otwarcia objektu TImageLists"));
 	GsReadBibleTextData::_GsImgListDataDisable->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListDataDisable->DrawingStyle = dsTransparent;
 	//Inicjalizacja objektu klasy TImageList, z określeniem wymiarów przyszłych obrazków na 32x32 pikseli
 	GsReadBibleTextData::_GsImgListDataLarge = new TImageList(pMainForm);
-	if(!GsReadBibleTextData::_GsImgListDataLarge) throw(Exception("Błąd otwarcia objektu TImageLists"));
+	if(!GsReadBibleTextData::_GsImgListDataLarge) throw(Exception(L"Błąd otwarcia objektu TImageLists"));
 	GsReadBibleTextData::_GsImgListDataLarge->ColorDepth = cd32Bit;			//Głębia kolorów przyszłych obrazków
 	GsReadBibleTextData::_GsImgListDataLarge->DrawingStyle = dsTransparent;
 	GsReadBibleTextData::_GsImgListDataLarge->Height = 32; GsReadBibleTextData::_GsImgListDataLarge->Width = 32;
@@ -66,9 +68,9 @@ void __fastcall GsReadBibleTextData::GsInitGlobalImageList(TForm *pMainForm)	//I
 	try
 	{
 		pIcon = new TIcon();
-		if(!pIcon) throw(Exception("Błąd metody TIcon"));
+		if(!pIcon) throw(Exception(L"Błąd metody TIcon"));
 		pMemoryStr = new TMemoryStream();
-		if(!pMemoryStr) throw(Exception("Błąd metody TMemoryStream"));
+		if(!pMemoryStr) throw(Exception(L"Błąd metody TMemoryStream"));
 
 		//************************************* WERSJA IKON DUŻYCH AKTYWNYCH **************************************
 		//--- 0.Ikona wersetu skopiowanego z modułu wyborów wersetów.
@@ -431,20 +433,6 @@ void __fastcall GsReadBibleTextData::GsFreeGlobalImageList()	//Likwidacja zmienn
 	GsReadBibleTextData::_GsImgListDataLarge->Clear(); //[26-05-2026]
 }
 //---------------------------------------------------------------------------
-UnicodeString __fastcall GsReadBibleTextData::GetVersionMainClass()
-/**
-	OPIS METOD(FUNKCJI):
-	OPIS ARGUMENTÓW:
-	OPIS ZMIENNYCH:
-	OPIS WYNIKU METODY(FUNKCJI):
-*/
-{
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
-	//---
-	GlobalVar::Global_ustrVerGsReadBibleTextClass = GsReadBibleTextData::pGsReadBibleTextClass->GetVersionClass();
-	return GlobalVar::Global_ustrVerGsReadBibleTextClass;
-}
-//---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 /**
 	OPIS METOD(FUNKCJI): Inicjalizacja pracy z biblioteką do analizy Pisma Świętego
@@ -453,16 +441,20 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+	// Lista informacji o wersji wszystkich bibliotek //[01-08-2026]
+	GlobalVar::Global_SListAllVersionLibrary = new TStringList();
+	if(!GlobalVar::Global_SListAllVersionLibrary) throw(Exception(L"Błąd inicjalizacji objektu TStringList"));
+
 	GsReadBibleTextData::InitGlobalVariables(); //Ustawienie globalnych zmiennych dla całej aplikacji
 	GsReadBibleTextData::InitListColors(); //Inicjalizacja listy kolorów
 	GsReadBibleTextData::InitHistoryList(); //Metoda inicjuje zmienne dotyczące historii [30-07-2023]
 	//GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy
 	//---
-	if(GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Objekt GsReadBibleTextClass jest już zainicjowany"));
-	if(GlobalVar::Global_custrGetDataDir.IsEmpty()) throw(Exception("Brak ścieżki dostępu do katalogu z tekstami biblijnymi"));
+	if(GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Objekt GsReadBibleTextClass jest już zainicjowany"));
+	if(GlobalVar::Global_custrGetDataDir.IsEmpty()) throw(Exception(L"Brak ścieżki dostępu do katalogu z tekstami biblijnymi"));
 	//---
 	GlobalVar::Global_HSListAllFavoritiesVers = new THashedStringList(); //String lista do wszystkich ulubionych wesrsetów
-	if(!GlobalVar::Global_HSListAllFavoritiesVers) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!GlobalVar::Global_HSListAllFavoritiesVers) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	if(TFile::Exists(GlobalVar::Global_custrPathFileFavoriteVers))
 		{GlobalVar::Global_HSListAllFavoritiesVers->LoadFromFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);} //Wczytanie listy ulubionych wersetów
 	else {GlobalVar::Global_HSListAllFavoritiesVers->SaveToFile(GlobalVar::Global_custrPathFileFavoriteVers, TEncoding::UTF8);}
@@ -470,25 +462,24 @@ void __fastcall GsReadBibleTextData::InitMyBible(TForm *MainWindow)
 	GsReadBibleTextData::GsInitGlobalImageList(MainWindow);	 //Inicjalizacja listy ikon
 	// Inicjalizacja głównej klasy
 	GsReadBibleTextClass *_pGsReadBibleTextClass = new GsReadBibleTextClass(GlobalVar::Global_custrGetDataDir);
-	if(!_pGsReadBibleTextClass) throw(Exception("Błąd inicjalizacji objektu GsReadBibleTextClass"));
+	if(!_pGsReadBibleTextClass) throw(Exception(L"Błąd inicjalizacji objektu GsReadBibleTextClass"));
 	// Inicjalizacja klasy tłumaczeń specjalistycznych
 	GsReadBibleSpecTextClass* _pGsReadBibleSpecTextClass = new GsReadBibleSpecTextClass();
-	if(!_pGsReadBibleSpecTextClass) throw(Exception("Błąd inicjalizacji objektu GsReadBibleSpecTextClass"));
+	if(!_pGsReadBibleSpecTextClass) throw(Exception(L"Błąd inicjalizacji objektu GsReadBibleSpecTextClass"));
 	// Przypisania do statycznych zmiennych
 	GsReadBibleTextData::pGsReadBibleTextClass = _pGsReadBibleTextClass; // Główna klasa
 	GsReadBibleTextData::pGsReadBibleSpecTextClass = _pGsReadBibleSpecTextClass; // Klasa tłumaczeń specjalistycznych
-	GsReadBibleTextData::GetVersionMainClass(); //Wersja biblioteki GsReadBibleTextClass
 	//---
 	TComponent *Component=nullptr;
 	for(int i=0; i<MainWindow->ComponentCount; ++i)
 	{
 		Component = MainWindow->Components[i];
-		if(Component && Component->ClassNameIs("TTaskbar")) break;
+		if(Component && Component->ClassNameIs(L"TTaskbar")) break;
 		Component = nullptr;
 	}
 	//GsReadBibleTextData::_GsTaskBar = pTaskBar;	//Wskaźnik na objekt, klasy TTaskBar
 	if(Component) GsReadBibleTextData::_GsTaskBar = dynamic_cast<TTaskbar *>(Component); //23.12.2018
-	else throw(Exception("Brak komponentu klasy TTaskbar"));
+	else throw(Exception(L"Brak komponentu klasy TTaskbar"));
 	//parametr inicjalizacji biblioteki
 	GsReadBibleTextData::IsInitLibrary = true; //Czy została zainicjowana bibliteka (moduł)
 	GsReadBibleTextData::SetupVariables(); //Ustawienie zmiennych dla klasy // [30-08=2025]
@@ -502,41 +493,42 @@ void __fastcall GsReadBibleTextData::InitListColors()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
+  //Lista informacji o wersji wszystkich bibliotek //[01-08-2026]
 	GlobalVar::Global_ItemsColor = new TStringList(); //Inicjalizacja listy kolorów do wyboru
-	if(!GlobalVar::Global_ItemsColor) throw(Exception("Błąd inicjalizacji objektu TStringList"));
+	if(!GlobalVar::Global_ItemsColor) throw(Exception(L"Błąd inicjalizacji objektu TStringList"));
 
-	GlobalVar::Global_ItemsColor->AddObject("clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
-	GlobalVar::Global_ItemsColor->AddObject("clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
-	GlobalVar::Global_ItemsColor->AddObject("clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
-	GlobalVar::Global_ItemsColor->AddObject("clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkOrange", reinterpret_cast<TObject*>(clWebDarkOrange));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkRed", reinterpret_cast<TObject*>(clWebDarkRed));
-	GlobalVar::Global_ItemsColor->AddObject("clWebCoral", reinterpret_cast<TObject*>(clWebCoral));
-	GlobalVar::Global_ItemsColor->AddObject("clWebGold", reinterpret_cast<TObject*>(clWebGold));
-	GlobalVar::Global_ItemsColor->AddObject("clWebRosyBrown", reinterpret_cast<TObject*>(clWebRosyBrown));
-	GlobalVar::Global_ItemsColor->AddObject("clWebForestGreen", reinterpret_cast<TObject*>(clWebForestGreen));
-	GlobalVar::Global_ItemsColor->AddObject("clWebChartreuse", reinterpret_cast<TObject*>(clWebChartreuse));
-	GlobalVar::Global_ItemsColor->AddObject("clWebSeaGreen", reinterpret_cast<TObject*>(clWebSeaGreen));
-	GlobalVar::Global_ItemsColor->AddObject("clWebMediumAquamarine", reinterpret_cast<TObject*>(clWebMediumAquamarine));
-	GlobalVar::Global_ItemsColor->AddObject("clWebLightCyan", reinterpret_cast<TObject*>(clWebLightCyan));
-	GlobalVar::Global_ItemsColor->AddObject("clWebCornFlowerBlue", reinterpret_cast<TObject*>(clWebCornFlowerBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebIndigo", reinterpret_cast<TObject*>(clWebIndigo));
-	GlobalVar::Global_ItemsColor->AddObject("clWebRed", reinterpret_cast<TObject*>(clWebRed));
-	GlobalVar::Global_ItemsColor->AddObject("clWebLightSkyBlue", reinterpret_cast<TObject*>(clWebLightSkyBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkBlue", reinterpret_cast<TObject*>(clWebDarkBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebCyan", reinterpret_cast<TObject*>(clWebCyan));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkTurquoise", reinterpret_cast<TObject*>(clWebDarkTurquoise));
-	GlobalVar::Global_ItemsColor->AddObject("clWebMediumVioletRed", reinterpret_cast<TObject*>(clWebMediumVioletRed));
-	GlobalVar::Global_ItemsColor->AddObject("clWebAqua", reinterpret_cast<TObject*>(clWebAqua));
-	GlobalVar::Global_ItemsColor->AddObject("clWebRoyalBlue", reinterpret_cast<TObject*>(clWebRoyalBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebMidnightBlue", reinterpret_cast<TObject*>(clWebMidnightBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkViolet", reinterpret_cast<TObject*>(clWebDarkViolet));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkMagenta", reinterpret_cast<TObject*>(clWebDarkMagenta));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDeepPink", reinterpret_cast<TObject*>(clWebDeepPink));
-	GlobalVar::Global_ItemsColor->AddObject("clWebMediumSlateBlue", reinterpret_cast<TObject*>(clWebMediumSlateBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebSteelBlue", reinterpret_cast<TObject*>(clWebSteelBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebSlateBlue", reinterpret_cast<TObject*>(clWebSlateBlue));
-	GlobalVar::Global_ItemsColor->AddObject("clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebWheat", reinterpret_cast<TObject*>(clWebWheat));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebBurlywood", reinterpret_cast<TObject*>(clWebBurlywood));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebLinen", reinterpret_cast<TObject*>(clWebLinen));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebLemonChiffon", reinterpret_cast<TObject*>(clWebLemonChiffon));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkOrange", reinterpret_cast<TObject*>(clWebDarkOrange));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkRed", reinterpret_cast<TObject*>(clWebDarkRed));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebCoral", reinterpret_cast<TObject*>(clWebCoral));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebGold", reinterpret_cast<TObject*>(clWebGold));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebRosyBrown", reinterpret_cast<TObject*>(clWebRosyBrown));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebForestGreen", reinterpret_cast<TObject*>(clWebForestGreen));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebChartreuse", reinterpret_cast<TObject*>(clWebChartreuse));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebSeaGreen", reinterpret_cast<TObject*>(clWebSeaGreen));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebMediumAquamarine", reinterpret_cast<TObject*>(clWebMediumAquamarine));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebLightCyan", reinterpret_cast<TObject*>(clWebLightCyan));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebCornFlowerBlue", reinterpret_cast<TObject*>(clWebCornFlowerBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebIndigo", reinterpret_cast<TObject*>(clWebIndigo));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebRed", reinterpret_cast<TObject*>(clWebRed));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebLightSkyBlue", reinterpret_cast<TObject*>(clWebLightSkyBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkBlue", reinterpret_cast<TObject*>(clWebDarkBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebCyan", reinterpret_cast<TObject*>(clWebCyan));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkTurquoise", reinterpret_cast<TObject*>(clWebDarkTurquoise));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebMediumVioletRed", reinterpret_cast<TObject*>(clWebMediumVioletRed));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebAqua", reinterpret_cast<TObject*>(clWebAqua));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebRoyalBlue", reinterpret_cast<TObject*>(clWebRoyalBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebMidnightBlue", reinterpret_cast<TObject*>(clWebMidnightBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkViolet", reinterpret_cast<TObject*>(clWebDarkViolet));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkMagenta", reinterpret_cast<TObject*>(clWebDarkMagenta));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDeepPink", reinterpret_cast<TObject*>(clWebDeepPink));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebMediumSlateBlue", reinterpret_cast<TObject*>(clWebMediumSlateBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebSteelBlue", reinterpret_cast<TObject*>(clWebSteelBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebSlateBlue", reinterpret_cast<TObject*>(clWebSlateBlue));
+	GlobalVar::Global_ItemsColor->AddObject(L"clWebDarkSlategray", reinterpret_cast<TObject*>(clWebDarkSlategray));
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::SetupVariables()
@@ -572,13 +564,13 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	if(bIsDisplayBackgroundImage) //[18-04-2024]
 	//Podkład pod głównym tekstem jako grafika domyślna (w przyszłości bedzie wybór)
 	{
-		_BackGroundMainText = Format("body {background-image: url(\"%s\");\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+		_BackGroundMainText = Format(L"body {background-image: url(\"%s\");\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
 			ARRAYOFCONST((_ConvertPathImage, iSizeFontMain, ustr_FontNameMain)));
 	}
 	else
 	//Podkład pod głównym tekstem jako jednolity tekst, lub grafika
 	{
-		_BackGroundMainText = Format("body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
+		_BackGroundMainText = Format(L"body {background-color: %s;\n\tfont-size:%upt;\n\tfont-family:%s;}\n",
 			ARRAYOFCONST((RGBToWebColorStr(iColorBackgroundText), iSizeFontMain, ustr_FontNameMain)));
 	}
 	//---
@@ -595,68 +587,68 @@ void __fastcall GsReadBibleTextData::SetupVariables()
 	UnicodeString		//Styl dla głównego tekstu
 //								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;display: inline-block;line-height: %upx;}\n",
 //									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain, iSizeFontMain+4))),
-								_GlobalText = Format(".styleText {color: #000000;font-size:%upt;font-family:%s;}\n",
+								_GlobalText = Format(L".styleText {color: #000000;font-size:%upt;font-family:%s;}\n",
 									ARRAYOFCONST((iSizeFontMain, ustr_FontNameMain))),
 									//Styl dla ulubionych wersetów
-								_FavoriteStyle = Format(".styleFavorite {background-color: %s;border: 1px solid %s}\n",
+								_FavoriteStyle = Format(L".styleFavorite {background-color: %s;border: 1px solid %s}\n",
 									ARRAYOFCONST((RGBToWebColorStr(iColorFavVers), RGBToWebColorStr(iColorBorderFavoritiesVers)))),
 									//Styl .css dla zaznaczania wersetów z komentarzem, podkład i kolor znacznika.
-								_CommentStyle = Format( ".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n",
+								_CommentStyle = Format( L".styleComment {font-family:%s;font-weight: 900; text-decoration: underline; background-color: %s ;color: %s;}\n",
 									ARRAYOFCONST((ustr_FontNameMain, RGBToWebColorStr(iColorBackgroundMarkComment), RGBToWebColorStr(iColorCommentVers)))),
 									//Kolor nazwy przekładu, dla pełnego tłumaczenia
-								_ColorNameFullTranslate = Format(".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n",
+								_ColorNameFullTranslate = Format(L".styleTranslates {color: %s;font-size:%upt;font-family:%s;}\n",
 									ARRAYOFCONST((RGBToWebColorStr(iColorNameFullTranslate), iSizeTranslatesFont, ustr_FontNameTranslators))),
 									//Kolor adresu dla pełnych tłumaczeń
-								_ColorAdressFullTranslates = Format(".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n",
+								_ColorAdressFullTranslates = Format(L".styleColorAdressTranslates {color: %s; font-size:%upt;font-family:%s;}\n",
 									ARRAYOFCONST((RGBToWebColorStr(iColorAdressFullTranslates), iSizeAdressFont, ustr_FontNameAdress))),
 									// Styl wybierania slowa [24-08-2025]
-								_SelectWord = UnicodeString(".slowo {cursor: pointer; display: inline; padding: 0px; margin: 0px; border-radius: 4px;}\n") +
-									".slowo:hover {background-color: #eef;}\n";
+								_SelectWord = UnicodeString(L".slowo {cursor: pointer; display: inline; padding: 0px; margin: 0px; border-radius: 4px;}\n") +
+									L".slowo:hover {background-color: #eef;}\n";
 									//Styl dla tekstu oryginalnego
 	//--- Domyślne zawartosci nagłówków kodu html, dla wyświetlania tekstów wersetów w głównym oknie, oknie wyszukiwań, oraz oknie wyboru wersetu
 
   // Tekst nagłówka dla tekstu zwykłego
-	GlobalVar::GsHTMLHeaderText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-																												"<html>\n<head>\n" +
-																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+	GlobalVar::GsHTMLHeaderText = UnicodeString(L"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																												L"<html>\n<head>\n" +
+																												L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
 																												GlobalVar::GsHTMLTitle + "\n" + //[03-08-2023]
 																												//"<title>Wybrany rozdział, dla dostępnych tłumaczeń</title>\n" +
-																												"<style type=\"text/css\">\n" +
+																												L"<style type=\"text/css\">\n" +
 																												_ColorAdressFullTranslates +
 																												_ColorNameFullTranslate +
 																												_GlobalText +
-																												".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}\n" + //Informacja o braku księgi
+																												L".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}\n" + //Informacja o braku księgi
 																												_FavoriteStyle + //Kolor zaznaczenie ulubionego wersetu
 																												_CommentStyle + //Kolor zaznaczania wersetu z komentarzem
 																												_BackGroundMainText +
 																												_SelectWord +
-																												"</style>\n</head>\n\n<body>\n";
+																												L"</style>\n</head>\n\n<body>\n";
 	// Tekst nagłówka dla tekstu, wyniku wyszukiwania
-	GlobalVar::GsHTMLHeaderSearch = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-																												"<html>\n<head>\n" +
-																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-																												"<title>Wyniki wyszukiwania</title>" +
-																												"<style type=\"text/css\">" +
+	GlobalVar::GsHTMLHeaderSearch = UnicodeString(L"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																												L"<html>\n<head>\n" +
+																												L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+																												L"<title>Wyniki wyszukiwania</title>" +
+																												L"<style type=\"text/css\">" +
 																												_ColorAdressFullTranslates +
 																												_ColorNameFullTranslate +
 																												_GlobalText +
-																												".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}" +	//Informacja o braku księgi
-																												".styleFound {background-color: #FFFF00;}" +
-																												"body {background-color:#33CCCC;font-size:12pt;font-family:Times New Roman;}" +
-																												"</style>\n</head>\n<body>\n";
+																												L".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}" +	//Informacja o braku księgi
+																												L".styleFound {background-color: #FFFF00;}" +
+																												L"body {background-color:#33CCCC;font-size:12pt;font-family:Times New Roman;}" +
+																												L"</style>\n</head>\n<body>\n";
 	// Tekst nagłówka dla tekstu wybranego wersetu
-	GlobalVar::GsHTMLHeaderDisplayVer = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-																												"<html>\n<head>" +
-																												"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-																												"<title>Wyswietlanie pojedyńczego werstu</title>" +
-																												"<style type=\"text/css\">" +
+	GlobalVar::GsHTMLHeaderDisplayVer = UnicodeString(L"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																												L"<html>\n<head>" +
+																												L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+																												L"<title>Wyswietlanie pojedyńczego werstu</title>" +
+																												L"<style type=\"text/css\">" +
 																												_ColorAdressFullTranslates +
 																												_ColorNameFullTranslate +
 																												_GlobalText +
-																												".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}" + //Informacja o braku księgi
-																												".styleFound {background-color: #FFFF00;}" +
-																												"body {background-color:#FCD9BA;font-size:12pt;font-family:Times New Roman;}" +
-																												"</style>\n</head>\n<body>";
+																												L".styleNoTranslate {color: #FF0000;font-size:16pt;font-family:Times New Roman;}" + //Informacja o braku księgi
+																												L".styleFound {background-color: #FFFF00;}" +
+																												L"body {background-color:#FCD9BA;font-size:12pt;font-family:Times New Roman;}" +
+																												L"</style>\n</head>\n<body>";
 	// KODY JAVA SCRIPT
 		// Kod Java script umożliwiający "klikalność" tekstu, znajduje sięd na  każdej zakładce rozdziału. // [24-08-2025]
 	GlobalVar::GsHTML_FileJavaSc_SelectWord = TPath::Combine(GlobalVar::Global_custrPathJavaScripts, "SelectWord.js");
@@ -698,7 +690,7 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	}
 	else
 	{
-		throw(Exception("Objekt GsReadBibleTextClass NIE JEST jeszcze zainicjowany, dlatego nie będzie zamknięty!"));
+		throw(Exception(L"Objekt GsReadBibleTextClass NIE JEST jeszcze zainicjowany, dlatego nie będzie zamknięty!"));
 	}
 	//--- Zamykanie klasy specjalistycznych tłumaczeń
 	if(GsReadBibleTextData::pGsReadBibleSpecTextClass)
@@ -708,6 +700,8 @@ void __fastcall GsReadBibleTextData::CloseMyBible()
 	}
 	GsReadBibleTextData::GsFreeGlobalImageList();	//Likwidacja zmiennych klasy //[26-05-2026]
 	GsReadBibleTextData::IsInitLibrary = false; //Czy została zainicjowana bibliteka (moduł)
+	//Zwolnienie listy informacji o wersji wszystkich bibliotek //[01-08-2026]
+	if(GlobalVar::Global_SListAllVersionLibrary) {delete GlobalVar::Global_SListAllVersionLibrary; GlobalVar::Global_SListAllVersionLibrary = nullptr;}
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::CreateTreeBooks(TWinControl* _OwnerParent, TPageControl *_PageControl,
@@ -722,10 +716,10 @@ void __fastcall GsReadBibleTextData::CreateTreeBooks(TWinControl* _OwnerParent, 
 */
 {
 	if(!GsReadBibleTextData::pGsReadBibleTextClass)
-		throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+		throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
 	GsTreeBibleClass *pGsTreeBibleClass = new GsTreeBibleClass(_OwnerParent, _PageControl);
-	if(!pGsTreeBibleClass) throw(Exception("Błąd inicjalizacji objektu GsTreeBibleClass"));
+	if(!pGsTreeBibleClass) throw(Exception(L"Błąd inicjalizacji objektu GsTreeBibleClass"));
 	_PageControl->Images = GsReadBibleTextData::_GsImgListData;
 	//---Stworzenie drzewa ksiąg biblijnych
 	pGsTreeBibleClass->Parent = _OwnerParent;
@@ -742,7 +736,7 @@ unsigned char __fastcall GsReadBibleTextData::CountTranslates()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	return GsReadBibleTextData::pGsReadBibleTextClass->GetCountTranslates();
 }
 //---------------------------------------------------------------------------
@@ -754,7 +748,7 @@ unsigned char __fastcall GsReadBibleTextData::CountPolTranslates()
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	return GsReadBibleTextData::pGsReadBibleTextClass->uiCountPol;
 }
 //---------------------------------------------------------------------------
@@ -766,7 +760,7 @@ void __fastcall GsReadBibleTextData::GetInfoNameTranslate(const unsigned char i,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::pGsReadBibleTextClass->_GetInfoNameTranslate(i, NameTranslate);
 }
 //---------------------------------------------------------------------------
@@ -778,7 +772,7 @@ void __fastcall GsReadBibleTextData::GetNameIndependentTranslate(const int i, Un
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::pGsReadBibleTextClass->_GetNameIndependentTranslate(i, NameTranslate);
 }
 //---------------------------------------------------------------------------
@@ -790,7 +784,7 @@ void __fastcall GsReadBibleTextData::WriteCurrentSheetText(const UnicodeString c
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsReadBibleTextData::pGsReadBibleTextClass->SaveCurrentSheetText(custrPath);
 }
 //---------------------------------------------------------------------------
@@ -802,7 +796,7 @@ void __fastcall GsReadBibleTextData::GetTextHTMLCurrentSheet(UnicodeString &_ust
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(!pGsTabSheetClass) return;
 	//---
@@ -817,7 +811,7 @@ GsReadBibleTextItem *__fastcall GsReadBibleTextData::GetTranslate(const unsigned
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	return GsReadBibleTextData::pGsReadBibleTextClass->GetTranslateClass(cucNumberTrans);
 }
 //---------------------------------------------------------------------------
@@ -829,7 +823,7 @@ THashedStringList *__fastcall GsReadBibleTextData::GetSelectBoksInTranslate(GsRe
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	return pGsReadBibleTextItem->GetSelectBooks(scIndexBook);
 }
 //---------------------------------------------------------------------------
@@ -843,12 +837,12 @@ unsigned int __fastcall GsReadBibleTextData::GetCountVer(const int iNumberTrans,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
 	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iNumberTrans); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
-	if(!pGsReadBibleTextItem) throw(Exception("Błąd funkcji GsReadBibleTextData::GetTranslate()"));
+	if(!pGsReadBibleTextItem) throw(Exception(L"Błąd funkcji GsReadBibleTextData::GetTranslate()"));
 	THashedStringList *pHashedStringList = GsReadBibleTextData::GetSelectBoksInTranslate(pGsReadBibleTextItem, scIndexBook); //Wyodrębnienie konkretnej księgi(sciIndex), z wybranej struktury tłumaczenia (GetTranslate)
-	if(!pHashedStringList) throw(Exception("Błąd funkcji GsReadBibleTextData::GetSelectBoksInTranslate()")); //TUTAJ!!!
+	if(!pHashedStringList) throw(Exception(L"Błąd funkcji GsReadBibleTextData::GetSelectBoksInTranslate()")); //TUTAJ!!!
 	unsigned int uiVers=0;
 
 	for(int i=0; i<pHashedStringList->Count; ++i)
@@ -872,7 +866,7 @@ void __fastcall GsReadBibleTextData::GetSelectVerAllTranslates(const unsigned ch
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
 	_HSListVers->Clear();
 	unsigned char uiTranslates = GsReadBibleTextData::CountTranslates();
@@ -920,7 +914,7 @@ void __fastcall GsReadBibleTextData::GetTextVersOfAdress(const unsigned char cuc
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
   ustrText = "";
 	GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(cucTrans);
@@ -948,7 +942,7 @@ void __fastcall GsReadBibleTextData::LoadFirstChapt(const unsigned char cucBook)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	//---
 	unsigned char ucBook;
 	//Korekcja wybranej pozycji z traya i przystosowania jej do pozycji w objekcie, klasy GsTreeBibleClass.
@@ -1004,7 +998,7 @@ void __fastcall GsReadBibleTextData::GetAdressFromId(UnicodeString &_ustrResult,
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	_ustrResult = Format("%.3u%.3u%.3u", ARRAYOFCONST((_iBook, _iChapt, _iVers)));//"";
+	_ustrResult = Format(L"%.3u%.3u%.3u", ARRAYOFCONST((_iBook, _iChapt, _iVers)));//"";
 }
 //---------------------------------------------------------------------------
 void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _iChapt)
@@ -1025,7 +1019,7 @@ void __fastcall GsReadBibleTextData::OpenSelectBookAndChapter(int _iBook, int _i
 	if(GsReadBibleTextData::pGsTreeBibleClass->Selected == NULL)
 		{GsReadBibleTextData::pGsTreeBibleClass->Selected = GsReadBibleTextData::pGsTreeBibleClass->Items->Item[iBook];}
 	GsTabSheetClass *pGsTabSheetClass = new GsTabSheetClass(GsReadBibleTextData::_GsPageControl);	 //Przyporządkowanie zakładki do klasy TPageControl odbywa się konstruktorze klasy
-	if(!pGsTabSheetClass) throw(Exception("Nie można zainicjować klasy GsTabSheetClass"));
+	if(!pGsTabSheetClass) throw(Exception(L"Nie można zainicjować klasy GsTabSheetClass"));
 	//NUMER TŁUMACZENIA LICZYMY OD ZERA. NUMER KSIĘGI LICZYMY OD ZERA. NUMER ROZDZIAŁU LICZYMY OD ZERA !!!
 	//Stworzenie listy (_ListAllTrChap) wszystkich tłumaczeń konkretnej księgi (pGsTreeNodeClass->ucIndexBook) i konkretnego rozdziału (pItem->Tag)
 	GsReadBibleTextData::pGsReadBibleTextClass->GetAllTranslatesChapter(_iBook-1, _iChapt-1);
@@ -1069,8 +1063,8 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 	MyObjectVers *pMyObjectVers=nullptr;
 	int iLicz=0, iStart=0, iStop=0, iTemps=0, iLastOffsetVers=0;
 	THashedStringList *pHSListText=nullptr;
-	const int ciExceptText=18, ciExceptChapter=12, ciExceptOneChapter=6;
-	UnicodeString ustrStartStop = ReplaceText(ustrInputStartStop, " ", ""), //Usunięcie wszystkich spacji
+	constexpr int ciExceptText=18, ciExceptChapter=12, ciExceptOneChapter=6;
+	UnicodeString ustrStartStop = ReplaceText(ustrInputStartStop, L" ", L""), //Usunięcie wszystkich spacji
 								ustrStartVers, ustrStopVers, ustrTemps, ustrRet;
 
 	try
@@ -1078,7 +1072,7 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 		try
 		{
 			GsReadBibleTextItem *pGsReadBibleTextItem = GsReadBibleTextData::GetTranslate(iSelectTranslate); //Metoda zwraca wskaźnik na klasę wybranego tłumaczenia
-			if(!pGsReadBibleTextItem) {throw(Exception("Błąd metody sReadBibleTextData::GetTranslate()"));}
+			if(!pGsReadBibleTextItem) {throw(Exception(L"Błąd metody sReadBibleTextData::GetTranslate()"));}
 
 			switch(ustrStartStop.Length())
 			//Formatowanie ciągu wyjściowego dla wyodrębnienia zakresu tekstu z całego tekstu księgi.
@@ -1095,36 +1089,36 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 				case ciExceptChapter:
 					//Granice dotyczą adresów całych rozdziałów (66)
 					ustrStartVers=ustrStartStop.SubString(1, 6); //Uzyskanie adresu startowegp
-					ustrStartVers+="001";												 //Dodanie do adresu startowego informacji pierwszego wersetu
+					ustrStartVers+=L"001";												 //Dodanie do adresu startowego informacji pierwszego wersetu
 					ustrStopVers=ustrStartStop.SubString(7, 6);	 //Uzyskanie adresu końcowego
 						//---
 					iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1
 					//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
-					ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
+					ustrStopVers = ustrStopVers.SubString(1, 3) + Format(L"%.3u", ARRAYOFCONST((iTemps))) + L"001";
 					iLastOffsetVers = -1;												 //Odjąć jedną pozycje końcowego wskażnika na tekst
 					break;
 				//---
 				case ciExceptOneChapter:
 					//Tylko jeden cału rozdział (6)
 					ustrStartVers=ustrStartStop.SubString(1, 6); //Uzyskanie adresu startowegp
-					ustrStartVers+="001";												 //Dodanie do adresu startowego informacji pierwszego wersetu
+					ustrStartVers+=L"001";												 //Dodanie do adresu startowego informacji pierwszego wersetu
 					ustrStopVers = ustrStartVers;								 //Skopiowanie startowego adresu do końcowego adresu
 						//---
 					iTemps = ustrStopVers.SubString(4, 3).ToInt() + 1; //Wyciągnięcie z adresu końcowego, numeru rozdziału i zwiększenie go o 1	 !!!
 					//Utworzenie kompletnego końcowego adresu, numer księgi niezmieniany + numer rozdziału zwiększony o 1 + pierwszy werset rozdziału
-					ustrStopVers = ustrStopVers.SubString(1, 3) + Format("%.3u", ARRAYOFCONST((iTemps))) + "001";
+					ustrStopVers = ustrStopVers.SubString(1, 3) + Format(L"%.3u", ARRAYOFCONST((iTemps))) + L"001";
 					iLastOffsetVers = -1; //Odjąć jedną pozycje końcowego wskażnika na tekst
 					break;
 				//---
 				default:
-					throw(Exception("Niewłaściwy format wejściowy"));
+					throw(Exception(L"Niewłaściwy format wejściowy"));
 			}
 
 			//Werset końcowy jest dalej niż początkowy, lub adresy początku i końca są niewłaściwego formatu
 			if( (ustrStopVers.ToInt() < ustrStartVers.ToInt()) || (ustrStartVers.Length() != 9) || (ustrStopVers.Length()!= 9) )
-				{throw(Exception("Niewłaściwy format danych wejściowych"));}
+				{throw(Exception(L"Niewłaściwy format danych wejściowych"));}
 			pHSListText = new THashedStringList();
-			if(!pHSListText) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+			if(!pHSListText) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 
 			if(pGsReadBibleTextItem)
 			{
@@ -1135,7 +1129,7 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 					//if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt()))
 					if(pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStartVers.ToInt())
 					{
-						throw(Exception("Końcowy adres tekstu zbyt duży"));
+						throw(Exception(L"Końcowy adres tekstu zbyt duży"));
 					}
 					iLicz++;
 					if(iLicz > pSelectBook->Count-1) break;
@@ -1148,7 +1142,7 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 					//if((iLicz >= pSelectBook->Count-1) || (pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt()))
 					if(pSelectBook->Strings[iLicz].SubString(1, 9).ToInt() > ustrStopVers.ToInt())
 					{
-						throw(Exception("Końcowy adres tekstu zbyt duży"));
+						throw(Exception(L"Końcowy adres tekstu zbyt duży"));
 					}
 					iLicz++;
 					if(iLicz > pSelectBook->Count-1) break;
@@ -1166,7 +1160,7 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 			for(int i=0; i<pHSListText->Count; ++i) //Tworzenie stringu wyjściowego, czystego tekstu
 			//for(int i=0; i<2; ++i) //Tworzenie stringu wyjściowego, czystego tekstu //Tymczasowo
 			{
-				ustrRet += pHSListText->Strings[i] + " ";
+				ustrRet += pHSListText->Strings[i] + L" ";
 			}
 
 			TTabSheet *pTabSheet = dynamic_cast<TTabSheet *>(_pWebBrowser->TOleControl::Parent);
@@ -1179,7 +1173,7 @@ UnicodeString __fastcall GsReadBibleTextData::DisplayExceptTextInHTML(TWebBrowse
 				if(pMyObjectStart && pMyObjectStop)
 				{
 					//Wyświetlenie zakresu na zakładkach
-					pTabSheet->Caption = Format("%s %d:%d - %s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[ustrStartVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
+					pTabSheet->Caption = Format(L"%s %d:%d - %s %d:%d", ARRAYOFCONST((AppCTable_InfoAllBooks[ustrStartVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
 						pMyObjectStart->ucChapt, pMyObjectStart->ucVers,
 						AppCTable_InfoAllBooks[ustrStopVers.SubString(1, 3).ToInt() - 1].ShortNameBook,
 						pMyObjectStop->ucChapt, pMyObjectStop->ucVers)));
@@ -1209,7 +1203,7 @@ void GsReadBibleTextData::InitHistoryList()
 {
 	//----- String lista histori otwieranych rozdziałow księg biblijnych
 	GlobalVar::Global_HListHistoryChapterOpen = new THashedStringList();
-	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	//Odczyt pliku historii
 	if(TFile::Exists(GlobalVar::Global_custrPathHistory))
 	{
@@ -1225,9 +1219,9 @@ void GsReadBibleTextData::AddItemHistoryList(const UnicodeString &_ustrTextItem)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception("Nie zainicjowana lista histori (THashedStringList)"));
-	UnicodeString ustrbDateNow = FormatDateTime("yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
-	GlobalVar::Global_HListHistoryChapterOpen->Insert(0, Format("%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
+	if(!GlobalVar::Global_HListHistoryChapterOpen) throw(Exception(L"Nie zainicjowana lista histori (THashedStringList)"));
+	UnicodeString ustrbDateNow = FormatDateTime(L"yyyy-mm-dd hh-nn-ss", Now());	//Aktualna data i czas
+	GlobalVar::Global_HListHistoryChapterOpen->Insert(0, Format(L"%s=%s", ARRAYOFCONST((_ustrTextItem, ustrbDateNow))));
 }
 //---------------------------------------------------------------------------
 void GsReadBibleTextData::GetCurentText(UnicodeString &_ustrText)
@@ -1238,7 +1232,7 @@ void GsReadBibleTextData::GetCurentText(UnicodeString &_ustrText)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(pGsTabSheetClass)
 	{
@@ -1254,7 +1248,7 @@ void GsReadBibleTextData::GetCurentListText(THashedStringList *_pHSList)
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception("Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
+	if(!GsReadBibleTextData::pGsReadBibleTextClass) throw(Exception(L"Nie dokonano inicjalizacji objektu GsReadBibleTextClass"));
 	GsTabSheetClass *pGsTabSheetClass = static_cast<GsTabSheetClass *>(GsReadBibleTextData::_GsPageControl->ActivePage);
 	if(pGsTabSheetClass)
 	{

@@ -25,28 +25,28 @@ enum {
 	enIndexInfo_Grec=0, enIndexInfo_Hbr
 };
 
-const UnicodeString custrInfo[] = {"Grecko-Polski", "Hebrajsko-Polski"};
+const UnicodeString custrInfo[] = {L"Grecko-Polski", L"Hebrajsko-Polski"};
 
-const UnicodeString custrHeadTransHTMLpre1 = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-																		"<html>\n<head>\n" +
-																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
-																		"<title>Tłumaczenie wybranego słowa</title>\n" +
-																		"<style type=\"text/css\">\n" +
-																		Format(".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
-																		".styleStrongWord {color: #FF0000;vertical-align: super;font-size: 42px;font-weight: bold;display: block;" +
-																				"width: auto;margin-left: auto;margin-right: auto;text-align: center;}\n" +
-																		".styleDescription {margin-left: 20px;color: #0000FF;font-size: 24px;font-weight: bold;}\n" +
-																		".styleNormal {display: block;margin-left: 20px;}\n",
-                    custrHeadText = UnicodeString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
-																		"<html>\n<head>\n" +
-																		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
-																		"<title>Tekst interlinearny grecko-polski</title>\n" +
-																		"<style type=\"text/css\">\n" +
-																		Format(".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
-																		".styleNumber {color: #FF0000;vertical-align: super;font-size: small;font-weight: bold;}\n" +
-																		Format("body {background-color: %s;font-size: x-large;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebLavender) )))  +
-																		"</style>\n</head>\n<body>\n",
-										custrEndHTML = "\n</body>\n</html>",
+const UnicodeString custrHeadTransHTMLpre1 = UnicodeString(L"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																		L"<html>\n<head>\n" +
+																		L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
+																		L"<title>Tłumaczenie wybranego słowa</title>\n" +
+																		L"<style type=\"text/css\">\n" +
+																		Format(L".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
+																		L".styleStrongWord {color: #FF0000;vertical-align: super;font-size: 42px;font-weight: bold;display: block;" +
+																				L"width: auto;margin-left: auto;margin-right: auto;text-align: center;}\n" +
+																		L".styleDescription {margin-left: 20px;color: #0000FF;font-size: 24px;font-weight: bold;}\n" +
+																		L".styleNormal {display: block;margin-left: 20px;}\n",
+										custrHeadText = UnicodeString(L"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n") +
+																		L"<html>\n<head>\n" +
+																		L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +// !!!
+																		L"<title>Tekst interlinearny grecko-polski</title>\n" +
+																		L"<style type=\"text/css\">\n" +
+																		Format(L".styleFound {background-color: %s;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebYellow) ))) +
+																		L".styleNumber {color: #FF0000;vertical-align: super;font-size: small;font-weight: bold;}\n" +
+																		Format(L"body {background-color: %s;font-size: x-large;}\n", ARRAYOFCONST(( RGBToWebColorStr(clWebLavender) )))  +
+																		L"</style>\n</head>\n<body>\n",
+										custrEndHTML = L"\n</body>\n</html>",
 										custrPathImportane = TPath::Combine(GlobalVar::Global_custrGetDataDir, "ImpStrong.html");
 UnicodeString custrHeadTransHTML;
 const unsigned char cucDelimit = ' '; // Znak cięcia lini
@@ -61,19 +61,19 @@ __fastcall TSuperDitionariesWindow::TSuperDitionariesWindow(TComponent* Owner, i
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-	UnicodeString ustrConvertPathImage = StringReplace(GlobalVar::Global_custrPathBackgroundSDict, "\\", "\\\\", TReplaceFlags() << rfReplaceAll),
+	UnicodeString ustrConvertPathImage = StringReplace(GlobalVar::Global_custrPathBackgroundSDict, L"\\", L"\\\\", TReplaceFlags() << rfReplaceAll),
 //								ustrBackGround = Format(UnicodeString("body {background-image: url(\"%s\");\n") +
 //								"\tfont-size: x-large;}",
 //									ARRAYOFCONST((ustrConvertPathImage)));
 
-								ustrBackGround = Format(UnicodeString("html, body{\n\tmargin: 0;\n\tpadding: 0;\n\twidth: 100%%;\n\theight: 100%%;\n}\n") +
-								"body {\n\tbackground: none;\n" +
-								"\tfilter: progid:DXImageTransform.Microsoft.AlphaImageLoader(" +
-								"src = \"%s\", sizingMethod = \"scale\");\n" +
-								"\tfont-size: x-large;\n}",
+								ustrBackGround = Format(UnicodeString(L"html, body{\n\tmargin: 0;\n\tpadding: 0;\n\twidth: 100%%;\n\theight: 100%%;\n}\n") +
+								L"body {\n\tbackground: none;\n" +
+								L"\tfilter: progid:DXImageTransform.Microsoft.AlphaImageLoader(" +
+								L"src = \"%s\", sizingMethod = \"scale\");\n" +
+								L"\tfont-size: x-large;\n}",
 									ARRAYOFCONST((ustrConvertPathImage)));
 
-	custrHeadTransHTML = Format("%s\n%s\n</style>\n</head>\n<body>\n",
+	custrHeadTransHTML = Format(L"%s\n%s\n</style>\n</head>\n<body>\n",
 		ARRAYOFCONST((custrHeadTransHTMLpre1, ustrBackGround)));
 
 	this->ControlListStrong->Tag = enCList_Strong;
@@ -108,8 +108,8 @@ void __fastcall TSuperDitionariesWindow::FormShow(TObject *Sender)
 
 	this->ControlListStrong->ItemHeight = 2 * -this->ControlListStrong->Font->Height;
 	this->ControlListApperances->ItemHeight = this->ControlListStrong->ItemHeight;
-	this->WebBrowserImpotance->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony
-	this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserImpotance->Navigate(WideString(L"about:blank").c_bstr()); // wypełnienie kontrolki pustą strony
+	this->WebBrowserVers->Navigate(WideString(L"about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
   this->WebBrowserExplanations->Navigate(custrPathImportane.c_str()); // wypełnienie kontrolki instrukcją.
 
 	this->ControlListStrongItemClick(this->ControlListStrong);
@@ -117,8 +117,8 @@ void __fastcall TSuperDitionariesWindow::FormShow(TObject *Sender)
   // Wyszukanie konkretnego tłumaczenia //[09-06-2024]
 	int iCountTrans = GsReadBibleTextData::CountTranslates();
 	UnicodeString ustrNameTrans;
-	const UnicodeString custrFindNameTransGrec = "TRO+",
-											custrFindNameTransHebr = "IBHP+"; // [31-07-2024]
+	const UnicodeString custrFindNameTransGrec = L"TRO+",
+											custrFindNameTransHebr = L"IBHP+"; // [31-07-2024]
   for(int i=0; i<iCountTrans; ++i)
 	{
 		GsReadBibleTextData::GetInfoNameTranslate(i, ustrNameTrans);
@@ -154,11 +154,11 @@ void __fastcall TSuperDitionariesWindow::FormCreate(TObject *Sender)
 {
 	this->_pManagerSuperDictionaries = new ManagerSuperDictionaries(GlobalVar::Global_custrPathGrecSuperDictionary,
 		GlobalVar::Global_custrPathHbrSuperDictionary);
-	if(!this->_pManagerSuperDictionaries) throw(Exception("Błąd inicjalizacji objektu ManagerSuperDictionarys"));
+	if(!this->_pManagerSuperDictionaries) throw(Exception(L"Błąd inicjalizacji objektu ManagerSuperDictionarys"));
 
   // Lista wystąpień dla wybranego słowa
 	this->_pHListVerses = new THashedStringList();
-	if(!this->_pHListVerses) throw(Exception("Błąd inicjalizacji objektu THashedStringList"));
+	if(!this->_pHListVerses) throw(Exception(L"Błąd inicjalizacji objektu THashedStringList"));
 	this->_pHListVerses->Delimiter = cucDelimit;
 	this->_pHListVerses->StrictDelimiter = true;
 
@@ -224,12 +224,12 @@ void __fastcall TSuperDitionariesWindow::ControlListStrongBeforeDrawItem(int AIn
 	if(this->ActionGrec->Checked)
 	{
 		pSuperDictionaryItemGrec = this->_pManagerSuperDictionaries->GetStrongGrec(AIndex + 1);
-		this->LabelStrongNumber->Caption = Format("G%d: %s", ARRAYOFCONST((AIndex + 1, pSuperDictionaryItemGrec->ustrGrecWord)));
+		this->LabelStrongNumber->Caption = Format(L"G%d: %s", ARRAYOFCONST((AIndex + 1, pSuperDictionaryItemGrec->ustrGrecWord)));
 	}
 	else
 	{
 		pSuperDictionaryItemHbr = this->_pManagerSuperDictionaries->GetStrongHbr(AIndex + 1);
-		this->LabelStrongNumber->Caption = Format("H%d: %s", ARRAYOFCONST((AIndex + 1, pSuperDictionaryItemHbr->ustrHbrWord)));
+		this->LabelStrongNumber->Caption = Format(L"H%d: %s", ARRAYOFCONST((AIndex + 1, pSuperDictionaryItemHbr->ustrHbrWord)));
 	}
 	this->ImageListSmall->GetIcon(enIcon16_StrongNumbers, this->ImageStrongNumbers->Picture->Icon);
 }
@@ -251,13 +251,13 @@ void __fastcall TSuperDitionariesWindow::ControlListStrongItemClick(TObject *Sen
 	SuperDictionaryItemGrec *pSuperDictionaryItemGrec=nullptr;
 	SuperDictionaryItemHbr *pSuperDictionaryItemHbr=nullptr;
 
-  this->WebBrowserVers->Navigate(WideString("about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserVers->Navigate(WideString(L"about:blank").c_bstr()); // wypełnienie kontrolki pustą strony.
 	this->ControlListApperances->ItemIndex = -1; // Nowe wyszukiwanie więc brak zaznaczonego elementu z listy wystąpień
 	this->_pHListVerses->BeginUpdate();
 	this->_pHListVerses->Clear();
 
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
-  if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	if(!pStringStream) throw(Exception(L"Błąd inicjalizacji objektu TStringStream"));
 
 	// Wyświetlenie tłumaczenia wyszukanego słowa
 	pStringStream->WriteString(custrHeadTransHTML); //Zapis nagłówka kodu html do strumienia
@@ -267,16 +267,16 @@ void __fastcall TSuperDitionariesWindow::ControlListStrongItemClick(TObject *Sen
 		if((iStrongNumber > 3202) && (iStrongNumber < 3303))
 		// Brak słowa o wybranym zakresie numeru Stronga. //[15-07-2026]
 		{
-			pStringStream->WriteString(Format("<span class=\"styleStrongWord\">Brak słowa o numerze Stronga: %d</span>", ARRAYOFCONST((iStrongNumber))));
+			pStringStream->WriteString(Format(L"<span class=\"styleStrongWord\">Brak słowa o numerze Stronga: %d</span>", ARRAYOFCONST((iStrongNumber))));
 		}
 		else
 		{
-  		pStringStream->WriteString(Format("<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrecWord))));
-  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrPhonetically))));
-  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrammForm))));
-  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Ilość wystąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrNumberApp))));
-  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Pochodzenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrOrigin))));
-  		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrTranslate))));
+			pStringStream->WriteString(Format(L"<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrecWord))));
+			pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrPhonetically))));
+			pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrGrammForm))));
+			pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Ilość wystąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrNumberApp))));
+			pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Pochodzenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrOrigin))));
+			pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Tłumaczenie: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemGrec->ustrTranslate))));
   		// Wyodrębnianie miejsca wystapień wybranego słowa greckiego
 			this->_pHListVerses->DelimitedText = pSuperDictionaryItemGrec->ustrApperDecode;
 		}
@@ -284,12 +284,12 @@ void __fastcall TSuperDitionariesWindow::ControlListStrongItemClick(TObject *Sen
 	else
 	{
 		pSuperDictionaryItemHbr = this->_pManagerSuperDictionaries->GetStrongHbr(iStrongNumber);
-		pStringStream->WriteString(Format("<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrHbrWord))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrPhonetically))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrGrammForm))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Ilość wytąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrNumberApp))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie 1: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrTranslate1))));
-		pStringStream->WriteString(Format("<p><span class=\"styleDescription\">Tłumaczenie 2: </span></span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrTranslate2))));
+		pStringStream->WriteString(Format(L"<span class=\"styleStrongWord\">%s</span>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrHbrWord))));
+		pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Wymowa: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrPhonetically))));
+		pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Gramatyka: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrGrammForm))));
+		pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Ilość wytąpień: </span>%s</p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrNumberApp))));
+		pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Tłumaczenie 1: </span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrTranslate1))));
+		pStringStream->WriteString(Format(L"<p><span class=\"styleDescription\">Tłumaczenie 2: </span></span><span class=\"styleNormal\">%s</span></p>", ARRAYOFCONST((pSuperDictionaryItemHbr->ustrTranslate2))));
 		// Wyodrębnianie miejsca wystapień wybranego słowa hebrajskiego
 		this->_pHListVerses->DelimitedText = pSuperDictionaryItemHbr->ustrApperDecode;
 	}
@@ -323,7 +323,7 @@ void __fastcall TSuperDitionariesWindow::ControlListApperancesBeforeDrawItem(int
 {
   if((AIndex < 0) || (AIndex >= this->ControlListStrong->ItemCount)) return;
 	//---
-	if(this->_pHListVerses->Strings[AIndex] != "None")
+	if(this->_pHListVerses->Strings[AIndex] != L"None")
 	{
   	int iBook=0, iChapt=0, iVers=0;
   	UnicodeString ustrAdress = this->_pHListVerses->Strings[AIndex];
@@ -332,7 +332,7 @@ void __fastcall TSuperDitionariesWindow::ControlListApperancesBeforeDrawItem(int
   	iChapt = ustrAdress.SubString(4, 3).ToIntDef(0);
   	iVers = ustrAdress.SubString(7, 3).ToIntDef(0);
 
-  	this->LabelApperances->Caption = Format("%s %d:%d",
+		this->LabelApperances->Caption = Format(L"%s %d:%d",
 			ARRAYOFCONST((AppCTable_InfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
 	}
 	else
@@ -363,12 +363,12 @@ void __fastcall TSuperDitionariesWindow::ControlListApperancesItemClick(TObject 
 //	#endif
 
 	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true); //Allokacja strumienia dla tekstu html
-	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	if(!pStringStream) throw(Exception(L"Błąd inicjalizacji objektu TStringStream"));
   // Wypisanie adresu wersetu w formie czytelnej
 	iBook = ustrSelectVers.SubString(1, 3).ToIntDef(1);
 	iChapt = ustrSelectVers.SubString(4, 3).ToIntDef(1);
 	iVers = ustrSelectVers.SubString(7, 3).ToIntDef(1);
-  ustrAdress = Format("%s %d:%d",
+	ustrAdress = Format(L"%s %d:%d",
 		ARRAYOFCONST((AppCTable_InfoAllBooks[iBook - 1].ShortNameBook, iChapt, iVers )));
 
   if(this->ActionGrec->Checked)
@@ -383,7 +383,7 @@ void __fastcall TSuperDitionariesWindow::ControlListApperancesItemClick(TObject 
 	}
 
   pStringStream->WriteString(custrHeadText); //Zapis nagłówka kodu html do strumienia
-	pStringStream->WriteString(Format("%s %s", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
+	pStringStream->WriteString(Format(L"%s %s", ARRAYOFCONST(( ustrAdress, ustrSelectVers ))));
 
 	pStringStream->WriteString(custrEndHTML);
 	pStringStream->Position = 0;
@@ -404,34 +404,34 @@ UnicodeString __fastcall TSuperDitionariesWindow::_SelectVersWordGrec(const Unic
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  const UnicodeString custrStyleFStart="<span class=\"styleFound\">",
-											custrStyleFStop="</span>";
+	const UnicodeString custrStyleFStart=L"<span class=\"styleFound\">",
+											custrStyleFStop=L"</span>";
 	UnicodeString ustrOp=_custrIn,
 								ustrOut,
 								ustrModify;
 	int iFind=0;
 
 	// Podmiana na "</m>#"
-	ustrOp = StringReplace(ustrOp, "</m> ", "</m>#", TReplaceFlags() << rfReplaceAll);
+	ustrOp = StringReplace(ustrOp, L"</m> ", L"</m>#", TReplaceFlags() << rfReplaceAll);
 	// Podział wersetu na części kończace sie na "#". I stworzenie tablicy dynamicznej
-	DynamicArray daWord = Strutils::SplitString(ustrOp, "#");
+	DynamicArray daWord = Strutils::SplitString(ustrOp, L"#");
 
 	for(int i=0; i<daWord.Length; ++i)
 	{
 		if(!daWord[i].IsEmpty())
 		{
       // Wstawienie numeru słowa //[22-06-2024]
-			daWord[i] = Format("<span class=\"styleNumber\">%d</span>%s", ARRAYOFCONST(( i+1, daWord[i] )));
+			daWord[i] = Format(L"<span class=\"styleNumber\">%d</span>%s", ARRAYOFCONST(( i+1, daWord[i] )));
 			// w celu "pocięcia" wersetu na tłumaczenia pojedyńczych słów
 			// Próba znalezienia kodu Stronga z przyległymi kodami html
-			iFind = daWord[i].Pos(Format(" <font color=\"green\"><sup>%s</sup></font> ",
+			iFind = daWord[i].Pos(Format(L" <font color=\"green\"><sup>%s</sup></font> ",
 				ARRAYOFCONST(( UnicodeString(this->ControlListStrong->ItemIndex + 1) ))));
 
 			if(iFind > 0)
 			{
 				// Jeśli znaleziono opis słowa o numerze szukanym
 				// Dodanie do słowa znalezionego kodu html zmieniający podkład pod napisem
-				ustrModify = Format("%s%s%s", ARRAYOFCONST(( custrStyleFStart, daWord[i], custrStyleFStop )));
+				ustrModify = Format(L"%s%s%s", ARRAYOFCONST(( custrStyleFStart, daWord[i], custrStyleFStop )));
 				// Podmiana oryginalnego definicji słowa, podkoloryzowaną wersją //[22-06-2024]
 				daWord[i] = StringReplace(daWord[i], daWord[i], ustrModify, TReplaceFlags());
 			}
@@ -451,8 +451,8 @@ UnicodeString __fastcall TSuperDitionariesWindow::_SelectVersWordHbr(const Unico
 	OPIS WYNIKU METODY(FUNKCJI):
 */
 {
-  const UnicodeString custrStyleFStart="<span class=\"styleFound\">",
-											custrStyleFStop="</span>";
+	const UnicodeString custrStyleFStart=L"<span class=\"styleFound\">",
+											custrStyleFStop=L"</span>";
 	UnicodeString ustrOp=_custrIn,
 								ustrOut,
 								ustrModify,
@@ -463,9 +463,9 @@ UnicodeString __fastcall TSuperDitionariesWindow::_SelectVersWordHbr(const Unico
 
 	if(iFind > 0)
 	{
-		ustrModify = Format("<sup>%s%s%s",
+		ustrModify = Format(L"<sup>%s%s%s",
 			ARRAYOFCONST(( custrStyleFStart, UnicodeString(this->ControlListStrong->ItemIndex + 1), custrStyleFStop )));
-		ustrTo = Format("<sup>%s", ARRAYOFCONST(( UnicodeString(this->ControlListStrong->ItemIndex + 1) )) );
+		ustrTo = Format(L"<sup>%s", ARRAYOFCONST(( UnicodeString(this->ControlListStrong->ItemIndex + 1) )) );
 		ustrOut = StringReplace(ustrOp, ustrTo, ustrModify, TReplaceFlags());
 	}
 

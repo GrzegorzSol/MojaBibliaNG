@@ -103,8 +103,8 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
         AlignWithMargins = True
         Left = 43
         Top = 3
-        Width = 169
-        Height = 34
+        Width = 5
+        Height = 19
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -115,8 +115,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
         ParentFont = False
         Transparent = True
         Layout = tlCenter
-        ExplicitWidth = 5
-        ExplicitHeight = 19
       end
       object ImageStrongNumbers: TImage
         AlignWithMargins = True
@@ -227,8 +225,8 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
         AlignWithMargins = True
         Left = 43
         Top = 3
-        Width = 120
-        Height = 34
+        Width = 5
+        Height = 19
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -239,8 +237,6 @@ object SuperDitionariesWindow: TSuperDitionariesWindow
         ParentFont = False
         Transparent = True
         Layout = tlCenter
-        ExplicitWidth = 5
-        ExplicitHeight = 19
       end
       object ImageVers: TImage
         AlignWithMargins = True

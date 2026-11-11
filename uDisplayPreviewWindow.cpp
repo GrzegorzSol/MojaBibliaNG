@@ -43,7 +43,7 @@ __fastcall TDisplayPreviewWindow::TDisplayPreviewWindow(TComponent* Owner)
 
 	this->Left = Screen->Width - this->Width - 4;
 	this->Top = Screen->Height - this->Height - GetTaskbarHeight() - 4;
-	this->WebBrowserPreview->Navigate(WideString("about:blank").c_bstr(), 8); // wypełnienie kontrolki pustą strony.
+	this->WebBrowserPreview->Navigate(WideString(L"about:blank").c_bstr(), 8); // wypełnienie kontrolki pustą strony.
 }
 //---------------------------------------------------------------------------
 void __fastcall TDisplayPreviewWindow::FormCreate(TObject *Sender)
@@ -87,7 +87,7 @@ void __fastcall TDisplayPreviewWindow::FormShow(TObject *Sender)
 		TStringStream *pStringStream=nullptr;
 		try
 		{
-			pStringStream = new TStringStream("", TEncoding::UTF8, true);
+			pStringStream = new TStringStream(L"", TEncoding::UTF8, true);
 			IPersistStreamInit *psi=nullptr;
 
 			pStringStream->WriteString(this->_ustrPreviewText);
@@ -137,7 +137,7 @@ void __fastcall TDisplayPreviewWindow::WebBrowserPreviewDocumentComplete(TObject
 {
 	if (_OldIEServerProc != nullptr) return; // już zrobione
 	HWND hIE = this->_GetIEServerWindow();
-	if(!hIE) throw(Exception("Nie uzyskano wewnetrznego okna objektu klasy TWebBrowser!"));
+	if(!hIE) throw(Exception(L"Nie uzyskano wewnetrznego okna objektu klasy TWebBrowser!"));
 	// Podmiana procedury obsługujacej kontrolke na własną (subclassing)
 	_OldIEServerProc = (WNDPROC)SetWindowLongPtr(hIE, GWLP_WNDPROC, (LONG_PTR)_NewIEServerProc);
 }

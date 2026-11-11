@@ -7,7 +7,7 @@
 #if defined(_DEBUGINFO_)
 	#include "GsDebugClass.h"
 #endif
-static UnicodeString sustrVersionGsEditorClass = "0.7.8844.2132";
+static UnicodeString sustrVersionGsEditor = "1.00.5176";
 //Flagi komponentu
 enum {enSetButton_Save = 100, enSetButton_SaveAs, enSetButton_Open};
 typedef Set <int, enSetButton_Save, enSetButton_Open> DisplaySelectIOButtons;
@@ -22,7 +22,6 @@ class GsEditorClass : public TCustomPanel
 		void __fastcall SaveEditorToFile(const UnicodeString _ustrInFilePath);
 		void __fastcall ClearEditor();
 		bool inline __fastcall IsModified() {return this->pTRichEdit->Modified;}
-		inline static UnicodeString __fastcall GetVersionClass() {return Format("Klasa \"GsEditorClass\" v%s", ARRAYOFCONST((sustrVersionGsEditorClass)));};	//Metoda inline zwracająca wersje klasy
 		inline TRichEdit *__fastcall GetRichEditObject() {return this->pTRichEdit;};
 		//---
 		__property UnicodeString EditorFileName = {read=FEditorFileName};

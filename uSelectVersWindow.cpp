@@ -43,7 +43,7 @@ __fastcall TSelectVersWindow::TSelectVersWindow(TComponent* Owner, const unsigne
 	//Wielkość okna //[10-12-2023]
 	TForm *pMainWindow = Application->MainForm;
 	if(pMainWindow)
-		{this->Width = pMainWindow->Width - 40; this->Height = pMainWindow->Height - 20;}
+		{this->Width = pMainWindow->Width - 40; this->Height = pMainWindow->Height - 160;} //[30-07-2026]
 }
 //---------------------------------------------------------------------------
 void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
@@ -60,7 +60,7 @@ void __fastcall TSelectVersWindow::FormCreate(TObject *Sender)
 	if(this->_InputCucStartBook < 66) ucStartBook = this->_InputCucStartBook; else ucStartBook = 0;
 	//---
 	this->_pGsPanelSelectVers = new GsPanelSelectVers(this, ucStartBook, this->_InputCucStartChapt, this->_InputCucStartVers);//, this->_InputBSelectComment);
-	if(!this->_pGsPanelSelectVers) throw(Exception("Nie dokonano inicjalizacji objektu GsPanelSelectVers"));
+	if(!this->_pGsPanelSelectVers) throw(Exception(L"Nie dokonano inicjalizacji objektu GsPanelSelectVers"));
 	this->_pGsPanelSelectVers->Parent = this;
 	this->_pGsPanelSelectVers->Align = alClient;
 	this->_pGsPanelSelectVers->OnStrongSelect = this->_OnClickButtonSelectStrong;
@@ -120,7 +120,7 @@ void __fastcall TSelectVersWindow::_OnClickButtonSelectStrong(System::TObject* S
 		//---
 		int iGetStrong = pButton->Caption.Delete(1, 1).ToIntDef(1);
 		TSuperDitionariesWindow *pSuperDitionariesWindow = new TSuperDitionariesWindow(this, iGetStrong, tStartDict);
-		if(!pSuperDitionariesWindow) throw(Exception("Błąd inicjalizacji objektu, klasy, okna TSuperDitionariesWindow"));
+		if(!pSuperDitionariesWindow) throw(Exception(L"Błąd inicjalizacji objektu, klasy, okna TSuperDitionariesWindow"));
 		pSuperDitionariesWindow->Show();
 	#endif
 }

@@ -21,7 +21,7 @@ MessageBox(NULL, TEXT("Test"), TEXT("Informacje aplikacji"), MB_OK | MB_ICONINFO
 THistoryOpenChaptersWindow *HistoryOpenChaptersWindow;
 
 static int iLViewStartIndex=0; static int iLViewEndIndex=0; //Zakres dolny i górny elementów w liście wirtualnej
-const UnicodeString custrNameColumns[] = {"Rozdział", "Data otwarcia"}; //Nazwy kolumn na liście historii
+const UnicodeString custrNameColumns[] = {L"Rozdział", L"Data otwarcia"}; //Nazwy kolumn na liście historii
 enum {//Kolumny
 			enColumn_Chapter, enColumn_DateTime, enColumn_Count,
 			//Głowne obrazy 32 pikseli
@@ -56,7 +56,7 @@ __fastcall THistoryOpenChaptersWindow::THistoryOpenChaptersWindow(TComponent* Ow
 
 	this->_pStartAction->Enabled = false;
 	//---
-	this->Act_DeleteSelectItemHistoryCh->Hint = Format("%s|Skasowanie z listy historii zaznaczonej pozycji, operacja jest nieodwracalna.|%u", ARRAYOFCONST((this->Act_DeleteSelectItemHistoryCh->Caption, this->Act_DeleteSelectItemHistoryCh->ImageIndex)));
+	this->Act_DeleteSelectItemHistoryCh->Hint = Format(L"%s|Skasowanie z listy historii zaznaczonej pozycji, operacja jest nieodwracalna.|%u", ARRAYOFCONST((this->Act_DeleteSelectItemHistoryCh->Caption, this->Act_DeleteSelectItemHistoryCh->ImageIndex)));
 }
 //---------------------------------------------------------------------------
 void __fastcall THistoryOpenChaptersWindow::FormClose(TObject *Sender, TCloseAction &Action)
@@ -85,10 +85,10 @@ void __fastcall THistoryOpenChaptersWindow::Act_DeleteSelectItemHistoryChExecute
 	TListItem *pListItem = this->LViewHistoryCh->Selected;
 	int iIndexOf=-1;
 
-	UnicodeString ustrMessage = "Czy jesteś pewny, że chcesz skasować wybraną(ne) pozycje z listy historii? Nie będzie można cofnąć operacji i odzyskać pozycje!";//[23-08-2023]
+	UnicodeString ustrMessage = L"Czy jesteś pewny, że chcesz skasować wybraną(ne) pozycje z listy historii? Nie będzie można cofnąć operacji i odzyskać pozycje!";//[23-08-2023]
 
 	THashedStringList *pHSListSelected = new THashedStringList(); //Tymczasowa (buforowa) lista zaznaczonych elementów //[22-08-2023]
-	if(!pHSListSelected) throw(Exception("Błąd inicjalizacji objektu, klasy THashedStringList!"));
+	if(!pHSListSelected) throw(Exception(L"Błąd inicjalizacji objektu, klasy THashedStringList!"));
 	TItemStates selected = TItemStates() << isSelected;
 
 	while(pListItem)
@@ -191,7 +191,7 @@ void __fastcall THistoryOpenChaptersWindow::LViewHistoryChDblClick(TObject *Send
 	UnicodeString ustrName = Item->Caption.SubString(1, Item->Caption.Pos(":") - 1),
 								ustrChapt;
 	UnicodeString ustrTest = Item->Caption.SubString(Item->Caption.Pos(": ") + 2, 25);
-	iPosSpace = ustrTest.Pos(" ");
+	iPosSpace = ustrTest.Pos(L" ");
 	ustrChapt = ustrTest.Delete(iPosSpace, 28);
 	iChapt = ustrChapt.ToIntDef(1);
 

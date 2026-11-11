@@ -9,14 +9,14 @@
 #pragma resource "*.dfm"
 TChapterEditWindow *ChapterEditWindow;
 const UnicodeString GlobalSizeFontText = "\\fs28",
-										GlobalHeaderRtf = UnicodeString("{\\urtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
-																		 "{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;}" +
-																		 "{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf3\\lang1045\\b\\f0\\fs28 Edycja wczytanego rozdziału (tylko polskie, pełne przekłady)\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\b" + GlobalSizeFontText,
-										GlobalAdressVersRtf = "\\f1\\line\\cf2\\b",
-										GlobalVersRtf = "\\cf1\\b0\\f0",
-										GlobalNameTransRtf = "\\cf4\\f1",
-										GlobalEndVersRtf = "\\cf1\\f1",
-										GlobalSizeNameTransRtf = "\\fs20";
+										GlobalHeaderRtf = UnicodeString(L"{\\urtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset238{\\*\\fname Arial;}Arial CE;}{\\f1\\fnil Arial;}}") +
+																		 L"{\\colortbl ;\\red0\\green0\\blue0;\\red255\\green0\\blue0;\\red0\\green200\\blue0;\\red0\\green0\\blue255;}" +
+																		 L"{\\*\\generator Msftedit 5.41.21.2510;}\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1\\qc\\tx720\\tx1440\\tx2880\\tx5760\\cf3\\lang1045\\b\\f0\\fs28 Edycja wczytanego rozdziału (tylko polskie, pełne przekłady)\\b0\\f1\\line\\pard\\sa200\\sl276\\slmult1\\tx720\\tx1440\\tx2880\\tx5760\\cf1\\b" + GlobalSizeFontText,
+										GlobalAdressVersRtf = L"\\f1\\line\\cf2\\b",
+										GlobalVersRtf = L"\\cf1\\b0\\f0",
+										GlobalNameTransRtf = L"\\cf4\\f1",
+										GlobalEndVersRtf = L"\\cf1\\f1",
+										GlobalSizeNameTransRtf = L"\\fs20";
 /*
 #if defined(_DEBUGINFO_)
 	GsDebugClass::WriteDebug(Format("", ARRAYOFCONST(( ))));
@@ -65,7 +65,7 @@ void __fastcall TChapterEditWindow::FormCreate(TObject *Sender)
 */
 {
 	this->_pGsEditorClass = new GsEditorClass(this);
-	if(!this->_pGsEditorClass) throw(Exception("Błąd inicjalizacji objektu GsEditorClass"));
+	if(!this->_pGsEditorClass) throw(Exception(L"Błąd inicjalizacji objektu GsEditorClass"));
 	this->_pGsEditorClass->Parent = this;
 	this->_pGsEditorClass->Align = alClient;
 }
@@ -92,8 +92,8 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 	TList *pListTr = GsReadBibleTextData::GetListAllTrChap(); //Lista wszystkich tekstów z wybranego rozdziału
 	if(!pListTr) return;
 	//---
-	TStringStream *pStringStream = new TStringStream("", TEncoding::UTF8, true);
-	if(!pStringStream) throw(Exception("Błąd inicjalizacji objektu TStringStream"));
+	TStringStream *pStringStream = new TStringStream(L"", TEncoding::UTF8, true);
+	if(!pStringStream) throw(Exception(L"Błąd inicjalizacji objektu TStringStream"));
 	//---
 	unsigned char uiTranslatesIndex, iIndexVers=0;
 	//bool bExit=false;
@@ -128,14 +128,14 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 							if(this->_iGetTranslate == 0)
 							//Wybrano wszystkie tłumaczenia
 							{
-								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s [%s]%s" ,ARRAYOFCONST((GlobalAdressVersRtf, AppCTable_InfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
+								pStringStream->WriteString(Format(L"%s %s %u:%u %s %s%s%s%s [%s]%s" ,ARRAYOFCONST((GlobalAdressVersRtf, AppCTable_InfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
 									this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
 									GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, pGsReadBibleTextItem->NameTranslate, GlobalSizeFontText))));
 							}
 							else if (this->_iGetTranslate > 0)
 							//Wybrano konkretne tłumaczenie
 							{
-								pStringStream->WriteString(Format("%s %s %u:%u %s %s%s%s%s %s" ,ARRAYOFCONST((GlobalAdressVersRtf, AppCTable_InfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
+								pStringStream->WriteString(Format(L"%s %s %u:%u %s %s%s%s%s %s" ,ARRAYOFCONST((GlobalAdressVersRtf, AppCTable_InfoAllBooks[this->_pGsTabSheetClass->_ShucIndexBook].ShortNameBook,
 								this->_pGsTabSheetClass->_ShucIndexChapt + 1, iIndexVers + 1, GlobalVersRtf, pTempHSList->Strings[iIndexVers],
 								GlobalEndVersRtf, GlobalNameTransRtf, GlobalSizeNameTransRtf, GlobalSizeFontText))));
 							}
@@ -154,11 +154,11 @@ void __fastcall TChapterEditWindow::FormActivate(TObject *Sender)
 			if(this->_iGetTranslate == 0)
 			//Jeśli wybrane konkretne tłumaczenie to nie wstawiać	 przerw pustej lini
 			{
-				if(uiTranslatesIndex > 0) pStringStream->WriteString("\\line");
+				if(uiTranslatesIndex > 0) pStringStream->WriteString(L"\\line");
 			}
 			if(uiTranslatesIndex >= GlobalVar::Global_cucMaxCountTranslates) uiTranslatesIndex=0; //Zabezpieczenie przed przekęceniem licznika
 		}while(uiTranslatesIndex > 0);
-		pStringStream->WriteString("}");
+		pStringStream->WriteString(L"}");
 		pStringStream->Position = 0;
 		this->_pGsEditorClass->LoadEditorFromStream(pStringStream);
 	}
